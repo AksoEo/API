@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/AksoEo/API#readme",
   "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
     "bcrypt": "^3.0.3",
     "canvas": "^2.3.1",
     "cookie-parser": "^1.4.3",
@@ -39,7 +40,6 @@
     "moment": "^2.24.0",
     "msgpack-lite": "^0.1.26",
     "mysql2": "^1.6.4",
-    "nodemailer": "^5.1.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-totp": "0.0.2",
