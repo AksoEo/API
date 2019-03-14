@@ -8,12 +8,12 @@ const header = require('gulp-header');
 const compileSrc = function (source) {
 	return source
 		.pipe(plumber())
-		.pipe(header("import 'babel-polyfill';import 'source-map-support/register';"))
+		.pipe(header("import '@babel/polyfill';import 'source-map-support/register';"))
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 				presets: ["@babel/env"],
 				plugins: [
-					"transform-async-to-generator",
+					"@babel/transform-async-to-generator",
 					"@babel/plugin-proposal-export-namespace-from"
 				]
 			}))

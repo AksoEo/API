@@ -4,7 +4,9 @@
   "description": "AKSO's REST API",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/gulp compile-src",
+    "preinstall": "npm install --ignore-scripts && npm run build"
   },
   "repository": {
     "type": "git",
@@ -42,20 +44,21 @@
     "passport-local": "^1.0.0",
     "passport-totp": "0.0.2",
     "pn": "^1.1.0",
+    "source-map-support": "^0.5.11",
     "winston": "^3.1.0",
     "xregexp": "^4.2.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.3.4",
     "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
-    "@babel/preset-env": "^7.3.1",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-polyfill": "^6.26.0",
+    "@babel/plugin-transform-async-to-generator": "^7.3.4",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.4",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-header": "^2.0.7",
     "gulp-plumber": "^1.2.1",
-    "gulp-sourcemaps": "^2.6.4",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-watch": "^5.0.1"
   }
 }
