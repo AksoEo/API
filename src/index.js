@@ -1,6 +1,7 @@
 import winston from 'winston';
 import moment from 'moment';
 
+import AKSOMail from './mail';
 import AKSOHttp from './http';
 
 global.AKSO = {
@@ -22,15 +23,28 @@ global.AKSO = {
 	conf: {
 		http: {
 			port: process.env.AKSO_HTTP_PORT || 1111
+		},
+		sendgrid: {
+			apiKey: process.env.AKSO_SENDGRID_API_KEY
 		}
-	}
+	},
+
+	// Constants used by internal APIs, not to be touched directly
+	mail: null
 };
+
+// Complain about missing required env vars
+if (!AKSO.conf.sendgrid.apiKey) {
+	AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
+	process.exit(1);
+}
 
 // Init
 moment.locale('en');
 
 AKSO.log.info("AKSO version %s", AKSO.version);
 
+AKSOMail();
 AKSOHttp();
 
 // Handle shutdown signal
