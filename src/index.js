@@ -1,5 +1,6 @@
 import winston from 'winston';
 import moment from 'moment';
+import msgpack from 'msgpack-lite';
 
 import AKSOMail from './mail';
 import AKSOHttp from './http';
@@ -26,11 +27,16 @@ global.AKSO = {
 		},
 		sendgrid: {
 			apiKey: process.env.AKSO_SENDGRID_API_KEY
-		}
+		},
+		prodMode: process.env.NODE_ENV || 'dev'
 	},
 
 	// Constants used by internal APIs, not to be touched directly
-	mail: null
+	mail: null,
+	msgpack: msgpack.createCodec({
+		int64: true,
+		usemap: true
+	})
 };
 
 // Complain about missing required env vars
@@ -43,6 +49,7 @@ if (!AKSO.conf.sendgrid.apiKey) {
 moment.locale('en');
 
 AKSO.log.info("AKSO version %s", AKSO.version);
+AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
 
 AKSOMail();
 AKSOHttp();
