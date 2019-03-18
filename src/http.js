@@ -1,5 +1,7 @@
 import express from 'express';
 import msgpack from 'msgpack-lite';
+import moment from 'moment';
+import url from 'url';
 
 import AKSORouting from './routing';
 
@@ -41,6 +43,25 @@ export default function init () {
 				}
 			});
 		};
+
+		res.on('finish', () => {
+			// Log the request
+			const logData = {
+				time: moment().unix(),
+				user: undefined, // todo
+				app: undefined, // todo
+				ip: req.ip,
+				origin: req.get('origin') || req.get('host'),
+				userAgent: req.headers['user-agent'] || null,
+				method: req.method,
+				path: req.baseUrl,
+				query: url.parse(req.url).query,
+				resStatus: res.statusCode
+			};
+
+			console.log(logData); // todo
+		});
+
 		next();
 	});
 
