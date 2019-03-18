@@ -23,8 +23,7 @@ export default function init () {
 
 		/**
 		 * Sends an object as response, formatting it according to the client's Accept http header
-		 * @param  {[type]} obj [description]
-		 * @return {[type]}     [description]
+		 * @param  {[type]} obj The object to send
 		 */
 		res.sendObj = function resSendObj (obj) {
 			res.format({
