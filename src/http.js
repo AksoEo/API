@@ -47,6 +47,17 @@ export default function init () {
 	// Routing
 	app.use('/', AKSORouting());
 
+	// Error handling
+	app.use(function handleError404 (req, res, next) {
+		if (res.headersSent) { return; }
+		res.sendError(404, 'Not found');
+	});
+	app.use(function handleError500 (err, req, res, next) {
+		AKSO.log.error(`An error occured at ${req.method} ${req.originalUrl}\n${err.stack}`);
+		if (res.headersSent) { return; }
+		res.sendError(500, 'Internal error');
+	});
+
 	app.listen(AKSO.conf.http.port, () => {
 		AKSO.log.info(`HTTP server listening on :${AKSO.conf.http.port}`);
 	});
