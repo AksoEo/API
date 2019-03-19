@@ -36,6 +36,7 @@
     "google-libphonenumber": "^3.2.2",
     "helmet": "^3.15.0",
     "knex": "^0.16.3",
+    "method-override": "^3.0.0",
     "moment": "^2.24.0",
     "msgpack-lite": "^0.1.26",
     "multer": "^1.4.1",

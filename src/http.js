@@ -5,6 +5,7 @@ import url from 'url';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
 import helmet from 'helmet';
+import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 
 import AKSORouting from './routing';
@@ -30,12 +31,25 @@ export default function init () {
 	// Add custom methods to req and res
 	app.use(setupMiddleware);
 
+	// Parse body
 	app.use(bodyParser.json({
 		limit: '1mb'
 	}));
 	app.use(bodyParser.raw({
 		type: 'application/vnd.msgpack',
 		limit: '1mb'
+	}));
+	// Allow text/plain only for method overriding
+	app.use(bodyParser.urlencoded({
+		extended: false,
+		limit: '1mb',
+		verify: req => {
+			if (!req.headers['x-http-method-override'] || req.method !== 'POST') {
+				const err = new Error('Unsupported media type');
+				err.statusCode = 415;
+				throw err;
+			}
+		}
 	}));
 	// Disallow all other content types
 	app.use(bodyParser.raw({
@@ -46,11 +60,8 @@ export default function init () {
 			throw err;
 		}
 	}));
-
-	// Handle msgpack
+	// Parse msgpack
 	app.use(function (req, res, next) {
-		console.log(req.body);
-
 		if (req.headers['content-type'] !== 'application/vnd.msgpack') {
 			next();
 			return;
@@ -65,6 +76,16 @@ export default function init () {
 		}
 		next();
 	});
+
+	// Method overriding
+	app.use(methodOverride((req, res) => {
+		if (req.body) {
+			req.query = req.body;
+			req.body = undefined;
+		}
+
+		return req.headers['x-http-method-override'];
+	}));
 
 	// Routing
 	app.use('/', AKSORouting());
@@ -122,12 +143,12 @@ function setupMiddleware (req, res,  next) {
 			origin: req.get('origin') || req.get('host'),
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
-			path: req.baseUrl,
-			query: url.parse(req.url).query,
+			path: url.parse(req.url).pathname,
+			query: JSON.stringify(req.query),
 			resStatus: res.statusCode
 		};
 
-		console.log(logData); // todo
+		// console.log(logData); // todo
 	});
 
 	next();
