@@ -37,7 +37,20 @@ export default function init () {
 		type: 'application/vnd.msgpack',
 		limit: '1mb'
 	}));
+	// Disallow all other content types
+	app.use(bodyParser.raw({
+		type: () => true,
+		verify: () => {
+			const err = new Error('Unsupported media type');
+			err.statusCode = 415;
+			throw err;
+		}
+	}));
+
+	// Handle msgpack
 	app.use(function (req, res, next) {
+		console.log(req.body);
+
 		if (req.headers['content-type'] !== 'application/vnd.msgpack') {
 			next();
 			return;
