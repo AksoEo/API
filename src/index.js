@@ -2,7 +2,7 @@ import winston from 'winston';
 import moment from 'moment';
 import msgpack from 'msgpack-lite';
 
-import AKSOMail from './mail';
+import * as AKSOMail from './mail';
 import AKSOHttp from './http';
 
 global.AKSO = {
@@ -23,7 +23,11 @@ global.AKSO = {
 
 	conf: {
 		http: {
-			port: process.env.AKSO_HTTP_PORT || 1111
+			port: 				process.env.AKSO_HTTP_PORT || 1111,
+			trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY || false,
+			helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
+									true : process.env.AKSO_HTTP_USE_HELMET != '0',
+			sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET
 		},
 		sendgrid: {
 			apiKey: process.env.AKSO_SENDGRID_API_KEY
@@ -44,6 +48,10 @@ if (!AKSO.conf.sendgrid.apiKey) {
 	AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 	process.exit(1);
 }
+if (!AKSO.conf.http.sessionSecret) {
+	AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
+	process.exit(1);
+}
 
 // Init
 moment.locale('en');
@@ -51,7 +59,7 @@ moment.locale('en');
 AKSO.log.info("AKSO version %s", AKSO.version);
 AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
 
-AKSOMail();
+AKSOMail.init();
 AKSOHttp();
 
 // Handle shutdown signal

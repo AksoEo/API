@@ -2,14 +2,31 @@ import express from 'express';
 import msgpack from 'msgpack-lite';
 import moment from 'moment';
 import url from 'url';
+import cookieParser from 'cookie-parser';
+import session from 'cookie-session';
+import helmet from 'helmet';
 
 import AKSORouting from './routing';
 
 export default function init () {
 	const app = express();
 
-	// TODO: Middleware
+	// Add middleware
+	if (AKSO.conf.trustLocalProxy) {
+		app.set('trust proxy', 'loopback');
+	}
+	if (AKSO.conf.http.helmet) {
+		app.use(helmet());
+	} else {
+		AKSO.log.warn('Running without helmet');
+	}
+	app.use(cookieParser());
+	app.use(session({
+		secret: AKSO.conf.http.sessionSecret,
+		name: 'akso_session'
+	}));
 	
+	// Add custom methods to req and res
 	app.use(function setupMiddleware (req, res,  next) {
 		/**
 		 * Sends an error message as response
