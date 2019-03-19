@@ -38,8 +38,7 @@ global.AKSO = {
 	// Constants used by internal APIs, not to be touched directly
 	mail: null,
 	msgpack: msgpack.createCodec({
-		int64: true,
-		usemap: true
+		int64: true
 	})
 };
 

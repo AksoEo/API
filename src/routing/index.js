@@ -7,5 +7,10 @@ import express from 'express';
 export default function init () {
 	const router = new express.Router();
 
+	router.all('/', (req, res, next) => {
+		console.log(req.body);
+		res.sendObj([]);
+	});
+
 	return router;
 }
