@@ -34,6 +34,13 @@ export function wrap (fn) {
 	};
 }
 
+/**
+ * Binds a method to a router with built-in schema validation
+ * @param  {express.Router} router The router to bind the endpoint to
+ * @param  {string}         path   The path of the endpoint relative to the router
+ * @param  {string}         method The method of the endpoint
+ * @param  {Object}         bind   The bind object
+ */
 export function bindMethod (router, path, method, bind) {
 	let validateBody = null;
 	if (bind.schema && bind.schema.body) {
