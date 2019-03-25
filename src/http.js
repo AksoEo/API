@@ -10,109 +10,114 @@ import bodyParser from 'body-parser';
 
 import { init as AKSORouting } from './routing';
 
-export default function init () {
-	const app = express();
+export function init () {
+	return new Promise((resolve, reject) => {
+		AKSO.log.info('Setting up http server ...');
 
-	// Add middleware
-	if (AKSO.conf.trustLocalProxy) {
-		app.set('trust proxy', 'loopback');
-	}
-	if (AKSO.conf.http.helmet) {
-		app.use(helmet());
-	} else {
-		AKSO.log.warn('Running without helmet');
-	}
-	app.use(cookieParser());
-	app.use(session({
-		secret: AKSO.conf.http.sessionSecret,
-		name: 'akso_session'
-	}));
+		const app = express();
 
-	// Add custom methods to req and res
-	app.use(setupMiddleware);
+		// Add middleware
+		if (AKSO.conf.trustLocalProxy) {
+			app.set('trust proxy', 'loopback');
+		}
+		if (AKSO.conf.http.helmet) {
+			app.use(helmet());
+		} else {
+			AKSO.log.warn('Running without helmet');
+		}
+		app.use(cookieParser());
+		app.use(session({
+			secret: AKSO.conf.http.sessionSecret,
+			name: 'akso_session'
+		}));
 
-	// Parse body
-	app.use(bodyParser.json({
-		limit: '1mb'
-	}));
-	app.use(bodyParser.raw({
-		type: 'application/vnd.msgpack',
-		limit: '1mb'
-	}));
-	// Allow application/x-www-form-urlencoded only for method overriding
-	app.use(bodyParser.urlencoded({
-		extended: false,
-		limit: '1mb',
-		verify: req => {
-			if (!req.headers['x-http-method-override'] || req.method !== 'POST') {
+		// Add custom methods to req and res
+		app.use(setupMiddleware);
+
+		// Parse body
+		app.use(bodyParser.json({
+			limit: '1mb'
+		}));
+		app.use(bodyParser.raw({
+			type: 'application/vnd.msgpack',
+			limit: '1mb'
+		}));
+		// Allow application/x-www-form-urlencoded only for method overriding
+		app.use(bodyParser.urlencoded({
+			extended: false,
+			limit: '1mb',
+			verify: req => {
+				if (!req.headers['x-http-method-override'] || req.method !== 'POST') {
+					const err = new Error('Unsupported media type');
+					err.statusCode = 415;
+					throw err;
+				}
+			}
+		}));
+		// Disallow all other content types
+		app.use(bodyParser.raw({
+			type: () => true,
+			verify: (req, res, buf, encoding) => {
+				// Content-Type is only required if a body is supplied
+				if (buf.length === 0) {
+					return;
+				}
+
 				const err = new Error('Unsupported media type');
 				err.statusCode = 415;
 				throw err;
 			}
-		}
-	}));
-	// Disallow all other content types
-	app.use(bodyParser.raw({
-		type: () => true,
-		verify: (req, res, buf, encoding) => {
-			// Content-Type is only required if a body is supplied
-			if (buf.length === 0) {
+		}));
+		// Parse msgpack
+		app.use(function (req, res, next) {
+			if (req.headers['content-type'] !== 'application/vnd.msgpack') {
+				next();
 				return;
 			}
 
-			const err = new Error('Unsupported media type');
-			err.statusCode = 415;
-			throw err;
-		}
-	}));
-	// Parse msgpack
-	app.use(function (req, res, next) {
-		if (req.headers['content-type'] !== 'application/vnd.msgpack') {
+			try {
+				req.body = msgpack.decode(req.body, { codec: AKSO.msgpack });
+			} catch (err) {
+				err.statusCode = 400;
+				next(err);
+				return;
+			}
 			next();
-			return;
-		}
+		});
 
-		try {
-			req.body = msgpack.decode(req.body, { codec: AKSO.msgpack });
-		} catch (err) {
-			err.statusCode = 400;
-			next(err);
-			return;
-		}
-		next();
-	});
+		// Method overriding
+		app.use(methodOverride((req, res) => {
+			if (req.body) {
+				req.query = req.body;
+				req.body = undefined;
+			}
 
-	// Method overriding
-	app.use(methodOverride((req, res) => {
-		if (req.body) {
-			req.query = req.body;
-			req.body = undefined;
-		}
+			return req.headers['x-http-method-override'];
+		}));
 
-		return req.headers['x-http-method-override'];
-	}));
+		// Routing
+		app.use('/', AKSORouting());
 
-	// Routing
-	app.use('/', AKSORouting());
+		// Error handling
+		app.use(function handleError404 (req, res, next) {
+			if (res.headersSent) { return; }
+			res.sendStatus(404);
+		});
+		app.use(function handleError500 (err, req, res, next) {
+			const status = err.status || err.statusCode;
 
-	// Error handling
-	app.use(function handleError404 (req, res, next) {
-		if (res.headersSent) { return; }
-		res.sendStatus(404);
-	});
-	app.use(function handleError500 (err, req, res, next) {
-		const status = err.status || err.statusCode;
+			if (!status || status >= 500) {
+				AKSO.log.error(`An error occured at ${req.method} ${req.originalUrl}\n${err.stack}`);
+			}
 
-		if (!status || status >= 500) {
-			AKSO.log.error(`An error occured at ${req.method} ${req.originalUrl}\n${err.stack}`);
-		}
+			if (res.headersSent) { return; }
+			res.sendStatus(err.statusCode || 500);
+		});
 
-		if (res.headersSent) { return; }
-		res.sendStatus(err.statusCode || 500);
-	});
-
-	app.listen(AKSO.conf.http.port, () => {
-		AKSO.log.info(`HTTP server listening on :${AKSO.conf.http.port}`);
+		app.listen(AKSO.conf.http.port, () => {
+			AKSO.log.info(`... HTTP server listening on :${AKSO.conf.http.port}`);
+			resolve();
+		});
 	});
 };
 
