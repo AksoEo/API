@@ -3,6 +3,7 @@ export async function init () {
 
 	AKSO.db = require('knex')({
 		client: 'mysql2',
+		asyncStackTraces: true,
 		connection: {
 			host: AKSO.conf.mysql.host,
 			user: AKSO.conf.mysql.user,

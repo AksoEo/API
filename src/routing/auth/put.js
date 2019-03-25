@@ -1,3 +1,5 @@
+import passport from 'passport';
+
 export default {
 	schema: {
 		query: null,
@@ -27,6 +29,18 @@ export default {
 	},
 
 	run: async function run (req, res, next) {
-		res.send('todo');
+		passport.authenticate('local', (err, user, info) => {
+			if (err) { return next(err); }
+			if (!user) { return res.sendStatus(401); }
+			req.logIn(user, err => {
+				if (err) { return next(err); }
+
+				res.sendObj({
+					csrfToken: null, // todo
+					totpSetUp: null, // todo
+					totpUsed: null // todo
+				});
+			});
+		})(req, res, next);
 	}
 };
