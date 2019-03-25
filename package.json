@@ -24,6 +24,7 @@
   "homepage": "https://github.com/AksoEo/API#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
+    "ajv": "^6.10.0",
     "bcrypt": "^3.0.3",
     "body-parser": "^1.18.3",
     "canvas": "^2.3.1",

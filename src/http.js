@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 
-import AKSORouting from './routing';
+import { init as AKSORouting } from './routing';
 
 export default function init () {
 	const app = express();
@@ -39,7 +39,7 @@ export default function init () {
 		type: 'application/vnd.msgpack',
 		limit: '1mb'
 	}));
-	// Allow text/plain only for method overriding
+	// Allow application/x-www-form-urlencoded only for method overriding
 	app.use(bodyParser.urlencoded({
 		extended: false,
 		limit: '1mb',
@@ -54,7 +54,12 @@ export default function init () {
 	// Disallow all other content types
 	app.use(bodyParser.raw({
 		type: () => true,
-		verify: () => {
+		verify: (req, res, buf, encoding) => {
+			// Content-Type is only required if a body is supplied
+			if (buf.length === 0) {
+				return;
+			}
+
 			const err = new Error('Unsupported media type');
 			err.statusCode = 415;
 			throw err;
