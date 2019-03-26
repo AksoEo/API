@@ -19,6 +19,8 @@
 -- Current Database: `akso`
 --
 
+/*!40000 DROP DATABASE IF EXISTS `akso`*/;
+
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `akso` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 
 USE `akso`;
@@ -35,7 +37,7 @@ CREATE TABLE `codeholders` (
   `codeholderType` enum('human','org') CHARACTER SET ascii NOT NULL,
   `oldCode` char(4) CHARACTER SET ascii DEFAULT NULL,
   `newCode` char(6) CHARACTER SET ascii NOT NULL,
-  `password` varbinary(255) DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `feeCountry` char(2) CHARACTER SET ascii DEFAULT NULL,
@@ -53,7 +55,7 @@ CREATE TABLE `codeholders` (
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
   CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,6 +64,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
+INSERT INTO `codeholders` VALUES (2,'human',NULL,'teeest','$2b$10$bPHLNnxxWs98EmYykTNd5e0U8ADkJtXIXUEp7IufYUqjhOdPQpBq6','test@test',1,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -422,6 +425,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,4 +472,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-25 12:16:41
+-- Dump completed on 2019-03-26 12:33:28
