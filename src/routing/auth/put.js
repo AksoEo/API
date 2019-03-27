@@ -38,7 +38,8 @@ export default {
 				res.sendObj({
 					csrfToken: null, // todo
 					totpSetUp: null, // todo
-					totpUsed: null // todo
+					totpUsed: null, // todo
+					isAdmin: null // todo
 				});
 			});
 		})(req, res, next);
