@@ -31,7 +31,7 @@ async function init () {
 										true : process.env.AKSO_HTTP_USE_HELMET != '0',
 				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
 				corsCheck: 			process.env.AKSO_HTTP_DISABLE_CORS_CHECK === undefined ?
-										true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK != '0'
+										true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK == '0'
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -59,7 +59,7 @@ async function init () {
 			'X-Total-Items',
 			'X-Total-Items-No-Filter',
 			'X-Affected-Items'
-		]
+		],
 
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,

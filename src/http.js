@@ -24,6 +24,11 @@ export function init () {
 
 			if (!AKSO.conf.http.corsCheck) {
 				AKSO.log.warn('Running without CORS check');
+				app.use(cors({
+					origin: '*',
+					allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
+					exposedHeaders: AKSO.CORS_EXPOSED_HEADERS
+				}));
 			} else {
 				// Set up CORS
 				app.use(cors({
