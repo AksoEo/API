@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
+import cors from 'cors';
 
 import { init as AKSORouting } from './routing';
 import AuthClient from './lib/auth-client';
@@ -20,6 +21,50 @@ export function init () {
 			AKSO.log.info('Setting up http server ...');
 
 			const app = express();
+
+			if (!AKSO.conf.http.corsCheck) {
+				AKSO.log.warn('Running without CORS check');
+			} else {
+				// Set up CORS
+				app.use(cors({
+					origin: function cors (origin, cb) {
+						if (!origin) { return cb(null, true); }
+
+						const parsedUrl = url.parse(origin);
+
+						// Validate protocol
+						if (parsedUrl.protocol !== 'https:') {
+							const err = new Error('Forbidden CORS protocol (only https is allowed)');
+							err.statusCode = 403;
+							throw err;
+						}
+
+						// Validate hostname
+						let foundValidHostname = false;
+						for (let hostname of AKSO.CORS_ORIGIN_WHITELIST) {
+							if (typeof hostname === 'string') {
+								if (parsedUrl.hostname === origin) {
+									foundValidHostname = true;
+									break;
+								}
+							} else if (hostname.test(origin)) {
+								foundValidHostname = true;
+								break;
+							}
+						}
+						if (!foundValidHostname) {
+							const err = new Error('Forbidden CORS hostname');
+							err.statusCode = 403;
+							throw err;
+						}
+
+						return cb(null, true);
+					},
+
+					allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
+					exposedHeaders: AKSO.CORS_EXPOSED_HEADERS
+				}));
+			}
 
 			// Add middleware
 			if (AKSO.conf.trustLocalProxy) {
@@ -177,7 +222,11 @@ function setupMiddleware (req, res,  next) {
 			resStatus: res.statusCode
 		};
 
-		// console.log(logData); // todo
+		console.log(logData);
+
+		if (logData.method === 'OPTIONS') { return; }
+
+		// todo
 	});
 
 	next();

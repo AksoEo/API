@@ -29,7 +29,9 @@ async function init () {
 				trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY || false,
 				helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
 										true : process.env.AKSO_HTTP_USE_HELMET != '0',
-				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET
+				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
+				corsCheck: 			process.env.AKSO_HTTP_DISABLE_CORS_CHECK === undefined ?
+										true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK != '0'
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -42,6 +44,22 @@ async function init () {
 			},
 			prodMode: process.env.NODE_ENV || 'dev'
 		},
+
+		// Constants, do not change without updating docs
+		CORS_ORIGIN_WHITELIST: [
+			/^.+\.akso\.org$/,
+			'tejo.org',
+			'uea.org'
+		],
+		CORS_ALLOWED_HEADERS: [
+			'X-Http-Method-Override'
+		],
+		CORS_EXPOSED_HEADERS: [
+			'X-Time-Taken',
+			'X-Total-Items',
+			'X-Total-Items-No-Filter',
+			'X-Affected-Items'
+		]
 
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,

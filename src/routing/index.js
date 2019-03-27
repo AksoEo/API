@@ -15,6 +15,13 @@ const ajv = new Ajv({
 export function init () {
 	const router = new express.Router();
 
+	router.get('/', (req, res, next) => {
+		res.type('text/plain').send([
+			'AKSO REST Server',
+			`Version: ${AKSO.version}`
+			].join('\n'));
+	});
+
 	router.use('/auth', route$auth());
 
 	return router;
