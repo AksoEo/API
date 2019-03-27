@@ -222,7 +222,7 @@ function setupMiddleware (req, res,  next) {
 			resStatus: res.statusCode
 		};
 
-		console.log(logData);
+		// console.log(logData);
 
 		if (logData.method === 'OPTIONS') { return; }
 
