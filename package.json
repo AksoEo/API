@@ -33,7 +33,6 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-rate-limit": "^3.3.2",
-    "fs-extra": "^7.0.1",
     "google-i18n-address": "github:cpsdqs/google-i18n-address",
     "google-libphonenumber": "^3.2.2",
     "helmet": "^3.15.0",
