@@ -219,7 +219,7 @@ function setupMiddleware (req, res,  next) {
 			user: undefined, // todo
 			app: undefined, // todo
 			ip: req.ip,
-			origin: req.get('origin') || req.get('host'),
+			origin: req.get('origin') || req.get('host') || null,
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
 			path: url.parse(req.url).pathname,
