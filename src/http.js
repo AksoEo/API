@@ -22,54 +22,51 @@ export function init () {
 
 			const app = express();
 
+			// Set up CORS
+			const corsSettings = {
+				origin: '*',
+				allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
+				exposedHeaders: AKSO.CORS_EXPOSED_HEADERS,
+				credentials: true
+			};
 			if (!AKSO.conf.http.corsCheck) {
 				AKSO.log.warn('Running without CORS check');
-				app.use(cors({
-					origin: '*',
-					allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
-					exposedHeaders: AKSO.CORS_EXPOSED_HEADERS
-				}));
 			} else {
-				// Set up CORS
-				app.use(cors({
-					origin: function cors (origin, cb) {
-						if (!origin) { return cb(null, true); }
+				corsSettings.origin = function cors (origin, cb) {
+					if (!origin) { return cb(null, true); }
 
-						const parsedUrl = url.parse(origin);
+					const parsedUrl = url.parse(origin);
 
-						// Validate protocol
-						if (parsedUrl.protocol !== 'https:') {
-							const err = new Error('Forbidden CORS protocol (only https is allowed)');
-							err.statusCode = 403;
-							throw err;
-						}
+					// Validate protocol
+					if (parsedUrl.protocol !== 'https:') {
+						const err = new Error('Forbidden CORS protocol (only https is allowed)');
+						err.statusCode = 403;
+						throw err;
+					}
 
-						// Validate hostname
-						let foundValidHostname = false;
-						for (let hostname of AKSO.CORS_ORIGIN_WHITELIST) {
-							if (typeof hostname === 'string') {
-								if (parsedUrl.hostname === origin) {
-									foundValidHostname = true;
-									break;
-								}
-							} else if (hostname.test(origin)) {
+					// Validate hostname
+					let foundValidHostname = false;
+					for (let hostname of AKSO.CORS_ORIGIN_WHITELIST) {
+						if (typeof hostname === 'string') {
+							if (parsedUrl.hostname === origin) {
 								foundValidHostname = true;
 								break;
 							}
+						} else if (hostname.test(origin)) {
+							foundValidHostname = true;
+							break;
 						}
-						if (!foundValidHostname) {
-							const err = new Error('Forbidden CORS hostname');
-							err.statusCode = 403;
-							throw err;
-						}
+					}
+					if (!foundValidHostname) {
+						const err = new Error('Forbidden CORS hostname');
+						err.statusCode = 403;
+						throw err;
+					}
 
-						return cb(null, true);
-					},
-
-					allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
-					exposedHeaders: AKSO.CORS_EXPOSED_HEADERS
-				}));
+					return cb(null, true);
+				};
 			}
+			app.use(cors(corsSettings));
 
 			// Add middleware
 			if (AKSO.conf.trustLocalProxy) {
