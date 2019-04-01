@@ -209,26 +209,29 @@ function setupMiddleware (req, res,  next) {
 		});
 	};
 
-	res.on('finish', () => {
+	res.on('finish', async () => {
 		// Log the request
 		const logData = {
 			time: moment().unix(),
-			user: undefined, // todo
-			app: undefined, // todo
+			codeholderId: req.user ? req.user.user || null : null,
+			apiKey: req.user ? req.user.app || null : null,
 			ip: req.ip,
 			origin: req.get('origin') || req.get('host') || null,
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
-			path: url.parse(req.url).pathname,
+			path: url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.query),
 			resStatus: res.statusCode
 		};
 
-		// console.log(logData);
+		// max length
+		logData.origin = logData.origin.substring(0, 300);
+		logData.userAgent = logData.userAgent.substring(0, 500);
+		logData.path = logData.path.substring(0, 300);
 
 		if (logData.method === 'OPTIONS') { return; }
 
-		// todo
+		await AKSO.db('httpLog').insert(logData);
 	});
 
 	next();
