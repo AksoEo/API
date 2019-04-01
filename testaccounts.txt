@@ -1,0 +1,7 @@
+User auth:
+u: test
+p: test
+
+Client auth:
+u: 0e5417fdf9edb4667ccd6de525300bd8
+p: test
