@@ -195,6 +195,7 @@ CREATE TABLE `clients` (
 
 LOCK TABLES `clients` WRITE;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
+INSERT INTO `clients` VALUES (_binary 'T˝˘\Ì¥f|\Õm\Â%0\ÿ',_binary 'üÜ–ÅàL}eö/\Í†\≈Z\–£øO+Ç,\—]l∞\n','random app (p: test)','TEJO','mia@tejo.org');
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,7 +238,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human',NULL,'teeest','$2b$10$bPHLNnxxWs98EmYykTNd5e0U8ADkJtXIXUEp7IufYUqjhOdPQpBq6','test@test',1,NULL,NULL,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$10$bPHLNnxxWs98EmYykTNd5e0U8ADkJtXIXUEp7IufYUqjhOdPQpBq6','test@test',1,NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -689,4 +690,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-27 16:11:23
+-- Dump completed on 2019-04-01 15:10:03
