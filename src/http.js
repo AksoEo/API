@@ -13,6 +13,7 @@ import { BasicStrategy } from 'passport-http';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import crypto from 'crypto';
+import responseTime from 'response-time';
 
 import { init as AKSORouting } from './routing';
 import AuthClient from './lib/auth-client';
@@ -23,6 +24,9 @@ export function init () {
 			AKSO.log.info('Setting up http server ...');
 
 			const app = express();
+
+			// Set up response time calculation
+			app.use(responseTime());
 
 			// Set up CORS
 			const corsSettings = {
@@ -221,7 +225,8 @@ function setupMiddleware (req, res,  next) {
 			method: req.method,
 			path: url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.query),
-			resStatus: res.statusCode
+			resStatus: res.statusCode,
+			resTime: res.get('x-response-time').slice(0, -2)
 		};
 
 		// max length

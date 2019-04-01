@@ -55,7 +55,7 @@ async function init () {
 			'X-Http-Method-Override'
 		],
 		CORS_EXPOSED_HEADERS: [
-			'X-Time-Taken',
+			'X-Response-Time',
 			'X-Total-Items',
 			'X-Total-Items-No-Filter',
 			'X-Affected-Items'

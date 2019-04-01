@@ -657,6 +657,7 @@ CREATE TABLE `httpLog` (
   `path` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
   `query` json NOT NULL,
   `resStatus` smallint(6) NOT NULL,
+  `resTime` decimal(5,3) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   KEY `apiKey` (`apiKey`),
@@ -690,4 +691,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-01 15:10:03
+-- Dump completed on 2019-04-01 15:34:48
