@@ -667,6 +667,7 @@ CREATE TABLE `httpLog` (
   KEY `path` (`path`),
   KEY `resStatus` (`resStatus`),
   KEY `method` (`method`),
+  KEY `resTime` (`resTime`),
   FULLTEXT KEY `userAgent` (`userAgent`),
   CONSTRAINT `httpLog_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `httpLog_ibfk_2` FOREIGN KEY (`apiKey`) REFERENCES `clients` (`apiKey`)
@@ -691,4 +692,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-01 15:34:48
+-- Dump completed on 2019-04-01 15:37:59
