@@ -9,8 +9,10 @@ import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { BasicStrategy } from 'passport-http';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
+import crypto from 'crypto';
 
 import { init as AKSORouting } from './routing';
 import AuthClient from './lib/auth-client';
@@ -148,9 +150,7 @@ export function init () {
 			}));
 
 			// Passport
-			await authentication();
-			app.use(passport.initialize());
-			app.use(passport.session());
+			await authentication(app);
 
 			// Routing
 			app.use('/', AKSORouting());
@@ -234,7 +234,8 @@ function setupMiddleware (req, res,  next) {
 	next();
 }
 
-async function authentication () {
+async function authentication (app) {
+	// User-based authentication
 	passport.use(new LocalStrategy({
 		usernameField: 'login',
 		passwordField: 'password'
@@ -271,12 +272,57 @@ async function authentication () {
 	}));
 
 	passport.serializeUser((client, done) => {
-		done(null, client.user);
+		if (client.user) { return done(null, client.user); }
+
+		done(null, -1);
 	});
 
 	passport.deserializeUser(async (id, done) => {
 		const dbUser = await AKSO.db.first(1).from('codeholders').where('id', id);
-		if (!dbUser) { return done(err); }
+		if (!dbUser) {
+			const err = new Error('Invalid session');
+			err.statusCode = 400;
+			return done(err);
+		}
 		done(null, new AuthClient(id, null));
+	});
+
+	// Application authentication
+	passport.use(new BasicStrategy({ passReqToCallback: true }, async function authenticateHttp (req, apiKey, apiSecret, done) {
+		if (req.user) {
+			const err = new Error('Already authenticated');
+			err.statusCode = 400;
+			return done(err);
+		}
+
+		const apiKeyBuf = Buffer.from(apiKey, 'hex'); // returns an empty buffer if invalid hex
+		const secretHashed = crypto.createHash('sha256').update(apiSecret).digest();
+
+		// Try to find the client
+		const dbClient = await AKSO.db.first(1).from('clients').where({
+			apiKey: apiKeyBuf,
+			apiSecret: secretHashed
+		});
+		if (!dbClient) { return done(null, false); }
+
+		const client = new AuthClient(null, apiKeyBuf);
+		return done(null, client);
+	}));
+
+	app.use(passport.initialize());
+	app.use(passport.session());
+	
+	// Perform app auth
+	app.use(function checkAppAuthUsed (req, res, next) {
+		if (!req.headers['authorization']) { return next(); }
+		
+		passport.authenticate('basic', { session: false }, (err, user, info) => {
+			if (err) { return next(err); }
+			if (!user) { return res.sendStatus(401); }
+			req.logIn(user, { session: false }, err => {
+				if (err) { return next(err); }
+				next();
+			});
+		})(req, res, next);
 	});
 }
