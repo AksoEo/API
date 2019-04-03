@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import crypto from 'crypto';
 import responseTime from 'response-time';
+import csurf from 'csurf';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
@@ -151,6 +152,24 @@ export function init () {
 
 			// Passport
 			await AKSOHttpAuthentication(app);
+
+			// CSRF
+			if (!AKSO.conf.http.csrfCheck) {
+				AKSO.log.warn('CSRF check disabled');
+			} else {
+				const csrf = csurf({
+					cookie: false,
+					ignoreMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
+					value: req => req.headers['x-csrf-token']
+				});
+				app.use(function csrfProtection (req, res, next) {
+					if (req.user && req.user.isUser()) {
+						csrf(req, res, next);
+					} else {
+						next();
+					}
+				});
+			}
 
 			// Routing
 			app.use('/', AKSORouting());

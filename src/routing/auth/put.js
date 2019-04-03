@@ -35,12 +35,7 @@ export default {
 			req.logIn(user, err => {
 				if (err) { return next(err); }
 
-				res.sendObj({
-					csrfToken: null, // todo
-					totpSetUp: null, // todo
-					totpUsed: null, // todo
-					isAdmin: null // todo
-				});
+				res.sendStatus(204);
 			});
 		})(req, res, next);
 	}

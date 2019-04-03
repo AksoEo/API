@@ -2,6 +2,7 @@ import express from 'express';
 
 import { bindMethod } from '..';
 
+import method$get from './get';
 import method$put from './put';
 import method$delete from './delete';
 
@@ -12,6 +13,7 @@ import method$delete from './delete';
 export function init () {
 	const router = new express.Router();
 
+	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'put', method$put);
 	bindMethod(router, '/', 'delete', method$delete);
 
