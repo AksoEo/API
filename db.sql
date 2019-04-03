@@ -604,6 +604,31 @@ INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest',NULL,NULL);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_totp`
+--
+
+DROP TABLE IF EXISTS `codeholders_totp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_totp` (
+  `codeholderId` int(10) unsigned NOT NULL,
+  `secret` tinyblob NOT NULL,
+  `iv` binary(16) NOT NULL,
+  PRIMARY KEY (`codeholderId`),
+  CONSTRAINT `codeholders_totp_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_totp`
+--
+
+LOCK TABLES `codeholders_totp` WRITE;
+/*!40000 ALTER TABLE `codeholders_totp` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_totp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `countries`
 --
 
@@ -657,7 +682,7 @@ CREATE TABLE `httpLog` (
   `path` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
   `query` json NOT NULL,
   `resStatus` smallint(6) NOT NULL,
-  `resTime` decimal(5,3) NOT NULL,
+  `resTime` decimal(9,3) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   KEY `apiKey` (`apiKey`),
@@ -692,4 +717,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-01 15:37:59
+-- Dump completed on 2019-04-03 18:11:15
