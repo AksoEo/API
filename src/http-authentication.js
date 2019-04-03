@@ -10,7 +10,7 @@ import AuthClient from './lib/auth-client';
  * @param  {express.Application} app
  */
 async function authentication (app) {
-	// User-based authentication
+	// User-based authentication strategy
 	passport.use(new LocalStrategy({
 		usernameField: 'login',
 		passwordField: 'password'
@@ -46,6 +46,7 @@ async function authentication (app) {
 		return done(null, user);
 	}));
 
+	// Session-based user serialization for user auth
 	passport.serializeUser((client, done) => {
 		if (client.user) { return done(null, client.user); }
 
@@ -62,7 +63,7 @@ async function authentication (app) {
 		done(null, new AuthClient(id, null));
 	});
 
-	// Application authentication
+	// Application authentication strategy
 	passport.use(new BasicStrategy({ passReqToCallback: true }, async function authenticateHttp (req, apiKey, apiSecret, done) {
 		if (req.user) {
 			const err = new Error('Already authenticated');
@@ -84,6 +85,7 @@ async function authentication (app) {
 		return done(null, client);
 	}));
 
+	// Set up passport
 	app.use(passport.initialize());
 	app.use(passport.session());
 	
