@@ -3,6 +3,7 @@ import express from 'express';
 import { bindMethod } from '../..';
 
 import method$post from './post';
+import method$delete from './delete';
 
 /**
  * Sets up /auth/totp
@@ -12,6 +13,7 @@ export function init () {
 	const router = new express.Router();
 
 	bindMethod(router, '/', 'post', method$post);
+	bindMethod(router, '/', 'delete', method$delete);
 
 	return router;
 }
