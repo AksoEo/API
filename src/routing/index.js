@@ -5,7 +5,36 @@ import { init as route$auth } from './auth';
 
 const ajv = new Ajv({
 	format: 'full',
-	useDefaults: true
+	useDefaults: true,
+	strictKeywords: true
+});
+ajv.addKeyword('isBinary', {
+	modifying: true,
+	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
+		if (!schema) { return true; }
+
+		if (typeof data === 'string') {
+			parentData[propertyName] = Buffer.from(data, 'base64');
+			return true;
+
+		} else if (data instanceof Buffer) {
+			return true;
+		}
+
+		return false;
+	}
+});
+ajv.addKeyword('minBytes', {
+	validate: function (schema, data) {
+		const buf = Buffer.from(data);
+		return buf.length >= schema;
+	}
+});
+ajv.addKeyword('maxBytes', {
+	validate: function (schema, data) {
+		const buf = Buffer.from(data);
+		return buf.length <= schema;
+	}
 });
 
 /**
@@ -64,20 +93,18 @@ export function bindMethod (router, path, method, bind) {
 
 			if ('query' in bind.schema) {
 				if (!bind.schema.query && Object.keys(req.query).length) {
-					res.sendStatus(400);
-					return;
+					const err = new Error('Endpoint expects no query params');
+					err.statusCode = 400;
+					return next(err);
 				}
 			}
 
 			if ('body' in bind.schema) {
 				if (!bind.schema.body) {
-					if (req.body instanceof Buffer && req.body.length) {
-						res.sendStatus(400);
-						return;
-					}
-					if (Object.keys(req.body).length) {
-						res.sendStatus(400);
-						return;
+					if (req.body instanceof Buffer && req.body.length || Object.keys(req.body).length) {
+						const err = new Error('Endpoint expects no body');
+						err.statusCode = 400;
+						return next(err);
 					}
 				} else {
 					if (!validateBody(req.body)) {

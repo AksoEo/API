@@ -44,7 +44,8 @@ async function init () {
 			sendgrid: {
 				apiKey: process.env.AKSO_SENDGRID_API_KEY
 			},
-			prodMode: process.env.NODE_ENV || 'dev'
+			prodMode: process.env.NODE_ENV || 'dev',
+			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex')
 		},
 
 		// Constants, do not change without updating docs
@@ -72,13 +73,17 @@ async function init () {
 		db: null
 	};
 
-	// Complain about missing required env vars
+	// Complain about missing/invalid env vars
 	if (!AKSO.conf.sendgrid.apiKey) {
 		AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 		process.exit(1);
 	}
 	if (!AKSO.conf.http.sessionSecret) {
 		AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
+		process.exit(1);
+	}
+	if (AKSO.conf.totpAESKey.length != 32) {
+		AKSO.log.error('AKSO_TOTP_AES_KEY must be 32 bytes encoded in hex');
 		process.exit(1);
 	}
 

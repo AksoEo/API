@@ -1,7 +1,9 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { BasicStrategy } from 'passport-http';
+import { Strategy as TotpStrategy } from 'passport-totp';
 import bcrypt from 'bcrypt';
+import crypto from 'pn/crypto';
 
 import AuthClient from './lib/auth-client';
 
@@ -44,6 +46,24 @@ async function authentication (app) {
 
 		const user = new AuthClient(dbUser.id, null);
 		return done(null, user);
+	}));
+
+	// User-based totp authentication strategy
+	passport.use(new TotpStrategy({
+		codeField: 'totp'
+	}, async function authenticateTotp (user, done) {
+		// Obtain TOTP secret
+		const totpData = await AKSO.db.first('secret', 'iv').from('codeholders_totp').where({
+			codeholderId: user.user
+		});
+		if (!totpData) { return done(new Error('User has not set up TOTP')); }
+		// Decrypt the TOTP secret
+		const decipher = crypto.createDecipheriv('aes-256-cbc', AKSO.conf.totpAESKey, totpData.iv);
+		const secret = Buffer.concat([
+			decipher.update(totpData.secret),
+			decipher.final()
+			]);
+		return done(null, secret, 30);
 	}));
 
 	// Session-based user serialization for user auth

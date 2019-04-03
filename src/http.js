@@ -142,7 +142,7 @@ export function init () {
 
 			// Method overriding
 			app.use(methodOverride((req, res) => {
-				if (req.body) {
+				if (req.headers['x-http-method-override'] && req.body) {
 					req.query = req.body;
 					req.body = undefined;
 				}
