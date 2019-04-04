@@ -2,6 +2,7 @@ import express from 'express';
 import Ajv from 'ajv';
 
 import { init as route$auth } from './auth';
+import { init as route$perms } from './perms';
 
 const ajv = new Ajv({
 	format: 'full',
@@ -44,7 +45,7 @@ ajv.addKeyword('maxBytes', {
 export function init () {
 	const router = new express.Router();
 
-	router.get('/', (req, res) => {
+	router.get('/', (req, res, next) => { // eslint-disable-line no-unused-vars
 		res.type('text/plain').send([
 			'AKSO REST Server',
 			`Version: ${AKSO.version}`
@@ -52,6 +53,7 @@ export function init () {
 	});
 
 	router.use('/auth', route$auth());
+	router.use('/perms', route$perms());
 
 	return router;
 }

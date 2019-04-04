@@ -4,7 +4,7 @@ export default {
 		body: null
 	},
 
-	run: async function run (req, res) {
+	run: async function run (req, res, next) { // eslint-disable-line no-unused-vars
 		if (req.user && req.user.isUser()) {
 			req.logOut();
 			req.session = null;

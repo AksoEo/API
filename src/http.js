@@ -13,6 +13,7 @@ import csurf from 'csurf';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
+import AKSOPermissions from './perms';
 
 export function init () {
 	return new Promise(resolve => {
@@ -140,7 +141,7 @@ export function init () {
 			});
 
 			// Method overriding
-			app.use(methodOverride(req => {
+			app.use(methodOverride((req, res) => { // eslint-disable-line no-unused-vars
 				if (req.headers['x-http-method-override'] && req.body) {
 					req.query = req.body;
 					req.body = undefined;
@@ -170,15 +171,18 @@ export function init () {
 				});
 			}
 
+			// Permissions
+			app.use(AKSOPermissions);
+
 			// Routing
 			app.use('/', AKSORouting());
 
 			// Error handling
-			app.use(function handleError404 (req, res) {
+			app.use(function handleError404 (req, res, next) { // eslint-disable-line no-unused-vars
 				if (res.headersSent) { return; }
 				res.sendStatus(404);
 			});
-			app.use(function handleError500 (err, req, res) {
+			app.use(function handleError500 (err, req, res, next) { // eslint-disable-line no-unused-vars
 				const status = err.status || err.statusCode || 500;
 
 				if (status >= 500) {

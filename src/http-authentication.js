@@ -18,7 +18,8 @@ async function authentication (app) {
 		passwordField: 'password'
 	}, async function authenticateLocal (username, password, done) {
 		const whereStmt = {
-			enabled: 1
+			enabled: 1,
+			isDead: 0
 		};
 
 		if (username.includes('@')) {
