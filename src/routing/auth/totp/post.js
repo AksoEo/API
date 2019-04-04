@@ -52,7 +52,7 @@ export default {
 			const secretEncr = Buffer.concat([
 				cipher.update(req.body.secret),
 				cipher.final()
-				]);
+			]);
 
 			// Save in db
 			await AKSO.db('codeholders_totp').insert({
@@ -63,7 +63,7 @@ export default {
 		}
 
 		// Login
-		passport.authenticate('totp', (err, user, info) => {
+		passport.authenticate('totp', (err, user) => {
 			if (err) { return next(err); }
 			if (!user) { return res.sendStatus(401); }
 

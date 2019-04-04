@@ -62,7 +62,7 @@ async function authentication (app) {
 		const secret = Buffer.concat([
 			decipher.update(totpData.secret),
 			decipher.final()
-			]);
+		]);
 		return done(null, secret, 30);
 	}));
 
@@ -113,7 +113,7 @@ async function authentication (app) {
 	app.use(function checkAppAuthUsed (req, res, next) {
 		if (!req.headers['authorization']) { return next(); }
 		
-		passport.authenticate('basic', { session: false }, (err, user, info) => {
+		passport.authenticate('basic', { session: false }, (err, user) => {
 			if (err) { return next(err); }
 			if (!user) { return res.sendStatus(401); }
 			req.logIn(user, { session: false }, err => {

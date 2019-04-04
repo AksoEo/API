@@ -44,11 +44,11 @@ ajv.addKeyword('maxBytes', {
 export function init () {
 	const router = new express.Router();
 
-	router.get('/', (req, res, next) => {
+	router.get('/', (req, res) => {
 		res.type('text/plain').send([
 			'AKSO REST Server',
 			`Version: ${AKSO.version}`
-			].join('\n'));
+		].join('\n'));
 	});
 
 	router.use('/auth', route$auth());

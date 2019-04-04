@@ -4,7 +4,7 @@ export default {
 		body: null
 	},
 
-	run: async function run (req, res, next) {
+	run: async function run (req, res) {
 		if (req.user && req.user.isUser()) {
 			const totpData = await AKSO.db.first(1).from('codeholders_totp').where('codeholderId', req.user.user);
 

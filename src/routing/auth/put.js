@@ -29,7 +29,7 @@ export default {
 	},
 
 	run: async function run (req, res, next) {
-		passport.authenticate('local', (err, user, info) => {
+		passport.authenticate('local', (err, user) => {
 			if (err) { return next(err); }
 			if (!user) { return res.sendStatus(401); }
 			req.logIn(user, err => {

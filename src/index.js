@@ -28,12 +28,12 @@ async function init () {
 				port: 				process.env.AKSO_HTTP_PORT || 1111,
 				trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY || false,
 				helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
-										true : process.env.AKSO_HTTP_USE_HELMET != '0',
+					true : process.env.AKSO_HTTP_USE_HELMET != '0',
 				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
 				corsCheck: 			process.env.AKSO_HTTP_DISABLE_CORS_CHECK === undefined ?
-										true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK == '0',
+					true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK == '0',
 				csrfCheck: 			process.env.AKSO_HTTP_DISABLE_CSRF_CHECK === undefined ?
-										true : process.env.AKSO_HTTP_DISABLE_CSRF_CHECK == '0'
+					true : process.env.AKSO_HTTP_DISABLE_CSRF_CHECK == '0'
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -120,7 +120,7 @@ init().catch(err => {
 	if (AKSO.log) {
 		AKSO.log.error(err);
 	} else {
-		console.error(err);
+		console.error(err); // eslint-disable-line no-console
 	}
 	process.exit(1);
 });

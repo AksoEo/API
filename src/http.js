@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import crypto from 'crypto';
 import responseTime from 'response-time';
 import csurf from 'csurf';
 
@@ -16,7 +15,7 @@ import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
 
 export function init () {
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
 		(async () => {
 			AKSO.log.info('Setting up http server ...');
 
@@ -112,7 +111,7 @@ export function init () {
 			// Disallow all other content types
 			app.use(bodyParser.raw({
 				type: () => true,
-				verify: (req, res, buf, encoding) => {
+				verify: (req, res, buf) => {
 					// Content-Type is only required if a body is supplied
 					if (buf.length === 0) {
 						return;
@@ -141,7 +140,7 @@ export function init () {
 			});
 
 			// Method overriding
-			app.use(methodOverride((req, res) => {
+			app.use(methodOverride(req => {
 				if (req.headers['x-http-method-override'] && req.body) {
 					req.query = req.body;
 					req.body = undefined;
@@ -175,11 +174,11 @@ export function init () {
 			app.use('/', AKSORouting());
 
 			// Error handling
-			app.use(function handleError404 (req, res, next) {
+			app.use(function handleError404 (req, res) {
 				if (res.headersSent) { return; }
 				res.sendStatus(404);
 			});
-			app.use(function handleError500 (err, req, res, next) {
+			app.use(function handleError500 (err, req, res) {
 				const status = err.status || err.statusCode || 500;
 
 				if (status >= 500) {
@@ -204,7 +203,7 @@ export function init () {
 			});
 		})();
 	});
-};
+}
 
 function setupMiddleware (req, res,  next) {
 	/**
