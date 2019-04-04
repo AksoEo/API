@@ -15,7 +15,7 @@ export default {
 				csrfToken: req.csrfToken ? req.csrfToken() : null, // return null if CSRF is disabled
 				totpSetUp: totpSetUp,
 				totpUsed: totpUsed,
-				isAdmin: null // todo
+				isAdmin: req.hasPermission('admin')
 			});
 		} else {
 			res.sendStatus(404);
