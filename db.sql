@@ -35,8 +35,9 @@ DROP TABLE IF EXISTS `admin_groups`;
 CREATE TABLE `admin_groups` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,6 +46,7 @@ CREATE TABLE `admin_groups` (
 
 LOCK TABLES `admin_groups` WRITE;
 /*!40000 ALTER TABLE `admin_groups` DISABLE KEYS */;
+INSERT INTO `admin_groups` VALUES (1,'Testgrupo (administranto)');
 /*!40000 ALTER TABLE `admin_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,6 +73,7 @@ CREATE TABLE `admin_groups_members` (
 
 LOCK TABLES `admin_groups_members` WRITE;
 /*!40000 ALTER TABLE `admin_groups_members` DISABLE KEYS */;
+INSERT INTO `admin_groups_members` VALUES (1,2);
 /*!40000 ALTER TABLE `admin_groups_members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,6 +122,7 @@ CREATE TABLE `admin_permissions_groups` (
 
 LOCK TABLES `admin_permissions_groups` WRITE;
 /*!40000 ALTER TABLE `admin_permissions_groups` DISABLE KEYS */;
+INSERT INTO `admin_permissions_groups` VALUES (1,'*');
 /*!40000 ALTER TABLE `admin_permissions_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,8 +135,8 @@ DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_codeholders`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `admin_permissions_memberRestrictions_codeholders` (
   `codeholderId` int(11) unsigned NOT NULL,
-  `filter` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fields` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filter` json NOT NULL,
+  `fields` json DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   CONSTRAINT `admin_permissions_memberRestrictions_codeholders_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -156,8 +160,8 @@ DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_groups`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `admin_permissions_memberRestrictions_groups` (
   `adminGroupId` int(11) unsigned NOT NULL,
-  `filter` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fields` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filter` json NOT NULL,
+  `fields` json DEFAULT NULL,
   PRIMARY KEY (`adminGroupId`),
   CONSTRAINT `admin_permissions_memberRestrictions_groups_ibfk_1` FOREIGN KEY (`adminGroupId`) REFERENCES `admin_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -169,6 +173,7 @@ CREATE TABLE `admin_permissions_memberRestrictions_groups` (
 
 LOCK TABLES `admin_permissions_memberRestrictions_groups` WRITE;
 /*!40000 ALTER TABLE `admin_permissions_memberRestrictions_groups` DISABLE KEYS */;
+INSERT INTO `admin_permissions_memberRestrictions_groups` VALUES (1,'{}',NULL);
 /*!40000 ALTER TABLE `admin_permissions_memberRestrictions_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -625,6 +630,7 @@ CREATE TABLE `codeholders_totp` (
 
 LOCK TABLES `codeholders_totp` WRITE;
 /*!40000 ALTER TABLE `codeholders_totp` DISABLE KEYS */;
+INSERT INTO `codeholders_totp` VALUES (2,_binary '¢?¦·¨g\\\\Ú˜†”K:—¯ƒ\Þ+\ÊAEa\É9\r\î',_binary '½s]<TªS\æˆ\ÐD');
 /*!40000 ALTER TABLE `codeholders_totp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -717,4 +723,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-03 18:11:15
+-- Dump completed on 2019-04-04 12:55:14
