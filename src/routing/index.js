@@ -52,8 +52,12 @@ export function init () {
 		].join('\n'));
 	});
 
+	// TOTP excluded endpoints
 	router.use('/auth', route$auth());
 	router.use('/perms', route$perms());
+
+	// TOTP required endpoints
+	router.use(checkTOTPRequired);
 
 	return router;
 }
@@ -120,4 +124,25 @@ export function bindMethod (router, path, method, bind) {
 		next();
 
 	}, wrap(bind.run));
+}
+
+/**
+ * Express middelware to ensure TOTP is used if required
+ * @param  {express.Request}  req
+ * @param  {express.Response} res
+ * @param  {Function}         next
+ */
+export async function checkTOTPRequired (req, res, next) {
+	if (req.user && req.user.isUser() && !req.session.totp) {
+		const totpData = await AKSO.db.first(1).from('codeholders_totp').where('codeholderId', req.user.user);
+		const totpSetUp = !!totpData;
+
+		if (!totpSetUp && !req.hasPermission('admin')) { return next(); }
+
+		const err = new Error('TOTP must be used');
+		err.statusCode = 401;
+		return next(err);
+	}
+
+	next();
 }

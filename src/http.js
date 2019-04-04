@@ -13,7 +13,6 @@ import csurf from 'csurf';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
-import AKSOPermissions from './perms';
 
 export function init () {
 	return new Promise(resolve => {
@@ -170,9 +169,6 @@ export function init () {
 					}
 				});
 			}
-
-			// Permissions
-			app.use(AKSOPermissions);
 
 			// Routing
 			app.use('/', AKSORouting());

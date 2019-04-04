@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'pn/crypto';
 
 import AuthClient from './lib/auth-client';
+import AKSOPermissions from './perms';
 
 /**
  * Sets up authentication on Express
@@ -123,6 +124,9 @@ async function authentication (app) {
 			});
 		})(req, res, next);
 	});
+
+	// Set up permissions
+	app.use(AKSOPermissions);
 }
 
 export default authentication;
