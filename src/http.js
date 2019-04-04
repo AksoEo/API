@@ -247,6 +247,9 @@ function setupMiddleware (req, res,  next) {
 		logData.origin = logData.origin.substring(0, 300);
 		logData.userAgent = logData.userAgent.substring(0, 500);
 		logData.path = logData.path.substring(0, 300);
+		if (parseInt(logData.resTime, 10) >= 10**6) {
+			logData.resTime = '999999.999';
+		}
 
 		if (logData.method === 'OPTIONS') { return; }
 
