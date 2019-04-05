@@ -9,7 +9,8 @@ export async function init () {
 			user: AKSO.conf.mysql.user,
 			password: AKSO.conf.mysql.password,
 			database: AKSO.conf.mysql.database
-		}
+		},
+		pool: { min: 2, max: 20 }
 	});
 
 	// Check if the connection works

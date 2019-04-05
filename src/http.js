@@ -141,7 +141,7 @@ export function init () {
 			});
 
 			// Method overriding
-			app.use(methodOverride((req, res) => { // eslint-disable-line no-unused-vars
+			app.use(methodOverride((req, res, next) => { // eslint-disable-line no-unused-vars
 				if (req.headers['x-http-method-override'] && req.body) {
 					req.query = req.body;
 					req.body = undefined;
@@ -170,6 +170,12 @@ export function init () {
 					}
 				});
 			}
+
+			// Save original query
+			app.use((req, res, next) => {
+				req.originalQuery = {...req.query};
+				next();
+			});
 
 			// Routing
 			app.use('/', AKSORouting());
@@ -239,7 +245,7 @@ function setupMiddleware (req, res,  next) {
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
 			path: url.parse(req.originalUrl).pathname,
-			query: JSON.stringify(req.query),
+			query: JSON.stringify(req.originalQuery),
 			resStatus: res.statusCode,
 			resTime: res.get('x-response-time').slice(0, -2)
 		};

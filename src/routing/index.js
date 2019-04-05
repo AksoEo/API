@@ -1,8 +1,12 @@
 import express from 'express';
 import Ajv from 'ajv';
+import { promisify } from 'util';
+const csvParse = promisify(require('csv-parse'));
+import XRegExp from 'xregexp';
 
 import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
+import { init as route$countries } from './countries';
 
 const ajv = new Ajv({
 	format: 'full',
@@ -59,6 +63,8 @@ export function init () {
 	// TOTP required endpoints
 	router.use(checkTOTPRequired);
 
+	router.use('/countries', route$countries());
+
 	return router;
 }
 
@@ -89,19 +95,199 @@ export function bindMethod (router, path, method, bind) {
 		validateBody = ajv.compile(bind.schema.body);
 	}
 
-	router[method](path, function validate (req, res, next) {
+	const querySearchRegex = XRegExp(
+		`^
+		( [+-]?
+    		(
+				  ( "[\\p{L}\\p{N}]{3,} (\\s+[\\p{L}\\p{N}]{3,})?" \\*? )
+        		| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+    		)
+		)
+
+		( \\s+ [+-]?
+    		(
+        		  ( "[\\p{L}\\p{N}]{3,} (\\s+[\\p{L}\\p{N}]{3,})?" \\*? )
+        		| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+    		)
+		)*
+		$`,
+
+		'x'
+	);
+
+	router[method](path, async function validate (req, res, next) {
 		if (bind.schema) {
 			/**
-			 * query:	null for none allowed
-			 * body:	null for none allowed,
-			 * 			Object for JSON schema validation
+			 * query:			null for none allowed,
+			 * 					String 'collection' to allow collection parameters
+			 * [maxQueryLimit]: The upper bound for ?limit, defaults to 100
+			 * body:			null for none allowed,
+			 * 					Object for JSON schema validation
 			 */
 
 			if ('query' in bind.schema) {
-				if (!bind.schema.query && Object.keys(req.query).length) {
-					const err = new Error('Endpoint expects no query params');
-					err.statusCode = 400;
-					return next(err);
+				if (!bind.schema.query) {
+					if (Object.keys(req.query).length) {
+						const err = new Error('Endpoint expects no query params');
+						err.statusCode = 400;
+						return next(err);
+					}
+				} else if (typeof bind.schema.query === 'string') {
+					const whitelist = [];
+
+					if (bind.schema.query === 'collection') {
+						whitelist.push( 'limit', 'offset', 'order', 'fields', 'search', 'filter' );
+					}
+
+					for (let key of Object.keys(req.query)) {
+						if (whitelist.indexOf(key) === -1) {
+							const err = new Error(`Unexpected query parameter ${key}`);
+							err.statusCode = 400;
+							return next(err);
+						}
+
+						if (key === 'limit') {
+							if (typeof req.query.limit === 'string') {
+								req.query.limit = parseInt(req.query.limit, 10);
+							}
+
+							if (!Number.isSafeInteger(req.query.limit)) {
+								const err = new Error('?limit must be an integer');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							const upperBound = bind.schema.maxQueryLimit || 100;
+							if (req.query.limit < 1 || req.query.limit > upperBound) {
+								const err = new Error(`?limit must be in [1, ${upperBound}]`);
+								err.statusCode = 400;
+								return next(err);
+							}
+
+						} else if (key === 'offset') {
+							if (typeof req.query.offset === 'string') {
+								req.query.offset = parseInt(req.query.offset, 10);
+							}
+
+							if (!Number.isSafeInteger(req.query.offset) || req.query.offset < 0) {
+								const err = new Error('?offset must be a non-negative integer');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+						} else if (key === 'order') {
+							if (typeof req.query.order !== 'string') {
+								const err = new Error('?order must be a string');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							req.query.order = req.query.order.split(',').map(x => {
+								const bits = x.split('.');
+								return { column: bits[0], order: bits[1] };
+							});
+							for (let order of req.query.order) {
+								if (order.column === '_relevance') {
+									if (req.query.search === undefined) {
+										const err = new Error('The special field _relevance may only be used when ?search is specified');
+										err.statusCode = 400;
+										return next(err);									
+									}
+
+								} else {
+									if (bind.schema.fields[order.column] === undefined) {
+										const err = new Error(`Unknown field ${order.column} used in ?order`);
+										err.statusCode = 400;
+										return next(err);
+									}
+
+									if (bind.schema.fields[order.column].indexOf('f') === -1) {
+										const err = new Error(`The field ${order.column} cannot be used in ?order as it's not filterable`);
+										err.statusCode = 400;
+										return next(err);
+									}
+								}
+
+								if (order.order === undefined) {
+									order.order = 'asc';
+								}
+
+								if (order.order !== 'asc' && order.order !== 'desc') {
+									const err = new Error(`Unknown direction ${order.order} used in ?order`);
+									err.statusCode = 400;
+									return next(err);
+								}
+							}
+
+						} else if (key === 'fields') {
+							if (typeof req.query.fields !== 'string') {
+								const err = new Error('?fields must be a string');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							req.query.fields = req.query.fields.split(',');
+							for (let field of req.query.fields) {
+								if (bind.schema.fields[field] === undefined) {
+									const err = new Error(`Unknown field ${field} used in ?fields`);
+									err.statusCode = 400;
+									return next(err);
+								}
+							}
+
+						} else if (key === 'search') {
+							if (typeof req.query.search !== 'string') {
+								const err = new Error('?search must be a string');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							let csvParsed;
+							try {
+								csvParsed = (await csvParse(req.query.search, { to: 1 }))[0];
+							} catch (e) {
+								const err = new Error('?search must be a valid csv string');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							if (!csvParsed || csvParsed.length < 2) {
+								const err = new Error('?search must contain at least two columns');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							req.query.search = {
+								query: csvParsed[0].trim(),
+								cols: csvParsed.slice(1)
+							};
+
+							if (!querySearchRegex.test(req.query.search.query)) {
+								const err = new Error('Invalid query in ?search');
+								err.statusCode = 400;
+								return next(err);
+							}
+
+							for (let col of req.query.search.cols) {
+								if (bind.schema.fields[col] === undefined) {
+									const err = new Error(`Unknown field ${col} used in ?search`);
+									err.statusCode = 400;
+									return next(err);
+								}
+
+								if (bind.schema.fields[col].indexOf('s') === -1) {
+									const err = new Error(`The field ${col} cannot be used in ?search as it's not searchable`);
+									err.statusCode = 400;
+									return next(err);
+								}
+							}
+
+						} else if (key === 'filter') {
+							// TODO
+							AKSO.log.error('?filter has not yet been implemented');
+							process.exit(1);
+						}
+					}
 				}
 			}
 
