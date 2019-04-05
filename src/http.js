@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import responseTime from 'response-time';
 import csurf from 'csurf';
+import ipaddr from 'ipaddr.js';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
@@ -233,7 +234,7 @@ function setupMiddleware (req, res,  next) {
 			time: moment().unix(),
 			codeholderId: req.user ? req.user.user || null : null,
 			apiKey: req.user ? req.user.app || null : null,
-			ip: req.ip,
+			ip: Buffer.from(ipaddr.parse(req.ip).toByteArray()),
 			origin: req.get('origin') || req.get('host') || null,
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
