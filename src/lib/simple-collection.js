@@ -1,9 +1,8 @@
+import SimpleResource from './simple-resource';
+
 class SimpleCollection {
 	constructor (arr) {
-		for (let row of arr) {
-			delete row._relevance;
-		}
-		this.arr = arr;
+		this.arr = arr.map(x => new SimpleResource(x));
 	}
 
 	toJSON () {

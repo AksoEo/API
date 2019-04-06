@@ -1,24 +1,15 @@
 import QueryUtil from '../../lib/query-util';
 import SimpleCollection from '../../lib/simple-collection';
 
+import parSchema from './schema';
+
 const schema = {
-	query: 'collection',
-	maxQueryLimit: 300,
-	fields: {
-		'code': 'f',
-		'currency': 'f',
-		'name_eo': 's',
-		'name_en': '',
-		'name_fr': '',
-		'name_es': '',
-		'name_nl': '',
-		'name_pt': '',
-		'name_sk': '',
-		'name_zh': '',
-		'name_de': ''
-	},
-	defaultFields: [ 'code' ],
-	body: null
+	...parSchema,
+	...{
+		query: 'collection',
+		maxQueryLimit: 300,
+		body: null
+	}
 };
 
 export default {

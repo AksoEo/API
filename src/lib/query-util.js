@@ -164,6 +164,13 @@ const QueryUtil = {
 		});
 	},
 
+	simpleResource: function queryUtilSimpleResource (req, schema, query) {
+		// ?fields
+		const fields = req.query.fields || schema.defaultFields;
+
+		query.first(fields);
+	},
+
 	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
 		// ?fields, ?search
 		let fields = req.query.fields || schema.defaultFields;
