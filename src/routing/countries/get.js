@@ -1,4 +1,5 @@
 import QueryUtil from '../../lib/query-util';
+import SimpleCollection from '../../lib/simple-collection';
 
 const schema = {
 	query: 'collection',
@@ -27,8 +28,7 @@ export default {
 		const query = AKSO.db('countries');
 		QueryUtil.simpleCollection(req, schema, query);
 
-		const countries = await query;
-		for (let row of countries) { delete row._relevance; }
+		const countries = new SimpleCollection(await query);
 		res.sendObj(countries);
 	}
 };
