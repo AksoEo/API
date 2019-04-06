@@ -19,7 +19,8 @@ const schema = {
 		resStatus: 'f',
 		resTime: 'f'
 	},
-	body: null
+	body: null,
+	requirePerms: 'log.read'
 };
 
 export default {

@@ -131,7 +131,21 @@ export function bindMethod (router, path, method, bind) {
 			 * [defaultFields]: The default fields to be selected when query.fields is undefined
 			 * body:			null for none allowed,
 			 * 					Object for JSON schema validation
+			 * [requirePerms]:  An array of strings or a string containing required permissions
 			 */
+
+			if ('requirePerms' in bind.schema) {
+				if (typeof bind.schema.requirePerms === 'string') {
+					bind.schema.requirePerms = [ bind.schema.requirePerms ];
+				}
+				for (let perm of bind.schema.requirePerms) {
+					if (!req.hasPermission(perm)) {
+						const err = new Error(`Missing permission ${perm}`);
+						err.statusCode = 401;
+						return next(err);
+					}
+				}
+			}
 
 			if (!('maxQueryLimit' in bind.schema)) {
 				bind.schema.maxQueryLimit = 100;
