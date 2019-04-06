@@ -8,6 +8,7 @@ import { base64url } from 'rfc4648';
 import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
 import { init as route$countries } from './countries';
+import { init as route$http_log } from './http_log';
 
 const ajv = new Ajv({
 	format: 'full',
@@ -65,6 +66,7 @@ export function init () {
 	router.use(checkTOTPRequired);
 
 	router.use('/countries', route$countries());
+	router.use('/http_log', route$http_log());
 
 	return router;
 }
@@ -131,6 +133,10 @@ export function bindMethod (router, path, method, bind) {
 			 * 					Object for JSON schema validation
 			 */
 
+			if (!('maxQueryLimit' in bind.schema)) {
+				bind.schema.maxQueryLimit = 100;
+			}
+
 			if ('query' in bind.schema) {
 				if (!bind.schema.query) {
 					if (Object.keys(req.query).length) {
@@ -165,9 +171,8 @@ export function bindMethod (router, path, method, bind) {
 								return next(err);
 							}
 
-							const upperBound = bind.schema.maxQueryLimit || 100;
-							if (req.query.limit < 1 || req.query.limit > upperBound) {
-								const err = new Error(`?limit must be in [1, ${upperBound}]`);
+							if (req.query.limit < 1 || req.query.limit > bind.schema.maxQueryLimit) {
+								const err = new Error(`?limit must be in [1, ${bind.schema.maxQueryLimit}]`);
 								err.statusCode = 400;
 								return next(err);
 							}

@@ -12,6 +12,8 @@ import responseTime from 'response-time';
 import csurf from 'csurf';
 import ipaddr from 'ipaddr.js';
 
+import { replaceObject } from './util';
+
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
 
@@ -221,6 +223,12 @@ function setupMiddleware (req, res,  next) {
 	res.sendObj = function resSendObj (obj) {
 		res.format({
 			'application/json': function () {
+				obj = replaceObject(obj, obj => {
+					if (obj instanceof Buffer) {
+						obj = obj.toString('base64');
+					}
+					return obj;
+				});
 				res.json(obj);
 			},
 

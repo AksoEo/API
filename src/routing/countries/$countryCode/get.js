@@ -1,5 +1,5 @@
 import QueryUtil from '../../../lib/query-util';
-import SimpleResource from '../../../lib/simple-resource';
+import SimpleResource from '../../../lib/resources/simple-resource';
 
 import parSchema from '../schema';
 

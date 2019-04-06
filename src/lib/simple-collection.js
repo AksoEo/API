@@ -1,8 +1,8 @@
-import SimpleResource from './simple-resource';
+import SimpleResource from './resources/simple-resource';
 
 class SimpleCollection {
-	constructor (arr) {
-		this.arr = arr.map(x => new SimpleResource(x));
+	constructor (arr, Res = SimpleResource) {
+		this.arr = arr.map(x => new Res(x));
 	}
 
 	toJSON () {
