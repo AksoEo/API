@@ -1,7 +1,7 @@
 import express from 'express';
 import msgpack from 'msgpack-lite';
 import moment from 'moment';
-import url from 'url';
+import Url from 'url';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
 import helmet from 'helmet';
@@ -38,7 +38,7 @@ export function init () {
 				corsSettings.origin = function cors (origin, cb) {
 					if (!origin) { return cb(null, true); }
 
-					const parsedUrl = url.parse(origin);
+					const parsedUrl = Url.parse(origin);
 
 					// Validate protocol
 					if (parsedUrl.protocol !== 'https:') {
@@ -189,7 +189,8 @@ export function init () {
 				const status = err.status || err.statusCode || 500;
 
 				if (status >= 500) {
-					AKSO.log.error(`An error occured at ${req.method} ${req.originalUrl}\n${err.stack}`);
+					const url = Url.parse(req.originalUrl).pathname;
+					AKSO.log.error(`An error occured at ${req.method} ${url}\n${err.stack}`);
 				}
 
 				if (res.headersSent) { return; }
@@ -244,7 +245,7 @@ function setupMiddleware (req, res,  next) {
 			origin: req.get('origin') || req.get('host') || null,
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
-			path: url.parse(req.originalUrl).pathname,
+			path: Url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.originalQuery),
 			resStatus: res.statusCode,
 			resTime: res.get('x-response-time').slice(0, -2)
