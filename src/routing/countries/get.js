@@ -64,8 +64,6 @@ export default {
 			query.offset(req.query.offset);
 		}
 
-		console.log(query.toString());
-
 		const countries = await query;
 		for (let row of countries) { delete row._relevance; }
 		res.sendObj(countries);
