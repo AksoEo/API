@@ -122,6 +122,10 @@ export function bindMethod (router, path, method, bind) {
 			 * query:			null for none allowed,
 			 * 					String 'collection' to allow collection parameters
 			 * [maxQueryLimit]: The upper bound for ?limit, defaults to 100
+			 * [fields]:        An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
+			 * 					f = filterable
+			 * 					s = searchable
+			 * [defaultFields]: The default fields to be selected when query.fields is undefined
 			 * body:			null for none allowed,
 			 * 					Object for JSON schema validation
 			 */
