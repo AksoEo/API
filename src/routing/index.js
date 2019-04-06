@@ -3,6 +3,7 @@ import Ajv from 'ajv';
 import { promisify } from 'util';
 const csvParse = promisify(require('csv-parse'));
 import XRegExp from 'xregexp';
+import { base64url } from 'rfc4648';
 
 import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
@@ -283,9 +284,30 @@ export function bindMethod (router, path, method, bind) {
 							}
 
 						} else if (key === 'filter') {
-							// TODO
-							AKSO.log.error('?filter has not yet been implemented');
-							process.exit(1);
+							if (typeof req.query.filter === 'string') {
+								if (req.query.filter.charAt(0) !== '{') { // treat as base64url
+									try {
+										req.query.filter = Buffer.from(base64url.parse(req.query.filter, { loose: true })).toString();
+									} catch (e) {
+										const err = new Error('Invalid base64url provided in ?filter');
+										err.statusCode = 400;
+										return next(err);
+									}
+								}
+								try {
+									req.query.filter = JSON.parse(req.query.filter);
+								} catch (e) {
+									const err = new Error('Invalid JSON encountered in ?filter');
+									err.statusCode = 400;
+									return next(err);
+								}
+							}
+							if (typeof req.query.filter !== 'object' || req.query.filter instanceof Array) {
+								const err = new Error('?filter must be a basic JSON object');
+								err.statusCode = 400;
+								return next(err);
+							}
+							req.originalQuery.filter = {...req.query.filter}; // to improve logging legibility
 						}
 					}
 				}

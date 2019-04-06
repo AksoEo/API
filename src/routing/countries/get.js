@@ -1,22 +1,26 @@
-export default {
-	schema: {
-		query: 'collection',
-		maxQueryLimit: 300,
-		fields: {
-			'code': 'f',
-			'currency': 'f',
-			'name_eo': 's',
-			'name_en': '',
-			'name_fr': '',
-			'name_es': '',
-			'name_nl': '',
-			'name_pt': '',
-			'name_sk': '',
-			'name_zh': '',
-			'name_de': ''
-		},
-		body: null
+import QueryUtil from '../../lib/query-util';
+
+const schema = {
+	query: 'collection',
+	maxQueryLimit: 300,
+	fields: {
+		'code': 'f',
+		'currency': 'f',
+		'name_eo': 's',
+		'name_en': '',
+		'name_fr': '',
+		'name_es': '',
+		'name_nl': '',
+		'name_pt': '',
+		'name_sk': '',
+		'name_zh': '',
+		'name_de': ''
 	},
+	body: null
+};
+
+export default {
+	schema: schema,
 
 	run: async function run (req, res) {
 		const fields = req.query.fields || [ 'code' ];
@@ -39,15 +43,28 @@ export default {
 				[ ...req.query.search.cols, req.query.search.query ]
 			);
 		}
+
+		if (req.query.filter) {
+			QueryUtil.filter(
+				Object.keys(schema.fields).filter(x => schema.fields[x].indexOf('f' > -1)),
+				query,
+				req.query.filter
+			);
+		}
+
 		if (req.query.order) {
 			query.orderBy(req.query.order);
 		}
+
 		if (req.query.limit) {
 			query.limit(req.query.limit);
 		}
+
 		if (req.query.offset) {
 			query.offset(req.query.offset);
 		}
+
+		console.log(query.toString());
 
 		const countries = await query;
 		for (let row of countries) { delete row._relevance; }
