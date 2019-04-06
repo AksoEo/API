@@ -162,6 +162,52 @@ const QueryUtil = {
 				}
 			}
 		});
+	},
+
+	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
+		// ?fields, ?search
+		let fields = req.query.fields || schema.defaultFields;
+
+		if (req.query.search) {
+			fields.push(query.raw(
+				`MATCH (${'??,'.repeat(req.query.search.cols.length).slice(0,-1)})
+				AGAINST (? IN BOOLEAN MODE) as ??`,
+
+				[ ...req.query.search.cols, req.query.search.query, '_relevance' ]
+			));
+			query.whereRaw(
+				`MATCH (${'??,'.repeat(req.query.search.cols.length).slice(0,-1)})
+				AGAINST (? IN BOOLEAN MODE)`,
+
+				[ ...req.query.search.cols, req.query.search.query ]
+			);
+		}
+
+		query.select(fields);
+
+		// ?filter
+		if (req.query.filter) {
+			QueryUtil.filter(
+				Object.keys(schema.fields).filter(x => schema.fields[x].indexOf('f' > -1)),
+				query,
+				req.query.filter
+			);
+		}
+
+		// ?order
+		if (req.query.order) {
+			query.orderBy(req.query.order);
+		}
+
+		// ?limit
+		if (req.query.limit) {
+			query.limit(req.query.limit);
+		}
+
+		// ?offset
+		if (req.query.offset) {
+			query.offset(req.query.offset);
+		}
 	}
 };
 
