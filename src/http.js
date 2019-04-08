@@ -146,7 +146,7 @@ export function init () {
 			app.use(methodOverride((req, res, next) => { // eslint-disable-line no-unused-vars
 				if (req.headers['x-http-method-override'] && req.body) {
 					req.query = req.body;
-					req.body = undefined;
+					req.body = {};
 				}
 
 				return req.headers['x-http-method-override'];
