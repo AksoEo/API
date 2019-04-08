@@ -362,7 +362,7 @@ export function bindMethod (router, path, method, bind) {
 }
 
 /**
- * Express middelware to ensure TOTP is used if required
+ * Express middleware to ensure TOTP is used if required
  * @param  {express.Request}  req
  * @param  {express.Response} res
  * @param  {Function}         next
