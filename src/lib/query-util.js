@@ -299,7 +299,7 @@ const QueryUtil = {
 		await QueryUtil.collectionMetadata(res, 
 			QueryUtil.simpleCollection(req, schema, query)
 		);
-		const data = new Res(await query, Col);
+		const data = new Col(await query, Res);
 		res.sendObj(data);
 	}
 };
