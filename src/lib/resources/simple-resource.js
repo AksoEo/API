@@ -7,6 +7,7 @@ class SimpleResource {
 			throw new Error('SimpleResource cannot be undefined');
 		}
 
+		delete obj._relevance;
 		this.obj = obj;
 	}
 

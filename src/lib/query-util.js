@@ -220,7 +220,7 @@ const QueryUtil = {
 		let fields = req.query.fields || schema.defaultFields;
 
 		if (req.query.search) {
-			fields.push(query.raw(
+			fields.push(AKSO.db.raw(
 				`MATCH (${'??,'.repeat(req.query.search.cols.length).slice(0,-1)})
 				AGAINST (? IN BOOLEAN MODE) as ??`,
 
