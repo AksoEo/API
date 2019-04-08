@@ -98,6 +98,7 @@ export function bindMethod (router, path, method, bind) {
 		validateBody = ajv.compile(bind.schema.body);
 	}
 
+	// Matches certain MySQL InnoDB boolean mode queries according to the API spec
 	const querySearchRegex = XRegExp(
 		`^
 		( [+-]?

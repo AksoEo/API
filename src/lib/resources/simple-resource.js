@@ -1,3 +1,6 @@
+/**
+ * A simple resource
+ */
 class SimpleResource {
 	constructor (obj) {
 		if (obj === undefined) {

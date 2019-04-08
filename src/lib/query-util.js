@@ -1,3 +1,8 @@
+/**
+ * Asserts the input to be a scalar (string, number, boolean, null)
+ * @param  {string,number,boolean,null} val
+ * @throws {Error} If the input isn't scalar
+ */
 function filterAssertScalar (val) {
 	if (typeof val !== 'string' && typeof val !== 'number' && typeof val !== 'boolean' && val !== null) {
 		const err = new Error('Invalid field comparison value used in ?filter');
@@ -11,6 +16,11 @@ function filterAssertScalar (val) {
 	}
 }
 
+/**
+ * Asserts the input to be a number
+ * @param  {number} val
+ * @throws {Error} If the input isn't a number
+ */
 function filterAssertNumber (val) {
 	if (typeof val !== 'number' || !Number.isFinite(val)) {
 		const err = new Error('Invalid number in ?filter');
@@ -19,16 +29,26 @@ function filterAssertNumber (val) {
 	}
 }
 
+/**
+ * Asserts the input to be an array
+ * @param  {Array} val
+ * @throws {Error} If the input isn't an array
+ */
 function filterAssertArray (val) {
-	if (!(val instanceof Array)) {
+	if (!Array.isArray(val)) {
 		const err = new Error('Expected array in ?filter');
 		err.statusCode = 400;
 		throw err;
 	}
 }
 
+/**
+ * Asserts the input to be a basic object (not an array or null)
+ * @param  {Object} val
+ * @throws {Error} If the input isn't an object
+ */
 function filterAssertObject (val) {
-	if (typeof val !== 'object' || val === null || val instanceof Array) {
+	if (typeof val !== 'object' || val === null || Array.isArray(val)) {
 		const err = new Error('Expected object in ?filter');
 		err.statusCode = 400;
 		throw err;
@@ -131,6 +151,12 @@ const filterCompOps = {
 };
 
 const QueryUtil = {
+	/**
+	 * Handles the ?filter parameter
+	 * @param {string[]}          fields    The permitted filterable fields
+	 * @param {knex.QueryBuilder} query     The query builder to apply the where statement to
+	 * @param {Object}            filterObj The filter object as supplied by `req.query.filter`
+	 */
 	filter: function queryUtilFilter (fields, query, filterObj) {
 		query.where(function () {
 			for (let key in filterObj) { // Iterate through each key
@@ -164,6 +190,12 @@ const QueryUtil = {
 		});
 	},
 
+	/**
+	 * Handles a simple resource
+	 * @param {express.Request}   req
+	 * @param {Object}            schema The endpoint's schema
+	 * @param {knex.QueryBuilder} query  The query to build upon
+	 */
 	simpleResource: function queryUtilSimpleResource (req, schema, query) {
 		// ?fields
 		const fields = req.query.fields || schema.defaultFields;
@@ -171,6 +203,12 @@ const QueryUtil = {
 		query.first(fields);
 	},
 
+	/**
+	 * Handles a simple collection
+	 * @param {express.Request}   req
+	 * @param {Object}            schema The endpoint's schema
+	 * @param {knex.QueryBuilder} query  The query to build upon
+	 */
 	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
 		// ?fields, ?search
 		let fields = req.query.fields || schema.defaultFields;
