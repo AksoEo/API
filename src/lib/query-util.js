@@ -2,12 +2,12 @@ import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
 
 /**
- * Asserts the input to be a scalar (string, number, boolean, null)
- * @param  {string,number,boolean,null} val
+ * Asserts the input to be a scalar (Buffer, string, number, boolean, null)
+ * @param  {Buffer, string,number,boolean,null} val
  * @throws {Error} If the input isn't scalar
  */
 function filterAssertScalar (val) {
-	if (typeof val !== 'string' && typeof val !== 'number' && typeof val !== 'boolean' && val !== null) {
+	if (!(val instanceof Buffer) && typeof val !== 'string' && typeof val !== 'number' && typeof val !== 'boolean' && val !== null) {
 		const err = new Error('Invalid field comparison value used in ?filter');
 		err.statusCode = 400;
 		throw err;
@@ -165,7 +165,7 @@ const QueryUtil = {
 			for (let key in filterObj) { // Iterate through each key
 				if (fields.indexOf(key) > -1) { // key is a field
 					let val = filterObj[key];
-					if (val === null || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
+					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
 						val = { $eq: val }; // turn into an $eq comparison operator
 					}
 
