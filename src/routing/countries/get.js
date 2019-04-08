@@ -1,5 +1,4 @@
 import QueryUtil from '../../lib/query-util';
-import SimpleCollection from '../../lib/simple-collection';
 
 import parSchema from './schema';
 
@@ -17,9 +16,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('countries');
-		QueryUtil.simpleCollection(req, schema, query);
-
-		const countries = new SimpleCollection(await query);
-		res.sendObj(countries);
+		await QueryUtil.handleCollection(req, res, schema, query);
 	}
 };

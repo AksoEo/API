@@ -1,5 +1,4 @@
 import QueryUtil from '../../lib/query-util';
-import SimpleCollection from '../../lib/simple-collection';
 import HttpLogResource from '../../lib/resources/http-log-resource';
 
 const schema = {
@@ -28,9 +27,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('httpLog');
-		QueryUtil.simpleCollection(req, schema, query);
-
-		const log = new SimpleCollection(await query, HttpLogResource);
-		res.sendObj(log);
+		await QueryUtil.handleCollection(req, res, schema, query, HttpLogResource);
 	}
 };

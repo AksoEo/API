@@ -1,3 +1,6 @@
+import SimpleCollection from './simple-collection';
+import SimpleResource from './resources/simple-resource';
+
 /**
  * Asserts the input to be a scalar (string, number, boolean, null)
  * @param  {string,number,boolean,null} val
@@ -205,9 +208,12 @@ const QueryUtil = {
 
 	/**
 	 * Handles a simple collection
-	 * @param {express.Request}   req
-	 * @param {Object}            schema The endpoint's schema
-	 * @param {knex.QueryBuilder} query  The query to build upon
+	 * @param  {express.Request}   req
+	 * @param  {Object}            schema The endpoint's schema
+	 * @param  {knex.QueryBuilder} query  The query to build upon
+	 * @return {Object} An object containing metadata on the collection:
+	 *     {knex.QueryBuilder} `totalItems`        The total amount of items in the collection without `?limit` and `?offset`
+	 *     {knex.QueryBuilder} `totalItemNoFilter` The total amount of items in the collection without `?limit`, `?offset`, `?search` and `?filter`
 	 */
 	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
 		// ?fields, ?search
@@ -251,6 +257,50 @@ const QueryUtil = {
 		if (req.query.offset) {
 			query.offset(req.query.offset);
 		}
+
+		const metadata = {};
+		const metaQuery = query.clone();
+
+		metaQuery
+			.clearSelect()
+			.first(AKSO.db.raw('count(1) as `count`'))
+
+			.limit(Number.MAX_SAFE_INTEGER)
+			.offset(0);
+
+		metadata.totalItems = metaQuery.clone();
+
+		metaQuery.clearWhere();
+		metadata.totalItemNoFilter = metaQuery.clone();
+
+		return metadata;
+	},
+
+	/**
+	 * Sets collection metadata headers 
+	 * @param {express.Response} res      
+	 * @param {Object}           metadata Metadata obtained from #simpleCollection
+	 */
+	async collectionMetadata (res, metadata) {
+		res.set('X-Total-Items', (await metadata.totalItems).count);
+		res.set('X-Total-Item-No-Filter', (await metadata.totalItemNoFilter).count);
+	},
+
+	/**
+	 * Handles an entire basic collection
+	 * @param {express.Request}   req
+	 * @param {express.Response}  res
+	 * @param {Object}            schema The schema as used in bindMethod
+	 * @param {knex.QueryBuilder} query  The query to build upon
+	 * @param {Object}            [Res]  The resource type to use
+	 * @param {Object}            [Col]  The collection type to use
+	 */
+	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection) {
+		await QueryUtil.collectionMetadata(res, 
+			QueryUtil.simpleCollection(req, schema, query)
+		);
+		const data = new Res(await query, Col);
+		res.sendObj(data);
 	}
 };
 
