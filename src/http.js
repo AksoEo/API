@@ -235,11 +235,10 @@ function setupMiddleware (req, res,  next) {
 			'application/vnd.msgpack': function () {
 				// msgpack-lite doesn't call Object.prototype.toJSON by itself so we have to
 				obj = replaceObject(obj, obj => {
-					if (typeof obj === 'object' && obj !== null && typeof obj.toJSON === 'function') {
-						obj = obj.toJSON();
-					}
+					if (obj instanceof Buffer) { return undefined; }
+					if (obj != null && typeof obj.toJSON === 'function') { return obj.toJSON(); }
 					return obj;
-				});
+				}, false);
 				const data = msgpack.encode(obj, { codec: AKSO.msgpack });
 				res.send(data);
 			},
