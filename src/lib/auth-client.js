@@ -43,71 +43,85 @@ export default class AuthClient {
 			memberFilter: {}
 		};
 
-		if (this.isUser()) {
-			// Get groups
-			const groups = await this.getGroups();
+		// Get groups
+		const groups = await this.getGroups();
 
-			// Group perms
-			const groupPerms = await AKSO.db
-				.select('permission')
-				.from('admin_permissions_groups')
-				.whereIn('adminGroupId', groups)
-				.pluck('permission');
-			this._perms.perms = groupPerms;
+		// Group perms
+		const groupPerms = await AKSO.db
+			.select('permission')
+			.from('admin_permissions_groups')
+			.whereIn('adminGroupId', groups)
+			.pluck('permission');
+		this._perms.perms = groupPerms;
 
-			// Group member restrictions
-			const groupMemberRestrictions = await AKSO.db
-				.select('filter', 'fields')
-				.from('admin_permissions_memberRestrictions_groups')
-				.whereIn('adminGroupId', groups);
+		// Group member restrictions
+		const groupMemberRestrictions = await AKSO.db
+			.select('filter', 'fields')
+			.from('admin_permissions_memberRestrictions_groups')
+			.whereIn('adminGroupId', groups);
 
-			this._perms.memberFilter = merge.all(
-				[ this._perms.memberFilter ]
-					.concat(groupMemberRestrictions.map(x => x.filter))
-			);
+		this._perms.memberFilter = merge.all(
+			[ this._perms.memberFilter ]
+				.concat(groupMemberRestrictions.map(x => x.filter))
+		);
 
-			for (let fields of groupMemberRestrictions.map(x => x.fields)) {
-				if (fields === null) {
-					this._perms.memberFields = null;
-					break;
-				}
-				this._perms.memberFields = merge(
-					this._perms.memberFields,
-					fields
-				);
+		for (let fields of groupMemberRestrictions.map(x => x.fields)) {
+			if (fields === null) {
+				this._perms.memberFields = null;
+				break;
 			}
+			this._perms.memberFields = merge(
+				this._perms.memberFields,
+				fields
+			);
+		}
 
-			// Add per-client overrides
-			// Codeholder perms
-			const codeholderPerms = await AKSO.db
-				.select('permission')
+		// Add per-client overrides
+		// Client perms
+		const clientPermsQuery = AKSO.db
+			.select('permission')
+			.pluck('permission');
+
+		if (this.isUser()) {
+			clientPermsQuery
 				.from('admin_permissions_codeholders')
-				.where('codeholderId', this.user)
-				.pluck('permission');
-			this._perms.perms = this._perms.perms.concat(codeholderPerms);
+				.where('codeholderId', this.user);
+		} else if (this.isApp()) {
+			clientPermsQuery
+				.from('admin_permissions_clients')
+				.where('apiKey', this.app);
+		}
+		this._perms.perms = this._perms.perms.concat(await clientPermsQuery);
 
-			// Codeholder member restrictions
-			const memberRestrictions = await AKSO.db
-				.first('filter', 'fields')
+		// Client member restrictions
+		const memberRestrictionsQuery = AKSO.db
+			.first('filter', 'fields');
+
+		if (this.isUser()) {
+			memberRestrictionsQuery
 				.from('admin_permissions_memberRestrictions_codeholders')
 				.where('codeholderId', this.user);
-			if (memberRestrictions) {
-				this._perms.memberFilter = merge(
-					this._perms.memberFilter,
-					memberRestrictions.filter
-				);
-
-				if (memberRestrictions.fields === null || this._perms.memberFields === null) {
-					this._perms.memberFields = null;
-				} else {
-					this._perms.memberFields = merge(
-						this._perms.memberFields,
-						memberRestrictions.fields
-					);
-				}
-			}
 		} else if (this.isApp()) {
-			// TODO
+			memberRestrictionsQuery
+				.from('admin_permissions_memberRestrictions_clients')
+				.where('apiKey', this.app);
+		}
+
+		const memberRestrictions = await memberRestrictionsQuery;
+		if (memberRestrictions) {
+			this._perms.memberFilter = merge(
+				this._perms.memberFilter,
+				memberRestrictions.filter
+			);
+
+			if (memberRestrictions.fields === null || this._perms.memberFields === null) {
+				this._perms.memberFields = null;
+			} else {
+				this._perms.memberFields = merge(
+					this._perms.memberFields,
+					memberRestrictions.fields
+				);
+			}
 		}
 
 		return this._perms;
@@ -119,15 +133,21 @@ export default class AuthClient {
 	 */
 	async getGroups () {
 		if (this._groups) { return this._groups; }
-		if (!this.isUser()) { return []; }
 
-		this._groups = await AKSO.db
-			.select('id')
-			.from('admin_groups')
-			.innerJoin('admin_groups_members', 'codeholderId', this.user)
+		const query = AKSO.db('admin_groups').select('id');
+
+		if (this.isUser()) {
+			query.innerJoin('admin_groups_members_codeholders', 'codeholderId', this.user);
+		} else if (this.isApp()) {
+			// Using raw joins here as knex errors when trying to join on a buffer
+			query.joinRaw('inner join `admin_groups_members_clients` on `apiKey` = ?', [ this.app ]);
+		}
+
+		query
 			.orderBy('name')
 			.pluck('id');
 
+		this._groups = await query;
 		return this._groups;
 	}
 }
