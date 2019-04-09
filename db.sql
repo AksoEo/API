@@ -684,6 +684,61 @@ INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest',NULL,NULL);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_notif_accounts`
+--
+
+DROP TABLE IF EXISTS `codeholders_notif_accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_notif_accounts` (
+  `codeholderId` int(10) unsigned NOT NULL,
+  `telegram_chatId` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `telegram_deepLink` binary(16) DEFAULT NULL,
+  `telegram_deepLink_time` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`codeholderId`),
+  UNIQUE KEY `telegram_deepLink` (`telegram_deepLink`),
+  UNIQUE KEY `telegram_chatId` (`telegram_chatId`),
+  KEY `telegram_deepLink_time` (`telegram_deepLink_time`),
+  CONSTRAINT `codeholders_notif_accounts_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_notif_accounts`
+--
+
+LOCK TABLES `codeholders_notif_accounts` WRITE;
+/*!40000 ALTER TABLE `codeholders_notif_accounts` DISABLE KEYS */;
+INSERT INTO `codeholders_notif_accounts` VALUES (2,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `codeholders_notif_accounts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_notif_pref`
+--
+
+DROP TABLE IF EXISTS `codeholders_notif_pref`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_notif_pref` (
+  `codeholderId` int(11) unsigned NOT NULL,
+  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pref` set('email','telegram') COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`codeholderId`,`category`),
+  CONSTRAINT `codeholders_notif_pref_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_notif_pref`
+--
+
+LOCK TABLES `codeholders_notif_pref` WRITE;
+/*!40000 ALTER TABLE `codeholders_notif_pref` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_notif_pref` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_totp`
 --
 
@@ -788,6 +843,37 @@ LOCK TABLES `httpLog` WRITE;
 /*!40000 ALTER TABLE `httpLog` DISABLE KEYS */;
 /*!40000 ALTER TABLE `httpLog` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'akso'
+--
+/*!50106 SET @save_time_zone= @@TIME_ZONE */ ;
+/*!50106 DROP EVENT IF EXISTS `remove_expired_codeholders_notif_accounts` */;
+DELIMITER ;;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;;
+/*!50003 SET character_set_client  = utf8mb4 */ ;;
+/*!50003 SET character_set_results = utf8mb4 */ ;;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
+/*!50003 SET @saved_time_zone      = @@time_zone */ ;;
+/*!50003 SET time_zone             = 'SYSTEM' */ ;;
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_notif_accounts` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-09 13:09:46' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes expired codeholder notif account setup keys' DO begin
+
+set @telegram_deepLink_time_delta = 3600; # 1 hour
+
+update codeholders_notif_accounts set telegram_deepLink = null, telegram_deepLink_time = null where telegram_deepLink_time < UNIX_TIMESTAMP() - @telegram_deepLink_time_delta;
+
+end */ ;;
+/*!50003 SET time_zone             = @saved_time_zone */ ;;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;;
+/*!50003 SET character_set_results = @saved_cs_results */ ;;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;;
+DELIMITER ;
+/*!50106 SET TIME_ZONE= @save_time_zone */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -798,4 +884,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-08 13:01:09
+-- Dump completed on 2019-04-09 13:16:56
