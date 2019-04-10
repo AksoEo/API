@@ -33,7 +33,11 @@ async function init () {
 				corsCheck: 			process.env.AKSO_HTTP_DISABLE_CORS_CHECK === undefined ?
 					true : process.env.AKSO_HTTP_DISABLE_CORS_CHECK == '0',
 				csrfCheck: 			process.env.AKSO_HTTP_DISABLE_CSRF_CHECK === undefined ?
-					true : process.env.AKSO_HTTP_DISABLE_CSRF_CHECK == '0'
+					true : process.env.AKSO_HTTP_DISABLE_CSRF_CHECK == '0',
+				rateLimit:			process.env.AKSO_HTTP_DISABLE_RATE_LIMIT === undefined ?
+					true : process.env.AKSO_HTTP_DISABLE_RATE_LIMIT == '0',
+				loginSlowDown:		process.env.AKSO_HTTP_DISABLE_SLOW_DOWN === undefined ?
+					true : process.env.AKSO_HTTP_DISABLE_SLOW_DOWN == '0'
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -62,8 +66,17 @@ async function init () {
 			'X-Response-Time',
 			'X-Total-Items',
 			'X-Total-Items-No-Filter',
-			'X-Affected-Items'
+			'X-Affected-Items',
+			'X-RateLimit-Limit',
+			'X-RateLimit-Remaining',
+			'Retry-After'
 		],
+		RATE_LIMIT_WINDOW_MS: 3*60*1000, // 3 minutes
+		RATE_LIMIT_MAX: 300, // 300 requests per window ms max
+		SLOW_DOWN_WINDOW_MS: 1*60*1000, // 1 minute
+		SLOW_DOWN_DELAY_AFTER: 5, // allow 5 requests per window ms, then ...
+		SLOW_DOWN_DELAY_MS: 500, // add a n*500ms delay for each n'th request past `delay after`
+		SLOW_DOWN_MAX_DELAY_MS: 2000, // maximum delay per request
 
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,

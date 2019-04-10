@@ -11,6 +11,7 @@ import cors from 'cors';
 import responseTime from 'response-time';
 import csurf from 'csurf';
 import ipaddr from 'ipaddr.js';
+import rateLimit from 'express-rate-limit';
 
 import { replaceObject } from './util';
 
@@ -26,6 +27,10 @@ export function init () {
 
 			// Set up response time calculation
 			app.use(responseTime());
+
+			if (AKSO.conf.http.trustLocalProxy) {
+				app.set('trust proxy', 'loopback');
+			}
 
 			// Set up CORS
 			const corsSettings = {
@@ -74,9 +79,6 @@ export function init () {
 			app.use(cors(corsSettings));
 
 			// Add middleware
-			if (AKSO.conf.trustLocalProxy) {
-				app.set('trust proxy', 'loopback');
-			}
 			if (AKSO.conf.http.helmet) {
 				app.use(helmet());
 			} else {
@@ -178,6 +180,28 @@ export function init () {
 				req.originalQuery = {...req.query};
 				next();
 			});
+
+			// Rate limiting
+			if (AKSO.conf.http.rateLimit) {
+				app.use(rateLimit({
+					windowMs: AKSO.RATE_LIMIT_WINDOW_MS,
+					max: AKSO.RATE_LIMIT_MAX,
+					message: 'Too many requests, please try again later',
+					statusCode: 429,
+					skip: function skipRateLimit (req) {
+						return req.hasPermission('ratelimit.disable');
+					},
+					keyGenerator: function rateLimitKeyGenerator (req) {
+						if (req.user) {
+							if (req.user.isUser()) { return 'u:' + req.user.user; }
+							else if (req.user.isApp()) { return 'a:' + req.user.app.toString('base64'); }
+						}
+						return req.ip;
+					}
+				}));
+			} else {
+				AKSO.log.warn('Running without rate limit');
+			}
 
 			// Routing
 			app.use('/', AKSORouting());

@@ -1,4 +1,5 @@
 import express from 'express';
+import slowDown from 'express-slow-down';
 
 import { bindMethod } from '..';
 
@@ -14,6 +15,12 @@ import method$delete from './delete';
  */
 export function init () {
 	const router = new express.Router();
+	router.use(slowDown({
+		windowMs: AKSO.SLOW_DOWN_WINDOW_MS,
+		delayAfter: AKSO.SLOW_DOWN_DELAY_AFTER,
+		delayMs: AKSO.SLOW_DOWN_DELAY_MS,
+		maxDelayMs: AKSO.SLOW_DOWN_MAX_DELAY_MS
+	}));
 
 	router.use('/totp', route$totp());
 

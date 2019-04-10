@@ -348,6 +348,11 @@ export function bindMethod (router, path, method, bind) {
 						return next(err);
 					}
 				} else {
+					if (req.body instanceof Buffer && !req.body.length) {
+						const err = new Error('Endpoint expects a body');
+						err.statusCode = 400;
+						return next(err);
+					}
 					if (!validateBody(req.body)) {
 						res.status(400).sendObj(validateBody.errors);
 						return;
