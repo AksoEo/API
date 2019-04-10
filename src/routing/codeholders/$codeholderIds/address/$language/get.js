@@ -7,7 +7,7 @@ const schema = {
 	...{
 		query: [ 'formatAs' ],
 		body: null,
-		requirePerms: 'log.read'
+		requirePerms: 'codeholders.read'
 	}
 };
 
