@@ -1,19 +1,15 @@
 import express from 'express';
 
-import { bindMethod } from '../..';
-
-import { init as route$address } from './address';
+import { bindMethod } from '../../../..';
 
 import method$get from './get';
 
 /**
- * Sets up /codeholders/{codeholderId}
+ * Sets up /codeholders/{codeholderId}/address/{language}
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
-
-	router.use('/address', route$address());
 
 	bindMethod(router, '/', 'get', method$get);
 

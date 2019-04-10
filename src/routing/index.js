@@ -127,6 +127,7 @@ export function bindMethod (router, path, method, bind) {
 			 * query:				null for none allowed,
 			 * 						String 'collection' to allow collection parameters
 			 * 						String 'resource' to allow resource parameters
+			 * 						Array for a whitelist.
 			 * [maxQueryLimit]: 	The upper bound for ?limit, defaults to 100
 			 * [fields]:        	An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
 			 * 						f = filterable
@@ -165,6 +166,15 @@ export function bindMethod (router, path, method, bind) {
 						err.statusCode = 400;
 						return next(err);
 					}
+				} else if (Array.isArray(bind.schema.query)) {
+					for (let key of Object.keys(req.query)) {
+						if (bind.schema.query.indexOf(key) === -1) {
+							const err = new Error(`Unknown query parameter ${key}`);
+							err.statusCode = 400;
+							return next(err);
+						}
+					}
+
 				} else if (typeof bind.schema.query === 'string') {
 					const whitelist = [];
 

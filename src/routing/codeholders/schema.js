@@ -85,10 +85,19 @@ export function memberFilter (schema, query, req) {
 	);
 }
 
-export function memberFields (schema, req, res, flag) {
-	if (req.memberFields === null) { return true; }
-
+export function memberFields (defaultFields, req, res, flag) {
 	const fields = req.query.fields || schema.defaultFields;
+
+	const haveFlag = memberFieldsManual(fields, req, flag);
+	if (!haveFlag) {
+		res.status(401).send('Illegal codeholder fields used, check /perms');
+	}
+
+	return haveFlag;
+}
+
+export function memberFieldsManual (fields, req, flag) {
+	if (req.memberFields === null) { return true; }
 
 	const haveFlag = fields
 		.map(f => {
@@ -96,10 +105,6 @@ export function memberFields (schema, req, res, flag) {
 			return req.memberFields[f].indexOf(flag) > -1;
 		})
 		.reduce((a, b) => a && b);
-
-	if (!haveFlag) {
-		res.status(401).send('Illegal codeholder fields used, check /perms');
-	}
 
 	return haveFlag;
 }
