@@ -156,11 +156,12 @@ const filterCompOps = {
 const QueryUtil = {
 	/**
 	 * Handles the ?filter parameter
-	 * @param {string[]}          fields    The permitted filterable fields
-	 * @param {knex.QueryBuilder} query     The query builder to apply the where statement to
-	 * @param {Object}            filterObj The filter object as supplied by `req.query.filter`
+	 * @param {string[]}          fields         The permitted filterable fields
+	 * @param {knex.QueryBuilder} query          The query builder to apply the where statement to
+	 * @param {Object}            filterObj      The filter object as supplied by `req.query.filter`
+	 * @param {Object}            [fieldAliases] The field aliases as defined in the schema
 	 */
-	filter: function queryUtilFilter (fields, query, filterObj) {
+	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}) {
 		query.where(function () {
 			for (let key in filterObj) { // Iterate through each key
 				if (fields.indexOf(key) > -1) { // key is a field
@@ -178,11 +179,15 @@ const QueryUtil = {
 								throw err;
 							}
 
+							// Check if the field is an alias
+							if (fieldAliases && fieldAliases[key]) { key = fieldAliases[key]; }
 							filterCompOps[compOp](key, this, val[compOp]);
 						}
 					});
 
 				} else if (key in filterLogicOps) {
+					// Check if the field is an alias
+					if (fieldAliases && fieldAliases[key]) { key = fieldAliases[key]; }
 					filterLogicOps[key](fields, this, filterObj[key]);
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
@@ -217,31 +222,48 @@ const QueryUtil = {
 	 */
 	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
 		// ?fields, ?search
-		let fields = req.query.fields || schema.defaultFields;
+		const fields = req.query.fields || schema.defaultFields;
+		// Get the actual db col names
+		const selectFields = fields
+			.map(f => {
+				if (schema.fieldAliases && schema.fieldAliases[f]) {
+					return schema.fieldAliases[f];
+				}
+				return f;
+			})
+			.concat(schema.alwaysSelect || []);
 
 		if (req.query.search) {
+			const searchCols = req.query.search.cols.map(f => {
+				if (schema.fieldAliases && schema.fieldAliases[f]) {
+					return schema.fieldAliases[f];
+				}
+				return f;
+			});
 			fields.push(AKSO.db.raw(
-				`MATCH (${'??,'.repeat(req.query.search.cols.length).slice(0,-1)})
+				`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 				AGAINST (? IN BOOLEAN MODE) as ??`,
 
-				[ ...req.query.search.cols, req.query.search.query, '_relevance' ]
+				[ ...searchCols, req.query.search.query, '_relevance' ]
 			));
 			query.whereRaw(
-				`MATCH (${'??,'.repeat(req.query.search.cols.length).slice(0,-1)})
+				`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 				AGAINST (? IN BOOLEAN MODE)`,
 
-				[ ...req.query.search.cols, req.query.search.query ]
+				[ ...searchCols, req.query.search.query ]
 			);
 		}
 
-		query.select(fields);
+		query.select(selectFields);
 
 		// ?filter
 		if (req.query.filter) {
 			QueryUtil.filter(
-				Object.keys(schema.fields).filter(x => schema.fields[x].indexOf('f' > -1)),
+				Object.keys(schema.fields)
+					.filter(x => schema.fields[x].indexOf('f' > -1)),
 				query,
-				req.query.filter
+				req.query.filter,
+				schema.fieldAliases || {}
 			);
 		}
 
@@ -290,16 +312,17 @@ const QueryUtil = {
 	 * Handles an entire basic collection
 	 * @param {express.Request}   req
 	 * @param {express.Response}  res
-	 * @param {Object}            schema The schema as used in bindMethod
-	 * @param {knex.QueryBuilder} query  The query to build upon
-	 * @param {Object}            [Res]  The resource type to use
-	 * @param {Object}            [Col]  The collection type to use
+	 * @param {Object}            schema      The schema as used in bindMethod
+	 * @param {knex.QueryBuilder} query       The query to build upon
+	 * @param {Object}            [Res]       The resource type to use
+	 * @param {Object}            [Col]       The collection type to use
+	 * @param {Object}            [passToCol] Variables to pass to the collection's constructor
 	 */
-	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection) {
+	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = []) {
 		await QueryUtil.collectionMetadata(res, 
 			QueryUtil.simpleCollection(req, schema, query)
 		);
-		const data = new Col(await query, Res);
+		const data = new Col(await query, Res, ...passToCol);
 		res.sendObj(data);
 	}
 };

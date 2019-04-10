@@ -7,6 +7,7 @@ import { base64url } from 'rfc4648';
 
 import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
+import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
 import { init as route$http_log } from './http_log';
 
@@ -65,6 +66,7 @@ export function init () {
 	// TOTP required endpoints
 	router.use(checkTOTPRequired);
 
+	router.use('/codeholders', route$codeholders());
 	router.use('/countries', route$countries());
 	router.use('/http_log', route$http_log());
 
@@ -122,17 +124,21 @@ export function bindMethod (router, path, method, bind) {
 	router[method](path, async function validate (req, res, next) {
 		if (bind.schema) {
 			/**
-			 * query:			null for none allowed,
-			 * 					String 'collection' to allow collection parameters
-			 * 					String 'resource' to allow resource parameters
-			 * [maxQueryLimit]: The upper bound for ?limit, defaults to 100
-			 * [fields]:        An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
-			 * 					f = filterable
-			 * 					s = searchable
-			 * [defaultFields]: The default fields to be selected when query.fields is undefined
-			 * body:			null for none allowed,
-			 * 					Object for JSON schema validation
-			 * [requirePerms]:  An array of strings or a string containing required permissions
+			 * query:				null for none allowed,
+			 * 						String 'collection' to allow collection parameters
+			 * 						String 'resource' to allow resource parameters
+			 * [maxQueryLimit]: 	The upper bound for ?limit, defaults to 100
+			 * [fields]:        	An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
+			 * 						f = filterable
+			 * 						s = searchable
+			 * [fieldSearchGroups]:	An array of fields searchable only together, e.g.
+	 		 * 						[ 'firstName,lastName' ]
+	 		 * [fieldAliases]:		An object of alias:colName used for mapping REST aliases to their actual db col name
+			 * [defaultFields]: 	The default fields to be selected when query.fields is undefined
+			 * [alwaysSelect]:      An array of fields that always are to be selected
+			 * body:				null for none allowed,
+			 * 						Object for JSON schema validation
+			 * [requirePerms]:  	An array of strings or a string containing required permissions
 			 */
 
 			if ('requirePerms' in bind.schema) {
@@ -302,9 +308,17 @@ export function bindMethod (router, path, method, bind) {
 									err.statusCode = 400;
 									return next(err);
 								}
+							}
 
-								if (bind.schema.fields[col].indexOf('s') === -1) {
-									const err = new Error(`The field ${col} cannot be used in ?search as it's not searchable`);
+							if (req.query.search.cols.length === 1) {
+								if (bind.schema.fields[req.query.search.cols[0]].indexOf('s') === -1) {
+									const err = new Error(`The field ${req.query.search.cols[0]} cannot be used in ?search as it's not searchable`);
+									err.statusCode = 400;
+									return next(err);
+								}
+							} else {
+								if (!(bind.schema.fieldSearchGroups && bind.schema.fieldSearchGroups.indexOf(req.query.search.cols.join(',')) > -1)) {
+									const err = new Error(`The fields ${req.query.search.cols.join(',')} cannot be used in ?search as they're not a searchable combination`);
 									err.statusCode = 400;
 									return next(err);
 								}

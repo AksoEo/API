@@ -318,7 +318,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$10$bPHLNnxxWs98EmYykTNd5e0U8ADkJtXIXUEp7IufYUqjhOdPQpBq6','test@test',1,NULL,NULL,NULL,0),(3,'org','tejo','xxtejo',NULL,NULL,1,NULL,NULL,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$10$bPHLNnxxWs98EmYykTNd5e0U8ADkJtXIXUEp7IufYUqjhOdPQpBq6','test@test',1,NULL,NULL,NULL,0),(3,'org','tejo','xxtejo',NULL,NULL,1,NULL,NULL,'+31104361044',0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -336,6 +336,8 @@ CREATE TABLE `codeholders_address` (
   `countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `streetAddress_latin` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -346,6 +348,7 @@ CREATE TABLE `codeholders_address` (
   FULLTEXT KEY `countryArea_latin` (`countryArea_latin`),
   FULLTEXT KEY `streetAddress_latin` (`streetAddress_latin`),
   FULLTEXT KEY `postalCode_latin` (`postalCode_latin`),
+  FULLTEXT KEY `cityArea_latin` (`cityArea_latin`),
   CONSTRAINT `codeholders_address_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `codeholders_address_ibfk_2` FOREIGN KEY (`country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -357,7 +360,7 @@ CREATE TABLE `codeholders_address` (
 
 LOCK TABLES `codeholders_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_address` DISABLE KEYS */;
-INSERT INTO `codeholders_address` VALUES (3,'nl',NULL,NULL,'Rotterdam','Rotterdam','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ');
+INSERT INTO `codeholders_address` VALUES (3,'nl',NULL,NULL,'Rotterdam','Rotterdam',NULL,NULL,'Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ');
 /*!40000 ALTER TABLE `codeholders_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -685,7 +688,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest',NULL,'1998-03-01',NULL,NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,'Testi','Test',NULL,'McTest',NULL,'1998-03-01',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -758,9 +761,8 @@ CREATE TABLE `codeholders_org` (
   `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
-  FULLTEXT KEY `fullName` (`fullName`,`fullNameLocal`),
   FULLTEXT KEY `careOf` (`careOf`),
-  FULLTEXT KEY `nameAbbrev` (`nameAbbrev`),
+  FULLTEXT KEY `fullName` (`fullName`,`fullNameLocal`,`nameAbbrev`),
   CONSTRAINT `codeholders_org_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -902,7 +904,9 @@ SET character_set_client = utf8;
  1 AS `address_countryArea`,
  1 AS `address_countryArea_latin`,
  1 AS `address_city`,
- 1 AS `address_latin`,
+ 1 AS `address_city_latin`,
+ 1 AS `address_cityArea`,
+ 1 AS `address_cityArea_latin`,
  1 AS `address_streetAddress`,
  1 AS `address_streetAddress_latin`,
  1 AS `address_postalCode`,
@@ -977,7 +981,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,timestampdiff(YEAR,`codeholders_human`.`birthdate`,curdate()) AS `age`,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(now()),1)) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(`codeholders`.`isDead`,NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,curdate())) AS `age`,if(`codeholders`.`isDead`,NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(now()),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -991,4 +995,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-10 10:58:34
+-- Dump completed on 2019-04-10 12:55:57

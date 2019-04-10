@@ -1,0 +1,106 @@
+import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
+import moment from 'moment';
+
+import SimpleResource from './simple-resource';
+
+/**
+ * A resource representing a codeholder
+ */
+class CodeholderResource extends SimpleResource {
+	constructor (obj, req) {
+		super(obj);
+
+		const except = [];
+
+		// Change field formats
+		if (req.query.fields.some(f => f.indexOf('address.') === 0)) {
+			except.push('address');
+			this.obj.address = {
+				country:		req.query.fields.indexOf('address.country') > -1 ? this.obj.address_country : undefined,
+				countryArea:	this.obj.address_countryArea,
+				city:			this.obj.address_city,
+				cityArea:		this.obj.address_cityArea,
+				streetAddress:	this.obj.address_streetAddress,
+				postalCode:		this.obj.address_postalCode
+			};
+		}
+
+		if (req.query.fields.some(f => f.indexOf('addressLatin.') === 0)) {
+			except.push('addressLatin');
+			this.obj.addressLatin = {
+				country:		req.query.fields.indexOf('addressLatin.country') > -1 ? this.obj.address_country : undefined,
+				countryArea:	this.obj.address_countryArea_latin,
+				city:			this.obj.address_city_latin,
+				cityArea:		this.obj.address_cityArea_latin,
+				streetAddress:	this.obj.address_streetAddress_latin,
+				postalCode:		this.obj.address_postalCode_latin
+			};
+		}
+
+		this.obj.enabled = !!this.obj.enabled;
+		this.obj.isDead  = !!this.obj.isDead;
+
+		if (this.obj.notes === null) { this.obj.notes = ''; }
+		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }
+		
+		if (req.query.fields.indexOf('officePhoneFormatted')) {
+			if (this.obj.officePhone) {
+				this.obj.officePhoneFormatted = formatPhoneNumber(this.obj.officePhone);
+			} else {
+				this.obj.officePhoneFormatted = null;
+			}
+		}
+		if (req.query.fields.indexOf('landlinePhoneFormatted')) {
+			if (this.obj.landlinePhone) {
+				this.obj.landlinePhoneFormatted = formatPhoneNumber(this.obj.landlinePhone);
+			} else {
+				this.obj.landlinePhoneFormatted = null;
+			}
+		}
+		if (req.query.fields.indexOf('cellphoneFormatted')) {
+			if (this.obj.cellphone) {
+				this.obj.cellphoneFormatted = formatPhoneNumber(this.obj.cellphone);
+			} else {
+				this.obj.cellphoneFormatted = null;
+			}
+		}
+
+		// Remove fields not belonging to this codeholder type
+		let deleteProps = [];
+		if (this.obj.codeholderType !== 'org') {
+			deleteProps = [
+				'fullName',
+				'fullNameLocal',
+				'careOf',
+				'nameAbbrev'
+			];
+		} else if (this.obj.codeholderType !== 'human') {
+			deleteProps = [
+				'firstName',
+				'firstNameLegal',
+				'lastName',
+				'lastNameLegal',
+				'honorific',
+				'birthdate',
+				'age',
+				'agePrimo',
+				'profession',
+				'landlinePhone',
+				'landlinePhoneFormatted',
+				'cellphone',
+				'cellphoneFormatted'
+			];
+		}
+		deleteProps.forEach(x => delete this.obj[x]);
+
+		this.removeUnnecessary(req, except);
+	}
+}
+
+export default CodeholderResource;
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+function formatPhoneNumber (number) {
+	const numberObj = phoneUtil.parse(number);
+	return phoneUtil.format(numberObj, PhoneNumberFormat.INTERNATIONAL);
+}
