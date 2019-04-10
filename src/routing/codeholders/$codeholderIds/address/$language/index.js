@@ -5,7 +5,7 @@ import { bindMethod } from '../../../..';
 import method$get from './get';
 
 /**
- * Sets up /codeholders/{codeholderId}/address/{language}
+ * Sets up /codeholders/{codeholderIds}/address/{language}
  * @return {express.Router}
  */
 export function init () {

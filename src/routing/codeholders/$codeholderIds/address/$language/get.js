@@ -41,10 +41,14 @@ export default {
 			}
 		}
 
-		// Try to find the codeholder
+		const latin = (req.query.formatAs === 'displayLatin' || req.query.formatAs === 'postalLatin');
+
+		// Try to find the codeholders
+		const codeholderIds = req.params.codeholderIds.split(',');
 		const codeholderQuery = AKSO.db('view_codeholders')
-			.where('id', req.params.codeholderId)
-			.first([
+			.whereIn('id', codeholderIds)
+			.select([
+				'id',
 				'address_country',
 				'address_countryArea',
 				'address_city',
@@ -62,6 +66,7 @@ export default {
 		// Restrictions
 		memberFilter(schema, codeholderQuery, req);
 		const requiredMemberFields = [
+			'id',
 			'address.country',
 			'address.countryArea',
 			'address.city',
@@ -79,52 +84,54 @@ export default {
 			return res.status(401).send('Missing permitted address codeholder fields, check /perms');
 		}
 
-		const codeholder = await codeholderQuery;
-		if (!codeholder) { return res.sendStatus(404); }
+		const codeholders = await codeholderQuery;
 
-		// Check if we have an address
-		if (!codeholder.address_country) {
-			return res.sendObj({ address: null });
-		}
+		const addresses = {};
 
-		// Obtain the country name
-		const countryData = await AKSO.db('countries')
-			.first('name_' + req.params.language)
-			.where('code', codeholder.address_country);
-		const countryName = countryData['name_' + req.params.language];
-
-		const addressObj = {
-			countryCode: 	codeholder.address_country,
-			countryArea: 	codeholder.address_countryArea,
-			city: 			codeholder.address_city,
-			cityArea: 		codeholder.address_cityArea,
-			streetAddress: 	codeholder.address_streetAddress,
-			postalCode: 	codeholder.address_postalCode,
-			sortingCode: 	codeholder.address_sortingCode
-		};
-
-		const latin = (req.query.formatAs === 'displayLatin' || req.query.formatAs === 'postalLatin');
-
-		if (req.query.formatAs === 'postal' || req.query.formatAs === 'postalLatin') {
-			if (codeholder.firstNameLegal) {
-				addressObj.name = codeholder.firstNameLegal;
+		for (let codeholder of codeholders) {
+			// Check if we have an address
+			if (!codeholder.address_country) {
+				addresses[codeholder.id] = null;
+				continue;
 			}
-			if (codeholder.lastNameLegal) {
-				addressObj.name += ' ' + codeholder.lastNameLegal;
-			}
-			if (codeholder.careOf) {
-				addressObj.name = `c/o ${codeholder.careOf}`;
-			}
-			addressObj.companyName = codeholder.fullNameLocal || codeholder.fullName;
-		}
 
-		return res.sendObj({
-			address: AddressFormat.formatAddress(
+			const addressObj = {
+				countryCode: 	codeholder.address_country,
+				countryArea: 	codeholder.address_countryArea,
+				city: 			codeholder.address_city,
+				cityArea: 		codeholder.address_cityArea,
+				streetAddress: 	codeholder.address_streetAddress,
+				postalCode: 	codeholder.address_postalCode,
+				sortingCode: 	codeholder.address_sortingCode
+			};
+
+			if (req.query.formatAs === 'postal' || req.query.formatAs === 'postalLatin') {
+				if (codeholder.firstNameLegal) {
+					addressObj.name = codeholder.firstNameLegal;
+				}
+				if (codeholder.lastNameLegal) {
+					addressObj.name += ' ' + codeholder.lastNameLegal;
+				}
+				if (codeholder.careOf) {
+					addressObj.name = `c/o ${codeholder.careOf}`;
+				}
+				addressObj.companyName = codeholder.fullNameLocal || codeholder.fullName;
+			}
+
+			// Obtain the country name
+			const countryData = await AKSO.db('countries')
+				.first('name_' + req.params.language)
+				.where('code', codeholder.address_country);
+			const countryName = countryData['name_' + req.params.language];
+
+			addresses[codeholder.id] = AddressFormat.formatAddress(
 				addressObj,
 				latin,
 				req.params.language,
 				countryName
-			)
-		});
+			);
+		}
+
+		res.sendObj(addresses);
 	}
 };
