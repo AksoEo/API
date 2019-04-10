@@ -1,7 +1,7 @@
 import QueryUtil from '../../../lib/query-util';
 import CodeholderResource from '../../../lib/resources/codeholder-resource';
 
-import { schema as parSchema, memberFilter } from '../schema';
+import { schema as parSchema, memberFilter, memberFields } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -20,6 +20,7 @@ export default {
 
 		// Restrictions
 		memberFilter(schema, query, req);
+		if (!memberFields(schema, req, res, 'r')) { return; }
 
 		QueryUtil.simpleResource(req, schema, query);
 		query.where('id', req.params.codeholderId);

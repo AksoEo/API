@@ -84,3 +84,22 @@ export function memberFilter (schema, query, req) {
 		schema.fieldAliases
 	);
 }
+
+export function memberFields (schema, req, res, flag) {
+	if (req.memberFields === null) { return true; }
+
+	const fields = req.query.fields || schema.defaultFields;
+
+	const haveFlag = fields
+		.map(f => {
+			if (!(f in req.memberFields)) { return false; }
+			return req.memberFields[f].indexOf(flag) > -1;
+		})
+		.reduce((a, b) => a && b);
+
+	if (!haveFlag) {
+		res.status(401).send('Illegal codeholder fields used, check /perms');
+	}
+
+	return haveFlag;
+}
