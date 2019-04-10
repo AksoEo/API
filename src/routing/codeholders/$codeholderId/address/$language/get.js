@@ -51,6 +51,7 @@ export default {
 				'address_cityArea',
 				'address_streetAddress',
 				'address_postalCode',
+				'address_sortingCode',
 				'firstNameLegal',
 				'lastNameLegal',
 				'fullName',
@@ -67,6 +68,7 @@ export default {
 			'address.cityArea',
 			'address.streetAddress',
 			'address.postalCode',
+			'address.sortingCode',
 			'firstNameLegal',
 			'lastNameLegal',
 			'fullName',
@@ -97,7 +99,8 @@ export default {
 			city: 			codeholder.address_city,
 			cityArea: 		codeholder.address_cityArea,
 			streetAddress: 	codeholder.address_streetAddress,
-			postalCode: 	codeholder.address_postalCode
+			postalCode: 	codeholder.address_postalCode,
+			sortingCode: 	codeholder.address_sortingCode
 		};
 
 		const latin = (req.query.formatAs === 'displayLatin' || req.query.formatAs === 'postalLatin');

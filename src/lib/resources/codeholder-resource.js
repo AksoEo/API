@@ -23,7 +23,8 @@ class CodeholderResource extends SimpleResource {
 				city:			this.obj.address_city,
 				cityArea:		this.obj.address_cityArea,
 				streetAddress:	this.obj.address_streetAddress,
-				postalCode:		this.obj.address_postalCode
+				postalCode:		this.obj.address_postalCode,
+				sortingCode:	this.obj.address_sortingCode
 			};
 		}
 
@@ -35,7 +36,8 @@ class CodeholderResource extends SimpleResource {
 				city:			this.obj.address_city_latin,
 				cityArea:		this.obj.address_cityArea_latin,
 				streetAddress:	this.obj.address_streetAddress_latin,
-				postalCode:		this.obj.address_postalCode_latin
+				postalCode:		this.obj.address_postalCode_latin,
+				sortingCode:	this.obj.address_sortingCode_latin
 			};
 		}
 
