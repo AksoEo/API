@@ -208,7 +208,16 @@ const QueryUtil = {
 		// ?fields
 		const fields = req.query.fields || schema.defaultFields;
 
-		query.first(fields);
+		// Get the actual db col names
+		const selectFields = fields
+			.map(f => {
+				if (schema.fieldAliases && schema.fieldAliases[f]) {
+					return schema.fieldAliases[f];
+				}
+				return f;
+			})
+			.concat(schema.alwaysSelect || []);
+		query.first(selectFields);
 	},
 
 	/**
@@ -305,7 +314,7 @@ const QueryUtil = {
 	 */
 	async collectionMetadata (res, metadata) {
 		res.set('X-Total-Items', (await metadata.totalItems).count);
-		res.set('X-Total-Item-No-Filter', (await metadata.totalItemNoFilter).count);
+		res.set('X-Total-Items-No-Filter', (await metadata.totalItemNoFilter).count);
 	},
 
 	/**

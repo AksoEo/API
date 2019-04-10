@@ -7,16 +7,18 @@ import SimpleResource from './simple-resource';
  * A resource representing a codeholder
  */
 class CodeholderResource extends SimpleResource {
-	constructor (obj, req) {
+	constructor (obj, req, schema) {
 		super(obj);
+
+		const fields = req.query.fields || schema.defaultFields;
 
 		const except = [];
 
 		// Change field formats
-		if (req.query.fields.some(f => f.indexOf('address.') === 0)) {
+		if (fields.some(f => f.indexOf('address.') === 0)) {
 			except.push('address');
 			this.obj.address = {
-				country:		req.query.fields.indexOf('address.country') > -1 ? this.obj.address_country : undefined,
+				country:		fields.indexOf('address.country') > -1 ? this.obj.address_country : undefined,
 				countryArea:	this.obj.address_countryArea,
 				city:			this.obj.address_city,
 				cityArea:		this.obj.address_cityArea,
@@ -25,10 +27,10 @@ class CodeholderResource extends SimpleResource {
 			};
 		}
 
-		if (req.query.fields.some(f => f.indexOf('addressLatin.') === 0)) {
+		if (fields.some(f => f.indexOf('addressLatin.') === 0)) {
 			except.push('addressLatin');
 			this.obj.addressLatin = {
-				country:		req.query.fields.indexOf('addressLatin.country') > -1 ? this.obj.address_country : undefined,
+				country:		fields.indexOf('addressLatin.country') > -1 ? this.obj.address_country : undefined,
 				countryArea:	this.obj.address_countryArea_latin,
 				city:			this.obj.address_city_latin,
 				cityArea:		this.obj.address_cityArea_latin,
@@ -43,21 +45,21 @@ class CodeholderResource extends SimpleResource {
 		if (this.obj.notes === null) { this.obj.notes = ''; }
 		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }
 		
-		if (req.query.fields.indexOf('officePhoneFormatted')) {
+		if (fields.indexOf('officePhoneFormatted')) {
 			if (this.obj.officePhone) {
 				this.obj.officePhoneFormatted = formatPhoneNumber(this.obj.officePhone);
 			} else {
 				this.obj.officePhoneFormatted = null;
 			}
 		}
-		if (req.query.fields.indexOf('landlinePhoneFormatted')) {
+		if (fields.indexOf('landlinePhoneFormatted')) {
 			if (this.obj.landlinePhone) {
 				this.obj.landlinePhoneFormatted = formatPhoneNumber(this.obj.landlinePhone);
 			} else {
 				this.obj.landlinePhoneFormatted = null;
 			}
 		}
-		if (req.query.fields.indexOf('cellphoneFormatted')) {
+		if (fields.indexOf('cellphoneFormatted')) {
 			if (this.obj.cellphone) {
 				this.obj.cellphoneFormatted = formatPhoneNumber(this.obj.cellphone);
 			} else {
@@ -93,7 +95,7 @@ class CodeholderResource extends SimpleResource {
 		}
 		deleteProps.forEach(x => delete this.obj[x]);
 
-		this.removeUnnecessary(req, except);
+		this.removeUnnecessary(fields.concat(except));
 	}
 }
 

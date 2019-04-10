@@ -4,7 +4,9 @@
 class SimpleResource {
 	constructor (obj) {
 		if (obj === undefined) {
-			throw new Error('SimpleResource cannot be undefined');
+			const err = new TypeError('SimpleResource cannot be undefined');
+			err.simpleResourceError = true;
+			throw err;
 		}
 
 		delete obj._relevance;
@@ -13,12 +15,11 @@ class SimpleResource {
 
 	/**
 	 * Removes fields that weren't selected from the resource
-	 * @param {express.Request} req
-	 * @param {string[]}        [except] An array of fields not to remove regardless
+	 * @param {string[]} [except] The fields not to remove
 	 */
-	removeUnnecessary (req, except = []) {
+	removeUnnecessary (except = []) {
 		for (let key of Object.keys(this.obj)) {
-			if (req.query.fields.indexOf(key) === -1 && except.indexOf(key) === -1) {
+			if (except.indexOf(key) === -1) {
 				delete this.obj[key];
 			}
 		}

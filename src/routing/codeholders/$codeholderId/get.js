@@ -1,5 +1,5 @@
 import QueryUtil from '../../../lib/query-util';
-import SimpleResource from '../../../lib/resources/simple-resource';
+import CodeholderResource from '../../../lib/resources/codeholder-resource';
 
 import parSchema from '../schema';
 
@@ -7,7 +7,8 @@ const schema = {
 	...parSchema,
 	...{
 		query: 'resource',
-		body: null
+		body: null,
+		requirePerms: 'codeholders.read'
 	}
 };
 
@@ -15,14 +16,14 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		const query = AKSO.db('countries');
+		const query = AKSO.db('view_codeholders');
 		QueryUtil.simpleResource(req, schema, query);
-		query.where('code', req.params.countryCode);
+		query.where('id', req.params.codeholderId);
 
 		const row = await query;
 		try {
-			const country = new SimpleResource(row);
-			res.sendObj(country);
+			const codeholder = new CodeholderResource(row, req, schema);
+			res.sendObj(codeholder);
 		} catch (e) {
 			if (e.simpleResourceError) { return res.sendStatus(404); }
 			throw e;
