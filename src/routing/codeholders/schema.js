@@ -1,4 +1,6 @@
-export default {
+import QueryUtil from '../../lib/query-util';
+
+export const schema = {
 	defaultFields: [ 'id' ],
 	fields: {
 		// Codeholder
@@ -72,3 +74,13 @@ export default {
 		'codeholderType'
 	]
 };
+
+export function memberFilter (schema, query, req) {
+	QueryUtil.filter(
+		Object.keys(schema.fields)
+			.filter(x => schema.fields[x].indexOf('f' > -1)),
+		query,
+		req.memberFilter,
+		schema.fieldAliases
+	);
+}
