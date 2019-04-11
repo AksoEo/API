@@ -132,24 +132,6 @@ const filterCompOps = {
 		val.forEach(filterAssertScalar);
 
 		query.whereNotIn(field, val);
-	},
-	$hasany: function filterCompOnHasany (field, query, val) { // eslint-disable-line no-unused-vars
-		const err = new Error('$hasany has not yet been implemented');
-		err.statusCode = 400;
-		throw err;
-		// TODO
-	},
-	$hasnone: function filterCompOnHasnone (field, query, val) { // eslint-disable-line no-unused-vars
-		const err = new Error('$hasnone has not yet been implemented');
-		err.statusCode = 400;
-		throw err;
-		// TODO
-	},
-	$hasall: function filterCompOnHasall (field, query, val) { // eslint-disable-line no-unused-vars
-		const err = new Error('$hasall has not yet been implemented');
-		err.statusCode = 400;
-		throw err;
-		// TODO
 	}
 };
 
