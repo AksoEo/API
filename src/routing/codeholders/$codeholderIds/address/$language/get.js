@@ -25,8 +25,6 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res, next) {
-		console.log(req.params);
-
 		// Validate the language
 		if (languages.indexOf(req.params.language) === -1) {
 			return res.sendStatus(404);
