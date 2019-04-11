@@ -36,9 +36,8 @@ async function authentication (app) {
 		if (!dbUser) { return done(null, false); }
 
 		if (!dbUser.password) {
-			// TODO: Do something
 			const err = new Error('User has no password');
-			err.statusCode = 500;
+			err.statusCode = 409;
 			return done(err);
 		}
 
