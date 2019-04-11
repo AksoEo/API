@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars';
+
 /**
  * Traverses through an object recursively and calls a replacement function
  * @param  {Object}   obj               The object to iterate over
@@ -24,4 +26,36 @@ export function replaceObject (obj, replacer, toJSON = true, removeUndefined = t
 		return newObj;
 	}
 	return obj;
+}
+
+/**
+ * Promise.all but for an object instead of an array
+ * @param  {Object} promises string:Promise mapping
+ * @return {Object} The result of all the promises
+ */
+export async function promiseAllObject (promises) {
+	const responseArray = await Promise.all(Object.values(promises));
+	const responseObject = {};
+
+	const keys = Object.keys(promises);
+	for (let i in responseArray)  {
+		responseObject[keys[i]] = responseArray[i];
+	}
+
+	return responseObject;
+}
+
+Handlebars.registerHelper('url', options => {
+	return options.data.root.domain + options.fn(this);
+});
+
+/**
+ * Renders a template using handlebars
+ * @param  {string}  tmpl       The template data
+ * @param  {Object}  view       The view
+ * @param  {boolean} [noEscape] If true nothing is escaped
+ * @return {string} The rendered template
+ */
+export function renderTemplate (tmpl, view = {}, noEscape = false) {
+	return Handlebars.compile(tmpl, noEscape)(view);
 }

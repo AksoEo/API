@@ -1,6 +1,7 @@
 import winston from 'winston';
 import moment from 'moment';
 import msgpack from 'msgpack-lite';
+import path from 'path';
 
 import * as AKSOMail from './mail';
 import * as AKSOHttp from './http';
@@ -8,6 +9,8 @@ import * as AKSODb from './db';
 
 async function init () {
 	global.AKSO = {
+		dir: path.normalize(path.join(__dirname, '../')),
+
 		version: require('../package.json').version,
 
 		log: winston.createLogger({
@@ -77,6 +80,8 @@ async function init () {
 		SLOW_DOWN_DELAY_AFTER: 5, // allow 5 requests per window ms, then ...
 		SLOW_DOWN_DELAY_MS: 500, // add a n*500ms delay for each n'th request past `delay after`
 		SLOW_DOWN_MAX_DELAY_MS: 2000, // maximum delay per request
+
+		CREATE_PASSWORD_FREQ: 3*60*60, // 3 hours
 
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,
