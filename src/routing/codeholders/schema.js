@@ -104,6 +104,7 @@ export function memberFieldsManual (fields, req, flag) {
 	if (req.memberFields === null) { return true; }
 
 	const haveFlag = fields
+		.map(f => f.split('.')[0])
 		.map(f => {
 			if (!(f in req.memberFields)) { return false; }
 			return req.memberFields[f].indexOf(flag) > -1;

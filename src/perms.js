@@ -14,11 +14,11 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 			oldCode: 'r',
 			newCode: 'r',
 			codeholderType: 'r',
+			password: 'w',
 			address: 'rw',
 			feeCountry: 'ra',
 			addressLatin: 'r',
 			email: 'rw',
-			notes: 'r',
 			officePhone: 'rw',
 			officePhoneFormatted: 'r',
 
