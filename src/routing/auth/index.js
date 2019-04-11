@@ -19,7 +19,8 @@ export function init () {
 		windowMs: AKSO.SLOW_DOWN_WINDOW_MS,
 		delayAfter: AKSO.SLOW_DOWN_DELAY_AFTER,
 		delayMs: AKSO.SLOW_DOWN_DELAY_MS,
-		maxDelayMs: AKSO.SLOW_DOWN_MAX_DELAY_MS
+		maxDelayMs: AKSO.SLOW_DOWN_MAX_DELAY_MS,
+		skipSuccessfulRequests: true
 	}));
 
 	router.use('/totp', route$totp());
