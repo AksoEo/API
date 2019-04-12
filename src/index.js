@@ -82,6 +82,9 @@ async function init () {
 		SLOW_DOWN_MAX_DELAY_MS: 2000, // maximum delay per request
 
 		CREATE_PASSWORD_FREQ: 3*60*60, // 3 hours
+		PASSWORD_BCRYPT_SALT_ROUNDS: 12,
+
+		CODEHOLDER_OWN_CHANGE_CMT: 'Memfarita ŝanĝo',
 
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,

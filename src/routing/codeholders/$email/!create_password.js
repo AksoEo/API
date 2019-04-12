@@ -1,7 +1,5 @@
 import moment from 'moment';
 import crypto from 'pn/crypto';
-
-import AKSOOrganization from '../../../lib/enums/akso-organization';
 import * as AKSOMail from '../../../mail';
 
 export default {
@@ -11,7 +9,7 @@ export default {
 			properties: {
 				org: {
 					type: 'string',
-					enum: AKSOOrganization.allLower
+					enum: [ 'akso', 'uea' ]
 				}
 			},
 			additionalProperties: false,
