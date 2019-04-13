@@ -2,7 +2,7 @@ import Enum from './enum';
 
 class AKSOOrganization extends Enum {
 	static getDomain (prop) {
-		if (AKSO.conf.prodMode === 'dev') { return 'http://localhost:2576'; }
+		if (AKSO.conf.prodMode === 'dev') { return 'http://127.0.0.1:2576'; }
 
 		switch (this.normalize(prop)) {
 		case 'AKSO':

@@ -96,7 +96,8 @@ async function init () {
 			int64: true
 		}),
 		db: null,
-		telegram: null
+		telegram: null,
+		telegramQueue: null
 	};
 
 	// Complain about missing/invalid env vars
@@ -148,10 +149,6 @@ async function init () {
 }
 
 init().catch(err => {
-	if (AKSO.log) {
-		AKSO.log.error(err);
-	} else {
-		console.error(err); // eslint-disable-line no-console
-	}
+	console.log(err); // eslint-disable-line no-console
 	process.exit(1);
 });

@@ -48,6 +48,7 @@
     "msgpack-lite": "^0.1.26",
     "multer": "^1.4.1",
     "mysql2": "^1.6.4",
+    "p-queue": "^5.0.0",
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
