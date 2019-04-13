@@ -101,5 +101,16 @@ export async function renderSendEmail ({
 	msg.html = renderTemplate(templs.outerHtml, {...outerView, ...{ content: innerHtml } });
 	msg.text = renderTemplate(templs.outerText, {...outerView, ...{ content: innerText } }, false);
 
-	return await AKSO.mail.send(msg);
+	// Split the mail into chunks of 100 recipients and send
+	const sendPromises = [];
+	for (let i = 0; i < msg.personalizations.length; i += 100) {
+		const msgChunk = {
+			...msg,
+			...{
+				personalizations: msg.personalizations.slice(i, i + 100)
+			}
+		};
+		sendPromises.push(AKSO.mail.send(msgChunk));
+	}
+	return await Promise.all(sendPromises);
 }
