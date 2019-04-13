@@ -4,6 +4,7 @@ import msgpack from 'msgpack-lite';
 import path from 'path';
 
 import * as AKSOMail from './mail';
+import * as AKSOTelegram from './telegram';
 import * as AKSOHttp from './http';
 import * as AKSODb from './db';
 
@@ -51,6 +52,9 @@ async function init () {
 			sendgrid: {
 				apiKey: process.env.AKSO_SENDGRID_API_KEY
 			},
+			telegram: {
+				token: process.env.AKSO_TELEGRAM_TOKEN
+			},
 			prodMode: process.env.NODE_ENV || 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex')
 		},
@@ -91,7 +95,8 @@ async function init () {
 		msgpack: msgpack.createCodec({
 			int64: true
 		}),
-		db: null
+		db: null,
+		telegram: null
 	};
 
 	// Complain about missing/invalid env vars
@@ -101,6 +106,10 @@ async function init () {
 	}
 	if (!AKSO.conf.http.sessionSecret) {
 		AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
+		process.exit(1);
+	}
+	if (!AKSO.conf.telegram.token) {
+		AKSO.log.error('Missing AKSO_TELEGRAM_TOKEN');
 		process.exit(1);
 	}
 	if (AKSO.conf.totpAESKey.length != 32) {
@@ -116,6 +125,7 @@ async function init () {
 
 	await AKSODb.init();
 	await AKSOMail.init();
+	await AKSOTelegram.init();
 	await AKSOHttp.init();
 
 	AKSO.log.info('AKSO is ready');
