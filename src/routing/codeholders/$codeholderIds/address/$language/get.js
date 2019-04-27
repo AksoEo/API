@@ -56,6 +56,7 @@ export default {
 				'address_streetAddress',
 				'address_postalCode',
 				'address_sortingCode',
+				'honorific',
 				'firstNameLegal',
 				'lastNameLegal',
 				'fullName',
@@ -74,6 +75,7 @@ export default {
 			'address.streetAddress',
 			'address.postalCode',
 			'address.sortingCode',
+			'honorific',
 			'firstNameLegal',
 			'lastNameLegal',
 			'fullName',
@@ -102,16 +104,21 @@ export default {
 				cityArea: 		codeholder.address_cityArea,
 				streetAddress: 	codeholder.address_streetAddress,
 				postalCode: 	codeholder.address_postalCode,
-				sortingCode: 	codeholder.address_sortingCode
+				sortingCode: 	codeholder.address_sortingCode,
+				name: ''
 			};
 
 			if (req.query.formatAs === 'postal' || req.query.formatAs === 'postalLatin') {
+				if (codeholder.honorific) {
+					addressObj.name += codeholder.honorific + ' ';
+				}
 				if (codeholder.firstNameLegal) {
-					addressObj.name = codeholder.firstNameLegal;
+					addressObj.name += codeholder.firstNameLegal;
 				}
 				if (codeholder.lastNameLegal) {
 					addressObj.name += ' ' + codeholder.lastNameLegal;
 				}
+
 				if (codeholder.careOf) {
 					addressObj.name = `c/o ${codeholder.careOf}`;
 				}

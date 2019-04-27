@@ -6,16 +6,15 @@
 export async function getNamesAndEmails (...ids) {
 	const codeholders = await AKSO.db('view_codeholders')
 		.whereIn('id', ids)
-		.select('codeholderType', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
+		.select('codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
 
 	return codeholders.map(codeholder => {
 		let name;
 		if (codeholder.codeholderType === 'human') {
+			if (codeholder.honorific) { name += codeholder.honorific + ' '; }
 			name = codeholder.firstName || codeholder.firstNameLegal;
-			const lastName = codeholder.lastName || codeholder.lastNameLegal;
-			if (lastName) {
-				name += ' ' + lastName;
-			}
+			name += ' ' + (codeholder.lastName || codeholder.lastNameLegal);
+
 		} else if (codeholder.codeholderType === 'org') {
 			name = codeholder.fullName;
 		}
