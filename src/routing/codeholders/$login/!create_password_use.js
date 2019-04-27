@@ -22,14 +22,23 @@ export default {
 
 	run: async function run (req, res) {
 		// Try to find the codeholder
+		const whereStmt = {};
+		if (req.params.login.indexOf('@') > -1) {
+			whereStmt.email = req.params.login;
+		} else if (req.params.login.length === 4) {
+			whereStmt.oldCode = req.params.login;
+		} else {
+			whereStmt.newCode = req.params.login;
+		}
 		const updated = await AKSO.db('codeholders')
 			.where({
-				email: req.params.email,
-				password: null,
-				enabled: true,
-				isDead: false,
-				createPasswordKey: req.body.key
-			})
+				...whereStmt,
+				...{
+					password: null,
+					enabled: true,
+					isDead: false,
+					createPasswordKey: req.body.key
+				}})
 			.where('createPasswordTime', '>=', moment().unix() - AKSO.CREATE_PASSWORD_FREQ)
 			.update({
 				password: await bcrypt.hash(req.body.password, AKSO.PASSWORD_BCRYPT_SALT_ROUNDS),
@@ -42,7 +51,7 @@ export default {
 		// Obtain the internal id
 		const codeholder = await AKSO.db('codeholders')
 			.first('id')
-			.where('email', req.params.email);
+			.where(whereStmt);
 
 		// Update hist
 		await AKSO.db('codeholders_hist_password')

@@ -2,7 +2,7 @@ import express from 'express';
 
 import { bindMethod } from '..';
 
-import { init as route$$email } from './$email';
+import { init as route$$login } from './$login';
 import { init as route$$codeholderId } from './$codeholderId';
 import { init as route$$codeholderIds } from './$codeholderIds';
 
@@ -15,16 +15,16 @@ import method$get from './get';
 export function init () {
 	const router = new express.Router();
 
-	const emailRegex = /^[^@]+@[^@]+$/;
-	router.param('email', (req, res, next, val) => {
-		if (emailRegex.test(val)) { next(); }
+	const loginRegex = /^([^@]+@[^@]+|[a-z]{4}([a-z]{2})?)$/;
+	router.param('login', (req, res, next, val) => {
+		if (loginRegex.test(val)) { next(); }
 		else {
 			const err = new Error();
 			err.statusCode = 404;
 			next(err);
 		}
 	});
-	router.use('/:email', route$$email());
+	router.use('/:login', route$$login());
 
 	router.use('/:codeholderId(\\d+)', route$$codeholderId());
 

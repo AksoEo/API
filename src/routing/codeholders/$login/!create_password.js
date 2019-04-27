@@ -26,19 +26,26 @@ export default {
 		res.sendStatus(202);
 
 		// Try to find the codeholder
+		const whereStmt = {
+			password: null,
+			enabled: true,
+			isDead: false
+		};
+		if (req.params.login.indexOf('@') > -1) {
+			whereStmt.email = req.params.login;
+		} else if (req.params.login.length === 4) {
+			whereStmt.oldCode = req.params.login;
+		} else {
+			whereStmt.newCode = req.params.login;
+		}
 		const codeholder = await AKSO.db('codeholders')
-			.where({
-				email: req.params.email,
-				password: null,
-				enabled: true,
-				isDead: false
-			})
+			.where(whereStmt)
 			.where(function () {
 				this
 					.where('createPasswordTime', '<', moment().unix() - AKSO.CREATE_PASSWORD_FREQ)
 					.orWhere('createPasswordTime', null);
 			})
-			.first('id');
+			.first('id', 'email');
 
 		if (!codeholder) { return; }
 
@@ -58,7 +65,7 @@ export default {
 			tmpl: 'create-password',
 			to: codeholder.id,
 			view: {
-				email: encodeURIComponent(req.params.email),
+				email: encodeURIComponent(codeholder.email),
 				key: createPasswordKey.toString('hex')
 			}
 		});
