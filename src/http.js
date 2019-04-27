@@ -284,7 +284,7 @@ function setupMiddleware (req, res,  next) {
 			userAgent: req.headers['user-agent'] || null,
 			method: req.method,
 			path: Url.parse(req.originalUrl).pathname,
-			query: JSON.stringify(req.originalQuery),
+			query: JSON.stringify(req.originalQuery) || '{}',
 			resStatus: res.statusCode,
 			resTime: res.get('x-response-time').slice(0, -2)
 		};
