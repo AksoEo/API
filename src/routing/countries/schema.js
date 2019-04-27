@@ -2,7 +2,6 @@ export default {
 	defaultFields: [ 'code' ],
 	fields: {
 		'code': 'f',
-		'currency': 'f',
 		'name_eo': 's',
 		'name_en': '',
 		'name_fr': '',
