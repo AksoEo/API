@@ -158,6 +158,9 @@ export function bindMethod (router, path, method, bind) {
 			if (!('maxQueryLimit' in bind.schema)) {
 				bind.schema.maxQueryLimit = 100;
 			}
+			if (!('customSearch' in bind.schema)) {
+				bind.schema.customSearch = {};
+			}
 
 			if ('query' in bind.schema) {
 				if (!bind.schema.query) {
@@ -312,25 +315,27 @@ export function bindMethod (router, path, method, bind) {
 								return next(err);
 							}
 
-							for (let col of req.query.search.cols) {
-								if (bind.schema.fields[col] === undefined) {
-									const err = new Error(`Unknown field ${col} used in ?search`);
-									err.statusCode = 400;
-									return next(err);
+							if (!(req.query.search.cols.join(',') in bind.schema.customSearch)) {
+								for (let col of req.query.search.cols) {
+									if (bind.schema.fields[col] === undefined) {
+										const err = new Error(`Unknown field ${col} used in ?search`);
+										err.statusCode = 400;
+										return next(err);
+									}
 								}
-							}
 
-							if (req.query.search.cols.length === 1) {
-								if (bind.schema.fields[req.query.search.cols[0]].indexOf('s') === -1) {
-									const err = new Error(`The field ${req.query.search.cols[0]} cannot be used in ?search as it's not searchable`);
-									err.statusCode = 400;
-									return next(err);
-								}
-							} else {
-								if (!(bind.schema.fieldSearchGroups && bind.schema.fieldSearchGroups.indexOf(req.query.search.cols.join(',')) > -1)) {
-									const err = new Error(`The fields ${req.query.search.cols.join(',')} cannot be used in ?search as they're not a searchable combination`);
-									err.statusCode = 400;
-									return next(err);
+								if (req.query.search.cols.length === 1) {
+									if (bind.schema.fields[req.query.search.cols[0]].indexOf('s') === -1) {
+										const err = new Error(`The field ${req.query.search.cols[0]} cannot be used in ?search as it's not searchable`);
+										err.statusCode = 400;
+										return next(err);
+									}
+								} else {
+									if (!(bind.schema.fieldSearchGroups && bind.schema.fieldSearchGroups.indexOf(req.query.search.cols.join(',')) > -1)) {
+										const err = new Error(`The fields ${req.query.search.cols.join(',')} cannot be used in ?search as they're not a searchable combination`);
+										err.statusCode = 400;
+										return next(err);
+									}
 								}
 							}
 

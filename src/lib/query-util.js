@@ -225,24 +225,39 @@ const QueryUtil = {
 			.concat(schema.alwaysSelect || []);
 
 		if (req.query.search) {
-			const searchCols = req.query.search.cols.map(f => {
-				if (schema.fieldAliases && schema.fieldAliases[f]) {
-					return schema.fieldAliases[f];
-				}
-				return f;
-			});
-			fields.push(AKSO.db.raw(
-				`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
-				AGAINST (? IN BOOLEAN MODE) as ??`,
+			const allCols = req.query.search.cols.join(',');
+			if (allCols in schema.customSearch) {
+				const customSearchFn = schema.customSearch[allCols];
+				const matchFn = cols => AKSO.db.raw(
+					`MATCH (${'??,'.repeat(cols.length).slice(0,-1)})
+					AGAINST (? IN BOOLEAN MODE)`,
 
-				[ ...searchCols, req.query.search.query, '_relevance' ]
-			));
-			query.whereRaw(
-				`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
-				AGAINST (? IN BOOLEAN MODE)`,
+					[ ...cols, req.query.search.query ]
+				);
+				const searchStmt = customSearchFn(matchFn);
+				selectFields.push(AKSO.db.raw(searchStmt + ' as `_relevance`'));
+				query.whereRaw(searchStmt);
 
-				[ ...searchCols, req.query.search.query ]
-			);
+			} else {
+				const searchCols = req.query.search.cols.map(f => {
+					if (schema.fieldAliases && schema.fieldAliases[f]) {
+						return schema.fieldAliases[f];
+					}
+					return f;
+				});
+				selectFields.push(AKSO.db.raw(
+					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
+					AGAINST (? IN BOOLEAN MODE) as ??`,
+
+					[ ...searchCols, req.query.search.query, '_relevance' ]
+				));
+				query.whereRaw(
+					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
+					AGAINST (? IN BOOLEAN MODE)`,
+
+					[ ...searchCols, req.query.search.query ]
+				);
+			}
 		}
 
 		query.select(selectFields);
@@ -278,6 +293,7 @@ const QueryUtil = {
 			.clearSelect()
 			.first(AKSO.db.raw('count(1) as `count`'))
 
+			.clearOrder()
 			.limit(Number.MAX_SAFE_INTEGER)
 			.offset(0);
 

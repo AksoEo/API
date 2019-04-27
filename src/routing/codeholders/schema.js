@@ -76,6 +76,13 @@ export const schema = {
 		'firstName,firstNameLegal,lastName,lastNameLegal',
 		'fullName,fullNameLocal,nameAbbrev'
 	],
+	customSearch: {
+		'name': match => AKSO.db.raw(
+			`IF(codeholderType = "human",
+				${match(['firstName', 'firstNameLegal', 'lastName', 'lastNameLegal'])},
+				${match(['fullName', 'fullNameLocal', 'nameAbbrev'])}
+			)`)
+	},
 	alwaysSelect: [
 		'codeholderType'
 	]
