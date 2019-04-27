@@ -23,6 +23,7 @@ export const schema = {
 		'addressLatin.streetAddress': 'fs',
 		'addressLatin.postalCode': 'fs',
 		'addressLatin.sortingCode': 'fs',
+		'searchAddress': 's',
 		'email': 'fs',
 		'notes': 'fs',
 		'enabled': 'f',
@@ -66,6 +67,7 @@ export const schema = {
 		'addressLatin.streetAddress': 'address_streetAddress_latin',
 		'addressLatin.postalCode': 'address_postalCode_latin',
 		'addressLatin.sortingCode': 'address_sortingCode_latin',
+		'searchAddress': 'address_search',
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone'
