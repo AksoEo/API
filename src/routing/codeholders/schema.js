@@ -30,6 +30,7 @@ export const schema = {
 		'officePhone': 's',
 		'officePhoneFormatted': '',
 		'isDead': 'f',
+		'deathdate': 'f',
 
 		// HumanCodeholder
 		'firstName': 'f',

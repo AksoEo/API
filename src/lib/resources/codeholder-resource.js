@@ -46,6 +46,7 @@ class CodeholderResource extends SimpleResource {
 
 		if (this.obj.notes === null) { this.obj.notes = ''; }
 		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }
+		if (this.obj.deathdate) { this.obj.deathdate = moment(this.obj.deathdate).format('Y-MM-DD'); }
 		
 		if (fields.indexOf('officePhoneFormatted')) {
 			if (this.obj.officePhone) {
