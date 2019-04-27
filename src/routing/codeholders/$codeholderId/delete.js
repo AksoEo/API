@@ -8,6 +8,7 @@ const schema = {
 		requirePerms: 'codeholders.delete'
 	}
 };
+schema.alwaysWhere = (query, req) => memberFilter(schema, query, req);
 
 export default {
 	schema: schema,
@@ -17,9 +18,6 @@ export default {
 		const queryCodeholder = AKSO.db('view_codeholders');
 		queryCodeholder.where('id', req.params.codeholderId);
 		queryCodeholder.first(1);
-
-		// Restrictions
-		memberFilter(schema, queryCodeholder, req);
 
 		const codeholder = await queryCodeholder;
 		if (!codeholder) { return res.sendStatus(404); }

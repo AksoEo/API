@@ -262,6 +262,7 @@ const QueryUtil = {
 
 		query.select(selectFields);
 
+		if (schema.alwaysWhere) { schema.alwaysWhere(query, req); }
 		// ?filter
 		if (req.query.filter) {
 			QueryUtil.filter(
@@ -300,6 +301,7 @@ const QueryUtil = {
 		metadata.totalItems = metaQuery.clone();
 
 		metaQuery.clearWhere();
+		if (schema.alwaysWhere) { schema.alwaysWhere(metaQuery, req); }
 		metadata.totalItemNoFilter = metaQuery.clone();
 
 		return metadata;

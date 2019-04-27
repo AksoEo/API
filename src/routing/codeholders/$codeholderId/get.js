@@ -11,6 +11,7 @@ const schema = {
 		requirePerms: 'codeholders.read'
 	}
 };
+schema.alwaysWhere = (query, req) => memberFilter(schema, query, req);
 
 export default {
 	schema: schema,
@@ -19,7 +20,6 @@ export default {
 		const query = AKSO.db('view_codeholders');
 
 		// Restrictions
-		memberFilter(schema, query, req);
 		if (!memberFields(schema, req, res, 'r')) { return; }
 
 		QueryUtil.simpleResource(req, schema, query);

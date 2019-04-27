@@ -10,6 +10,7 @@ const schema = {
 		requirePerms: 'codeholders.read'
 	}
 };
+schema.alwaysWhere = (query, req) => memberFilter(schema, query, req);
 
 const languages = [
 	'eo', 'en', 'fr', 'es',
@@ -65,7 +66,6 @@ export default {
 			]);
 
 		// Restrictions
-		memberFilter(schema, codeholderQuery, req);
 		const requiredMemberFields = [
 			'id',
 			'address.country',

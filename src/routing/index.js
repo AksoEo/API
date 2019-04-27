@@ -134,9 +134,11 @@ export function bindMethod (router, path, method, bind) {
 			 * 						s = searchable
 			 * [fieldSearchGroups]:	An array of fields searchable only together, e.g.
 	 		 * 						[ 'firstName,lastName' ]
+	 		 * [customSearch]:      An object of colName:function for custom search mappings. The function takes one argument, `match` which is a function taking one argument, the columns to match against, which will generate the `MATCH (...) AGAINST (...)` statement. The function must return a knex raw statement
 	 		 * [fieldAliases]:		An object of alias:colName used for mapping REST aliases to their actual db col name
 			 * [defaultFields]: 	The default fields to be selected when query.fields is undefined
 			 * [alwaysSelect]:      An array of fields that always are to be selected
+			 * [alwaysWhere]:       A function with two arguments, `query` (a knex query) and `req` (the express request), which will add a where clause to the query that should always be included, even in metadata.
 			 * body:				null for none allowed,
 			 * 						Object for JSON schema validation
 			 * [requirePerms]:  	An array of strings or a string containing required permissions
