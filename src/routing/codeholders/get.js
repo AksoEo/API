@@ -23,6 +23,8 @@ export default {
 		// Restrictions
 		if (!memberFields(schema, req, res, 'r')) { return; }
 
-		await QueryUtil.handleCollection(req, res, schema, query, CodeholderResource, SimpleCollection, [[ req, schema ]], Object.keys(req.memberFields));
+		let fieldWhitelist = null;
+		if (req.memberFields) { fieldWhitelist = Object.keys(req.memberFields); }
+		await QueryUtil.handleCollection(req, res, schema, query, CodeholderResource, SimpleCollection, [[ req, schema ]], fieldWhitelist);
 	}
 };
