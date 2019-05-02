@@ -6,7 +6,7 @@ import operation$create_password from './!create_password';
 import operation$create_password_use from './!create_password_use';
 
 /**
- * Sets up /codeholders/{email}
+ * Sets up /codeholders/{login}
  * @return {express.Router}
  */
 export function init () {

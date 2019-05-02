@@ -6,45 +6,40 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 	req.memberFilter = {};
 	req.permissions = [];
 
-	// Override for authenticated users
-	if (req.user && req.user.isUser()) {
-		req.memberFilter.id = req.user.user;
-		req.memberFields = {
-			id: 'r',
-			oldCode: 'r',
-			newCode: 'r',
-			codeholderType: 'r',
-			password: 'w',
-			address: 'rw',
-			feeCountry: 'ra',
-			addressLatin: 'r',
-			email: 'rw',
-			officePhone: 'rw',
-			officePhoneFormatted: 'r',
+	req.ownMemberFields = {
+		id: 'r',
+		oldCode: 'r',
+		newCode: 'r',
+		codeholderType: 'r',
+		password: 'w',
+		address: 'rw',
+		feeCountry: 'ra',
+		addressLatin: 'r',
+		email: 'rw',
+		officePhone: 'rw',
+		officePhoneFormatted: 'r',
 
-			// Humans
-			firstName: 'rw',
-			firstNameLegal: 'rw',
-			lastName: 'rw',
-			lastNameLegal: 'rw',
-			honorific: 'rw',
-			birthdate: 'ra',
-			age: 'r',
-			agePrimo: 'r',
-			profession: 'rw',
-			landlinePhone: 'rw',
-			landlinePhoneFormatted: 'r',
-			cellphone: 'rw',
-			cellphoneFormatted: 'r',
+		// Humans
+		firstName: 'rw',
+		firstNameLegal: 'rw',
+		lastName: 'rw',
+		lastNameLegal: 'rw',
+		honorific: 'rw',
+		birthdate: 'ra',
+		age: 'r',
+		agePrimo: 'r',
+		profession: 'rw',
+		landlinePhone: 'rw',
+		landlinePhoneFormatted: 'r',
+		cellphone: 'rw',
+		cellphoneFormatted: 'r',
 
-			// Orgs
-			fullName: 'rw',
-			fullNameLocal: 'rw',
-			careOf: 'rw',
-			nameAbbrev: 'rw'
-		};
-		req.permissions.push('codeholders.read', 'codeholders.update');
-	}
+		// Orgs
+		fullName: 'rw',
+		fullNameLocal: 'rw',
+		careOf: 'rw',
+		nameAbbrev: 'rw'
+	};
 
 	// Override permissions for all authenticated clients
 	let clientPerms;

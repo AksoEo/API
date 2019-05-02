@@ -99,25 +99,26 @@ export function memberFilter (schema, query, req) {
 	);
 }
 
-export function memberFields (defaultFields, req, res, flag) {
+export function memberFields (defaultFields, req, res, flag, memberFields) {
 	const fields = req.query.fields || schema.defaultFields;
 
-	const haveFlag = memberFieldsManual(fields, req, flag);
+	const haveFlag = memberFieldsManual(fields, req, flag, memberFields);
 	if (!haveFlag) {
-		res.status(401).send('Illegal codeholder fields used, check /perms');
+		res.status(403).type('text/plain').send('Illegal codeholder fields used, check /perms');
 	}
 
 	return haveFlag;
 }
 
-export function memberFieldsManual (fields, req, flag) {
+export function memberFieldsManual (fields, req, flag, memberFields) {
+	if (memberFields === undefined) { memberFields = req.memberFields; }
 	if (req.memberFields === null) { return true; }
 
 	const haveFlag = fields
 		.map(f => f.split('.')[0])
 		.map(f => {
-			if (!(f in req.memberFields)) { return false; }
-			return req.memberFields[f].indexOf(flag) > -1;
+			if (!(f in memberFields)) { return false; }
+			return memberFields[f].indexOf(flag) > -1;
 		})
 		.reduce((a, b) => a && b);
 
