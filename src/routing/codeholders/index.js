@@ -22,22 +22,14 @@ export function init () {
 	const codeholderIdsRegex = /^\d+(,\d+){0,99}$/;
 	router.param('codeholderIds', (req, res, next, val) => {
 		if (codeholderIdsRegex.test(val)) { next(); }
-		else {
-			const err = new Error();
-			err.statusCode = 404;
-			next(err);
-		}
+		else { next('route'); }
 	});
 	router.use('/:codeholderIds', route$$codeholderIds());
 
 	const loginRegex = /^([^@]+@[^@]+|[a-z]{4}([a-z]{2})?)$/;
 	router.param('login', (req, res, next, val) => {
 		if (loginRegex.test(val)) { next(); }
-		else {
-			const err = new Error();
-			err.statusCode = 404;
-			next(err);
-		}
+		else { next('route'); }
 	});
 	router.use('/:login', route$$login());
 

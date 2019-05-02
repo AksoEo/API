@@ -34,7 +34,6 @@ export default {
 			.where({
 				...whereStmt,
 				...{
-					password: null,
 					enabled: true,
 					isDead: false,
 					createPasswordKey: req.body.key

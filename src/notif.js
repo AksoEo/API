@@ -3,7 +3,7 @@ import * as AKSOMail from './mail';
 
 /**
  * Sends a notification to a number of recipients
- * @param  {number[]} options.codeholderIds The codeholder ids of the recipients
+ * @param  {number[]} options.codeholderIds   The codeholder ids of the recipients
  * @param  {string}   options.org             The organization of the notification
  * @param  {string}   options.notif           The name of the template for the notification
  * @param  {string}   options.category        The category of the notification
@@ -34,12 +34,12 @@ export async function sendNotification ({
 		msgPrefs.set(pref.codeholderId, pref.pref.split(','));
 	}
 
-	const recipients = {};
+	const recipients = {
+		telegram: [],
+		email: []
+	};
 	for (let [id, prefs] of msgPrefs.entries()) {
-		for (let pref of prefs) {
-			if (!(pref in recipients)) { recipients[pref] = []; }
-			recipients[pref].push(id);
-		}
+		for (let pref of prefs) { recipients[pref].push(id); }
 	}
 
 	// Send Telegram messages
