@@ -45,7 +45,7 @@ export default {
 					.where('createPasswordTime', '<', moment().unix() - AKSO.CREATE_PASSWORD_FREQ)
 					.orWhere('createPasswordTime', null);
 			})
-			.first('id', 'email');
+			.first('id', 'newCode');
 
 		if (!codeholder) { return; }
 
@@ -66,7 +66,7 @@ export default {
 			notif: 'forgot-password',
 			category: 'account',
 			view: {
-				email: encodeURIComponent(codeholder.email),
+				code: encodeURIComponent(codeholder.newCode),
 				key: createPasswordKey.toString('hex')
 			}
 		});
