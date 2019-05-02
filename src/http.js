@@ -286,7 +286,8 @@ function setupMiddleware (req, res,  next) {
 			path: Url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.originalQuery) || '{}',
 			resStatus: res.statusCode,
-			resTime: res.get('x-response-time').slice(0, -2)
+			resTime: res.get('x-response-time').slice(0, -2),
+			resLocation: res.get('location') || null
 		};
 
 		// max length
