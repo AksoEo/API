@@ -59,33 +59,33 @@ function filterAssertObject (val) {
 }
 
 const filterLogicOps = {
-	$and: function filterLogicOpAnd (fields, query, filterArr) {
+	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
-				QueryUtil.filter(fields, this, obj);
+				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist);
 			}
 		});
 	},
-	$or: function filterLogicOpOr (fields, query, filterArr) {
+	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
 				this.orWhere(function () {
-					QueryUtil.filter(fields, this, obj);
+					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist);
 				});
 			}
 		});
 	},
-	$not: function filterLogicOpNot (fields, query, filterObj) {
+	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist) {
 		filterAssertObject(filterObj);
 
 		query.whereNot(function () {
-			QueryUtil.filter(fields, this, filterObj);
+			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist);
 		});
 	}
 };
@@ -138,14 +138,24 @@ const filterCompOps = {
 const QueryUtil = {
 	/**
 	 * Handles the ?filter parameter
-	 * @param {string[]}          fields         The permitted filterable fields
-	 * @param {knex.QueryBuilder} query          The query builder to apply the where statement to
-	 * @param {Object}            filterObj      The filter object as supplied by `req.query.filter`
-	 * @param {Object}            [fieldAliases] The field aliases as defined in the schema
+	 * @param {string[]}          fields           The permitted filterable fields
+	 * @param {knex.QueryBuilder} query            The query builder to apply the where statement to
+	 * @param {Object}            filterObj        The filter object as supplied by `req.query.filter`
+	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
+	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client override
 	 */
-	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}) {
+	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null) {
+		if (!fieldWhitelist) { fieldWhitelist = fields; }
+
 		query.where(function () {
 			for (let key in filterObj) { // Iterate through each key
+				// Ensure the client has the necessary permissions
+				if (fieldWhitelist.indexOf(key) === -1) {
+					const err = new Error(`Disallowed field ${key} used in ?filter`);
+					err.statusCode = 403;
+					throw err;
+				}
+
 				if (fields.indexOf(key) > -1) { // key is a field
 					let val = filterObj[key];
 					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
@@ -170,7 +180,7 @@ const QueryUtil = {
 				} else if (key in filterLogicOps) {
 					// Check if the field is an alias
 					if (fieldAliases && fieldAliases[key]) { key = fieldAliases[key]; }
-					filterLogicOps[key](fields, this, filterObj[key]);
+					filterLogicOps[key](fields, this, filterObj[key], fieldAliases, fieldWhitelist);
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
 					err.statusCode = 400;
@@ -205,13 +215,14 @@ const QueryUtil = {
 	/**
 	 * Handles a simple collection
 	 * @param  {express.Request}   req
-	 * @param  {Object}            schema The endpoint's schema
-	 * @param  {knex.QueryBuilder} query  The query to build upon
+	 * @param  {Object}            schema           The endpoint's schema
+	 * @param  {knex.QueryBuilder} query            The query to build upon
+	 * @param  {Array}             [fieldWhitelist] The permitted fields for per client override
 	 * @return {Object} An object containing metadata on the collection:
 	 *     {knex.QueryBuilder} `totalItems`        The total amount of items in the collection without `?limit` and `?offset`
 	 *     {knex.QueryBuilder} `totalItemNoFilter` The total amount of items in the collection without `?limit`, `?offset`, `?search` and `?filter`
 	 */
-	simpleCollection: function queryUtilSimpleCollection (req, schema, query) {
+	simpleCollection: function queryUtilSimpleCollection (req, schema, query, fieldWhitelist = null) {
 		// ?fields, ?search
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
@@ -225,6 +236,12 @@ const QueryUtil = {
 			.concat(schema.alwaysSelect || []);
 
 		if (req.query.search) {
+			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {
+				const err = new Error('Disallowed field used in ?search');
+				err.statusCode = 403;
+				throw err;
+			}
+
 			const allCols = req.query.search.cols.join(',');
 			if (allCols in schema.customSearch) {
 				const customSearchFn = schema.customSearch[allCols];
@@ -270,12 +287,18 @@ const QueryUtil = {
 					.filter(x => schema.fields[x].indexOf('f' > -1)),
 				query,
 				req.query.filter,
-				schema.fieldAliases || {}
+				schema.fieldAliases || {},
+				fieldWhitelist
 			);
 		}
 
 		// ?order
 		if (req.query.order) {
+			if (fieldWhitelist && !req.query.order.map(x => x.column).every(f => fieldWhitelist.includes(f))) {
+				const err = new Error('Disallowed field used in ?order');
+				err.statusCode = 403;
+				throw err;
+			}
 			query.orderBy(req.query.order);
 		}
 
@@ -321,15 +344,16 @@ const QueryUtil = {
 	 * Handles an entire basic collection
 	 * @param {express.Request}   req
 	 * @param {express.Response}  res
-	 * @param {Object}            schema      The schema as used in bindMethod
-	 * @param {knex.QueryBuilder} query       The query to build upon
-	 * @param {Object}            [Res]       The resource type to use
-	 * @param {Object}            [Col]       The collection type to use
-	 * @param {Object}            [passToCol] Variables to pass to the collection's constructor
+	 * @param {Object}            schema           The schema as used in bindMethod
+	 * @param {knex.QueryBuilder} query            The query to build upon
+	 * @param {Object}            [Res]            The resource type to use
+	 * @param {Object}            [Col]            The collection type to use
+	 * @param {Object}            [passToCol]      Variables to pass to the collection's constructor
+	 * @param  {Array}            [fieldWhitelist] The permitted fields for per client override
 	 */
-	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = []) {
+	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null) {
 		await QueryUtil.collectionMetadata(res, 
-			QueryUtil.simpleCollection(req, schema, query)
+			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
 		);
 		const data = new Col(await query, Res, ...passToCol);
 		res.sendObj(data);

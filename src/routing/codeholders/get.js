@@ -23,6 +23,6 @@ export default {
 		// Restrictions
 		if (!memberFields(schema, req, res, 'r')) { return; }
 
-		await QueryUtil.handleCollection(req, res, schema, query, CodeholderResource, SimpleCollection, [[ req, schema ]]);
+		await QueryUtil.handleCollection(req, res, schema, query, CodeholderResource, SimpleCollection, [[ req, schema ]], Object.keys(req.memberFields));
 	}
 };
