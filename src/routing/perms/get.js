@@ -8,7 +8,8 @@ export default {
 		res.sendObj({
 			permissions: req.permissions,
 			memberFields: req.memberFields,
-			memberFilter: req.memberFilter
+			memberFilter: req.memberFilter,
+			ownMemberFields: req.ownMemberFields
 		});
 	}
 };
