@@ -151,7 +151,7 @@ export function bindMethod (router, path, method, bind) {
 				for (let perm of bind.schema.requirePerms) {
 					if (!req.hasPermission(perm)) {
 						const err = new Error(`Missing permission ${perm}`);
-						err.statusCode = 401;
+						err.statusCode = 403;
 						return next(err);
 					}
 				}
