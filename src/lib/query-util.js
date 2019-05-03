@@ -58,6 +58,14 @@ function filterAssertObject (val) {
 	}
 }
 
+function getAlias (fieldAliases, field) {
+	if (!fieldAliases) { return field; }
+	const alias = fieldAliases[field];
+	if (!alias) { return field; }
+	if (typeof alias === 'string') { return alias; }
+	if (typeof alias === 'function') { return alias(); }
+}
+
 const filterLogicOps = {
 	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist) {
 		filterAssertArray(filterArr);
@@ -142,7 +150,7 @@ const QueryUtil = {
 	 * @param {knex.QueryBuilder} query            The query builder to apply the where statement to
 	 * @param {Object}            filterObj        The filter object as supplied by `req.query.filter`
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
-	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client override
+	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
 	 */
 	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null) {
 		if (!fieldWhitelist) { fieldWhitelist = fields; }
@@ -172,14 +180,14 @@ const QueryUtil = {
 							}
 
 							// Check if the field is an alias
-							if (fieldAliases && fieldAliases[key]) { key = fieldAliases[key]; }
+							key = getAlias(fieldAliases, key);
 							filterCompOps[compOp](key, this, val[compOp]);
 						}
 					});
 
 				} else if (key in filterLogicOps) {
 					// Check if the field is an alias
-					if (fieldAliases && fieldAliases[key]) { key = fieldAliases[key]; }
+					key = getAlias(fieldAliases, key);
 					filterLogicOps[key](fields, this, filterObj[key], fieldAliases, fieldWhitelist);
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
@@ -202,13 +210,8 @@ const QueryUtil = {
 
 		// Get the actual db col names
 		const selectFields = fields
-			.map(f => {
-				if (schema.fieldAliases && schema.fieldAliases[f]) {
-					return schema.fieldAliases[f];
-				}
-				return f;
-			})
-			.concat(schema.alwaysSelect || []);
+			.concat(schema.alwaysSelect || [])
+			.map(f => getAlias(schema.fieldAliases, f));
 		query.first(selectFields);
 	},
 
@@ -217,7 +220,7 @@ const QueryUtil = {
 	 * @param  {express.Request}   req
 	 * @param  {Object}            schema           The endpoint's schema
 	 * @param  {knex.QueryBuilder} query            The query to build upon
-	 * @param  {Array}             [fieldWhitelist] The permitted fields for per client override
+	 * @param  {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
 	 * @return {Object} An object containing metadata on the collection:
 	 *     {knex.QueryBuilder} `totalItems`        The total amount of items in the collection without `?limit` and `?offset`
 	 *     {knex.QueryBuilder} `totalItemNoFilter` The total amount of items in the collection without `?limit`, `?offset`, `?search` and `?filter`
@@ -227,13 +230,8 @@ const QueryUtil = {
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
 		const selectFields = fields
-			.map(f => {
-				if (schema.fieldAliases && schema.fieldAliases[f]) {
-					return schema.fieldAliases[f];
-				}
-				return f;
-			})
-			.concat(schema.alwaysSelect || []);
+			.concat(schema.alwaysSelect || [])
+			.map(f => getAlias(schema.fieldAliases, f));
 
 		if (req.query.search) {
 			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {
@@ -256,12 +254,7 @@ const QueryUtil = {
 				query.whereRaw(searchStmt);
 
 			} else {
-				const searchCols = req.query.search.cols.map(f => {
-					if (schema.fieldAliases && schema.fieldAliases[f]) {
-						return schema.fieldAliases[f];
-					}
-					return f;
-				});
+				const searchCols = req.query.search.cols.map(f => getAlias(schema.fieldAliases, f));
 				selectFields.push(AKSO.db.raw(
 					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 					AGAINST (? IN BOOLEAN MODE) as ??`,
@@ -349,7 +342,7 @@ const QueryUtil = {
 	 * @param {Object}            [Res]            The resource type to use
 	 * @param {Object}            [Col]            The collection type to use
 	 * @param {Object}            [passToCol]      Variables to pass to the collection's constructor
-	 * @param  {Array}            [fieldWhitelist] The permitted fields for per client override
+	 * @param {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
 	 */
 	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null) {
 		await QueryUtil.collectionMetadata(res, 

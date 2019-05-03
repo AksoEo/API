@@ -41,7 +41,9 @@ async function init () {
 				rateLimit:			process.env.AKSO_HTTP_DISABLE_RATE_LIMIT === undefined ?
 					true : process.env.AKSO_HTTP_DISABLE_RATE_LIMIT == '0',
 				loginSlowDown:		process.env.AKSO_HTTP_DISABLE_SLOW_DOWN === undefined ?
-					true : process.env.AKSO_HTTP_DISABLE_SLOW_DOWN == '0'
+					true : process.env.AKSO_HTTP_DISABLE_SLOW_DOWN == '0',
+				path:				process.env.AKSO_HTTP_PATH === undefined ?
+					'/' : process.env.AKSO.HTTP_PATH
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,

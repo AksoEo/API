@@ -9,6 +9,7 @@ import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
 import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
+import { init as route$country_groups } from './country_groups';
 import { init as route$http_log } from './http_log';
 
 const ajv = new Ajv({
@@ -68,6 +69,7 @@ export function init () {
 
 	router.use('/codeholders', route$codeholders());
 	router.use('/countries', route$countries());
+	router.use('/country_groups', route$country_groups());
 	router.use('/http_log', route$http_log());
 
 	return router;
