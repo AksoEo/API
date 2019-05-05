@@ -323,7 +323,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,NULL,NULL,NULL,0,NULL),(3,'org','tejo','xxtejo',NULL,NULL,NULL,'admin@akso.org',1,NULL,NULL,'+31104361044',0,NULL);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',1557067928,_binary '∫ÄCÜl\Ê\⁄\\1∏çz(ß','mia@tejo.org',1,NULL,NULL,NULL,0,NULL),(3,'org','tejo','xxtejo',NULL,NULL,NULL,'admin@akso.org',1,NULL,NULL,'+31104361044',0,NULL);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,6 +372,41 @@ LOCK TABLES `codeholders_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_address` DISABLE KEYS */;
 INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','Brooklyn','Brooklyn',NULL,NULL,'1 Union St.','1 Union St.','11231','11231',NULL,NULL,'1 Union Street\r\nBrooklyn 11231\r\nNew York\r\nUSONO'),(3,'nl',NULL,NULL,'Rotterdam','Rotterdam',NULL,NULL,'Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ',NULL,NULL,'Nieuwe Binnenweg 176, 3015BJ Rotterdam, Nederlando');
 /*!40000 ALTER TABLE `codeholders_address` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_files`
+--
+
+DROP TABLE IF EXISTS `codeholders_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_files` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `time` bigint(20) unsigned NOT NULL,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `addedBy` int(10) unsigned DEFAULT NULL,
+  `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mime` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `codeholderId` (`codeholderId`),
+  KEY `addedBy` (`addedBy`),
+  KEY `time` (`time`),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  CONSTRAINT `codeholders_files_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `codeholders_files_ibfk_2` FOREIGN KEY (`addedBy`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_files`
+--
+
+LOCK TABLES `codeholders_files` WRITE;
+/*!40000 ALTER TABLE `codeholders_files` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_files` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -835,6 +870,7 @@ CREATE TABLE `countries` (
   `name_zh` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_de` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_german2_ci NOT NULL,
   PRIMARY KEY (`code`),
+  KEY `enabled` (`enabled`),
   FULLTEXT KEY `name` (`name_eo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1087,4 +1123,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-03 15:35:02
+-- Dump completed on 2019-05-05 17:05:55

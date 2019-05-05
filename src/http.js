@@ -114,25 +114,25 @@ export function init () {
 				}
 			}));
 			// Disallow all other content types
-			app.use(bodyParser.raw({
-				type: () => true,
-				verify: (req, res, buf) => {
-					// Content-Type is only required if a body is supplied
-					if (buf.length === 0) {
-						return;
-					}
+			app.use((req, res, next) => {
+				if (!req.get('content-type')) { return next(); }
 
+				if (!(
+					req.is('application/json') ||
+					req.is('application/vnd.msgpack') ||
+					req.is('application/x-www-form-urlencoded') ||
+					req.is('multipart/form-data')
+				)) {
 					const err = new Error('Unsupported media type');
 					err.statusCode = 415;
 					throw err;
 				}
-			}));
+
+				next();
+			});
 			// Parse msgpack
 			app.use(function (req, res, next) {
-				if (req.headers['content-type'] !== 'application/vnd.msgpack') {
-					next();
-					return;
-				}
+				if (!req.is('application/vnd.msgpack')) { return next(); }
 
 				try {
 					req.body = msgpack.decode(req.body, { codec: AKSO.msgpack });

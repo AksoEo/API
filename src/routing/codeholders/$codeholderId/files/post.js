@@ -1,0 +1,73 @@
+import fs from 'fs-extra';
+import path from 'path';
+import moment from 'moment';
+
+import { schema as parSchema, memberFilter, memberFieldsManual } from '../../schema';
+
+export default {
+	schema: {
+		query: null,
+		body: {
+			properties: {
+				name: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 80,
+					pattern: '^[^\\n]+$'
+				},
+				description: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 300
+				}
+			},
+			additionalProperties: false,
+			required: [ 'name' ]
+		},
+		multipart: [
+			{
+				name: 'file',
+				maxCount: 1,
+				minCount: 1,
+				maxSize: '6mb'
+			}
+		],
+		requirePerms: 'codeholders.update'
+	},
+
+	run: async function run (req, res) {
+		// Check member fields
+		const requiredMemberFields = [
+			'id',
+			'files'
+		];
+		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
+			return res.status(403).send('Missing permitted files codeholder fields, check /perms');
+		}
+
+		// Ensure that the we can access the codeholder through the member filter
+		const codeholderQuery = AKSO.db('view_codeholders')
+			.where('id', req.params.codeholderId)
+			.first(1);
+		memberFilter(parSchema, codeholderQuery, req);
+		if (!await codeholderQuery) { return res.sendStatus(404); }
+
+		const file = req.files.file[0];
+
+		// Insert into the db
+		const fileId = (await AKSO.db('codeholders_files').insert({
+			time: moment().unix(),
+			codeholderId: req.params.codeholderId,
+			addedBy: req.user && req.user.user ? req.user.user : null,
+			name: req.body.name,
+			description: req.body.description,
+			mime: file.mimetype
+		}))[0];
+
+		// Move the file
+		await fs.move(file.path, path.join(AKSO.conf.dataDir, 'codeholder_files', fileId.toString()));
+
+		res.set('Location', `/codeholders/${req.params.codeholderId}/files/${fileId}`);
+		res.sendStatus(201);
+	}
+};

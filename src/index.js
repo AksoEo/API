@@ -2,6 +2,7 @@ import winston from 'winston';
 import moment from 'moment';
 import msgpack from 'msgpack-lite';
 import path from 'path';
+import fs from 'fs-extra';
 
 import * as AKSOMail from './mail';
 import * as AKSOTelegram from './telegram';
@@ -58,7 +59,8 @@ async function init () {
 				token: process.env.AKSO_TELEGRAM_TOKEN
 			},
 			prodMode: process.env.NODE_ENV || 'dev',
-			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex')
+			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex'),
+			dataDir: process.env.AKSO_DATA_DIR
 		},
 
 		// Constants, do not change without updating docs
@@ -119,6 +121,16 @@ async function init () {
 		AKSO.log.error('AKSO_TOTP_AES_KEY must be 32 bytes encoded in hex');
 		process.exit(1);
 	}
+	if (!AKSO.conf.dataDir) {
+		AKSO.log.error('Missing AKSO_DATA_DIR');
+		process.exit(1);
+	} else if (!fs.statSync(AKSO.conf.dataDir).isDirectory()) {
+		AKSO.log.error('AKSO_DATA_DIR must be a directory');
+		process.exit(1);
+	}
+
+	// Set up subdirs in data dir
+	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files'));
 
 	// Init
 	moment.locale('en');

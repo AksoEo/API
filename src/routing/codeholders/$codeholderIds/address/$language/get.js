@@ -83,7 +83,7 @@ export default {
 			'careOf'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
-			return res.status(401).send('Missing permitted address codeholder fields, check /perms');
+			return res.status(403).send('Missing permitted address codeholder fields, check /perms');
 		}
 
 		const codeholders = await codeholderQuery;
