@@ -2,7 +2,8 @@ export default {
 	defaultFields: [ 'code' ],
 	fields: {
 		'code': 'f',
-		'name_eo': 's',
+		'enabled': 'f',
+		'name_eo': 'fs',
 		'name_en': '',
 		'name_fr': '',
 		'name_es': '',
