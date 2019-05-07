@@ -1015,6 +1015,35 @@ LOCK TABLES `httpLog` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `savedQueries`
+--
+
+DROP TABLE IF EXISTS `savedQueries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `savedQueries` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `query` json NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `category` (`category`),
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `savedQueries`
+--
+
+LOCK TABLES `savedQueries` WRITE;
+/*!40000 ALTER TABLE `savedQueries` DISABLE KEYS */;
+/*!40000 ALTER TABLE `savedQueries` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Temporary table structure for view `view_codeholders`
 --
 
@@ -1155,4 +1184,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-07 12:04:41
+-- Dump completed on 2019-05-07 14:34:11
