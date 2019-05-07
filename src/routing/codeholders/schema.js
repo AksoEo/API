@@ -31,6 +31,7 @@ export const schema = {
 		'officePhoneFormatted': '',
 		'isDead': 'f',
 		'deathdate': 'f',
+		'hasProfilePicture': 'f',
 
 		// HumanCodeholder
 		'firstName': 'f',
@@ -124,3 +125,7 @@ export function memberFieldsManual (fields, req, flag, memberFields) {
 
 	return haveFlag;
 }
+
+export const profilePictureSizes = [
+	32, 64, 128, 256, 512
+];

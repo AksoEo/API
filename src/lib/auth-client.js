@@ -150,4 +150,9 @@ export default class AuthClient {
 		this._groups = await query;
 		return this._groups;
 	}
+
+	get modBy () {
+		if (this.isUser()) { return 'ch:' + this.user; }
+		else { return 'app:' + this.app.toString('hex'); }
+	}
 }

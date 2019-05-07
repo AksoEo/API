@@ -41,8 +41,9 @@ class CodeholderResource extends SimpleResource {
 			};
 		}
 
-		this.obj.enabled = !!this.obj.enabled;
-		this.obj.isDead  = !!this.obj.isDead;
+		this.obj.enabled           = !!this.obj.enabled;
+		this.obj.isDead            = !!this.obj.isDead;
+		this.obj.hasProfilePicture = !!this.obj.hasProfilePicture;
 
 		if (this.obj.notes === null) { this.obj.notes = ''; }
 		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }

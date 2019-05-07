@@ -131,6 +131,7 @@ async function init () {
 
 	// Set up subdirs in data dir
 	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files'));
+	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures'));
 
 	// Init
 	moment.locale('en');

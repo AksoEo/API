@@ -107,6 +107,11 @@ export function bindMethod (router, path, method, bind) {
 		validateBody = ajv.compile(bind.schema.body);
 	}
 
+	let validateQuery = null;
+	if (bind.schema && bind.schema.query && typeof bind.schema.query === 'object' && !Array.isArray(bind.schema.query)) {
+		validateQuery = ajv.compile(bind.schema.query);
+	}
+
 	// Matches certain MySQL InnoDB boolean mode queries according to the API spec
 	const querySearchRegex = XRegExp(
 		`^
@@ -133,9 +138,10 @@ export function bindMethod (router, path, method, bind) {
 			if (bind.schema) {
 				/**
 				 * query:				null for none allowed,
-				 * 						String 'collection' to allow collection parameters
-				 * 						String 'resource' to allow resource parameters
-				 * 						Array for a whitelist.
+				 * 						String 'collection' to allow collection parameters,
+				 * 						String 'resource' to allow resource parameters,
+				 * 						Array for a whitelist,
+				 * 						Object for JSON schema validation.
 				 * [maxQueryLimit]: 	The upper bound for ?limit, defaults to 100
 				 * [fields]:        	An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
 				 * 						f = filterable
@@ -148,7 +154,7 @@ export function bindMethod (router, path, method, bind) {
 				 * [alwaysSelect]:      An array of fields that always are to be selected
 				 * [alwaysWhere]:       A function with two arguments, `query` (a knex query) and `req` (the express request), which will add a where clause to the query that should always be included, even in metadata.
 				 * body:				null for none allowed,
-				 * 						Object for JSON schema validation
+				 * 						Object for JSON schema validation.
 				 * [multipart]:         Defaults to false. Must be an array of objects to pass to `multer#fields`. Additional options are:
 				 * 						minCount, maxSize, mimeCheck (a function with one argument which must return a boolean)
 				 * [requirePerms]:  	An array of strings or a string containing required permissions
@@ -254,6 +260,12 @@ export function bindMethod (router, path, method, bind) {
 								err.statusCode = 400;
 								return next(err);
 							}
+						}
+
+					} else if (typeof bind.schema.query === 'object') {
+						if (!validateQuery(req.query)) {
+							res.status(400).sendObj(validateQuery.errors);
+							return;
 						}
 
 					} else if (typeof bind.schema.query === 'string') {

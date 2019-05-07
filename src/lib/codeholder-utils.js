@@ -24,3 +24,18 @@ export async function getNamesAndEmails (...ids) {
 		};
 	});
 }
+
+/**
+ * The JSON schema used for validating codeholder mod query params
+ * @type {Object}
+ */
+export const modQuerySchema = {
+	properties: {
+		modCmt: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 500
+		}
+	},
+	additionalProperties: false
+};
