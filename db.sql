@@ -459,6 +459,125 @@ LOCK TABLES `codeholders_hist_address` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_birthdate`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_birthdate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_birthdate` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `birthdate` date DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  KEY `birthdate` (`birthdate`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_birthdate`
+--
+
+LOCK TABLES `codeholders_hist_birthdate` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_birthdate` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_birthdate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_careOf`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_careOf`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_careOf` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `careOf` (`careOf`),
+  CONSTRAINT `codeholders_hist_careOf_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_careOf`
+--
+
+LOCK TABLES `codeholders_hist_careOf` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_careOf` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_careOf` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_cellphone`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_cellphone`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_cellphone` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `cellphone` (`cellphone`),
+  CONSTRAINT `codeholders_hist_cellphone_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_cellphone`
+--
+
+LOCK TABLES `codeholders_hist_cellphone` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_cellphone` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_cellphone` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_deathdate`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_deathdate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_deathdate` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `deathdate` date DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  KEY `deathdate` (`deathdate`) USING BTREE,
+  CONSTRAINT `codeholders_hist_deathdate_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_deathdate`
+--
+
+LOCK TABLES `codeholders_hist_deathdate` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_deathdate` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_deathdate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_email`
 --
 
@@ -551,6 +670,155 @@ LOCK TABLES `codeholders_hist_feeCountry` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_firstName`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_firstName`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_firstName` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `firstName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `firstName` (`firstName`),
+  CONSTRAINT `codeholders_hist_firstName_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_firstName`
+--
+
+LOCK TABLES `codeholders_hist_firstName` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_firstName` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_firstName` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_firstNameLegal`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_firstNameLegal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_firstNameLegal` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `firstNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `firstNameLegal` (`firstNameLegal`),
+  CONSTRAINT `codeholders_hist_firstNameLegal_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_firstNameLegal`
+--
+
+LOCK TABLES `codeholders_hist_firstNameLegal` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_firstNameLegal` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_firstNameLegal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_fullName`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_fullName`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_fullName` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `fullName` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `fullName` (`fullName`),
+  CONSTRAINT `codeholders_hist_fullName_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_fullName`
+--
+
+LOCK TABLES `codeholders_hist_fullName` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_fullName` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_fullName` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_fullNameLocal`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_fullNameLocal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_fullNameLocal` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `fullNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `fullNameLocal` (`fullNameLocal`),
+  CONSTRAINT `codeholders_hist_fullNameLocal_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_fullNameLocal`
+--
+
+LOCK TABLES `codeholders_hist_fullNameLocal` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_fullNameLocal` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_fullNameLocal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_honorific`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_honorific`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_honorific` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `honorific` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_honorific_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_honorific`
+--
+
+LOCK TABLES `codeholders_hist_honorific` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_honorific` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_honorific` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_isDead`
 --
 
@@ -578,6 +846,126 @@ CREATE TABLE `codeholders_hist_isDead` (
 LOCK TABLES `codeholders_hist_isDead` WRITE;
 /*!40000 ALTER TABLE `codeholders_hist_isDead` DISABLE KEYS */;
 /*!40000 ALTER TABLE `codeholders_hist_isDead` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_landlinePhone`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_landlinePhone`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_landlinePhone` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `landlinePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `landlinePhone` (`landlinePhone`),
+  CONSTRAINT `codeholders_hist_landlinePhone_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_landlinePhone`
+--
+
+LOCK TABLES `codeholders_hist_landlinePhone` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_landlinePhone` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_landlinePhone` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_lastName`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_lastName`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_lastName` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `lastName` (`lastName`),
+  CONSTRAINT `codeholders_hist_lastName_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_lastName`
+--
+
+LOCK TABLES `codeholders_hist_lastName` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_lastName` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_lastName` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_lastNameLegal`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_lastNameLegal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_lastNameLegal` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `lastNameLegal` (`lastNameLegal`),
+  CONSTRAINT `codeholders_hist_lastNameLegal_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_lastNameLegal`
+--
+
+LOCK TABLES `codeholders_hist_lastNameLegal` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_lastNameLegal` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_lastNameLegal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_nameAbbrev`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_nameAbbrev`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_nameAbbrev` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `nameAbbrev` (`nameAbbrev`),
+  CONSTRAINT `codeholders_hist_nameAbbrev_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_nameAbbrev`
+--
+
+LOCK TABLES `codeholders_hist_nameAbbrev` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_nameAbbrev` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_nameAbbrev` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -696,6 +1084,35 @@ CREATE TABLE `codeholders_hist_password` (
 LOCK TABLES `codeholders_hist_password` WRITE;
 /*!40000 ALTER TABLE `codeholders_hist_password` DISABLE KEYS */;
 /*!40000 ALTER TABLE `codeholders_hist_password` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_profession`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_profession`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_profession` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_profession_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_profession`
+--
+
+LOCK TABLES `codeholders_hist_profession` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_profession` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_profession` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1184,4 +1601,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-07 14:34:11
+-- Dump completed on 2019-05-07 15:17:01
