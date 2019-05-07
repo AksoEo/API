@@ -1,4 +1,5 @@
 import QueryUtil from '../../lib/query-util';
+import CountryResource from '../../lib/resources/country-resource';
 
 import parSchema from './schema';
 
@@ -16,6 +17,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('countries');
-		await QueryUtil.handleCollection(req, res, schema, query);
+		await QueryUtil.handleCollection(req, res, schema, query, CountryResource);
 	}
 };
