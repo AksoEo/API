@@ -71,7 +71,7 @@ export default {
 		// Move the file
 		await fs.move(file.path, path.join(AKSO.conf.dataDir, 'codeholder_files', fileId.toString()));
 
-		res.set('Location', `/codeholders/${req.params.codeholderId}/files/${fileId}`);
+		res.set('Location', path.join(AKSO.conf.http.path, `/codeholders/${req.params.codeholderId}/files/${fileId}`));
 		res.sendStatus(201);
 	}
 };
