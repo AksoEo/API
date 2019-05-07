@@ -36,12 +36,15 @@ export default {
 	},
 
 	run: async function run (req, res) {
+		const file = req.files.file[0];
+
 		// Check member fields
 		const requiredMemberFields = [
 			'id',
 			'files'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
+			await cleanUp(file);
 			return res.status(403).send('Missing permitted files codeholder fields, check /perms');
 		}
 
@@ -50,9 +53,10 @@ export default {
 			.where('id', req.params.codeholderId)
 			.first(1);
 		memberFilter(parSchema, codeholderQuery, req);
-		if (!await codeholderQuery) { return res.sendStatus(404); }
-
-		const file = req.files.file[0];
+		if (!await codeholderQuery) {
+			await cleanUp(file);
+			return res.sendStatus(404);
+		}
 
 		// Insert into the db
 		const fileId = (await AKSO.db('codeholders_files').insert({
@@ -71,3 +75,7 @@ export default {
 		res.sendStatus(201);
 	}
 };
+
+async function cleanUp (file) {
+	await fs.unlink(file.path);
+}
