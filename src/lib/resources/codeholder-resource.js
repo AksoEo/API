@@ -45,6 +45,21 @@ class CodeholderResource extends SimpleResource {
 		this.obj.isDead            = !!this.obj.isDead;
 		this.obj.hasProfilePicture = !!this.obj.hasProfilePicture;
 
+		if ('addressCountryGroups' in this.obj) {
+			if (typeof this.obj.addressCountryGroups === 'string') {
+				this.obj.addressCountryGroups = this.obj.addressCountryGroups.split(',');
+			} else {
+				this.obj.addressCountryGroups = [];
+			}
+		}
+		if ('feeCountryGroups' in this.obj) {
+			if (typeof this.obj.feeCountryGroups === 'string') {
+				this.obj.feeCountryGroups = this.obj.feeCountryGroups.split(',');
+			} else {
+				this.obj.feeCountryGroups = [];
+			}
+		}
+
 		if (this.obj.notes === null) { this.obj.notes = ''; }
 		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }
 		if (this.obj.deathdate) { this.obj.deathdate = moment(this.obj.deathdate).format('Y-MM-DD'); }

@@ -58,12 +58,16 @@ function filterAssertObject (val) {
 	}
 }
 
-function getAlias (fieldAliases, field) {
+function getAlias (fieldAliases, field, includeAs = true) {
 	if (!fieldAliases) { return field; }
 	const alias = fieldAliases[field];
 	if (!alias) { return field; }
 	if (typeof alias === 'string') { return alias; }
-	if (typeof alias === 'function') { return alias(); }
+	if (typeof alias === 'function') {
+		let newField = alias();
+		if (includeAs) { newField = AKSO.db.raw(newField + ' as ??', field); }
+		return newField;
+	}
 }
 
 const filterLogicOps = {
@@ -151,8 +155,9 @@ const QueryUtil = {
 	 * @param {Object}            filterObj        The filter object as supplied by `req.query.filter`
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
 	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
+	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/routing/codeholders/schema.js` for usage
 	 */
-	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null) {
+	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null, customCompOps = {}) {
 		if (!fieldWhitelist) { fieldWhitelist = fields; }
 
 		query.where(function () {
@@ -173,15 +178,24 @@ const QueryUtil = {
 					// Handle comparison operator
 					this.where(function () {
 						for (let compOp in val) {
-							if (!(compOp in filterCompOps)) {
+							// Check if the field is an alias
+							const orgKey = key;
+							key = getAlias(fieldAliases, key, false);
+
+							if (compOp in filterCompOps) {
+								filterCompOps[compOp](key, this, val[compOp]);
+							} else if (compOp in customCompOps && orgKey in customCompOps[compOp]) {
+								val = val[compOp];
+								if (compOp === '$hasAny') {
+									if (!Array.isArray(val)) { val = [ val ]; }
+									val.forEach(x => filterAssertScalar(x));
+								}
+								customCompOps[compOp][orgKey](this, val);
+							} else {
 								const err = new Error(`Unknown comparison operator ${compOp} used in ?filter`);
 								err.statusCode = 400;
 								throw err;
 							}
-
-							// Check if the field is an alias
-							key = getAlias(fieldAliases, key);
-							filterCompOps[compOp](key, this, val[compOp]);
 						}
 					});
 
@@ -281,7 +295,8 @@ const QueryUtil = {
 				query,
 				req.query.filter,
 				schema.fieldAliases || {},
-				fieldWhitelist
+				fieldWhitelist,
+				schema.customFilterCompOps
 			);
 		}
 

@@ -15,7 +15,9 @@ export const schema = {
 		'address.streetAddress': '',
 		'address.postalCode': '',
 		'address.sortingCode': '',
+		'addressCountryGroups': 'f',
 		'feeCountry': 'f',
+		'feeCountryGroups': 'f',
 		'addressLatin.country': 'f',
 		'addressLatin.countryArea': 'fs',
 		'addressLatin.city': 'fs',
@@ -69,6 +71,8 @@ export const schema = {
 		'addressLatin.streetAddress': 'address_streetAddress_latin',
 		'addressLatin.postalCode': 'address_postalCode_latin',
 		'addressLatin.sortingCode': 'address_sortingCode_latin',
+		'addressCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.address_country)'),
+		'feeCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.feeCountry)'),
 		'searchAddress': 'address_search',
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
@@ -86,8 +90,28 @@ export const schema = {
 			)`)
 	},
 	alwaysSelect: [
-		'codeholderType'
-	]
+		'codeholderType',
+		'addressCountryGroups',
+		'feeCountryGroups'
+	],
+	customFilterCompOps: {
+		$hasAny: {
+			addressCountryGroups: (query, arr) => {
+				query.whereExists(function () {
+					this.select(1).from('countries_groups_members')
+						.whereRaw('`countries_groups_members`.`country_code` = `view_codeholders`.`address_country`')
+						.whereIn('countries_groups_members.group_code', arr);
+				});
+			},
+			feeCountryGroups: (query, arr) => {
+				query.whereExists(function () {
+					this.select(1).from('countries_groups_members')
+						.whereRaw('`countries_groups_members`.`country_code` = `view_codeholders`.`address_country`')
+						.whereIn('countries_groups_members.group_code', arr);
+				});
+			}
+		}
+	}
 };
 
 export function memberFilter (schema, query, req) {
