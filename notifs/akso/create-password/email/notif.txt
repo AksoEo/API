@@ -1,6 +1,6 @@
 Estimata \{{name}},
 
-Iu petis krei pasvorton por AKSO kaj uea.org. Se ne estas vi, kiu faris tion, vi povas senprobleme ignori tiun ĉi mesaĝon.
+Iu petis krei pasvorton ĉe AKSO per via UEA-kodo. Se ne estas vi, kiu faris tion, vi povas senprobleme ignori tiun ĉi mesaĝon.
 
 Se vi ja volas krei pasvorton, bonvolu iri al la ĉi-suba ligilo:
 {{#url}}/krei_pasvorton/{{../code}}/{{../key}}{{/url}}
