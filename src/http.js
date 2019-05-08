@@ -80,7 +80,9 @@ export function init () {
 
 			// Add middleware
 			if (AKSO.conf.http.helmet) {
-				app.use(helmet());
+				app.use(helmet({
+					xssFilter: false
+				}));
 			} else {
 				AKSO.log.warn('Running without helmet');
 			}
