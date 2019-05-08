@@ -2,6 +2,12 @@ User auth:
 u: test
 p: test
 totp secret: a 20 times
+admin: false
+
+u: tejo
+p: test
+totp secret: a 20 times
+admin: true
 
 Client auth:
 u: 0e5417fdf9edb4667ccd6de525300bd8
