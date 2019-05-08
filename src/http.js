@@ -34,7 +34,7 @@ export function init () {
 
 			// Set up CORS
 			const corsSettings = {
-				origin: '*',
+				origin: (origin, cb) => cb(null, true), // setting it to * breaks credentials in fetch
 				allowedHeaders: AKSO.CORS_ALLOWED_HEADERS,
 				exposedHeaders: AKSO.CORS_EXPOSED_HEADERS,
 				credentials: true
