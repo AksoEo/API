@@ -31,7 +31,8 @@ async function init () {
 		conf: {
 			http: {
 				port: 				process.env.AKSO_HTTP_PORT || 1111,
-				trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY || false,
+				trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY === undefined ?
+					false : process.env.AKSO_HTTP_TRUST_LOCAL_PROXY != '0'
 				helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
 					true : process.env.AKSO_HTTP_USE_HELMET != '0',
 				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
