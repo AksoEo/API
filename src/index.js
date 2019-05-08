@@ -71,7 +71,8 @@ async function init () {
 		],
 		CORS_ALLOWED_HEADERS: [
 			'X-CSRF-Token',
-			'X-Http-Method-Override'
+			'X-Http-Method-Override',
+			'Content-Type'
 		],
 		CORS_EXPOSED_HEADERS: [
 			'X-Response-Time',
