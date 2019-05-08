@@ -29,6 +29,7 @@ export function init () {
 			app.use(responseTime());
 
 			if (AKSO.conf.http.trustLocalProxy) {
+				AKSO.log.warn('Trusting local proxy');
 				app.set('trust proxy', 'loopback');
 			}
 
