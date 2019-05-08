@@ -325,7 +325,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,NULL,NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo',NULL,NULL,NULL,'admin@akso.org',1,NULL,NULL,'+31104361044',0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,NULL,NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,NULL,NULL,'+31104361044',0,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1294,7 +1294,7 @@ CREATE TABLE `codeholders_totp` (
 
 LOCK TABLES `codeholders_totp` WRITE;
 /*!40000 ALTER TABLE `codeholders_totp` DISABLE KEYS */;
-INSERT INTO `codeholders_totp` VALUES (2,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy');
+INSERT INTO `codeholders_totp` VALUES (2,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy'),(3,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy');
 /*!40000 ALTER TABLE `codeholders_totp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1601,4 +1601,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-07 15:17:01
+-- Dump completed on 2019-05-08 15:19:31
