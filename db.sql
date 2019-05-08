@@ -100,6 +100,7 @@ CREATE TABLE `admin_groups_members_codeholders` (
 
 LOCK TABLES `admin_groups_members_codeholders` WRITE;
 /*!40000 ALTER TABLE `admin_groups_members_codeholders` DISABLE KEYS */;
+INSERT INTO `admin_groups_members_codeholders` VALUES (1,3);
 /*!40000 ALTER TABLE `admin_groups_members_codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1601,4 +1602,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-08 15:19:31
+-- Dump completed on 2019-05-08 15:21:15
