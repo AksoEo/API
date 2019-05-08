@@ -74,7 +74,8 @@ async function init () {
 			'X-CSRF-Token',
 			'X-Http-Method-Override',
 			'Content-Type',
-			'If-None-Match'
+			'If-None-Match',
+			'Cache-Control'
 		],
 		CORS_EXPOSED_HEADERS: [
 			'X-Response-Time',
