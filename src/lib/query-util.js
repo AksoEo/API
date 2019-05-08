@@ -71,33 +71,33 @@ function getAlias (fieldAliases, field, includeAs = true) {
 }
 
 const filterLogicOps = {
-	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist) {
+	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
-				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist);
+				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps);
 			}
 		});
 	},
-	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist) {
+	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
 				this.orWhere(function () {
-					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist);
+					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps);
 				});
 			}
 		});
 	},
-	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist) {
+	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist, customCompOps) {
 		filterAssertObject(filterObj);
 
 		query.whereNot(function () {
-			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist);
+			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist, customCompOps);
 		});
 	}
 };
@@ -162,14 +162,14 @@ const QueryUtil = {
 
 		query.where(function () {
 			for (let key in filterObj) { // Iterate through each key
-				// Ensure the client has the necessary permissions
-				if (fieldWhitelist.indexOf(key) === -1) {
-					const err = new Error(`Disallowed field ${key} used in ?filter`);
-					err.statusCode = 403;
-					throw err;
-				}
-
 				if (fields.indexOf(key) > -1) { // key is a field
+					// Ensure the client has the necessary permissions
+					if (fieldWhitelist.indexOf(key) === -1) {
+						const err = new Error(`Disallowed field ${key} used in ?filter`);
+						err.statusCode = 403;
+						throw err;
+					}
+
 					let val = filterObj[key];
 					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
 						val = { $eq: val }; // turn into an $eq comparison operator
@@ -202,7 +202,7 @@ const QueryUtil = {
 				} else if (key in filterLogicOps) {
 					// Check if the field is an alias
 					key = getAlias(fieldAliases, key);
-					filterLogicOps[key](fields, this, filterObj[key], fieldAliases, fieldWhitelist);
+					filterLogicOps[key](fields, this, filterObj[key], fieldAliases, fieldWhitelist, customCompOps);
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
 					err.statusCode = 400;
