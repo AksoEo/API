@@ -80,7 +80,8 @@ async function init () {
 			'X-Affected-Items',
 			'X-RateLimit-Limit',
 			'X-RateLimit-Remaining',
-			'Retry-After'
+			'Retry-After',
+			'Content-Type'
 		],
 		RATE_LIMIT_WINDOW_MS: 3*60*1000, // 3 minutes
 		RATE_LIMIT_MAX: 300, // 300 requests per window ms max
