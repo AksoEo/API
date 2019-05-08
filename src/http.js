@@ -89,7 +89,8 @@ export function init () {
 			app.use(cookieParser());
 			app.use(session({
 				secret: AKSO.conf.http.sessionSecret,
-				name: 'akso_session'
+				name: 'akso_session',
+				sameSite: 'lax'
 			}));
 
 			// Add custom methods to req and res
