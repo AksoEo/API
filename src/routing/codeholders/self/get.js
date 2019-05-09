@@ -15,8 +15,6 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		if (!req.user || !req.user.user) { return res.sendStatus(404); }
-
 		const query = AKSO.db('view_codeholders');
 
 		// Restrictions

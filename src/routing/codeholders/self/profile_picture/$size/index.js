@@ -5,7 +5,7 @@ import { bindMethod } from '../../../..';
 import method$get from './get';
 
 /**
- * Sets up /codeholders/{codeholderId}/profile_picture/{size}
+ * Sets up /codeholders/self/profile_picture/{size}
  * @return {express.Router}
  */
 export function init () {

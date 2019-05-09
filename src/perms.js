@@ -7,6 +7,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 	req.permissions = [];
 
 	req.ownMemberFields = {
+		id: 'r',
 		oldCode: 'r',
 		newCode: 'r',
 		codeholderType: 'r',
@@ -18,6 +19,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		officePhone: 'rw',
 		officePhoneFormatted: 'r',
 		profilePicture: 'rw',
+		hasProfilePicture: 'r',
 
 		// Humans
 		firstName: 'rw',

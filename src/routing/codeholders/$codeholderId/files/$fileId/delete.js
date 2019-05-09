@@ -18,7 +18,7 @@ export default {
 			'id',
 			'files'
 		];
-		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
+		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
