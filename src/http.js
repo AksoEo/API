@@ -294,8 +294,8 @@ function setupMiddleware (req, res,  next) {
 		};
 
 		// max length
-		logData.origin = logData.origin.substring(0, 300);
-		logData.userAgent = logData.userAgent.substring(0, 500);
+		if (logData.origin) { logData.origin = logData.origin.substring(0, 300); }
+		if (logData.userAgent) { logData.userAgent = logData.userAgent.substring(0, 500); }
 		logData.path = logData.path.substring(0, 300);
 		if (parseInt(logData.resTime, 10) >= 10**6) {
 			logData.resTime = '999999.999';
