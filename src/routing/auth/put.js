@@ -63,6 +63,10 @@ export default {
 					city: geoData ? geoData.city : null,
 				};
 				loginData.ll = AKSO.db.raw(`POINT(${loginData.ll[0]},${loginData.ll[1]})`);
+				if (loginData.userAgent) {
+					loginData.userAgent = loginData.userAgent.substring(0, 500);
+					loginData.userAgentParsed = loginData.userAgentParsed.substring(0, 500);
+				}
 
 				await AKSO.db('codeholders_logins').insert(loginData);
 			});

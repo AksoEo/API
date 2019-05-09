@@ -12,6 +12,7 @@ const schema = {
 		ip: 'f',
 		origin: 'f',
 		userAgent: 's',
+		userAgentParsed: 's',
 		method: 'f',
 		path: 'f',
 		query: '',

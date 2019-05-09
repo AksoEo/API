@@ -12,6 +12,7 @@ import responseTime from 'response-time';
 import csurf from 'csurf';
 import ipaddr from 'ipaddr.js';
 import rateLimit from 'express-rate-limit';
+import useragent from 'useragent';
 
 import { replaceObject } from './util';
 
@@ -278,13 +279,17 @@ function setupMiddleware (req, res,  next) {
 
 	res.on('finish', async () => {
 		// Log the request
+		const rawUserAgent = req.headers['user-agent'] || null;
+		const userAgent = rawUserAgent ? useragent.lookup(rawUserAgent) : null;
+
 		const logData = {
 			time: moment().unix(),
 			codeholderId: req.user ? req.user.user || null : null,
 			apiKey: req.user ? req.user.app || null : null,
 			ip: Buffer.from(ipaddr.parse(req.ip).toByteArray()),
 			origin: req.get('origin') || req.get('host') || null,
-			userAgent: req.headers['user-agent'] || null,
+			userAgent: rawUserAgent,
+			userAgentParsed: userAgent.toString(),
 			method: req.method,
 			path: Url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.originalQuery) || '{}',
@@ -295,7 +300,10 @@ function setupMiddleware (req, res,  next) {
 
 		// max length
 		if (logData.origin) { logData.origin = logData.origin.substring(0, 300); }
-		if (logData.userAgent) { logData.userAgent = logData.userAgent.substring(0, 500); }
+		if (logData.userAgent) {
+			logData.userAgent = logData.userAgent.substring(0, 500);
+			logData.userAgentParsed = logData.userAgentParsed.substring(0, 500);
+		}
 		logData.path = logData.path.substring(0, 300);
 		if (parseInt(logData.resTime, 10) >= 10**6) {
 			logData.resTime = '999999.999';

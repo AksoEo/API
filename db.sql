@@ -1438,6 +1438,7 @@ CREATE TABLE `httpLog` (
   `ip` binary(16) NOT NULL,
   `origin` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `method` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `path` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
   `query` json NOT NULL,
@@ -1455,6 +1456,7 @@ CREATE TABLE `httpLog` (
   KEY `method` (`method`),
   KEY `resTime` (`resTime`),
   FULLTEXT KEY `userAgent` (`userAgent`),
+  FULLTEXT KEY `userAgentParsed` (`userAgentParsed`),
   CONSTRAINT `httpLog_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `httpLog_ibfk_2` FOREIGN KEY (`apiKey`) REFERENCES `clients` (`apiKey`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1639,4 +1641,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-09 13:29:59
+-- Dump completed on 2019-05-09 13:36:38
