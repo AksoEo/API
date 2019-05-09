@@ -1211,7 +1211,8 @@ CREATE TABLE `codeholders_logins` (
   KEY `codeholderId` (`codeholderId`),
   SPATIAL KEY `ll` (`ll`),
   KEY `country` (`country`),
-  KEY `region` (`region`)
+  KEY `region` (`region`),
+  KEY `time` (`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1569,9 +1570,9 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_createPassword` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-11 16:04:18' ON COMPLETION PRESERVE ENABLE DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_createPassword` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-11 16:04:18' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 24 hours' DO begin
 
-set @time_delta = 86400; # 1 day
+set @time_delta = 86400;
 
 update codeholders set createPasswordTime = null, createPasswordKey = null where createPasswordTime < UNIX_TIMESTAMP() - @time_delta;
 
@@ -1593,11 +1594,35 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_notif_accounts` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-09 13:09:46' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes expired codeholder notif account setup keys' DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_notif_accounts` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-09 13:09:46' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 1 hour' DO begin
 
-set @telegram_deepLink_time_delta = 3600; # 1 hour
+set @time_delta = 3600; 
 
-update codeholders_notif_accounts set telegram_deepLink = null, telegram_deepLink_time = null where telegram_deepLink_time < UNIX_TIMESTAMP() - @telegram_deepLink_time_delta;
+update codeholders_notif_accounts set telegram_deepLink = null, telegram_deepLink_time = null where telegram_deepLink_time < UNIX_TIMESTAMP() - @time_delta;
+
+end */ ;;
+/*!50003 SET time_zone             = @saved_time_zone */ ;;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;;
+/*!50003 SET character_set_results = @saved_cs_results */ ;;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;;
+/*!50106 DROP EVENT IF EXISTS `remove_old_codeholders_logins` */;;
+DELIMITER ;;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;;
+/*!50003 SET character_set_client  = utf8mb4 */ ;;
+/*!50003 SET character_set_results = utf8mb4 */ ;;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
+/*!50003 SET @saved_time_zone      = @@time_zone */ ;;
+/*!50003 SET time_zone             = 'SYSTEM' */ ;;
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_old_codeholders_logins` ON SCHEDULE EVERY 1 DAY STARTS '2019-05-09 14:46:51' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
+
+set @time_delta = 5184000; 
+
+delete from codeholders_logins where time < UNIX_TIMESTAMP() - @time_delta;
 
 end */ ;;
 /*!50003 SET time_zone             = @saved_time_zone */ ;;
@@ -1641,4 +1666,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-09 13:36:38
+-- Dump completed on 2019-05-09 14:47:47
