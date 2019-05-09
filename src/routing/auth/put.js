@@ -64,7 +64,6 @@ export default {
 				};
 				loginData.ll = AKSO.db.raw(`POINT(${loginData.ll[0]},${loginData.ll[1]})`);
 
-
 				await AKSO.db('codeholders_logins').insert(loginData);
 			});
 		})(req, res, next);

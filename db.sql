@@ -1188,6 +1188,43 @@ INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','D-ro','1998
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_logins`
+--
+
+DROP TABLE IF EXISTS `codeholders_logins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_logins` (
+  `loginId` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `time` bigint(20) unsigned NOT NULL,
+  `timezone` varchar(32) CHARACTER SET ascii NOT NULL,
+  `ip` binary(16) NOT NULL,
+  `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ll` point NOT NULL,
+  `area` smallint(6) NOT NULL,
+  `country` varchar(2) CHARACTER SET ascii DEFAULT NULL,
+  `region` varchar(3) CHARACTER SET ascii DEFAULT NULL,
+  `city` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`loginId`),
+  KEY `codeholderId` (`codeholderId`),
+  SPATIAL KEY `ll` (`ll`),
+  KEY `country` (`country`),
+  KEY `region` (`region`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_logins`
+--
+
+LOCK TABLES `codeholders_logins` WRITE;
+/*!40000 ALTER TABLE `codeholders_logins` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_logins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_notif_accounts`
 --
 
@@ -1602,4 +1639,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-08 15:21:15
+-- Dump completed on 2019-05-09 13:29:59

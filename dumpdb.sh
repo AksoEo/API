@@ -6,7 +6,10 @@ SELECT concat('TRUNCATE TABLE ', TABLE_NAME, ';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE
 	TABLE_NAME LIKE 'codeholders_hist_%'
-	or TABLE_NAME = \"httpLog\";
+	or TABLE_NAME in (
+		\"httpLog\",
+		\"codeholders_logins\"
+	);
 "
 mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso --execute "$command" | sed 1d | mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso
 
