@@ -86,8 +86,8 @@ export default {
 						.first(1)
 						.where('codeholderId', user.user)
 						.where(function() {
-							this.
-								where('ip', loginData.ip)
+							this
+								.where('ip', loginData.ip)
 								.orWhere(function () {
 									this
 										.whereNotNull('country')
@@ -96,7 +96,6 @@ export default {
 											region: loginData.region
 										});
 								})
-								.orWhere(AKSO.db.raw('ST_Distance_Sphere(ll, ?) - area / 2 - ? < 200000', [ loginData.ll, loginData.area / 2 ]));
 						});
 
 					if (!similarLogin) { isFishy = true; }
