@@ -99,6 +99,8 @@ async function init () {
 
 		CODEHOLDER_OWN_CHANGE_CMT: 'Memfarita ŝanĝo',
 
+		SUBDIVISIONS: require('../data/subdivisions.json'),
+
 		// Constants used by internal APIs, not to be touched directly
 		mail: null,
 		msgpack: msgpack.createCodec({

@@ -95,7 +95,7 @@ export default {
 											country: loginData.country,
 											region: loginData.region
 										});
-								})
+								});
 						});
 
 					if (!similarLogin) { isFishy = true; }
@@ -114,6 +114,11 @@ export default {
 					};
 					const coords = latlon.formatLatitude(ll[0], coordsOpts) + ', ' + latlon.formatLongitude(ll[1], coordsOpts);
 
+					let region = loginData.region;
+					if (AKSO.SUBDIVISIONS[loginData.country] && AKSO.SUBDIVISIONS[loginData.country][region]) {
+						region = AKSO.SUBDIVISIONS[loginData.country][region];
+					}
+
 					await AKSONotif.sendNotification({
 						codeholderIds: [ user.user ],
 						org: 'akso',
@@ -124,7 +129,7 @@ export default {
 							ip: req.ip,
 							userAgent: loginData.userAgentParsed,
 							country: countryData ? countryData.name_eo : loginData.country,
-							region: loginData.region,
+							region: region,
 							city: loginData.city,
 							coords: coords
 						}
