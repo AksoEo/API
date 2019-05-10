@@ -5,23 +5,10 @@ import * as AKSOMail from '../../../mail';
 export default {
 	schema: {
 		query: null,
-		body: {
-			properties: {
-				org: {
-					type: 'string',
-					enum: [ 'akso', 'uea' ]
-				}
-			},
-			additionalProperties: false,
-			required: [ 'org' ]
-		}
+		body: null
 	},
 
 	run: async function run (req, res) {
-		if (req.body.org !== 'akso') {
-			return res.sendStatus(500); // todo
-		}
-
 		// Reply, then deal with it to prevent timing attacks
 		res.sendStatus(202);
 
@@ -61,7 +48,7 @@ export default {
 
 		// Send the email
 		await AKSOMail.renderSendEmail({
-			org: req.body.org,
+			org: 'akso',
 			tmpl: 'create-password',
 			to: codeholder.id,
 			view: {
