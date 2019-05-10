@@ -116,7 +116,7 @@ export default {
 
 					let region = loginData.region;
 					if (AKSO.SUBDIVISIONS[loginData.country] && AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`]) {
-						region = AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`];
+						region = AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`].name;
 					}
 
 					await AKSONotif.sendNotification({
