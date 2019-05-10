@@ -15,6 +15,7 @@ export default {
 		await AKSO.db('codeholders_totp_remember').where('codeholderId', req.user.user).delete();
 
 		req.session.totp = false;
+		res.clearCookie('remember_totp');
 		res.sendStatus(204);
 	}
 };
