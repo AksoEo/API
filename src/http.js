@@ -108,7 +108,7 @@ export function init () {
 			// Allow application/x-www-form-urlencoded only for method overriding
 			app.use(bodyParser.urlencoded({
 				extended: false,
-				limit: '1mb',
+				limit: '4kb',
 				verify: req => {
 					if (!req.headers['x-http-method-override'] || req.method !== 'POST') {
 						const err = new Error('Unsupported media type');
