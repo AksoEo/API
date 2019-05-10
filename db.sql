@@ -1195,7 +1195,7 @@ DROP TABLE IF EXISTS `codeholders_logins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `codeholders_logins` (
-  `loginId` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `codeholderId` int(10) unsigned NOT NULL,
   `time` bigint(20) unsigned NOT NULL,
   `timezone` varchar(32) CHARACTER SET ascii NOT NULL,
@@ -1207,7 +1207,7 @@ CREATE TABLE `codeholders_logins` (
   `country` varchar(2) CHARACTER SET ascii DEFAULT NULL,
   `region` varchar(3) CHARACTER SET ascii DEFAULT NULL,
   `city` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`loginId`),
+  PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   SPATIAL KEY `ll` (`ll`),
   KEY `country` (`country`),
@@ -1277,7 +1277,7 @@ CREATE TABLE `codeholders_notif_pref` (
 
 LOCK TABLES `codeholders_notif_pref` WRITE;
 /*!40000 ALTER TABLE `codeholders_notif_pref` DISABLE KEYS */;
-INSERT INTO `codeholders_notif_pref` VALUES (2,'account','telegram');
+INSERT INTO `codeholders_notif_pref` VALUES (2,'account','email,telegram');
 /*!40000 ALTER TABLE `codeholders_notif_pref` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1666,4 +1666,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-09 14:47:47
+-- Dump completed on 2019-05-10 12:16:57

@@ -20,6 +20,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		officePhoneFormatted: 'r',
 		profilePicture: 'rw',
 		hasProfilePicture: 'r',
+		logins: 'r',
 
 		// Humans
 		firstName: 'rw',
