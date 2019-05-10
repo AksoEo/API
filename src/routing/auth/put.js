@@ -119,6 +119,9 @@ export default {
 						region = AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`].name;
 					}
 
+					let prettyIp = ipaddr.fromByteArray(loginData.ip).toString();
+					prettyIp = ipaddr.process(prettyIp).toString();
+
 					await AKSONotif.sendNotification({
 						codeholderIds: [ user.user ],
 						org: 'akso',
@@ -126,7 +129,7 @@ export default {
 						category: 'account',
 						view: {
 							time: moment.tz(loginData.time, loginData.timezone).format('D[-a de] MMMM Y [je] HH:mm Z'),
-							ip: req.ip,
+							ip: prettyIp,
 							userAgent: loginData.userAgentParsed,
 							country: countryData ? countryData.name_eo : loginData.country,
 							region: region,
