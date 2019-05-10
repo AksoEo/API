@@ -2,6 +2,7 @@ import express from 'express';
 
 import { bindMethod } from '../..';
 
+import { init as router$logins } from './logins';
 import { init as router$profile_picture } from './profile_picture';
 
 import method$get from './get';
@@ -20,6 +21,7 @@ export function init () {
 		next();
 	});
 
+	router.use('/logins', router$logins());
 	router.use('/profile_picture', router$profile_picture());
 
 	bindMethod(router, '/', 'get', method$get);
