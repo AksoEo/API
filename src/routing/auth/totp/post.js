@@ -1,5 +1,6 @@
 import crypto from 'pn/crypto';
 import passport from 'passport';
+import moment from 'moment-timezone';
 
 export default {
 	schema: {
@@ -15,6 +16,10 @@ export default {
 					isBinary: true,
 					minBytes: 20,
 					maxBytes: 20
+				},
+				remember: {
+					type: 'boolean',
+					default: false
 				}
 			},
 			additionalProperties: false,
@@ -67,10 +72,27 @@ export default {
 			if (err) { return next(err); }
 			if (!user) { return res.sendStatus(401); }
 
-			req.logIn(user, err => {
+			req.logIn(user, async err => {
 				if (err) { return next(err); }
 
 				req.session.totp = true;
+
+				if (req.body.remember) {
+					const rememberKey = await crypto.randomBytes(32);
+					const timeNow = moment().unix();
+					const expiration = timeNow + 5184000; // 60 days
+
+					await AKSO.db('codeholders_totp_remember').insert({
+						rememberKey: rememberKey,
+						codeholderId: user.user,
+						time: timeNow
+					});
+
+					res.cookie('remember_totp', rememberKey.toString('hex'), {
+						expires: moment.unix(expiration).toDate(),
+						httpOnly: true
+					});
+				}
 
 				res.sendStatus(204);
 			});

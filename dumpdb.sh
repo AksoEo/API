@@ -8,6 +8,7 @@ WHERE
 	TABLE_NAME LIKE 'codeholders_hist_%'
 	or TABLE_NAME in (
 		\"httpLog\",
+		\"codeholders_totp_remember\",
 		\"codeholders_logins\"
 	);
 "

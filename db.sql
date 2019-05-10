@@ -1338,6 +1338,32 @@ INSERT INTO `codeholders_totp` VALUES (2,_binary 'ü`ø…Q*f>2?‡2	y¨\Ìú\âM\Ö?3L\
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_totp_remember`
+--
+
+DROP TABLE IF EXISTS `codeholders_totp_remember`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_totp_remember` (
+  `rememberKey` binary(32) NOT NULL,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `time` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`rememberKey`),
+  KEY `codeholderId` (`codeholderId`),
+  KEY `time` (`time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_totp_remember`
+--
+
+LOCK TABLES `codeholders_totp_remember` WRITE;
+/*!40000 ALTER TABLE `codeholders_totp_remember` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_totp_remember` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `countries`
 --
 
@@ -1606,6 +1632,30 @@ end */ ;;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;;
 /*!50003 SET character_set_results = @saved_cs_results */ ;;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;;
+/*!50106 DROP EVENT IF EXISTS `remove_expired_codeholders_totp_remember` */;;
+DELIMITER ;;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;;
+/*!50003 SET character_set_client  = utf8mb4 */ ;;
+/*!50003 SET character_set_results = utf8mb4 */ ;;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
+/*!50003 SET @saved_time_zone      = @@time_zone */ ;;
+/*!50003 SET time_zone             = 'SYSTEM' */ ;;
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_totp_remember` ON SCHEDULE EVERY 12 HOUR STARTS '2019-05-10 13:46:20' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
+
+set @time_delta = 5184000;
+
+delete from codeholders_totp_remember where time < UNIX_TIMESTAMP() - @time_delta;
+
+end */ ;;
+/*!50003 SET time_zone             = @saved_time_zone */ ;;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;;
+/*!50003 SET character_set_results = @saved_cs_results */ ;;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;;
 /*!50106 DROP EVENT IF EXISTS `remove_old_codeholders_logins` */;;
 DELIMITER ;;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
@@ -1666,4 +1716,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-10 12:16:57
+-- Dump completed on 2019-05-10 14:06:15

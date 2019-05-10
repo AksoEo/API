@@ -44,6 +44,32 @@ export default {
 			req.logIn(user, async err => {
 				if (err) { return next(err); }
 
+				// Check if there's a totp remember key set
+				if (req.cookies.remember_totp) {
+					// Look it up
+					const rememberKey = Buffer.from(req.cookies.remember_totp, 'hex');
+					const timeNow = moment().unix();
+					const found = await AKSO.db('codeholders_totp_remember')
+						.where({
+							rememberKey: rememberKey,
+							codeholderId: user.user
+						})
+						.update('time', timeNow);
+
+					if (found) {
+						const expiration = timeNow + 5184000; // 60 days
+
+						res.cookie('remember_totp', req.cookies.remember_totp, {
+							expires: moment.unix(expiration).toDate(),
+							httpOnly: true
+						});
+
+						req.session.totp = true;
+					} else {
+						res.clearCookie('remember_totp');
+					}
+				}
+
 				res.sendStatus(204);
 
 				// Log the login to codeholders_logins
@@ -128,7 +154,7 @@ export default {
 						notif: 'fishy-location',
 						category: 'account',
 						view: {
-							time: moment.tz(loginData.time, loginData.timezone).format('D[-a de] MMMM Y [je] HH:mm Z'),
+							time: moment.unix(loginData.time).tz(loginData.timezone).format('D[-a de] MMMM Y [je] HH:mm Z'),
 							ip: prettyIp,
 							userAgent: loginData.userAgentParsed,
 							country: countryData ? countryData.name_eo : loginData.country,
