@@ -1,4 +1,4 @@
-Iu ĵus ensalutis al via konto ĉe AKSO de loko, kiun ni ne povis rekoni. Bonvolu legi la informojn pri la ensaluto ĉi-sube. Se vi ne ensalutis al AKSO de tiu loko, ni rekomendas, ke vi tuj ŝanĝas vian pasvorton.
+Iu ĵus ensalutis al via konto ĉe AKSO de loko, kiun ni ne povis rekoni. Bonvolu legi la informojn pri la ensaluto ĉi-sube. Se vi ne ensalutis al AKSO de tiu loko, ni rekomendas, ke vi tuj ŝanĝu vian pasvorton.
 
 **Horo**: {{time}}
 **IP-adreso**: {{ip}}
