@@ -1,5 +1,5 @@
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import SimpleResource from './simple-resource';
 

@@ -1,7 +1,7 @@
 import * as Canvas from 'canvas';
 import fs from 'fs-extra';
 import path from 'path';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { profilePictureSizes } from '../routing/codeholders/schema';
 

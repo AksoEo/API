@@ -1,0 +1,68 @@
+<!-- 1 Column Text + Button : BEGIN -->
+<tr>
+    <td style="background-color: #ffffff;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td style="padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                    <h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">{{subject}}</h1>
+                    <p>Estimata \{{name}},</p>
+                    <p>Iu ĵus ensalutis al via konto ĉe AKSO de loko, kiun ni ne povis rekoni. Bonvolu legi la informojn pri la ensaluto ĉi-sube. Se vi ne ensalutis al AKSO de tiu loko, ni rekomendas, ke vi tuj ŝanĝas vian pasvorton.</p>
+                    <table>
+                        <tr>
+                            <td><b>Horo:</b></td>
+                            <td>{{time}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>IP-adreso:</b></td>
+                            <td>{{ip}}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Retumilo:</b></td>
+                            <td>{{userAgent}}</td>
+                        </tr>
+                        {{#if country}}
+                            <tr>
+                                <td><b>Loko:</b></td>
+                                <td>{{city}}, {{region}}, {{country}}</td>
+                            </tr>
+                        {{else}}
+                            <tr>
+                                <td><b>Koordinatoj:</b></td>
+                                <td>{{coords}}</td>
+                            </tr>
+                        {{/if}}
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0 20px;">
+                    <!-- Button : BEGIN -->
+                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
+                        <tr>
+                            <td class="button-td button-td-primary" style="border-radius: 4px; background: #222222;">
+							     <a class="button-a button-a-primary" href="{{#url}}/ensalutoj{{/url}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Vidi ensaluthistorion</a>
+							</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <!-- Button : END -->
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0 20px;">
+                    <!-- Button : BEGIN -->
+                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
+                        <tr>
+                            <td class="button-td button-td-primary" style="border-radius: 4px; background: #222222;">
+                                 <a class="button-a button-a-primary" href="{{#url}}/nova_pasvorto{{/url}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Ŝanĝi pasvorton</a>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <!-- Button : END -->
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<!-- 1 Column Text + Button : END -->

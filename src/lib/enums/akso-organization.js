@@ -6,7 +6,7 @@ class AKSOOrganization extends Enum {
 
 		switch (this.normalize(prop)) {
 		case 'AKSO':
-			return 'https://admin.akso.org';
+			return 'https://akso.org';
 		case 'TEJO':
 			return 'https://tejo.org';
 		case 'UEA':

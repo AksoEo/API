@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { memberFieldsManual } from '../../schema';
 

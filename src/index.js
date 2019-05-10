@@ -1,5 +1,5 @@
 import winston from 'winston';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import msgpack from 'msgpack-lite';
 import path from 'path';
 import fs from 'fs-extra';
@@ -139,7 +139,7 @@ async function init () {
 	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures'));
 
 	// Init
-	moment.locale('en');
+	moment.locale('eo');
 
 	AKSO.log.info('AKSO version %s', AKSO.version);
 	AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);

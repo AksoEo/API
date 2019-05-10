@@ -1,6 +1,6 @@
 import express from 'express';
 import msgpack from 'msgpack-lite';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Url from 'url';
 import cookieParser from 'cookie-parser';
 import session from 'cookie-session';
