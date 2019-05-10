@@ -99,6 +99,7 @@ async function init () {
 
 		CODEHOLDER_OWN_CHANGE_CMT: 'Memfarita ŝanĝo',
 
+		// https://github.com/timshadel/subdivision-list
 		SUBDIVISIONS: require('../data/subdivisions.json'),
 
 		// Constants used by internal APIs, not to be touched directly

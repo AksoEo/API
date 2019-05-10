@@ -115,8 +115,8 @@ export default {
 					const coords = latlon.formatLatitude(ll[0], coordsOpts) + ', ' + latlon.formatLongitude(ll[1], coordsOpts);
 
 					let region = loginData.region;
-					if (AKSO.SUBDIVISIONS[loginData.country] && AKSO.SUBDIVISIONS[loginData.country][region]) {
-						region = AKSO.SUBDIVISIONS[loginData.country][region];
+					if (AKSO.SUBDIVISIONS[loginData.country] && AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`]) {
+						region = AKSO.SUBDIVISIONS[loginData.country][`${loginData.country}-${region}`];
 					}
 
 					await AKSONotif.sendNotification({
