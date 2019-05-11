@@ -13,6 +13,7 @@ import { profilePictureSizes } from '../routing/codeholders/schema';
 export async function getNamesAndEmails (...ids) {
 	const codeholders = await AKSO.db('view_codeholders')
 		.whereIn('id', ids)
+		.whereNotNull('email')
 		.select('codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
 
 	return codeholders.map(codeholder => {
