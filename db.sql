@@ -1499,6 +1499,68 @@ LOCK TABLES `httpLog` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `membershipCategories`
+--
+
+DROP TABLE IF EXISTS `membershipCategories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `membershipCategories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nameAbbrev` varchar(6) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `givesMembership` tinyint(1) NOT NULL DEFAULT '1',
+  `lifetime` tinyint(1) NOT NULL DEFAULT '0',
+  `availableFrom` year(4) DEFAULT NULL,
+  `availableTo` year(4) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nameAbbrev` (`nameAbbrev`) USING BTREE,
+  KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `membershipCategories`
+--
+
+LOCK TABLES `membershipCategories` WRITE;
+/*!40000 ALTER TABLE `membershipCategories` DISABLE KEYS */;
+INSERT INTO `membershipCategories` VALUES (1,'MG','Membro kun Gvidlibro','Individua membro, kiu ricevas nur la *Gvidlibron* tra la Esperanto-movado plus la revuon *Esperanto* rete.',1,0,NULL,2018),(2,'MJ','Membro kun Jarlibro','Membro kun Jarlibro plus la reta versio de la revuo Esperanto (kaj, ĝis inkl. 35 jaroj, membro de TEJO kun la revuo Kontakto sen plia abonpago).',1,0,NULL,2018),(3,'MB','Membro Baza','Donas retan aliron al UEA-servoj: reta revuo *Esperanto*, Delegita Reto (reta jarlibro). TEJO-aĝaj membroj (ĝis inkluzive 35 jarojn je la komenco de la jaro) aldone ricevas retan revuon Kontakto.',1,0,2019,NULL),(4,'DMB','Dumviva Membro Baza','Kiel Membro Baza, sed validas vian tutan vivon.',1,1,2019,NULL),(5,'DMJ','Dumviva Membro kun Jarlibro','Kiel Membro kun Jarlibro sed validas vian tutan vivon.',1,1,NULL,2018),(6,'MA','Membro-Abonanto','Kiel MB plus la revuo *Esperanto* (surpapera). TEJO-aĝaj membroj ricevas aldone revuon *Kontakto* papere.',1,0,NULL,NULL),(7,'DMA','Dumviva Membro-Abonanto','Kiel DMA sed validas vian tutan vivon.',1,1,NULL,NULL),(8,'HM','Honora Membro','Honoraj Membroj estas elektitaj esperantistoj, kiuj faris gravajn servojn al la tutmonda Esperanto-movado.',1,1,NULL,NULL),(9,'HPK','Honora Patrono','La Honora Patrona Komitato konsistas el lingvistoj, sciencistoj kaj aliaj eminentaj personoj, kiuj faris gravajn servojn al la Esperanto-movado, kaj mem parolas la internacian lingvon.',1,1,NULL,NULL),(10,'DP','Dumviva Patrono de UEA','',0,1,NULL,NULL),(11,'SZ','Membro de Societo Zamenhof','Finance apogas Universalan Esperanto-Asocion.',0,0,NULL,NULL),(12,'PT','Patrono de TEJO','Finance apogas Tutmondan Esperantistan Junularan Organizon, kaj ricevas papere la eldonaĵojn de TEJO.',0,0,NULL,NULL),(13,'DPT','Dumviva Patrono de TEJO','Kiel PT sed validas vian tutan vivon.',0,1,NULL,NULL);
+/*!40000 ALTER TABLE `membershipCategories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `membershipCategories_codeholders`
+--
+
+DROP TABLE IF EXISTS `membershipCategories_codeholders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `membershipCategories_codeholders` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `categoryId` int(10) unsigned NOT NULL,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `year` year(4) DEFAULT NULL COMMENT 'Null for lifetime validity',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `categoryId` (`categoryId`,`codeholderId`,`year`),
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `membershipCategories_codeholders_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `membershipCategories_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `membershipCategories_codeholders`
+--
+
+LOCK TABLES `membershipCategories_codeholders` WRITE;
+/*!40000 ALTER TABLE `membershipCategories_codeholders` DISABLE KEYS */;
+INSERT INTO `membershipCategories_codeholders` VALUES (1,3,2,2019),(3,6,2,2018),(4,10,2,NULL),(2,13,3,NULL);
+/*!40000 ALTER TABLE `membershipCategories_codeholders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `savedQueries`
 --
 
@@ -1716,4 +1778,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-10 14:06:15
+-- Dump completed on 2019-05-11 11:01:09
