@@ -34,6 +34,7 @@ export const schema = {
 		'isDead': 'f',
 		'deathdate': 'f',
 		'hasProfilePicture': 'f',
+		'membership': '',
 
 		// HumanCodeholder
 		'firstName': 'f',
@@ -76,7 +77,8 @@ export const schema = {
 		'searchAddress': 'address_search',
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
-		'cellphoneFormatted': 'cellphone'
+		'cellphoneFormatted': 'cellphone',
+		'membership': () => AKSO.db.raw('1')
 	},
 	fieldSearchGroups: [
 		'firstName,firstNameLegal,lastName,lastNameLegal',
@@ -90,6 +92,7 @@ export const schema = {
 			)`)
 	},
 	alwaysSelect: [
+		'id',
 		'codeholderType',
 		'addressCountryGroups',
 		'feeCountryGroups'
@@ -110,6 +113,32 @@ export const schema = {
 						.whereIn('countries_groups_members.group_code', arr);
 				});
 			}
+		}
+	},
+	customFilterLogicOps: {
+		$membership: (fields, query, obj) => {
+			if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+				const err = new Error('$membership expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1)
+					.from('membershipCategories_codeholders')
+					.innerJoin('membershipCategories', 'membershipCategories.id', 'membershipCategories_codeholders.categoryId')
+					.whereRaw('`codeholderId` = `view_codeholders`.`id`');
+
+				QueryUtil.filter(
+					[
+						'categoryId',
+						'givesMembership',
+						'lifetime',
+						'year'
+					],
+					this,
+					obj
+				);
+			});
 		}
 	}
 };
@@ -148,6 +177,81 @@ export function memberFieldsManual (fields, req, flag, memberFields) {
 		.reduce((a, b) => a && b);
 
 	return haveFlag;
+}
+
+export async function afterQuery (arr, done) {
+	if (!arr.length || !arr[0].membership) { return done(); }
+
+	const codeholders = {};
+	const ids = arr.map(x => {
+		codeholders[x.id] = x;
+		x.membership = [];
+		return x.id;
+	});
+	// See: https://stackoverflow.com/a/47696704/1248084
+	// Obtains the two most relevant membership entries for the codeholder
+	const memberships = await AKSO.db.raw(`
+		SELECT
+		    \`categoryId\`,
+		    \`codeholderId\`,
+		    \`year\`,
+		    \`nameAbbrev\`,
+		    \`name\`,
+		    \`lifetime\`
+
+			FROM (
+			    SELECT
+		        	*,
+		            (@rn := if(@prev = codeholderId, @rn + 1, 1)) AS rn,
+		            @prev := codeholderId
+
+		        FROM (
+		            SELECT
+		                \`categoryId\`,
+		                \`codeholderId\`,
+		                \`year\`,
+		                \`nameAbbrev\`,
+		                \`name\`,
+		                \`lifetime\`
+		            
+		            FROM membershipCategories_codeholders
+
+		            INNER JOIN membershipCategories
+		                ON membershipCategories.id = membershipCategories_codeholders.categoryId
+
+		            WHERE
+		            	\`codeholderId\` IN (${ids.map(() => '?').join(',')}) AND
+		                \`givesMembership\` AND
+		                \`year\` <= YEAR(CURDATE())
+
+		            ORDER BY
+		                codeholderId,
+		                \`lifetime\` desc,
+		                \`year\` desc
+		            
+		        ) AS \`sortedTable\`
+		        
+		        JOIN (SELECT @prev := NULL, @rn := 0) AS \`vars\`
+			    
+			) AS \`groupedTable\`
+		    
+		    WHERE rn <= 2
+	`,
+
+	ids
+	);
+
+	for (let membership of memberships[0]) {
+		codeholders[membership.codeholderId].membership.push({
+			categoryId: membership.categoryId,
+			year: membership.year,
+			nameAbbrev: membership.nameAbbrev,
+			name: membership.name
+		});
+	}
+	
+
+	done();
 }
 
 export const profilePictureSizes = [

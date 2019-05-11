@@ -71,33 +71,33 @@ function getAlias (fieldAliases, field, includeAs = true) {
 }
 
 const filterLogicOps = {
-	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps) {
+	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
-				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps);
+				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
 			}
 		});
 	},
-	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps) {
+	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
 		filterAssertArray(filterArr);
 		filterArr.forEach(filterAssertObject);
 
 		query.where(function () {
 			for (let obj of filterArr) {
 				this.orWhere(function () {
-					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps);
+					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
 				});
 			}
 		});
 	},
-	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist, customCompOps) {
+	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
 		filterAssertObject(filterObj);
 
 		query.whereNot(function () {
-			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist, customCompOps);
+			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
 		});
 	}
 };
@@ -156,8 +156,9 @@ const QueryUtil = {
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
 	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
 	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/routing/codeholders/schema.js` for usage
+	 * @param {Object}            [customLogicOps] Custom logic operators. See `/src/routing/codeholders/schema.js` for usage
 	 */
-	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null, customCompOps = {}) {
+	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null, customCompOps = {}, customLogicOps = {}) {
 		if (!fieldWhitelist) { fieldWhitelist = fields; }
 
 		query.where(function () {
@@ -199,10 +200,15 @@ const QueryUtil = {
 						}
 					});
 
-				} else if (key in filterLogicOps) {
+				} else if (key in filterLogicOps || key in customLogicOps) {
 					// Check if the field is an alias
 					key = getAlias(fieldAliases, key);
-					filterLogicOps[key](fields, this, filterObj[key], fieldAliases, fieldWhitelist, customCompOps);
+
+					let filter;
+					if (key in filterLogicOps) { filter = filterLogicOps[key]; }
+					else { filter = customLogicOps[key]; }
+
+					filter(fields, this, filterObj[key], fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
 					err.statusCode = 400;
@@ -296,7 +302,8 @@ const QueryUtil = {
 				req.query.filter,
 				schema.fieldAliases || {},
 				fieldWhitelist,
-				schema.customFilterCompOps
+				schema.customFilterCompOps,
+				schema.customFilterLogicOps
 			);
 		}
 
@@ -358,12 +365,15 @@ const QueryUtil = {
 	 * @param {Object}            [Col]            The collection type to use
 	 * @param {Object}            [passToCol]      Variables to pass to the collection's constructor
 	 * @param {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
+	 * @param {Function}          [afterQuery]     A function to run after the query has been performed, before it's passed to the collection. Receives two arguments, the returned array and a callback to run when all modifications are done.
 	 */
-	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null) {
+	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null, afterQuery) {
 		await QueryUtil.collectionMetadata(res, 
 			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
 		);
-		const data = new Col(await query, Res, ...passToCol);
+		const rawData = await query;
+		if (afterQuery) { await new Promise(resolve => afterQuery(rawData, resolve)); }
+		const data = new Col(rawData, Res, ...passToCol);
 		res.sendObj(data);
 	}
 };

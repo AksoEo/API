@@ -156,6 +156,7 @@ export function bindMethod (router, path, method, bind) {
 				 * [alwaysSelect]:      An array of fields that always are to be selected
 				 * [alwaysWhere]:       A function with two arguments, `query` (a knex query) and `req` (the express request), which will add a where clause to the query that should always be included, even in metadata.
 				 * [customCompOps]:     Custom comparison operators. See `/src/routing/codeholders/schema.js` for usage
+				 * [customLogicOps]:    Custom logic operators. See `/src/routing/codeholders/schema.js` for usage
 				 * body:				null for none allowed,
 				 * 						Object for JSON schema validation.
 				 * [multipart]:         Defaults to false. Must be an array of objects to pass to `multer#fields`. Additional options are:

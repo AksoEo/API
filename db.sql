@@ -1515,8 +1515,8 @@ CREATE TABLE `membershipCategories` (
   `availableFrom` year(4) DEFAULT NULL,
   `availableTo` year(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nameAbbrev` (`nameAbbrev`) USING BTREE,
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  KEY `nameAbbrev` (`nameAbbrev`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1541,13 +1541,13 @@ CREATE TABLE `membershipCategories_codeholders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `categoryId` int(10) unsigned NOT NULL,
   `codeholderId` int(10) unsigned NOT NULL,
-  `year` year(4) DEFAULT NULL COMMENT 'Null for lifetime validity',
+  `year` year(4) NOT NULL COMMENT 'For lifetime validity, this is the year it started being valid',
   PRIMARY KEY (`id`),
   UNIQUE KEY `categoryId` (`categoryId`,`codeholderId`,`year`),
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `membershipCategories_codeholders_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `membershipCategories_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1556,7 +1556,7 @@ CREATE TABLE `membershipCategories_codeholders` (
 
 LOCK TABLES `membershipCategories_codeholders` WRITE;
 /*!40000 ALTER TABLE `membershipCategories_codeholders` DISABLE KEYS */;
-INSERT INTO `membershipCategories_codeholders` VALUES (1,3,2,2019),(3,6,2,2018),(4,10,2,NULL),(2,13,3,NULL);
+INSERT INTO `membershipCategories_codeholders` VALUES (3,1,2,2018),(5,2,3,2017),(1,3,2,2014),(4,7,2,2015),(2,13,3,2017);
 /*!40000 ALTER TABLE `membershipCategories_codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1778,4 +1778,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-11 11:01:09
+-- Dump completed on 2019-05-11 20:08:30
