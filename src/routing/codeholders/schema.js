@@ -246,7 +246,8 @@ export async function afterQuery (arr, done) {
 			categoryId: membership.categoryId,
 			year: membership.year,
 			nameAbbrev: membership.nameAbbrev,
-			name: membership.name
+			name: membership.name,
+			lifetime: membership.lifetime
 		});
 	}
 	
