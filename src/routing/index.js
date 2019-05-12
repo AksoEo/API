@@ -147,21 +147,24 @@ export function bindMethod (router, path, method, bind) {
 	}
 
 	// Matches certain MySQL InnoDB boolean mode queries according to the API spec
+	const querySearchWord = '[\\p{L}\\p{N}]';
 	const querySearchRegex = XRegExp(
 		`^
 		( [+-]?
 			(
-				  ( "([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*)
-					 (\\s+([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*))*" )
-				| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+				  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
+					 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
+
+				| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
 			)
 		)
 
 		( \\s+ [+-]?
 			(
-				  ( "([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*)
-					 (\\s+([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*))*" )
-				| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+				  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
+					 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
+
+				| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
 			)
 		)*
 		$`,
