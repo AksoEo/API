@@ -16,6 +16,7 @@ import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
 import { init as route$country_groups } from './country_groups';
 import { init as route$http_log } from './http_log';
+import { init as route$membership_categories } from './membership_categories';
 import { init as route$queries } from './queries';
 
 const ajv = new Ajv({
@@ -51,6 +52,36 @@ ajv.addKeyword('maxBytes', {
 		return buf.length <= schema;
 	}
 });
+ajv.addFormat('year', {
+	type: 'number',
+	validate: function (val) {
+		return val >= 1901 && val <= 2155; // https://dev.mysql.com/doc/refman/5.7/en/year.html
+	}
+});
+ajv.addFormat('int32', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**31) && val < 2**31;
+	}
+});
+ajv.addFormat('uint32', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**32;
+	}
+});
+ajv.addFormat('int64', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**63) && val < 2**63;
+	}
+});
+ajv.addFormat('uint32', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**64;
+	}
+});
 
 /**
  * Sets up all http routing
@@ -77,6 +108,7 @@ export function init () {
 	router.use('/countries', route$countries());
 	router.use('/country_groups', route$country_groups());
 	router.use('/http_log', route$http_log());
+	router.use('/membership_categories', route$membership_categories());
 	router.use('/queries', route$queries());
 
 	return router;

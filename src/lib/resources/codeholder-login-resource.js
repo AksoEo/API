@@ -2,7 +2,7 @@ import SimpleResource from './simple-resource';
 import ipaddr from 'ipaddr.js';
 
 /**
- * A resource representing an entry from the HTTP log
+ * A resource representing a codeholder login entry
  */
 class CodeholderLoginResource extends SimpleResource {
 	constructor (obj) {

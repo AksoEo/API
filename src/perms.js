@@ -4,7 +4,9 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 	// Set default hard-coded business logic
 	req.memberFields = {};
 	req.memberFilter = {};
-	req.permissions = [];
+	req.permissions = [
+		'membership_categories.read'
+	];
 
 	req.ownMemberFields = {
 		id: 'r',
@@ -21,6 +23,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		profilePicture: 'rw',
 		hasProfilePicture: 'r',
 		logins: 'r',
+		membership: 'r',
 
 		// Humans
 		firstName: 'rw',

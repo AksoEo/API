@@ -1516,7 +1516,11 @@ CREATE TABLE `membershipCategories` (
   `availableTo` year(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
-  KEY `nameAbbrev` (`nameAbbrev`) USING BTREE
+  KEY `nameAbbrev` (`nameAbbrev`) USING BTREE,
+  KEY `givesMembership` (`givesMembership`),
+  KEY `lifetime` (`lifetime`),
+  KEY `availableFrom` (`availableFrom`),
+  KEY `availableTo` (`availableTo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1526,7 +1530,7 @@ CREATE TABLE `membershipCategories` (
 
 LOCK TABLES `membershipCategories` WRITE;
 /*!40000 ALTER TABLE `membershipCategories` DISABLE KEYS */;
-INSERT INTO `membershipCategories` VALUES (1,'MG','Membro kun Gvidlibro','Individua membro, kiu ricevas nur la *Gvidlibron* tra la Esperanto-movado plus la revuon *Esperanto* rete.',1,0,NULL,2018),(2,'MJ','Membro kun Jarlibro','Membro kun Jarlibro plus la reta versio de la revuo Esperanto (kaj, ĝis inkl. 35 jaroj, membro de TEJO kun la revuo Kontakto sen plia abonpago).',1,0,NULL,2018),(3,'MB','Membro Baza','Donas retan aliron al UEA-servoj: reta revuo *Esperanto*, Delegita Reto (reta jarlibro). TEJO-aĝaj membroj (ĝis inkluzive 35 jarojn je la komenco de la jaro) aldone ricevas retan revuon Kontakto.',1,0,2019,NULL),(4,'DMB','Dumviva Membro Baza','Kiel Membro Baza, sed validas vian tutan vivon.',1,1,2019,NULL),(5,'DMJ','Dumviva Membro kun Jarlibro','Kiel Membro kun Jarlibro sed validas vian tutan vivon.',1,1,NULL,2018),(6,'MA','Membro-Abonanto','Kiel MB plus la revuo *Esperanto* (surpapera). TEJO-aĝaj membroj ricevas aldone revuon *Kontakto* papere.',1,0,NULL,NULL),(7,'DMA','Dumviva Membro-Abonanto','Kiel DMA sed validas vian tutan vivon.',1,1,NULL,NULL),(8,'HM','Honora Membro','Honoraj Membroj estas elektitaj esperantistoj, kiuj faris gravajn servojn al la tutmonda Esperanto-movado.',1,1,NULL,NULL),(9,'HPK','Honora Patrono','La Honora Patrona Komitato konsistas el lingvistoj, sciencistoj kaj aliaj eminentaj personoj, kiuj faris gravajn servojn al la Esperanto-movado, kaj mem parolas la internacian lingvon.',1,1,NULL,NULL),(10,'DP','Dumviva Patrono de UEA','',0,1,NULL,NULL),(11,'SZ','Membro de Societo Zamenhof','Finance apogas Universalan Esperanto-Asocion.',0,0,NULL,NULL),(12,'PT','Patrono de TEJO','Finance apogas Tutmondan Esperantistan Junularan Organizon, kaj ricevas papere la eldonaĵojn de TEJO.',0,0,NULL,NULL),(13,'DPT','Dumviva Patrono de TEJO','Kiel PT sed validas vian tutan vivon.',0,1,NULL,NULL);
+INSERT INTO `membershipCategories` VALUES (1,'MG','Membro kun Gvidlibro','Individua membro, kiu ricevas nur la *Gvidlibron* tra la Esperanto-movado plus la revuon *Esperanto* rete.',1,0,NULL,2018),(2,'MJ','Membro kun Jarlibro','Membro kun Jarlibro plus la reta versio de la revuo Esperanto (kaj, ĝis inkl. 35 jaroj, membro de TEJO kun la revuo Kontakto sen plia abonpago).',1,0,NULL,2018),(3,'MB','Membro Baza','Donas retan aliron al UEA-servoj: reta revuo *Esperanto*, Delegita Reto (reta jarlibro). TEJO-aĝaj membroj (ĝis inkluzive 35 jarojn je la komenco de la jaro) aldone ricevas retan revuon *Kontakto*.',1,0,2019,NULL),(4,'DMB','Dumviva Membro Baza','Kiel Membro Baza, sed validas vian tutan vivon.',1,1,2019,NULL),(5,'DMJ','Dumviva Membro kun Jarlibro','Kiel Membro kun Jarlibro sed validas vian tutan vivon.',1,1,NULL,2018),(6,'MA','Membro-Abonanto','Kiel MB plus la revuo *Esperanto* (surpapera). TEJO-aĝaj membroj ricevas aldone revuon *Kontakto* papere.',1,0,NULL,NULL),(7,'DMA','Dumviva Membro-Abonanto','Kiel DMA sed validas vian tutan vivon.',1,1,NULL,NULL),(8,'HM','Honora Membro','Honoraj Membroj estas elektitaj esperantistoj, kiuj faris gravajn servojn al la tutmonda Esperanto-movado.',1,1,NULL,NULL),(9,'HPK','Honora Patrono','La Honora Patrona Komitato konsistas el lingvistoj, sciencistoj kaj aliaj eminentaj personoj, kiuj faris gravajn servojn al la Esperanto-movado, kaj mem parolas la internacian lingvon.',1,1,NULL,NULL),(10,'DP','Dumviva Patrono de UEA','',0,1,NULL,NULL),(11,'SZ','Membro de Societo Zamenhof','Finance apogas Universalan Esperanto-Asocion.',0,0,NULL,NULL),(12,'PT','Patrono de TEJO','Finance apogas Tutmondan Esperantistan Junularan Organizon, kaj ricevas papere la eldonaĵojn de TEJO.',0,0,NULL,NULL),(13,'DPT','Dumviva Patrono de TEJO','Kiel PT sed validas vian tutan vivon.',0,1,NULL,NULL);
 /*!40000 ALTER TABLE `membershipCategories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1547,7 +1551,7 @@ CREATE TABLE `membershipCategories_codeholders` (
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `membershipCategories_codeholders_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `membershipCategories_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1556,7 +1560,7 @@ CREATE TABLE `membershipCategories_codeholders` (
 
 LOCK TABLES `membershipCategories_codeholders` WRITE;
 /*!40000 ALTER TABLE `membershipCategories_codeholders` DISABLE KEYS */;
-INSERT INTO `membershipCategories_codeholders` VALUES (3,1,2,2018),(5,2,3,2017),(1,3,2,2014),(4,7,2,2015),(2,13,3,2017);
+INSERT INTO `membershipCategories_codeholders` VALUES (5,2,3,2017),(1,3,2,2014),(6,4,2,2019),(4,7,2,2015),(2,13,3,2017);
 /*!40000 ALTER TABLE `membershipCategories_codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1778,4 +1782,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-11 20:08:30
+-- Dump completed on 2019-05-12 12:54:33

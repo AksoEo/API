@@ -1,5 +1,5 @@
 import QueryUtil from '../../../lib/query-util';
-import CountryResource from '../../../lib/resources/country-resource';
+import MembershipCategoryResource from '../../../lib/resources/membership-category-resource';
 
 import parSchema from '../schema';
 
@@ -7,7 +7,8 @@ const schema = {
 	...parSchema,
 	...{
 		query: 'resource',
-		body: null
+		body: null,
+		requirePerms: 'membership_categories.read'
 	}
 };
 
@@ -15,14 +16,14 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		const query = AKSO.db('countries');
+		const query = AKSO.db('membershipCategories');
 		QueryUtil.simpleResource(req, schema, query);
-		query.where('code', req.params.countryCode);
+		query.where('id', req.params.categoryId);
 
 		const row = await query;
 		try {
-			const country = new CountryResource(row);
-			res.sendObj(country);
+			const obj = new MembershipCategoryResource(row);
+			res.sendObj(obj);
 		} catch (e) {
 			if (e.simpleResourceError) { return res.sendStatus(404); }
 			throw e;

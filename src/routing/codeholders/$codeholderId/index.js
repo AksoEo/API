@@ -4,6 +4,7 @@ import { bindMethod } from '../..';
 
 import { init as route$files } from './files';
 import { init as route$logins } from './logins';
+import { init as route$membership } from './membership';
 import { init as route$profile_picture } from './profile_picture';
 
 import method$get from './get';
@@ -18,6 +19,7 @@ export function init () {
 
 	router.use('/files', route$files());
 	router.use('/logins', route$logins());
+	router.use('/membership', route$membership());
 	router.use('/profile_picture', route$profile_picture());
 
 	bindMethod(router, '/', 'get', method$get);

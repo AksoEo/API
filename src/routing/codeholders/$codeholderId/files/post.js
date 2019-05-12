@@ -40,7 +40,6 @@ export default {
 
 		// Check member fields
 		const requiredMemberFields = [
-			'id',
 			'files'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {

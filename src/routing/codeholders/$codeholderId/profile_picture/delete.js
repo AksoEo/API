@@ -15,7 +15,6 @@ export default {
 	run: async function run (req, res) {
 		// Check member fields
 		const requiredMemberFields = [
-			'id',
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
