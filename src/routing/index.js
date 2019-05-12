@@ -416,7 +416,7 @@ export function bindMethod (router, path, method, bind) {
 							} else if (key === 'search') {
 								if (typeof req.query.search !== 'string') {
 									const err = new Error('?search must be a string');
-									err.statusCode = 400;
+									err.statusCode = 400;``
 									return next(err);
 								}
 
@@ -440,7 +440,7 @@ export function bindMethod (router, path, method, bind) {
 									cols: csvParsed.slice(1)
 								};
 
-								if (!querySearchRegex.test(req.query.search.query)) {
+								if (!querySearchRegex.test(req.query.search.query) || req.query.search.query.length > 250) {
 									const err = new Error('Invalid query in ?search');
 									err.statusCode = 400;
 									return next(err);
