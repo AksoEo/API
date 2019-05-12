@@ -98,38 +98,41 @@ export default {
 					loginData.userAgentParsed = loginData.userAgentParsed.substring(0, 500);
 				}
 
+
 				// Check if the location seems fishy
 				let isFishy = false;
-				// Check if this is the first login ever
-				const loginCount = (await AKSO.db('codeholders_logins')
-					.count({ count: 1 })
-					.where('codeholderId', user.user)
-				)[0].count;
-
-				if (loginCount > 0) {
-					// Check if we've previously had a login from a similar location
-					const similarLogin = await AKSO.db('codeholders_logins')
-						.first(1)
+				if (AKSO.conf.loginNotifsEnabled) {
+					// Check if this is the first login ever
+					const loginCount = (await AKSO.db('codeholders_logins')
+						.count({ count: 1 })
 						.where('codeholderId', user.user)
-						.where(function() {
-							this
-								.where('ip', loginData.ip)
-								.orWhere(function () {
-									this
-										.whereNotNull('country')
-										.where({
-											country: loginData.country,
-											region: loginData.region
-										});
-								});
-						});
+					)[0].count;
 
-					if (!similarLogin) { isFishy = true; }
+					if (loginCount > 0) {
+						// Check if we've previously had a login from a similar location
+						const similarLogin = await AKSO.db('codeholders_logins')
+							.first(1)
+							.where('codeholderId', user.user)
+							.where(function() {
+								this
+									.where('ip', loginData.ip)
+									.orWhere(function () {
+										this
+											.whereNotNull('country')
+											.where({
+												country: loginData.country,
+												region: loginData.region
+											});
+									});
+							});
+
+						if (!similarLogin) { isFishy = true; }
+					}
 				}
 
 				await AKSO.db('codeholders_logins').insert(loginData);
 
-				if (isFishy) {
+				if (AKSO.conf.loginNotifsEnabled && isFishy) {
 					// Send an alert to the codeholder
 					const countryData = await AKSO.db('countries')
 						.where('code', loginData.country)

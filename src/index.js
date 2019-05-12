@@ -61,7 +61,9 @@ async function init () {
 			},
 			prodMode: process.env.NODE_ENV || 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex'),
-			dataDir: process.env.AKSO_DATA_DIR
+			dataDir: process.env.AKSO_DATA_DIR,
+			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
+				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0'
 		},
 
 		// Constants, do not change without updating docs
@@ -146,6 +148,11 @@ async function init () {
 
 	AKSO.log.info('AKSO version %s', AKSO.version);
 	AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
+
+	// Warn about used values
+	if (!AKSO.conf.loginNotifsEnabled) {
+		AKSO.log.warn('Login notifications disabled');
+	}
 
 	await AKSODb.init();
 	await AKSOMail.init();
