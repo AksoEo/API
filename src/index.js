@@ -95,6 +95,7 @@ async function init () {
 		SLOW_DOWN_DELAY_AFTER: 5, // allow 5 requests per window ms, then ...
 		SLOW_DOWN_DELAY_MS: 500, // add a n*500ms delay for each n'th request past `delay after`
 		SLOW_DOWN_MAX_DELAY_MS: 2000, // maximum delay per request
+		TOTP_REMEMBER_LIFE: 5184000, // 60 days
 
 		CREATE_PASSWORD_FREQ: 3*60*60, // 3 hours
 		PASSWORD_BCRYPT_SALT_ROUNDS: 12,

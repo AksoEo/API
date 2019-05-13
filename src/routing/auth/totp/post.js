@@ -82,7 +82,7 @@ export default {
 					const rememberKeyHash = crypto.createHash('sha256').update(rememberKey).digest();
 
 					const timeNow = moment().unix();
-					const expiration = timeNow + 5184000; // 60 days
+					const expiration = timeNow + AKSO.TOTP_REMEMBER_LIFE;
 
 					await AKSO.db('codeholders_totp_remember').insert({
 						rememberKey: rememberKeyHash,

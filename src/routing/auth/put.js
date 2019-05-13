@@ -60,7 +60,7 @@ export default {
 						.update('time', timeNow);
 
 					if (found) {
-						const expiration = timeNow + 5184000; // 60 days
+						const expiration = timeNow + AKSO.TOTP_REMEMBER_LIFE;
 
 						res.cookie('remember_totp', req.cookies.remember_totp, {
 							expires: moment.unix(expiration).toDate(),
