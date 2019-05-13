@@ -327,7 +327,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,NULL,1,'pl',NULL,NULL,0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,0,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -426,15 +426,20 @@ CREATE TABLE `codeholders_hist_address` (
   `modTime` bigint(20) unsigned NOT NULL,
   `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `country` char(2) CHARACTER SET ascii NOT NULL,
+  `country` char(2) CHARACTER SET ascii DEFAULT NULL,
   `countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `streetAddress_latin` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `postalCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sortingCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sortingCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `search` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`modId`),
   KEY `country` (`country`),
   KEY `codeholderId` (`codeholderId`),
@@ -1184,7 +1189,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1783,4 +1788,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-13 14:26:46
+-- Dump completed on 2019-05-13 16:02:54
