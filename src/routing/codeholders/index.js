@@ -8,6 +8,7 @@ import { init as route$$codeholderIds } from './$codeholderIds';
 import { init as route$self } from './self';
 
 import method$get from './get';
+import method$post from './post';
 
 /**
  * Sets up /codeholders
@@ -34,6 +35,7 @@ export function init () {
 	router.use('/:login', route$$login());
 
 	bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'post', method$post);
 
 	return router;
 }

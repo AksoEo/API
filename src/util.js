@@ -59,3 +59,23 @@ Handlebars.registerHelper('url', options => {
 export function renderTemplate (tmpl, view = {}, noEscape = false) {
 	return Handlebars.compile(tmpl, noEscape)(view);
 }
+
+/**
+ * Creates a knex transaction for use with async await
+ * @return {knex.Transaction}
+ */
+export function createTransaction() {
+	return new Promise((resolve, reject) => AKSO.db.transaction(resolve).catch(reject));
+}
+
+/**
+ * Silently rolls back a knex transaction
+ * @param {knex.Transaction} trx
+ */
+export async function rollbackTransaction (trx) {
+	try {
+		await trx.rollback(new Error('Safe rollback, not an error'));
+	} catch (e) {
+		// noop
+	}
+}

@@ -1,5 +1,6 @@
 import express from 'express';
 import Ajv from 'ajv';
+import AjvMergePatch from 'ajv-merge-patch';
 import { promisify } from 'util';
 const csvParse = promisify(require('csv-parse'));
 import XRegExp from 'xregexp';
@@ -24,6 +25,7 @@ const ajv = new Ajv({
 	useDefaults: true,
 	strictKeywords: true
 });
+AjvMergePatch(ajv);
 ajv.addKeyword('isBinary', {
 	modifying: true,
 	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
@@ -57,6 +59,10 @@ ajv.addFormat('year', {
 	validate: function (val) {
 		return val >= 1901 && val <= 2155; // https://dev.mysql.com/doc/refman/5.7/en/year.html
 	}
+});
+ajv.addFormat('tel', {
+	type: 'number',
+	validate: /^\+[a-z0-9]{1,49}$/i
 });
 ajv.addFormat('int32', {
 	type: 'number',
@@ -416,7 +422,7 @@ export function bindMethod (router, path, method, bind) {
 							} else if (key === 'search') {
 								if (typeof req.query.search !== 'string') {
 									const err = new Error('?search must be a string');
-									err.statusCode = 400;``
+									err.statusCode = 400;
 									return next(err);
 								}
 
