@@ -1,4 +1,5 @@
 import moment from 'moment';
+import AddressFormat from 'google-i18n-address';
 
 import { createTransaction, rollbackTransaction, insertAsReplace } from '../../../util';
 import { modQuerySchema } from '../../../lib/codeholder-utils';
@@ -208,7 +209,7 @@ export default {
 	run: async function run (req, res) {
 		// Member fields
 		const fields = Object.keys(req.body);
-		if (!memberFieldsManual(fields, req, res, 'r')) {
+		if (!memberFieldsManual(fields, req, res, 'w')) {
 			return res.status(403).type('text/plain').send('Illegal codeholder fields used, check /perms');
 		}
 
@@ -234,11 +235,66 @@ export default {
 			}
 
 			if (field === 'address') {
-				addressUpdateData = {...req.body.address};
-				addressUpdateData.codeholderId = req.params.codeholderId;
-				addressUpdateData.search = '';
-				// TODO: Latin, remaining fields
+				// Make sure the country exists
+				const addressCountry = await AKSO.db('countries')
+					.where({ enabled: true, code: req.body.address.country })
+					.first('name_eo');
+				if (!addressCountry) {
+					return res.status(400).type('text/plain').send('Unknown address.country');
+				}
+
+				const addressInput = {...req.body.address};
+				addressInput.countryCode = req.body.address.country;
+				delete addressInput.country;
+				let addressNormalized;
+				try {
+					addressNormalized = AddressFormat.normalizeAddress(addressInput);
+				} catch (e) {
+					if (e instanceof AddressFormat.InvalidAddress) {
+						return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
+					}
+					throw e;
+				}
+				const addressLatin = AddressFormat.latinizeAddress(addressNormalized);
+
+				const addressSearch = [
+					addressLatin.countryCode,
+					addressCountry.name_eo,
+					addressNormalized.countryArea,
+					addressLatin.countryArea,
+					addressLatin.city,
+					addressLatin.cityArea,
+					addressLatin.streetAddress,
+					addressLatin.postalCode,
+					addressLatin.sortingCode
+				]
+					.filter(val => val) // remove null/undefined
+					.join(' ');
+
+				addressUpdateData = {
+					...addressNormalized,
+					...{
+						codeholderId: req.params.codeholderId,
+						search: addressSearch
+					}
+				};
+				for (let [key, val] of Object.entries(addressLatin)) {
+					addressUpdateData[key + '_latin'] = val;
+				}
+				addressUpdateData.country = addressUpdateData.countryCode;
+				delete addressUpdateData.countryCode;
+				delete addressUpdateData.countryCode_latin;
 			} else {
+				if (field === 'feeCountry') {
+					// Make sure the country exists
+					const feeCountryFound = await AKSO.db('countries')
+						.where({ enabled: true, code: req.body.feeCountry })
+						.first(1);
+					if (!feeCountryFound) {
+						return res.status(400).type('text/plain').send('Unknown feeCountry');
+					}
+				}
+
 				updateData[field] = req.body[field];
 			}
 		}
@@ -254,11 +310,13 @@ export default {
 			.where('id', req.params.codeholderId)
 			.first(oldDataFields);
 
-		await trx('codeholders')
-			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
-			.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')
-			.where('id', req.params.codeholderId)
-			.update(updateData);
+		if (Object.keys(updateData).length) {
+			await trx('codeholders')
+				.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
+				.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')
+				.where('id', req.params.codeholderId)
+				.update(updateData);
+		}
 
 		if (addressUpdateData) {
 			oldAddress = await trx('codeholders_address')
