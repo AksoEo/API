@@ -79,11 +79,13 @@ export default {
 
 				if (req.body.remember) {
 					const rememberKey = await crypto.randomBytes(32);
+					const rememberKeyHash = crypto.createHash('sha256').update(rememberKey).digest();
+
 					const timeNow = moment().unix();
 					const expiration = timeNow + 5184000; // 60 days
 
 					await AKSO.db('codeholders_totp_remember').insert({
-						rememberKey: rememberKey,
+						rememberKey: rememberKeyHash,
 						codeholderId: user.user,
 						time: timeNow
 					});

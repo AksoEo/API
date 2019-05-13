@@ -262,7 +262,7 @@ DROP TABLE IF EXISTS `clients`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clients` (
   `apiKey` binary(16) NOT NULL,
-  `apiSecret` binary(32) NOT NULL,
+  `apiSecret` binary(32) NOT NULL COMMENT 'SHA-256',
   `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ownerName` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ownerEmail` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -292,7 +292,7 @@ CREATE TABLE `codeholders` (
   `codeholderType` enum('human','org') CHARACTER SET ascii NOT NULL,
   `oldCode` char(4) CHARACTER SET ascii DEFAULT NULL,
   `newCode` char(6) CHARACTER SET ascii NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'bcrypt',
   `createPasswordTime` bigint(20) unsigned DEFAULT NULL,
   `createPasswordKey` binary(16) DEFAULT NULL,
   `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1345,7 +1345,7 @@ DROP TABLE IF EXISTS `codeholders_totp_remember`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `codeholders_totp_remember` (
-  `rememberKey` binary(32) NOT NULL,
+  `rememberKey` binary(32) NOT NULL COMMENT 'SHA-256',
   `codeholderId` int(10) unsigned NOT NULL,
   `time` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`rememberKey`),
@@ -1782,4 +1782,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-12 12:54:33
+-- Dump completed on 2019-05-13 10:14:30

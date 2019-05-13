@@ -3,6 +3,7 @@ import geoip from 'geoip-lite';
 import useragent from 'useragent';
 import moment from 'moment-timezone';
 import ipaddr from 'ipaddr.js';
+import crypto from 'pn/crypto';
 import * as latlon from 'latlon-formatter';
 
 import * as AKSONotif from '../../notif';
@@ -48,10 +49,12 @@ export default {
 				if (req.cookies.remember_totp) {
 					// Look it up
 					const rememberKey = Buffer.from(req.cookies.remember_totp, 'hex');
+					const rememberKeyHash = crypto.createHash('sha256').update(rememberKey).digest();
+
 					const timeNow = moment().unix();
 					const found = await AKSO.db('codeholders_totp_remember')
 						.where({
-							rememberKey: rememberKey,
+							rememberKey: rememberKeyHash,
 							codeholderId: user.user
 						})
 						.update('time', timeNow);
