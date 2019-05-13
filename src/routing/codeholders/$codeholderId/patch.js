@@ -281,7 +281,7 @@ export default {
 				for (let [key, val] of Object.entries(addressLatin)) {
 					addressUpdateData[key + '_latin'] = val;
 				}
-				addressUpdateData.country = addressUpdateData.countryCode;
+				addressUpdateData.country = req.body.address.country;
 				delete addressUpdateData.countryCode;
 				delete addressUpdateData.countryCode_latin;
 			} else {

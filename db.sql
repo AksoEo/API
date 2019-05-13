@@ -374,7 +374,7 @@ CREATE TABLE `codeholders_address` (
 
 LOCK TABLES `codeholders_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_address` DISABLE KEYS */;
-INSERT INTO `codeholders_address` VALUES (2,'US','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'NL','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'NL','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800');
+INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800');
 /*!40000 ALTER TABLE `codeholders_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1788,4 +1788,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-13 17:06:59
+-- Dump completed on 2019-05-13 17:16:23
