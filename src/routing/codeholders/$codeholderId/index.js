@@ -8,6 +8,7 @@ import { init as route$membership } from './membership';
 import { init as route$profile_picture } from './profile_picture';
 
 import method$get from './get';
+import method$patch from './patch';
 import method$delete from './delete';
 
 /**
@@ -23,6 +24,7 @@ export function init () {
 	router.use('/profile_picture', route$profile_picture());
 
 	bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'patch', method$patch);
 	bindMethod(router, '/', 'delete', method$delete);
 
 	return router;

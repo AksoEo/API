@@ -79,3 +79,13 @@ export async function rollbackTransaction (trx) {
 		// noop
 	}
 }
+
+/**
+ * Turns a knex insert query into a replace query
+ * @param  {knex.QueryBuilder} query
+ * @param  {knex.QueryBuilder} [db]  The database or subquery to run the query as
+ * @return {knex.Raw}
+ */
+export function insertAsReplace (query, db = AKSO.db) {
+	return db.raw(query.toString().replace(/^INSERT/i, 'REPLACE'));
+}

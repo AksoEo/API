@@ -116,7 +116,7 @@ const schema = {
 						officePhone: {
 							type: 'string',
 							format: 'tel'
-						} // Codeholder
+						}
 					},
 					required: [ 'newCode', 'codeholderType' ],
 					additionalProperties: false

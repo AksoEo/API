@@ -8,25 +8,19 @@ const schema = {
 		requirePerms: 'codeholders.delete'
 	}
 };
-schema.alwaysWhere = (query, req) => memberFilter(schema, query, req);
 
 export default {
 	schema: schema,
 
 	run: async function run (req, res) {
 		// Try to find the codeholder
-		const queryCodeholder = AKSO.db('view_codeholders');
-		queryCodeholder.where('id', req.params.codeholderId);
-		queryCodeholder.first(1);
-
-		const codeholder = await queryCodeholder;
-		if (!codeholder) { return res.sendStatus(404); }
-
-		// Found, perform deletion
-		await AKSO.db('codeholders')
+		const query = AKSO.db('view_codeholders')
 			.where('id', req.params.codeholderId)
 			.delete();
+		memberFilter(parSchema, query, req);
 
-		res.sendStatus(204);
+		const deleted = await query;
+		if (deleted) { res.sendStatus(204); }
+		else { res.sendStatus(404); }
 	}
 };
