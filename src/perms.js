@@ -94,10 +94,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 				clientPerms.memberFields
 			);
 		}
-
-		if (req.hasPermission('codeholders.others')) {
-			req.memberFilter = {};
-		}
+		
 		req.memberFilter = merge(
 			req.memberFilter,
 			clientPerms.memberFilter
