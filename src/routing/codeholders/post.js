@@ -1,4 +1,5 @@
 import path from 'path';
+import AddressFormat from 'google-i18n-address';
 
 import { createTransaction, rollbackTransaction } from '../../util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
@@ -233,11 +234,12 @@ export default {
 			}
 		}
 
+		let addressCountry;
 		if (req.body.address) {
-			const addressCountryFound = await AKSO.db('countries')
+			addressCountry = await AKSO.db('countries')
 				.where({ enabled: true, code: req.body.address.country })
-				.first(1);
-			if (!addressCountryFound) {
+				.first('name_eo');
+			if (!addressCountry) {
 				return res.status(400).type('text/plain').send('Unknown address.country');
 			}
 
@@ -295,22 +297,51 @@ export default {
 		}
 
 		if (req.body.address) {
+			const addressInput = {...req.body.address};
+			addressInput.countryCode = req.body.address.country;
+			delete addressInput.country;
+			let addressNormalized;
+			try {
+				addressNormalized = AddressFormat.normalizeAddress(addressInput);
+			} catch (e) {
+				await rollbackTransaction(trx);
+				if (e instanceof AddressFormat.InvalidAddress) {
+					return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
+				}
+				throw e;
+			}
+			const addressLatin = AddressFormat.latinizeAddress(addressNormalized);
+
+			const addressSearch = [
+				addressLatin.countryCode,
+				addressCountry.name_eo,
+				addressNormalized.countryArea,
+				addressLatin.countryArea,
+				addressLatin.city,
+				addressLatin.cityArea,
+				addressLatin.streetAddress,
+				addressLatin.postalCode,
+				addressLatin.sortingCode
+			]
+				.filter(val => val) // remove null/undefined
+				.join(' ');
+
 			await trx('codeholders_address').insert({
 				codeholderId: id,
 				country: req.body.address.country,
-				countryArea: req.body.address.countryArea,
-				countryArea_latin: null, // todo
-				city: req.body.address.city,
-				city_latin: null, // todo
-				cityArea: req.body.address.cityArea,
-				cityArea_latin: null, // todo
-				streetAddress: req.body.address.streetAddress,
-				streetAddress_latin: null, // todo
-				postalCode: req.body.address.postalCode,
-				postalCode_latin: null, // todo
-				sortingCode: req.body.address.sortingCode,
-				sortingCode_latin: null, // todo
-				search: '' // todo
+				countryArea: addressNormalized.countryArea,
+				countryArea_latin: addressLatin.countryArea,
+				city: addressNormalized.city,
+				city_latin: addressLatin.city,
+				cityArea: addressNormalized.cityArea,
+				cityArea_latin: addressLatin.cityArea,
+				streetAddress: addressNormalized.streetAddress,
+				streetAddress_latin: addressLatin.streetAddress,
+				postalCode: addressNormalized.postalCode,
+				postalCode_latin: addressLatin.postalCode,
+				sortingCode: addressNormalized.sortingCode,
+				sortingCode_latin: addressLatin.sortingCode,
+				search: addressSearch
 			});
 		}
 

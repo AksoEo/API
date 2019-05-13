@@ -10,7 +10,6 @@ const schema = {
 		requirePerms: 'codeholders.read'
 	}
 };
-schema.alwaysWhere = (query, req) => memberFilter(schema, query, req);
 
 const languages = [
 	'eo', 'en', 'fr', 'es',
@@ -64,6 +63,7 @@ export default {
 				'fullNameLocal',
 				'careOf'
 			]);
+		memberFilter(schema, codeholderQuery, req);
 
 		// Restrictions
 		const requiredMemberFields = [
@@ -119,10 +119,10 @@ export default {
 					addressObj.name += ' ' + codeholder.lastNameLegal;
 				}
 
-				if (codeholder.careOf) {
-					addressObj.name = `c/o ${codeholder.careOf}`;
-				}
 				addressObj.companyName = codeholder.fullNameLocal || codeholder.fullName;
+				if (codeholder.careOf) {
+					addressObj.companyName += `\nc/o ${codeholder.careOf}`;
+				}
 			}
 
 			// Obtain the country name
