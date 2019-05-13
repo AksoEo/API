@@ -313,6 +313,7 @@ CREATE TABLE `codeholders` (
   KEY `createPasswordTime` (`createPasswordTime`),
   KEY `deathdate` (`deathdate`),
   KEY `hasProfilePicture` (`hasProfilePicture`),
+  KEY `password` (`password`),
   FULLTEXT KEY `email_2` (`email`),
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
@@ -1782,4 +1783,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-13 14:01:07
+-- Dump completed on 2019-05-13 14:26:46

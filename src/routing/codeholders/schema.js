@@ -35,6 +35,7 @@ export const schema = {
 		'deathdate': 'f',
 		'hasProfilePicture': 'f',
 		'membership': '',
+		'hasPassword': 'f',
 
 		// HumanCodeholder
 		'firstName': 'f',
@@ -78,7 +79,8 @@ export const schema = {
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone',
-		'membership': () => AKSO.db.raw('1')
+		'membership': () => AKSO.db.raw('1'),
+		'hasPassword': () => AKSO.db.raw('`password` is not null')
 	},
 	fieldSearchGroups: [
 		'firstName,firstNameLegal,lastName,lastNameLegal',

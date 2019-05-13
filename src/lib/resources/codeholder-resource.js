@@ -44,6 +44,7 @@ class CodeholderResource extends SimpleResource {
 		this.obj.enabled           = !!this.obj.enabled;
 		this.obj.isDead            = !!this.obj.isDead;
 		this.obj.hasProfilePicture = !!this.obj.hasProfilePicture;
+		this.obj.hasPassword       = !!this.obj.hasPassword;
 
 		if ('addressCountryGroups' in this.obj) {
 			if (typeof this.obj.addressCountryGroups === 'string') {
