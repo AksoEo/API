@@ -57,7 +57,8 @@ export const schema = {
 		'fullName': 'fs',
 		'fullNameLocal': 'fs',
 		'careOf': 'fs',
-		'nameAbbrev': 'fs'
+		'nameAbbrev': 'fs',
+		'website': ''
 	},
 	fieldAliases: {
 		'address.country': 'address_country',

@@ -11,6 +11,8 @@ import fs from 'pn/fs';
 import bytesUtil from 'bytes';
 import msgpack from 'msgpack-lite';
 
+import { urlRegex } from '../util';
+
 import { init as route$auth } from './auth';
 import { init as route$perms } from './perms';
 import { init as route$codeholders } from './codeholders';
@@ -23,7 +25,8 @@ import { init as route$queries } from './queries';
 const ajv = new Ajv({
 	format: 'full',
 	useDefaults: true,
-	strictKeywords: true
+	strictKeywords: true,
+	nullable: true
 });
 AjvMergePatch(ajv);
 ajv.addKeyword('isBinary', {
@@ -63,6 +66,19 @@ ajv.addFormat('year', {
 ajv.addFormat('tel', {
 	type: 'number',
 	validate: /^\+[a-z0-9]{1,49}$/i
+});
+ajv.addFormat('safe-uri', {
+	type: 'string',
+	validate: function (val) {
+		if (!urlRegex.test(val)) { return false; }
+		let parsedURL;
+		try { parsedURL = new URL(val); }
+		catch (e) { return false; }
+		if (parsedURL.username) { return false; }
+		if (parsedURL.password) { return false; }
+		if (parsedURL.protocol !== 'http:' && parsedURL.protocol !== 'https:') { return false; }
+		return true;
+	}
 });
 ajv.addFormat('int32', {
 	type: 'number',

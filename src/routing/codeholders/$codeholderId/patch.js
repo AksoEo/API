@@ -25,71 +25,35 @@ const schema = {
 							pattern: '^[a-z]{2}$'
 						},
 						countryArea: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									pattern: '^[^\\n]{1,50}$'
-								}
-							]
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
 						},
 						city: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									pattern: '^[^\\n]{1,50}$'
-								}
-							]
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
 						},
 						cityArea: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									pattern: '^[^\\n]{1,50}$'
-								}
-							]
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
 						},
 						streetAddress: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									minLength: 1,
-									maxLength: 100
-								}
-							]
+							type: 'string',
+							minLength: 1,
+							maxLength: 100,
+							nullable: true
 						},
 						postalCode: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									pattern: '^[^\\n]{1,20}$'
-								}
-							]
+							type: 'string',
+							pattern: '^[^\\n]{1,20}$',
+							nullable: true
 						},
 						sortingCode: {
-							oneOf: [
-								{
-									type: 'null'
-								},
-								{
-									type: 'string',
-									pattern: '^[^\\n]{1,20}$'
-								}
-							]
+							type: 'string',
+							pattern: '^[^\\n]{1,20}$',
+							nullable: true
 						}
 					},
 					additionalProperties: false,
@@ -174,6 +138,11 @@ const schema = {
 				nameAbbrev: {
 					type: 'string',
 					pattern: '^[^\\n]{1,12}$'
+				},
+				website: {
+					type: 'string',
+					maxLength: 50,
+					format: 'safe-uri'
 				}
 			},
 			additionalProperties: false,
@@ -199,7 +168,8 @@ const exclusiveFields = {
 		'fullName',
 		'fullNameLocal',
 		'careOf',
-		'nameAbbrev'
+		'nameAbbrev',
+		'website'
 	]
 };
 exclusiveFields.all = Object.values(exclusiveFields).reduce((a, b) => a.concat(b));
