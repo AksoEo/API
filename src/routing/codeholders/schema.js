@@ -36,6 +36,7 @@ export const schema = {
 		'hasProfilePicture': 'f',
 		'membership': '',
 		'hasPassword': 'f',
+		'isActiveMember': 'f',
 
 		// HumanCodeholder
 		'firstName': 'f',
