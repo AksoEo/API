@@ -112,5 +112,12 @@ export async function renderSendEmail ({
 		};
 		sendPromises.push(AKSO.mail.send(msgChunk));
 	}
-	return await Promise.all(sendPromises);
+	try {
+		return await Promise.all(sendPromises);
+	} catch (e) {
+		if (e.response.body && e.response.body.errors) {
+			AKSO.log.error(e);
+			console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
+		} else { throw e; }
+	}
 }

@@ -22,7 +22,7 @@ export async function sendNotification ({
 } = {}) {
 	const msgPrefs = new Map();
 	for (let id of codeholderIds) {
-		msgPrefs.set(id, [ 'email' ]); // Default to sending by email
+		msgPrefs.set(parseInt(id, 10), [ 'email' ]); // Default to sending by email
 	}
 
 	const msgPrefsDb = await AKSO.db('codeholders_notif_pref')
@@ -42,14 +42,16 @@ export async function sendNotification ({
 		for (let pref of prefs) { recipients[pref].push(id); }
 	}
 
+	const sendPromises = [];
+
 	// Send Telegram messages
 	if (recipients.telegram.length) {
-		await AKSOTelegram.sendNotification({
+		sendPromises.push(AKSOTelegram.sendNotification({
 			codeholderIds: recipients.telegram,
 			org: org,
 			tmpl: notif,
 			view: view
-		});
+		}));
 	}
 
 	// Send emails
@@ -60,12 +62,14 @@ export async function sendNotification ({
 			return personalization;
 		});
 
-		await AKSOMail.renderSendEmail({
+		sendPromises.push(AKSOMail.renderSendEmail({
 			org: org,
 			tmpl: notif,
 			personalizations: personalizations,
 			view: view,
 			msgData: emailConf
-		});
+		}));
 	}
+
+	await Promise.all(sendPromises);
 }

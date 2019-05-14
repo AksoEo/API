@@ -3,6 +3,7 @@ import AddressFormat from 'google-i18n-address';
 
 import { createTransaction, rollbackTransaction, insertAsReplace } from '../../../util';
 import { modQuerySchema } from '../../../lib/codeholder-utils';
+import * as AKSONotif from '../../../notif';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from '../schema';
 
@@ -357,6 +358,20 @@ export default {
 			const table = 'codeholders_hist_' + field;
 			const histQuery = AKSO.db(table).insert(histEntry);
 			histPromises.push(histQuery);
+
+			if (field === 'email') {
+				histPromises.push(AKSONotif.sendNotification({
+					codeholderIds: [ req.params.codeholderId ],
+					org: 'akso',
+					notif: 'email-changed-admin',
+					category: 'account',
+					view: {
+						emailFrom: oldData.email,
+						emailTo: updateData.email,
+						note: req.query.modCmt
+					}
+				}));
+			}
 		}
 		await Promise.all(histPromises);
 	}

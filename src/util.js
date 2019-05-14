@@ -48,6 +48,11 @@ export async function promiseAllObject (promises) {
 Handlebars.registerHelper('url', options => {
 	return options.data.root.domain + options.fn(this);
 });
+Handlebars.registerHelper('breaklines', text => {
+	text = Handlebars.Utils.escapeExpression(text)
+		.replace(/(\r\n|\n|\r)/gm, '<br>');
+	return new Handlebars.SafeString(text);
+});
 
 /**
  * Renders a template using handlebars
