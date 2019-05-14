@@ -39,10 +39,10 @@ export const schema = {
 		'isActiveMember': 'f',
 
 		// HumanCodeholder
-		'firstName': 'f',
-		'firstNameLegal': 'f',
-		'lastName': 'f',
-		'lastNameLegal': 'f',
+		'firstName': 'fs',
+		'firstNameLegal': 'fs',
+		'lastName': 'fs',
+		'lastNameLegal': 'fs',
 		'honorific': '',
 		'birthdate': 'f',
 		'age': 'f',
@@ -54,10 +54,10 @@ export const schema = {
 		'cellphoneFormatted': '',
 
 		// OrgCodeholder
-		'fullName': 'f',
-		'fullNameLocal': 'f',
+		'fullName': 'fs',
+		'fullNameLocal': 'fs',
 		'careOf': 'fs',
-		'nameAbbrev': 'f'
+		'nameAbbrev': 'fs'
 	},
 	fieldAliases: {
 		'address.country': 'address_country',
