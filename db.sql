@@ -1165,6 +1165,7 @@ CREATE TABLE `codeholders_human` (
   `firstNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
   `honorific` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_esperanto_ci DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1176,9 +1177,9 @@ CREATE TABLE `codeholders_human` (
   FULLTEXT KEY `firstNameLegal` (`firstNameLegal`),
   FULLTEXT KEY `lastName` (`lastName`),
   FULLTEXT KEY `lastNameLegal` (`lastNameLegal`),
-  FULLTEXT KEY `name_any` (`firstName`,`firstNameLegal`,`lastName`,`lastNameLegal`),
   FULLTEXT KEY `landlinePhone` (`landlinePhone`),
   FULLTEXT KEY `cellphone` (`cellphone`),
+  FULLTEXT KEY `searchName` (`searchName`),
   CONSTRAINT `codeholders_human_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1189,9 +1190,47 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `insert_human_searchName` BEFORE INSERT ON `codeholders_human` FOR EACH ROW BEGIN
+
+	SET NEW.searchName = CONCAT_WS(' ', NEW.firstName, new.lastName, NEW.firstNameLegal, new.lastNameLegal);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_human_searchName` BEFORE UPDATE ON `codeholders_human` FOR EACH ROW BEGIN
+
+	SET NEW.searchName = CONCAT_WS(' ', NEW.firstName, new.lastName, NEW.firstNameLegal, new.lastNameLegal);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `codeholders_logins`
@@ -1300,9 +1339,13 @@ CREATE TABLE `codeholders_org` (
   `fullNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`),
   FULLTEXT KEY `careOf` (`careOf`),
-  FULLTEXT KEY `fullName` (`fullName`,`fullNameLocal`,`nameAbbrev`),
+  FULLTEXT KEY `searchName` (`searchName`),
+  FULLTEXT KEY `fullName` (`fullName`),
+  FULLTEXT KEY `fullNameLocal` (`fullNameLocal`),
+  FULLTEXT KEY `nameAbbrev` (`nameAbbrev`),
   CONSTRAINT `codeholders_org_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1313,9 +1356,47 @@ CREATE TABLE `codeholders_org` (
 
 LOCK TABLES `codeholders_org` WRITE;
 /*!40000 ALTER TABLE `codeholders_org` DISABLE KEYS */;
-INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA');
+INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO','Tutmonda Esperantista Junulara Organizo TEJO Wereld Esperanto-Jongeren Organisatie'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA','Universala Esperanto-Asocio UEA'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA','Dana Esperanto-Asocio DEA Esperanto-Foreningen for Danmark');
 /*!40000 ALTER TABLE `codeholders_org` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `insert_org_searchName` BEFORE INSERT ON `codeholders_org` FOR EACH ROW BEGIN
+
+	SET NEW.searchName = CONCAT_WS(' ', NEW.fullName, NEW.nameAbbrev, NEW.fullNameLocal);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_org_searchName` BEFORE UPDATE ON `codeholders_org` FOR EACH ROW BEGIN
+
+	SET NEW.searchName = CONCAT_WS(' ', NEW.fullName, NEW.nameAbbrev, NEW.fullNameLocal);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `codeholders_totp`
@@ -1650,7 +1731,8 @@ SET character_set_client = utf8;
  1 AS `fullNameLocal`,
  1 AS `careOf`,
  1 AS `nameAbbrev`,
- 1 AS `isActiveMember`*/;
+ 1 AS `searchNameHuman`,
+ 1 AS `searchNameOrg`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1775,7 +1857,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`hasProfilePicture` AS `hasProfilePicture`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,exists(select 1 from (`membershipCategories_codeholders` left join `membershipCategories` on((`membershipCategories_codeholders`.`categoryId` = `membershipCategories`.`id`))) where ((`membershipCategories_codeholders`.`codeholderId` = `codeholders`.`id`) and `membershipCategories`.`givesMembership` and (((not(`membershipCategories`.`lifetime`)) and (`membershipCategories_codeholders`.`year` = year(curdate()))) or (`membershipCategories`.`lifetime` and (`membershipCategories_codeholders`.`year` <= year(curdate())))))) AS `isActiveMember` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`hasProfilePicture` AS `hasProfilePicture`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1789,4 +1871,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-14  9:43:58
+-- Dump completed on 2019-05-14 11:01:47

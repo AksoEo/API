@@ -81,17 +81,28 @@ export const schema = {
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone',
 		'membership': () => AKSO.db.raw('1'),
-		'hasPassword': () => AKSO.db.raw('`password` is not null')
+		'hasPassword': () => AKSO.db.raw('`password` is not null'),
+		'isActiveMember': () => AKSO.db.raw(
+			`EXISTS(
+				SELECT 1 from membershipCategories_codeholders
+				left join membershipCategories
+					on membershipCategories_codeholders.categoryId = membershipCategories.id
+
+				where
+					membershipCategories_codeholders.codeholderId = view_codeholders.id
+					and givesMembership
+					and (
+						( not lifetime and membershipCategories_codeholders.year = year(curdate()) )
+						or ( lifetime and membershipCategories_codeholders.year <= year(curdate()) )
+					)
+			)`)
 	},
-	fieldSearchGroups: [
-		'firstName,firstNameLegal,lastName,lastNameLegal',
-		'fullName,fullNameLocal,nameAbbrev'
-	],
+	fieldSearchGroups: [],
 	customSearch: {
 		'name': match => AKSO.db.raw(
 			`IF(codeholderType = "human",
-				${match(['firstName', 'firstNameLegal', 'lastName', 'lastNameLegal'])},
-				${match(['fullName', 'fullNameLocal', 'nameAbbrev'])}
+				${match('searchNameHuman')},
+				${match('searchNameOrg')}
 			)`)
 	},
 	alwaysSelect: [

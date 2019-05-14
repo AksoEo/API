@@ -263,12 +263,15 @@ const QueryUtil = {
 			const allCols = req.query.search.cols.join(',');
 			if (allCols in schema.customSearch) {
 				const customSearchFn = schema.customSearch[allCols];
-				const matchFn = cols => AKSO.db.raw(
-					`MATCH (${'??,'.repeat(cols.length).slice(0,-1)})
-					AGAINST (? IN BOOLEAN MODE)`,
+				const matchFn = cols => {
+					const colsArr = Array.isArray(cols) ? cols : [cols];
+					return AKSO.db.raw(
+						`MATCH (${'??,'.repeat(colsArr.length).slice(0,-1)})
+						AGAINST (? IN BOOLEAN MODE)`,
 
-					[ ...cols, req.query.search.query ]
-				);
+						[ ...colsArr, req.query.search.query ]
+					);
+				};
 				const searchStmt = customSearchFn(matchFn);
 				selectFields.push(AKSO.db.raw(searchStmt + ' as `_relevance`'));
 				query.whereRaw(searchStmt);
@@ -368,7 +371,7 @@ const QueryUtil = {
 	 * @param {Function}          [afterQuery]     A function to run after the query has been performed, before it's passed to the collection. Receives two arguments, the returned array and a callback to run when all modifications are done.
 	 */
 	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null, afterQuery) {
-		await QueryUtil.collectionMetadata(res, 
+		await QueryUtil.collectionMetadata(res,
 			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
 		);
 		const rawData = await query;
