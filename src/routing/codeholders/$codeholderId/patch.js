@@ -228,7 +228,7 @@ export default {
 		const updateData = {};
 		let addressUpdateData = null;
 
-		// Ensure that no field belonging to a different codeholder type is used
+		// Ensure that no field belonging to a different codeholder type is used and perform additional field validation
 		for (let field of fields) {
 			if (exclusiveFields.all.includes(field) && !exclusiveFields[codeholderType].includes(field)) {
 				return res.status(400).type('text/plain')
@@ -293,6 +293,22 @@ export default {
 						.first(1);
 					if (!feeCountryFound) {
 						return res.status(400).type('text/plain').send('Unknown feeCountry');
+					}
+				} else if (field === 'email') {
+					// Make sure the email isn't taken
+					const emailTaken = await AKSO.db('codeholders')
+						.where('email', req.body.email)
+						.first(1);
+					if (emailTaken) {
+						return res.status(400).type('text/plain').send('email taken');
+					}
+				} else if (field === 'newCode') {
+					// Make sure the newCode isn't taken
+					const newCodeTaken = await AKSO.db('codeholders')
+						.where('newCode', req.body.newCode)
+						.first(1);
+					if (newCodeTaken) {
+						return res.status(400).type('text/plain').send('newCode taken');
 					}
 				}
 

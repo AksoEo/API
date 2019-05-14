@@ -256,6 +256,15 @@ export default {
 			return res.status(400).type('text/plain').send('newCode is taken');
 		}
 
+		if (req.body.email) {
+			// Check if email is taken
+			const emailTaken = await AKSO.db('codeholders')
+				.where('email', req.body.email)
+				.first(1);
+			if (emailTaken) {
+				return res.status(400).type('text/plain').send('email is taken');
+			}
+		}
 
 		// Generate the member filter lookup before beginning the transaction to reduce latency
 		const findNewCodeholderQuery = AKSO.db('view_codeholders');
