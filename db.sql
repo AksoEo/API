@@ -327,7 +327,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,0,NULL,0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1788,4 +1788,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-13 17:16:23
+-- Dump completed on 2019-05-14  9:02:00
