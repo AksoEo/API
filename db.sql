@@ -1153,6 +1153,35 @@ LOCK TABLES `codeholders_hist_profilePicture` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_website`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_website`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_website` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_website_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_website`
+--
+
+LOCK TABLES `codeholders_hist_website` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_website` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_website` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_human`
 --
 
@@ -1340,6 +1369,7 @@ CREATE TABLE `codeholders_org` (
   `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   FULLTEXT KEY `careOf` (`careOf`),
   FULLTEXT KEY `searchName` (`searchName`),
@@ -1356,7 +1386,7 @@ CREATE TABLE `codeholders_org` (
 
 LOCK TABLES `codeholders_org` WRITE;
 /*!40000 ALTER TABLE `codeholders_org` DISABLE KEYS */;
-INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO','Tutmonda Esperantista Junulara Organizo TEJO Wereld Esperanto-Jongeren Organisatie'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA','Universala Esperanto-Asocio UEA'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA','Dana Esperanto-Asocio DEA Esperanto-Foreningen for Danmark');
+INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO','Tutmonda Esperantista Junulara Organizo TEJO Wereld Esperanto-Jongeren Organisatie','https://tejo.org'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA','Universala Esperanto-Asocio UEA','https://uea.org'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA','Dana Esperanto-Asocio DEA Esperanto-Foreningen for Danmark','https://esperanto.dk');
 /*!40000 ALTER TABLE `codeholders_org` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1732,7 +1762,8 @@ SET character_set_client = utf8;
  1 AS `careOf`,
  1 AS `nameAbbrev`,
  1 AS `searchNameHuman`,
- 1 AS `searchNameOrg`*/;
+ 1 AS `searchNameOrg`,
+ 1 AS `website`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1857,7 +1888,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`hasProfilePicture` AS `hasProfilePicture`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`hasProfilePicture` AS `hasProfilePicture`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg`,`codeholders_org`.`website` AS `website` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1871,4 +1902,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-14 11:01:47
+-- Dump completed on 2019-05-14 14:05:07
