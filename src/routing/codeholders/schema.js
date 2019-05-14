@@ -81,19 +81,21 @@ export const schema = {
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone',
 		'membership': () => AKSO.db.raw('1'),
-		'hasPassword': () => AKSO.db.raw('`password` is not null'),
+		'hasPassword': () => AKSO.db.raw('`password` IS NOT NULL'),
 		'isActiveMember': () => AKSO.db.raw(
-			`EXISTS(
+			`enabled
+			AND NOT isDead
+			AND EXISTS(
 				SELECT 1 from membershipCategories_codeholders
-				left join membershipCategories
-					on membershipCategories_codeholders.categoryId = membershipCategories.id
+				LEFT JOIN membershipCategories
+					ON membershipCategories_codeholders.categoryId = membershipCategories.id
 
-				where
+				WHERE
 					membershipCategories_codeholders.codeholderId = view_codeholders.id
-					and givesMembership
-					and (
-						( not lifetime and membershipCategories_codeholders.year = year(curdate()) )
-						or ( lifetime and membershipCategories_codeholders.year <= year(curdate()) )
+					AND givesMembership
+					AND (
+						( NOT lifetime AND membershipCategories_codeholders.year = year(curdate()) )
+						OR ( lifetime AND membershipCategories_codeholders.year <= year(curdate()) )
 					)
 			)`)
 	},
