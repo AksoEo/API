@@ -95,7 +95,8 @@ class CodeholderResource extends SimpleResource {
 				'fullName',
 				'fullNameLocal',
 				'careOf',
-				'nameAbbrev'
+				'nameAbbrev',
+				'website'
 			];
 		} else if (this.obj.codeholderType !== 'human') {
 			deleteProps = [
