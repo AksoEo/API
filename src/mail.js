@@ -26,7 +26,7 @@ export async function init () {
  * @param  {string} options.org                The organization of the email
  * @param  {string} options.tmpl               The name of the notification template
  * @param  {Array}  [options.to]               The recipients, either as codeholder ids (number) or something understood by sendgrid
- * @param  {Array}  [options.personalizations] Sendgrid personalizations with to either as codeholder ids (number) or something understood by sendgrid
+ * @param  {Array}  [options.personalizations] Sendgrid personalizations with `to` either as codeholder ids (number) or something understood by sendgrid
  * @param  {Object} [options.view]             The view
  * @param  {Object} [msgData]                  Additional options to pass to sendgrid
  */

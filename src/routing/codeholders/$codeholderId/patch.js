@@ -2,8 +2,9 @@ import moment from 'moment';
 import AddressFormat from 'google-i18n-address';
 
 import { createTransaction, rollbackTransaction, insertAsReplace } from '../../../util';
-import { modQuerySchema } from '../../../lib/codeholder-utils';
+import { modQuerySchema, getNamesAndEmails } from '../../../lib/codeholder-utils';
 import * as AKSONotif from '../../../notif';
+import * as AKSOMail from '../../../mail';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from '../schema';
 
@@ -67,7 +68,8 @@ const schema = {
 					type: 'string',
 					format: 'email',
 					minLength: 3,
-					maxLength: 200
+					maxLength: 200,
+					nullable: true
 				},
 				enabled: {
 					type: 'boolean'
@@ -78,14 +80,23 @@ const schema = {
 				},
 				officePhone: {
 					type: 'string',
-					format: 'tel'
+					format: 'tel',
+					nullable: true
 				},
-
+				isDead: {
+					type: 'boolean'
+				},
+				deathdate: {
+					type: 'string',
+					format: 'date',
+					nullable: true
+				},
 
 				// HumanCodeholder
 				firstName: {
 					type: 'string',
-					pattern: '^[^\\n]{1,50}$'
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
 				},
 				firstNameLegal: {
 					type: 'string',
@@ -93,34 +104,39 @@ const schema = {
 				},
 				lastName: {
 					type: 'string',
-					pattern: '^[^\\n]{1,50}$'
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
 				},
 				lastNameLegal: {
 					type: 'string',
-					pattern: '^[^\\n]{1,50}$'
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
 				},
 				honorific: {
 					type: 'string',
-					pattern: '^[^\\n]{2,15}$'
+					pattern: '^[^\\n]{2,15}$',
+					nullable: true
 				},
 				birthdate: {
 					type: 'string',
-					format: 'date'
+					format: 'date',
+					nullable: true
 				},
 				profession: {
 					type: 'string',
-					pattern: '^[^\\n]{1,50}$'
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
 				},
 				landlinePhone: {
 					type: 'string',
-					format: 'tel'
+					format: 'tel',
+					nullable: true
 				},
 				cellphone: {
 					type: 'string',
-					format: 'tel'
+					format: 'tel',
+					nullable: true
 				},
-
-
 
 				// OrgCodeholder
 				fullName: {
@@ -129,20 +145,24 @@ const schema = {
 				},
 				fullNameLocal: {
 					type: 'string',
-					pattern: '^[^\\n]{1,100}$'
+					pattern: '^[^\\n]{1,100}$',
+					nullable: true
 				},
 				careOf: {
 					type: 'string',
-					pattern: '^[^\\n]{1,100}$'
+					pattern: '^[^\\n]{1,100}$',
+					nullable: true
 				},
 				nameAbbrev: {
 					type: 'string',
-					pattern: '^[^\\n]{1,12}$'
+					pattern: '^[^\\n]{1,12}$',
+					nullable: true
 				},
 				website: {
 					type: 'string',
 					maxLength: 50,
-					format: 'safe-uri'
+					format: 'safe-uri',
+					nullable: true
 				}
 			},
 			additionalProperties: false,
@@ -264,7 +284,7 @@ export default {
 					if (!feeCountryFound) {
 						return res.status(400).type('text/plain').send('Unknown feeCountry');
 					}
-				} else if (field === 'email') {
+				} else if (field === 'email' && req.body.email !== null) {
 					// Make sure the email isn't taken
 					const emailTaken = await AKSO.db('codeholders')
 						.where('email', req.body.email)
@@ -346,16 +366,35 @@ export default {
 			histPromises.push(histQuery);
 
 			if (field === 'email') {
+				const view = {
+					emailFrom: oldData.email || '-nenio-',
+					emailTo: updateData.email || '-nenio-',
+					note: req.query.modCmt
+				};
+				// Send to old
+				if (oldData.email !== null) {
+					const to = (await getNamesAndEmails(req.params.codeholderId))[0];
+					to.email = oldData.email;
+					const personalization = {
+						to: to,
+						substitutions: {
+							name: to.name
+						}
+					};
+					histPromises.push(AKSOMail.renderSendEmail({
+						org: 'akso',
+						tmpl: 'email-changed-admin',
+						view: view,
+						personalizations: [ personalization ]
+					}));
+				}
+				// Send to new
 				histPromises.push(AKSONotif.sendNotification({
 					codeholderIds: [ req.params.codeholderId ],
 					org: 'akso',
 					notif: 'email-changed-admin',
 					category: 'account',
-					view: {
-						emailFrom: oldData.email,
-						emailTo: updateData.email,
-						note: req.query.modCmt
-					}
+					view: view
 				}));
 			}
 		}

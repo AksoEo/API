@@ -11,12 +11,18 @@ import { profilePictureSizes } from '../routing/codeholders/schema';
  * @return {Object[]} The names and emails of the codeholders in the same order as they were provided
  */
 export async function getNamesAndEmails (...ids) {
+	const map = {};
+	ids.forEach((id, i) => {
+		map[id] = i;
+	});
 	const codeholders = await AKSO.db('view_codeholders')
 		.whereIn('id', ids)
 		.whereNotNull('email')
-		.select('codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
+		.select('id', 'codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
 
-	return codeholders.map(codeholder => {
+	const newArr = [];
+	for (let codeholder of codeholders) {
+		const index = map[codeholder.id];
 		let name;
 		if (codeholder.codeholderType === 'human') {
 			if (codeholder.honorific) { name += codeholder.honorific + ' '; }
@@ -26,11 +32,12 @@ export async function getNamesAndEmails (...ids) {
 		} else if (codeholder.codeholderType === 'org') {
 			name = codeholder.fullName;
 		}
-		return {
+		newArr[index] = {
 			email: codeholder.email,
 			name: name
 		};
-	});
+	}
+	return newArr;
 }
 
 /**
