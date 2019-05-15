@@ -80,6 +80,18 @@ ajv.addFormat('safe-uri', {
 		return true;
 	}
 });
+ajv.addFormat('int16', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**15) && val < 2**15;
+	}
+});
+ajv.addFormat('uint16', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**16;
+	}
+});
 ajv.addFormat('int32', {
 	type: 'number',
 	validate: function (val) {
@@ -138,14 +150,18 @@ export function init () {
 
 /**
  * Wraps an async function to ensure proper error handling in Express
- * @param  {Function} fn
+ * @param {Function} fn
+ * @param {Function} [onErr] An optional function to call when an error is caught
  * @return {Function}
  */
-export function wrap (fn) {
+export function wrap (fn, onErr) {
 	return (req, res, next) => {
 		const promise = fn(req, res, next);
 		if (promise.catch) {
-			promise.catch(err => next(err));
+			promise.catch(err => {
+				if (typeof onErr === 'function') { onErr(err); }
+				next(err);
+			});
 		}
 	};
 }
@@ -383,7 +399,8 @@ export function bindMethod (router, path, method, bind) {
 								}
 
 								req.query.order = req.query.order.split(',').map(x => {
-									const bits = x.split('.');
+									const dotIndex = x.lastIndexOf('.');
+									const bits = [ x.slice(0, dotIndex), x.slice(dotIndex + 1) ];
 									return { column: bits[0], order: bits[1] };
 								});
 								for (let order of req.query.order) {
@@ -547,7 +564,7 @@ export function bindMethod (router, path, method, bind) {
 
 		} catch (e) { next(e); }
 
-	}, wrap(bind.run));
+	}, wrap(bind.run, bind.onError));
 }
 
 /**

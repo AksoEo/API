@@ -10,6 +10,8 @@ import { init as route$self } from './self';
 import method$get from './get';
 import method$post from './post';
 
+import operation$make_address_labels from './!make_address_labels';
+
 /**
  * Sets up /codeholders
  * @return {express.Router}
@@ -36,6 +38,8 @@ export function init () {
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'post', method$post);
+
+	bindMethod(router, '/!make_address_labels', 'post', operation$make_address_labels);
 
 	return router;
 }

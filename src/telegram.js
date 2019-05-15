@@ -16,7 +16,8 @@ export async function init () {
 	AKSO.telegramQueue = new PQueue({
 		intervalCap: 30,
 		interval: 1000, // 1 second
-		carryoverConcurrencyCount: true
+		carryoverConcurrencyCount: true,
+		concurrency: 1
 	});
 
 	AKSO.telegram = new Telegraf(AKSO.conf.telegram.token);
@@ -71,17 +72,19 @@ async function handleDeepLink (ctx) {
 
 /**
  * Sends a notification to an array of recipients
- * @param  {Object}   options
- * @param  {number[]} options.codeholderIds The recipients
- * @param  {string}   options.org           The org of the notification
- * @param  {string}   options.tmpl          The name of the notification template
- * @param  {Object}   [options.view]        The view for the template
+ * @param {Object}   options
+ * @param {number[]} options.codeholderIds The recipients
+ * @param {string}   options.org           The org of the notification
+ * @param {string}   options.tmpl          The name of the notification template
+ * @param {Object}   [options.view]        The view for the template.
+ * @param {Object}   [options.attach]      A Telegram attachment object
  */
 export async function sendNotification ({
 	codeholderIds,
 	org,
 	tmpl,
-	view = {}
+	view = {},
+	attach = []
 }) {
 	const recipientData = await AKSO.db('codeholders_notif_accounts')
 		.whereIn('codeholderId', codeholderIds)
@@ -96,35 +99,57 @@ export async function sendNotification ({
 
 	// Render and send the messages
 	view.domain = AKSOOrganization.getDomain(org);
-	AKSO.telegramQueue.addAll(recipientData.map(recipient => {
-		return function renderSendTelegramNotif () {
+
+	for (let recipient of recipientData) {
+		AKSO.telegramQueue.add(function renderSendTelegramNotif () {
 			const msg = renderTemplate(notifTmpl, view, doEscape);
-			AKSO.telegram.telegram.sendMessage(recipient.telegram_chatId, msg, notifData)
-				.catch(async e => {
-					if (
-						e.code === 400 &&
-						e.response &&
-						typeof e.response.description === 'string' &&
-						e.response.description.includes('chat not found')
-					) {
-						// Change notif preferences to remove telegram
-						await AKSO.db('codeholders_notif_pref')
-							.where('codeholderId', recipient.codeholderId)
-							.whereRaw('FIND_IN_SET("telegram", `pref`)')
-							// Remove telegram from the list unless it's the only item, in which case it should be replaced by email
-							.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
 
-						// Unlink the notif account since it clearly doesn't exist
-						await AKSO.db('codeholders_notif_accounts')
-							.where('codeholderId', recipient.codeholderId)
-							.delete();
+			let fn;
+			let args = [recipient.telegram_chatId];
+			if (attach) {
+				if (attach.type === 'document') {
+					fn = AKSO.telegram.telegram.sendDocument;
+					args.push(attach.file, {
+						...notifData,
+						...{
+							caption: msg
+						},
+						...attach.extra
+					});
 
-						// TODO: Perhaps some way to send the message by email instead?
+				} else {
+					throw new Error('Unknown Telegram attachment type ' + attach.type);
+				}
+			} else {
+				fn = AKSO.telegram.telegram.sendMessage;
+				args.push(msg, notifData);
+			}
 
-					} else {
-						AKSO.log.error(e.stack);
-					}
-				});
-		};
-	}));
+			fn.apply(AKSO.telegram.telegram, args).catch(async e => {
+				if (
+					e.code === 400 &&
+					e.response &&
+					typeof e.response.description === 'string' &&
+					e.response.description.includes('chat not found')
+				) {
+					// Change notif preferences to remove telegram
+					await AKSO.db('codeholders_notif_pref')
+						.where('codeholderId', recipient.codeholderId)
+						.whereRaw('FIND_IN_SET("telegram", `pref`)')
+						// Remove telegram from the list unless it's the only item, in which case it should be replaced by email
+						.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
+
+					// Unlink the notif account since it clearly doesn't exist
+					await AKSO.db('codeholders_notif_accounts')
+						.where('codeholderId', recipient.codeholderId)
+						.delete();
+
+					// TODO: Perhaps some way to send the message by email instead?
+
+				} else {
+					AKSO.log.error(e.stack);
+				}
+			});
+		});
+	}
 }

@@ -9,6 +9,7 @@ import * as AKSOMail from './mail';
  * @param  {string}   options.category        The category of the notification
  * @param  {Object}   [options.emailConf]     Additional settings to pass to sendgrid emails
  * @param  {Map}      [emailPersonalizations] A `Map` of codeholderId:personalization object
+ * @param  {Object}   [tgAttach]              A Telegram attachment object
  * @param  {Object}   [view]                  The view for rendering the notification
  */
 export async function sendNotification ({
@@ -18,6 +19,7 @@ export async function sendNotification ({
 	category,
 	emailConf = {},
 	emailPersonalizations = new Map(),
+	tgAttach = [],
 	view = {}
 } = {}) {
 	const msgPrefs = new Map();
@@ -50,7 +52,8 @@ export async function sendNotification ({
 			codeholderIds: recipients.telegram,
 			org: org,
 			tmpl: notif,
-			view: view
+			view: view,
+			attach: tgAttach
 		}));
 	}
 

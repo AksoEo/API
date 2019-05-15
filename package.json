@@ -58,11 +58,13 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "passport-totp": "0.0.2",
+    "pdfkit": "^0.9.1",
     "pn": "^1.1.0",
     "response-time": "^2.3.2",
     "rfc4648": "^1.2.0",
     "source-map-support": "^0.5.12",
     "telegraf": "^3.29.0",
+    "tmp-promise": "^1.1.0",
     "useragent": "^2.3.0",
     "winston": "^3.2.1",
     "xregexp": "^4.2.4"

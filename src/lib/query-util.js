@@ -317,7 +317,13 @@ const QueryUtil = {
 				err.statusCode = 403;
 				throw err;
 			}
-			query.orderBy(req.query.order);
+			const order = req.query.order.map(x => {
+				return {
+					column: getAlias(schema.fieldAliases, x.column),
+					order: x.order
+				};
+			});
+			query.orderBy(order);
 		}
 
 		// ?limit
