@@ -26,7 +26,7 @@ export async function init () {
 	AKSO.log.info('... Telegram bot ready');
 }
 
-const deepLinkNotFoundMsg = 'La ligilo kiun vi uzis por agordi Telegramon kun TEJO/UEA ne plu validas. Bonvolu provi denove.';
+const deepLinkNotFoundMsg = 'La ligilo kiun vi uzis por agordi Telegramon kun AKSO ne plu validas. Bonvolu provi denove.';
 /**
  * @internal Handles deeplinking Telegram accounts
  * @param  {Telegraf.Context} ctx
@@ -54,7 +54,7 @@ async function handleDeepLink (ctx) {
 		.first(1);
 
 	if (chatIdUsed) {
-		return ctx.reply('Tiu ĉi Telegram-konto estas jam uzata por sciigoj de TEJO/UEA. Ne necesas reagordi ĝin.');
+		return ctx.reply('Tiu ĉi Telegram-konto estas jam uzata por sciigoj de AKSO, TEJO kaj UEA. Ne necesas reagordi ĝin.');
 	}
 
 	// Update the database
@@ -66,7 +66,7 @@ async function handleDeepLink (ctx) {
 			telegram_deepLink_time: null
 		});
 
-	ctx.reply('Via Telegram-konto nun estas ligita al via konto ĉe TEJO/UEA.');
+	ctx.reply('Via Telegram-konto nun estas ligita al via konto ĉe AKSO.');
 }
 
 /**
