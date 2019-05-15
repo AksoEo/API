@@ -26,6 +26,29 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `akso` /*!40100 DEFAULT CHARACTER SET u
 USE `akso`;
 
 --
+-- Table structure for table `addressLabelOrders`
+--
+
+DROP TABLE IF EXISTS `addressLabelOrders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `addressLabelOrders` (
+  `codeholderId` int(10) unsigned DEFAULT NULL,
+  `apiKey` binary(16) DEFAULT NULL,
+  UNIQUE KEY `codeholderId` (`codeholderId`,`apiKey`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `addressLabelOrders`
+--
+
+LOCK TABLES `addressLabelOrders` WRITE;
+/*!40000 ALTER TABLE `addressLabelOrders` DISABLE KEYS */;
+/*!40000 ALTER TABLE `addressLabelOrders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `admin_groups`
 --
 
@@ -318,7 +341,7 @@ CREATE TABLE `codeholders` (
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
   CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -327,7 +350,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0),(8,'human',NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,0),(18,'human',NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -374,7 +397,7 @@ CREATE TABLE `codeholders_address` (
 
 LOCK TABLES `codeholders_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_address` DISABLE KEYS */;
-INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800');
+INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800'),(8,'gb','','','AYLESBURY','AYLESBURY','','','61A Stoke Rd','61A Stoke Rd','HP21 8BL','HP21 8BL','','','GB Britio AYLESBURY 61A Stoke Rd HP21 8BL'),(18,'cn','云南省','Yunnan Sheng','临沧市','Lincang Shi','','','中关村东路1号','中关村东路1号','677400','677400','','','CN Ĉinio 云南省 Yunnan Sheng Lincang Shi 中关村东路1号 677400');
 /*!40000 ALTER TABLE `codeholders_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1219,7 +1242,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1325,7 +1348,7 @@ CREATE TABLE `codeholders_notif_accounts` (
 
 LOCK TABLES `codeholders_notif_accounts` WRITE;
 /*!40000 ALTER TABLE `codeholders_notif_accounts` DISABLE KEYS */;
-INSERT INTO `codeholders_notif_accounts` VALUES (2,'172252715',NULL,NULL);
+INSERT INTO `codeholders_notif_accounts` VALUES (3,'172252715',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_notif_accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1351,7 +1374,7 @@ CREATE TABLE `codeholders_notif_pref` (
 
 LOCK TABLES `codeholders_notif_pref` WRITE;
 /*!40000 ALTER TABLE `codeholders_notif_pref` DISABLE KEYS */;
-INSERT INTO `codeholders_notif_pref` VALUES (2,'account','email,telegram');
+INSERT INTO `codeholders_notif_pref` VALUES (3,'account','email,telegram'),(3,'admin','telegram');
 /*!40000 ALTER TABLE `codeholders_notif_pref` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1902,4 +1925,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-14 14:05:07
+-- Dump completed on 2019-05-15 16:34:26
