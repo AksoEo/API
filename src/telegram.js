@@ -99,7 +99,32 @@ export async function sendNotification ({
 	AKSO.telegramQueue.addAll(recipientData.map(recipient => {
 		return function renderSendTelegramNotif () {
 			const msg = renderTemplate(notifTmpl, view, doEscape);
-			return AKSO.telegram.telegram.sendMessage(recipient.telegram_chatId, msg, notifData);
+			AKSO.telegram.telegram.sendMessage(recipient.telegram_chatId, msg, notifData)
+				.catch(async e => {
+					if (
+						e.code === 400 &&
+						e.response &&
+						typeof e.response.description === 'string' &&
+						e.response.description.includes('chat not found')
+					) {
+						// Change notif preferences to remove telegram
+						await AKSO.db('codeholders_notif_pref')
+							.where('codeholderId', recipient.codeholderId)
+							.whereRaw('FIND_IN_SET("telegram", `pref`)')
+							// Remove telegram from the list unless it's the only item, in which case it should be replaced by email
+							.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
+
+						// Unlink the notif account since it clearly doesn't exist
+						await AKSO.db('codeholders_notif_accounts')
+							.where('codeholderId', recipient.codeholderId)
+							.delete();
+
+						// TODO: Perhaps some way to send the message by email instead?
+
+					} else {
+						AKSO.log.error(e.stack);
+					}
+				});
 		};
 	}));
 }
