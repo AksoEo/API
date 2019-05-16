@@ -19,7 +19,7 @@ export async function sendNotification ({
 	category,
 	emailConf = {},
 	emailPersonalizations = new Map(),
-	tgAttach = [],
+	tgAttach = {},
 	view = {}
 } = {}) {
 	const msgPrefs = new Map();

@@ -84,7 +84,7 @@ export async function sendNotification ({
 	org,
 	tmpl,
 	view = {},
-	attach = []
+	attach = {}
 }) {
 	const recipientData = await AKSO.db('codeholders_notif_accounts')
 		.whereIn('codeholderId', codeholderIds)
