@@ -17,7 +17,8 @@ const schema = {
 		path: 'f',
 		query: '',
 		resStatus: 'f',
-		resTime: 'f'
+		resTime: 'f',
+		resLocation: ''
 	},
 	body: null,
 	requirePerms: 'log.read'
