@@ -341,7 +341,7 @@ CREATE TABLE `codeholders` (
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
   CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,7 +350,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0),(8,'human',NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,0),(18,'human',NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human','test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org','tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0),(8,'human',NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,0),(18,'human',NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,0),(20,'human',NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(21,'human',NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(22,'human',NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(23,'human',NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(24,'human',NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(25,'human',NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(26,'human',NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(27,'human',NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(28,'human',NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(29,'human',NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(30,'human',NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(31,'human',NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(32,'human',NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,0);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1242,7 +1242,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL),(20,NULL,'Max',NULL,'Mustermann','Max Mustermann',NULL,NULL,NULL,NULL,NULL),(21,NULL,'Max',NULL,'Mustermann II','Max Mustermann II',NULL,NULL,NULL,NULL,NULL),(22,NULL,'Max',NULL,'Mustermann III','Max Mustermann III',NULL,NULL,NULL,NULL,NULL),(23,NULL,'Max',NULL,'Mustermann IV','Max Mustermann IV',NULL,NULL,NULL,NULL,NULL),(24,NULL,'Max',NULL,'Mustermann V','Max Mustermann V',NULL,NULL,NULL,NULL,NULL),(25,NULL,'Max',NULL,'Mustermann VI','Max Mustermann VI',NULL,NULL,NULL,NULL,NULL),(26,NULL,'Max',NULL,'Mustermann VII','Max Mustermann VII',NULL,NULL,NULL,NULL,NULL),(27,NULL,'Max',NULL,'Mustermann VIII','Max Mustermann VIII',NULL,NULL,NULL,NULL,NULL),(28,NULL,'Max',NULL,'Mustermann IX','Max Mustermann IX',NULL,NULL,NULL,NULL,NULL),(29,NULL,'Max',NULL,'Mustermann X','Max Mustermann X',NULL,NULL,NULL,NULL,NULL),(30,NULL,'Max',NULL,'Mustermann XI','Max Mustermann XI',NULL,NULL,NULL,NULL,NULL),(31,NULL,'Max',NULL,'Mustermann XII','Max Mustermann XII',NULL,NULL,NULL,NULL,NULL),(32,NULL,'Max',NULL,'Mustermann M','Max Mustermann M',NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1925,4 +1925,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-15 16:34:26
+-- Dump completed on 2019-05-21 20:03:17
