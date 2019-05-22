@@ -68,7 +68,7 @@ async function init () {
 
 		// Constants, do not change without updating docs
 		CORS_ORIGIN_WHITELIST: [
-			/^.+\.akso\.org$/,
+			/^(.+\.)?akso\.org$/,
 			'tejo.org',
 			'uea.org'
 		],
