@@ -1,5 +1,6 @@
 import path from 'path';
 import AddressFormat from 'google-i18n-address';
+import moment from 'moment-timezone';
 
 import { createTransaction, rollbackTransaction } from '../../util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
@@ -243,6 +244,7 @@ export default {
 		const id = (await trx('codeholders')
 			.insert({
 				codeholderType: req.body.codeholderType,
+				creationTime: moment().unix(),
 				newCode: req.body.newCode,
 				email: req.body.email,
 				enabled: req.body.enabled,

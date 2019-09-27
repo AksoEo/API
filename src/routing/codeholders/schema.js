@@ -8,6 +8,7 @@ export const schema = {
 		'oldCode': 'f',
 		'newCode': 'f',
 		'codeholderType': 'f',
+		'creationTime': 'f',
 		'address.country': '',
 		'address.countryArea': '',
 		'address.city': '',
