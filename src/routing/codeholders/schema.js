@@ -239,7 +239,6 @@ export async function afterQuery (arr, done) {
 
 		            WHERE
 		            	\`codeholderId\` IN (${ids.map(() => '?').join(',')}) AND
-		                \`givesMembership\` AND
 		                \`year\` <= YEAR(CURDATE())
 
 		            ORDER BY
