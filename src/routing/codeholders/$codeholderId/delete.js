@@ -16,11 +16,17 @@ export default {
 		// Try to find the codeholder
 		const query = AKSO.db('view_codeholders')
 			.where('id', req.params.codeholderId)
-			.delete();
+			.first(1);
 		memberFilter(parSchema, query, req);
 
-		const deleted = await query;
-		if (deleted) { res.sendStatus(204); }
-		else { res.sendStatus(404); }
+		if (!await query) {
+			return res.sendStatus(404);
+		}
+
+		await AKSO.db('codeholders')
+			.where('id', req.params.codeholderId)
+			.delete();
+
+		res.sendStatus(204);
 	}
 };
