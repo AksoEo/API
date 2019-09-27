@@ -89,90 +89,91 @@ const schema = {
 				}
 			},
 
-			if: {
-				properties: {
-					codeholderType: {
-						enum: [ 'human' ]
+			oneOf: [
+				{ // HumanCodeholder
+					$merge: {
+						source: { $ref: '#/definitions/Codeholder' },
+						with: { // HumanCodeholder
+							properties: {
+								codeholderType: {
+									const: 'human'
+								},
+								firstName: {
+									type: 'string',
+									pattern: '^[^\\n]{1,50}$'
+								},
+								firstNameLegal: {
+									type: 'string',
+									pattern: '^[^\\n]{1,50}$'
+								},
+								lastName: {
+									type: 'string',
+									pattern: '^[^\\n]{1,50}$'
+								},
+								lastNameLegal: {
+									type: 'string',
+									pattern: '^[^\\n]{1,50}$'
+								},
+								honorific: {
+									type: 'string',
+									pattern: '^[^\\n]{2,15}$'
+								},
+								birthdate: {
+									type: 'string',
+									format: 'date'
+								},
+								profession: {
+									type: 'string',
+									pattern: '^[^\\n]{1,50}$'
+								},
+								landlinePhone: {
+									type: 'string',
+									format: 'tel'
+								},
+								cellphone: {
+									type: 'string',
+									format: 'tel'
+								}
+							},
+							required: [ 'firstNameLegal' ]
+						}
+					}
+				},
+				{ // OrgCodeholder
+					$merge: {
+						source: { $ref: '#/definitions/Codeholder' },
+						with: { // OrgCodeholder
+							properties: {
+								codeholderType: {
+									const: 'org'
+								},
+								fullName: {
+									type: 'string',
+									pattern: '^[^\\n]{1,100}$'
+								},
+								fullNameLocal: {
+									type: 'string',
+									pattern: '^[^\\n]{1,100}$'
+								},
+								careOf: {
+									type: 'string',
+									pattern: '^[^\\n]{1,100}$'
+								},
+								nameAbbrev: {
+									type: 'string',
+									pattern: '^[^\\n]{1,12}$'
+								},
+								website: {
+									type: 'string',
+									format: 'safe-uri',
+									maxLength: 50
+								}
+							},
+							required: [ 'fullName' ]
+						}
 					}
 				}
-			},
-			then: {
-				$merge: {
-					source: { $ref: '#/definitions/Codeholder' },
-					with: { // HumanCodeholder
-						properties: {
-							firstName: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							firstNameLegal: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							lastName: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							lastNameLegal: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							honorific: {
-								type: 'string',
-								pattern: '^[^\\n]{2,15}$'
-							},
-							birthdate: {
-								type: 'string',
-								format: 'date'
-							},
-							profession: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							landlinePhone: {
-								type: 'string',
-								format: 'tel'
-							},
-							cellphone: {
-								type: 'string',
-								format: 'tel'
-							}
-						},
-						required: [ 'firstNameLegal' ]
-					}
-				}
-			},
-			else: {
-				$merge: {
-					source: { $ref: '#/definitions/Codeholder' },
-					with: { // OrgCodeholder
-						properties: {
-							fullName: {
-								type: 'string',
-								pattern: '^[^\\n]{1,100}$'
-							},
-							fullNameLocal: {
-								type: 'string',
-								pattern: '^[^\\n]{1,100}$'
-							},
-							careOf: {
-								type: 'string',
-								pattern: '^[^\\n]{1,100}$'
-							},
-							nameAbbrev: {
-								type: 'string',
-								pattern: '^[^\\n]{1,12}$'
-							},
-							website: {
-								type: 'string',
-								format: 'safe-uri',
-								maxLength: 50
-							}
-						},
-						required: [ 'fullName' ]
-					}
-				}
-			}
+			]
 		},
 		requirePerms: 'codeholders.create'
 	}
