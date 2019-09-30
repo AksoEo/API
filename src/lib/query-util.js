@@ -33,6 +33,19 @@ function filterAssertNumber (val) {
 }
 
 /**
+ * Asserts the input to be a string
+ * @param  {string} val
+ * @throws {Error} If the input isn't a string
+ */
+function filterAssertString (val) {
+	if (typeof val !== 'string') {
+		const err = new Error('Invalid string in ?filter');
+		err.statusCode = 400;
+		throw err;
+	}
+}
+
+/**
  * Asserts the input to be an array
  * @param  {Array} val
  * @throws {Error} If the input isn't an array
@@ -112,6 +125,14 @@ const filterCompOps = {
 		filterAssertScalar(val);
 
 		query.whereNot(field, val);
+	},
+	$pre: function filterCompOpPre (field, query, val) {
+		filterAssertString(val);
+
+		val = val
+			.replace(/%/g, '\\%')
+			.replace(/_/g, '\\_') + '%';
+		query.where(field, 'LIKE', val);
 	},
 	$gt: function filterCompOpGt (field, query, val) {
 		filterAssertNumber(val);
