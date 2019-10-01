@@ -215,7 +215,8 @@ export async function afterQuery (arr, done) {
 		    \`year\`,
 		    \`nameAbbrev\`,
 		    \`name\`,
-		    \`lifetime\`
+		    \`lifetime\`,
+		    \`givesMembership\`
 
 			FROM (
 			    SELECT
@@ -230,7 +231,8 @@ export async function afterQuery (arr, done) {
 		                \`year\`,
 		                \`nameAbbrev\`,
 		                \`name\`,
-		                \`lifetime\`
+		                \`lifetime\`,
+		    			\`givesMembership\`
 		            
 		            FROM membershipCategories_codeholders
 
