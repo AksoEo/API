@@ -1227,6 +1227,7 @@ CREATE TABLE `codeholders_human` (
   `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   KEY `birthdate` (`birthdate`),
+  KEY `searchName_2` (`searchName`),
   FULLTEXT KEY `firstName` (`firstName`),
   FULLTEXT KEY `firstNameLegal` (`firstNameLegal`),
   FULLTEXT KEY `lastName` (`lastName`),
@@ -1396,6 +1397,7 @@ CREATE TABLE `codeholders_org` (
   `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
   `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
+  KEY `searchName_2` (`searchName`),
   FULLTEXT KEY `careOf` (`careOf`),
   FULLTEXT KEY `searchName` (`searchName`),
   FULLTEXT KEY `fullName` (`fullName`),
@@ -1928,4 +1930,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-01 14:08:36
+-- Dump completed on 2019-10-01 14:44:17
