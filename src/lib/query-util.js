@@ -134,6 +134,17 @@ const filterCompOps = {
 			.replace(/_/g, '\\_') + '%';
 		query.where(field, 'LIKE', val);
 	},
+	$range: function filterCompOpRange (field, query, val) {
+		filterAssertArray(val);
+		if (val.length !== 2) {
+			const err = new Error('Expected exactly two items for $range in ?filter');
+			err.statusCode = 400;
+			throw err;
+		}
+		val.forEach(filterAssertScalar);
+
+		query.whereBetween(field, val);
+	},
 	$gt: function filterCompOpGt (field, query, val) {
 		filterAssertNumber(val);
 
