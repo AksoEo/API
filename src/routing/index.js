@@ -348,7 +348,7 @@ export function bindMethod (router, path, method, bind) {
 						}
 
 					} else if (typeof bind.schema.query === 'string') {
-						const whitelist = [];
+						const whitelist = [ 'noop' ];
 
 						if (bind.schema.query === 'collection') {
 							whitelist.push( 'limit', 'offset', 'order', 'fields', 'search', 'filter' );
