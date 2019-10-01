@@ -2,6 +2,7 @@ import * as Canvas from 'canvas';
 import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment-timezone';
+import crypto from 'pn/crypto';
 
 import { profilePictureSizes } from '../routing/codeholders/schema';
 
@@ -66,6 +67,9 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 		throw err;
 	}
 
+	// Hash the picture
+	const hash = crypto.createHash('sha1').update(img.src).digest();
+
 	// Crop and scale the picture to all the necessary sizes
 	const pictures = {};
 	for (let size of profilePictureSizes) {
@@ -105,7 +109,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	// Update the db
 	await AKSO.db('codeholders')
 		.where('id', codeholderId)
-		.update({ hasProfilePicture: true });
+		.update({ profilePictureHash: hash });
 
 	// Update datum history
 	await AKSO.db('codeholders_hist_profilePicture')
@@ -114,7 +118,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 			modTime: moment().unix(),
 			modBy: modBy,
 			modCmt: modCmt,
-			hasProfilePicture: true
+			profilePictureHash: hash
 		});
 
 	// Remove the temp file

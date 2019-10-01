@@ -326,7 +326,7 @@ CREATE TABLE `codeholders` (
   `officePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
   `deathdate` date DEFAULT NULL,
-  `hasProfilePicture` tinyint(1) NOT NULL DEFAULT '0',
+  `profilePictureHash` binary(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `newCode` (`newCode`) USING BTREE,
   UNIQUE KEY `email` (`email`) USING BTREE,
@@ -336,9 +336,9 @@ CREATE TABLE `codeholders` (
   KEY `enabled` (`enabled`),
   KEY `createPasswordTime` (`createPasswordTime`),
   KEY `deathdate` (`deathdate`),
-  KEY `hasProfilePicture` (`hasProfilePicture`),
   KEY `password` (`password`),
   KEY `creationTime` (`creationTime`),
+  KEY `profilePictureHash` (`profilePictureHash`) USING BTREE,
   FULLTEXT KEY `email_2` (`email`),
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
@@ -352,7 +352,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,0),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,0),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,0),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',0),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,0),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,0),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,0),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,0),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,0),(33,'human',1569580471,NULL,'petepe',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,0),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,0),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,0),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,0);
+INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,NULL),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,NULL),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,NULL),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',NULL),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,NULL),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,NULL),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,NULL),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,NULL),(33,'human',1569580471,NULL,'petepe',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,NULL);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -426,7 +426,7 @@ CREATE TABLE `codeholders_files` (
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `codeholders_files_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `codeholders_files_ibfk_2` FOREIGN KEY (`addedBy`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1160,10 +1160,10 @@ CREATE TABLE `codeholders_hist_profilePicture` (
   `modTime` bigint(10) unsigned NOT NULL,
   `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `hasProfilePicture` tinyint(1) NOT NULL,
+  `profilePictureHash` binary(20) DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
-  KEY `hasProfilePicture` (`hasProfilePicture`) USING BTREE,
+  KEY `profilePictureHash` (`profilePictureHash`) USING BTREE,
   CONSTRAINT `codeholders_hist_profilePicture_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1771,7 +1771,7 @@ SET character_set_client = utf8;
  1 AS `officePhone`,
  1 AS `isDead`,
  1 AS `deathdate`,
- 1 AS `hasProfilePicture`,
+ 1 AS `profilePictureHash`,
  1 AS `firstName`,
  1 AS `firstNameLegal`,
  1 AS `lastName`,
@@ -1914,7 +1914,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`hasProfilePicture` AS `hasProfilePicture`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg`,`codeholders_org`.`website` AS `website` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg`,`codeholders_org`.`website` AS `website` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1928,4 +1928,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-01 12:34:31
+-- Dump completed on 2019-10-01 14:08:36

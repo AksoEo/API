@@ -31,7 +31,7 @@ export default {
 		// Update the db
 		await AKSO.db('codeholders')
 			.where('id', req.user.user)
-			.update({ hasProfilePicture: false });
+			.update({ profilePictureHash: null });
 
 		// Update datum history
 		await AKSO.db('codeholders_hist_profilePicture')
@@ -40,7 +40,7 @@ export default {
 				modTime: moment().unix(),
 				modBy: req.user.modBy,
 				modCmt: AKSO.CODEHOLDER_OWN_CHANGE_CMT,
-				hasProfilePicture: false
+				profilePictureHash: null
 			});
 
 		res.sendStatus(204);

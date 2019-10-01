@@ -34,7 +34,7 @@ export const schema = {
 		'officePhoneFormatted': '',
 		'isDead': 'f',
 		'deathdate': 'f',
-		'hasProfilePicture': 'f',
+		'profilePictureHash': 'f',
 		'membership': '',
 		'hasPassword': 'f',
 		'isActiveMember': 'f',

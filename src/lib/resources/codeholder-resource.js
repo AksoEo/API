@@ -43,7 +43,6 @@ class CodeholderResource extends SimpleResource {
 
 		this.obj.enabled           = !!this.obj.enabled;
 		this.obj.isDead            = !!this.obj.isDead;
-		this.obj.hasProfilePicture = !!this.obj.hasProfilePicture;
 		this.obj.hasPassword       = !!this.obj.hasPassword;
 		this.obj.isActiveMember    = !!this.obj.isActiveMember;
 
