@@ -5,6 +5,8 @@ import moment from 'moment-timezone';
 import { createTransaction, rollbackTransaction } from '../../util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
 
+const codeholderRequiredProps = [ 'newCode', 'codeholderType' ];
+
 const schema = {
 	...parSchema,
 	...{
@@ -83,9 +85,7 @@ const schema = {
 							type: 'string',
 							format: 'tel'
 						}
-					},
-					required: [ 'newCode', 'codeholderType' ],
-					additionalProperties: false
+					}
 				}
 			},
 
@@ -95,6 +95,9 @@ const schema = {
 						source: { $ref: '#/definitions/Codeholder' },
 						with: { // HumanCodeholder
 							properties: {
+								newCode: {
+									pattern: '^(?!xx)[a-z]{6}$'
+								},
 								codeholderType: {
 									const: 'human'
 								},
@@ -135,7 +138,8 @@ const schema = {
 									format: 'tel'
 								}
 							},
-							required: [ 'firstNameLegal' ]
+							required: codeholderRequiredProps.concat([ 'firstNameLegal' ]),
+							additionalProperties: false
 						}
 					}
 				},
@@ -144,6 +148,9 @@ const schema = {
 						source: { $ref: '#/definitions/Codeholder' },
 						with: { // OrgCodeholder
 							properties: {
+								newCode: {
+									pattern: '^xx[a-z]{4}$'
+								},
 								codeholderType: {
 									const: 'org'
 								},
@@ -169,7 +176,8 @@ const schema = {
 									maxLength: 50
 								}
 							},
-							required: [ 'fullName' ]
+							required: codeholderRequiredProps.concat([ 'fullName' ]),
+							additionalProperties: false
 						}
 					}
 				}
