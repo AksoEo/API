@@ -25,6 +25,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		profilePictureHash: 'r',
 		logins: 'r',
 		membership: 'r',
+		searchName: 'r',
 
 		// Humans
 		firstName: 'rw',

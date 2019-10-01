@@ -38,6 +38,7 @@ export const schema = {
 		'membership': '',
 		'hasPassword': 'f',
 		'isActiveMember': 'f',
+		'searchName': 'fs',
 
 		// HumanCodeholder
 		'firstName': 'fs',
@@ -79,6 +80,7 @@ export const schema = {
 		'addressCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.address_country)'),
 		'feeCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.feeCountry)'),
 		'searchAddress': 'address_search',
+		'searchName': () => AKSO.db.raw('IF(codeholderType = "human",searchNameHuman,searchNameOrg)'),
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone',
@@ -103,7 +105,7 @@ export const schema = {
 	},
 	fieldSearchGroups: [],
 	customSearch: {
-		'name': match => AKSO.db.raw(
+		searchName: match => AKSO.db.raw(
 			`IF(codeholderType = "human",
 				${match('searchNameHuman')},
 				${match('searchNameOrg')}
