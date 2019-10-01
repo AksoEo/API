@@ -39,6 +39,11 @@ export default {
 	run: async function run (req, res, next) {
 		req.session = null; // this unsets totp data among other things
 
+		// if password evals to false, passport just pretends the user doesn't exist
+		// in reality they might just not have set up a password
+		// this hack bypasses that
+		if (!req.body.password.length) { req.body.password = 42; }
+
 		passport.authenticate('local', (err, user) => {
 			if (err) { return next(err); }
 			if (!user) { return res.sendStatus(401); }
