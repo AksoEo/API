@@ -7,6 +7,7 @@ export default {
 	run: async function run (req, res, next) { // eslint-disable-line no-unused-vars
 		if (req.user && req.user.isUser()) {
 			const totpData = await AKSO.db.first(1).from('codeholders_totp').where('codeholderId', req.user.user);
+			const userData = await AKSO.db.first('id', 'newCode').from('codeholders').where('id', req.user.user);
 
 			const totpSetUp = !!totpData;
 			const totpUsed = !!req.session.totp;
@@ -15,7 +16,9 @@ export default {
 				csrfToken: req.csrfToken ? req.csrfToken() : null, // return null if CSRF is disabled
 				totpSetUp: totpSetUp,
 				totpUsed: totpUsed,
-				isAdmin: req.hasPermission('admin')
+				isAdmin: req.hasPermission('admin'),
+				id: userData.id,
+				newCode: userData.newCode
 			});
 		} else {
 			res.sendStatus(404);
