@@ -307,8 +307,8 @@ export function bindMethod (router, path, method, bind) {
 						try {
 							if (file.mimetype === 'application/json') {
 								req.body = JSON.parse(fileData.toString());
-							} else if (file.mimeType === 'application/vnd.msgpack') {
-								req.body = msgpack.decode(req.body, { codec: AKSO.msgpack });
+							} else if (file.mimetype === 'application/vnd.msgpack') {
+								req.body = msgpack.decode(fileData, { codec: AKSO.msgpack });
 							}
 						} catch (e) {
 							e.statusCode = 400;
