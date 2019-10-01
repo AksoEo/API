@@ -9,6 +9,11 @@ p: test
 totp secret: a 20 times
 admin: true
 
+u: dooder
+p: cats
+totp: not set up
+admin: true
+
 Client auth:
 u: 0e5417fdf9edb4667ccd6de525300bd8
 p: test
