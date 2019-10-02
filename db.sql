@@ -1299,7 +1299,7 @@ CREATE TABLE `codeholders_logins` (
   `codeholderId` int(10) unsigned NOT NULL,
   `time` bigint(20) unsigned NOT NULL,
   `timezone` varchar(32) CHARACTER SET ascii NOT NULL,
-  `ip` binary(16) NOT NULL,
+  `ip` varbinary(16) NOT NULL,
   `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ll` point NOT NULL,
@@ -1930,4 +1930,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-02 13:39:19
+-- Dump completed on 2019-10-02 13:40:02
