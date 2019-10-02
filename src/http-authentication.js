@@ -35,9 +35,15 @@ async function authentication (app) {
 		const dbUser = await AKSO.db.first('id', 'password').from('codeholders').where(whereStmt);
 		if (!dbUser) { return done(null, false); }
 
-		if (!dbUser.password || typeof password !== 'string') {
+		if (!dbUser.password) {
 			const err = new Error('User has no password');
 			err.statusCode = 409;
+			return done(err);
+		}
+
+		if (typeof password !== 'string') {
+			const err = new Error();
+			err.statusCode = 401;
 			return done(err);
 		}
 
