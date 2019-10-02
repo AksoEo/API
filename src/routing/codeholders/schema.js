@@ -80,7 +80,7 @@ export const schema = {
 		'addressCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.address_country)'),
 		'feeCountryGroups': () => AKSO.db.raw('(select group_concat(group_code) from countries_groups_members where countries_groups_members.country_code = view_codeholders.feeCountry)'),
 		'searchAddress': 'address_search',
-		'searchName': () => AKSO.db.raw('IF(codeholderType = "human",searchNameHuman,searchNameOrg)'),
+		'searchName': () => AKSO.db.raw('COALESCE(searchNameHuman,searchNameOrg)'),
 		'officePhoneFormatted': 'officePhone',
 		'landlinePhoneFormatted': 'landlinePhone',
 		'cellphoneFormatted': 'cellphone',

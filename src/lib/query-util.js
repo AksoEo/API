@@ -351,7 +351,7 @@ const QueryUtil = {
 			}
 			const order = req.query.order.map(x => {
 				return {
-					column: getAlias(schema.fieldAliases, x.column),
+					column: getAlias(schema.fieldAliases, x.column, false),
 					order: x.order
 				};
 			});
