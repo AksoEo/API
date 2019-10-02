@@ -268,7 +268,8 @@ export async function afterQuery (arr, done) {
 			year: membership.year,
 			nameAbbrev: membership.nameAbbrev,
 			name: membership.name,
-			lifetime: !!membership.lifetime
+			lifetime: !!membership.lifetime,
+			givesMembership: !!membership.givesMembership
 		});
 	}
 	
