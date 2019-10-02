@@ -325,6 +325,10 @@ export function bindMethod (router, path, method, bind) {
 					bind.schema.customSearch = {};
 				}
 
+				if ('noop' in req.query) {
+					delete req.query.noop;
+				}
+
 				if ('query' in bind.schema) {
 					if (!bind.schema.query) {
 						if (Object.keys(req.query).length) {
@@ -348,7 +352,7 @@ export function bindMethod (router, path, method, bind) {
 						}
 
 					} else if (typeof bind.schema.query === 'string') {
-						const whitelist = [ 'noop' ];
+						const whitelist = [];
 
 						if (bind.schema.query === 'collection') {
 							whitelist.push( 'limit', 'offset', 'order', 'fields', 'search', 'filter' );
