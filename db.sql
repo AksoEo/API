@@ -1606,7 +1606,7 @@ CREATE TABLE `httpLog` (
   `time` bigint(20) unsigned NOT NULL,
   `codeholderId` int(10) unsigned DEFAULT NULL,
   `apiKey` binary(16) DEFAULT NULL,
-  `ip` binary(16) NOT NULL,
+  `ip` varbinary(16) NOT NULL,
   `origin` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1930,4 +1930,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-01 14:44:17
+-- Dump completed on 2019-10-02 13:39:19
