@@ -403,8 +403,13 @@ export function bindMethod (router, path, method, bind) {
 								}
 
 								req.query.order = req.query.order.split(',').map(x => {
-									const dotIndex = x.lastIndexOf('.');
-									const bits = [ x.slice(0, dotIndex), x.slice(dotIndex + 1) ];
+									let dotIndex = x.lastIndexOf('.');
+									let dirIndex = dotIndex + 1;
+									if (dotIndex === -1) {
+										dotIndex = undefined;
+										dirIndex = x.length;
+									}
+									const bits = [ x.substring(0, dotIndex), x.substring(dirIndex) || 'asc' ];
 									return { column: bits[0], order: bits[1] };
 								});
 								for (let order of req.query.order) {
