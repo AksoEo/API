@@ -8,6 +8,7 @@ export default {
 	schema: {
 		query: null,
 		body: {
+			type: 'object',
 			properties: {
 				name: {
 					type: 'string',

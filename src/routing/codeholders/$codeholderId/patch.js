@@ -13,6 +13,7 @@ const schema = {
 	...{
 		query: modQuerySchema,
 		body: {
+			type: 'object',
 			properties: {
 				// Codeholder
 				newCode: {
@@ -20,6 +21,7 @@ const schema = {
 					pattern: '^[a-z]{6}$'
 				},
 				address: {
+					type: 'object',
 					properties: {
 						country: {
 							type: 'string',

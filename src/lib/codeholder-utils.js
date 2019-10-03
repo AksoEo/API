@@ -46,6 +46,7 @@ export async function getNamesAndEmails (...ids) {
  * @type {Object}
  */
 export const modQuerySchema = {
+	type: 'object',
 	properties: {
 		modCmt: {
 			type: 'string',

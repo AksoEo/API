@@ -4,6 +4,7 @@ export default {
 	schema: {
 		query: null,
 		body: {
+			type: 'object',
 			properties: {
 				code: {
 					type: 'string',

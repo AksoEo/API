@@ -14,6 +14,7 @@ const schema = {
 		body: {
 			definitions: {
 				Codeholder: {
+					type: 'object',
 					properties: {
 						newCode: {
 							type: 'string',
@@ -24,6 +25,7 @@ const schema = {
 							enum: [ 'human', 'org' ]
 						},
 						address: {
+							type: 'object',
 							properties: {
 								country: {
 									type: 'string',
@@ -94,6 +96,7 @@ const schema = {
 					$merge: {
 						source: { $ref: '#/definitions/Codeholder' },
 						with: { // HumanCodeholder
+							type: 'object',
 							properties: {
 								newCode: {
 									pattern: '^(?!xx)[a-z]{6}$'
@@ -147,6 +150,7 @@ const schema = {
 					$merge: {
 						source: { $ref: '#/definitions/Codeholder' },
 						with: { // OrgCodeholder
+							type: 'object',
 							properties: {
 								newCode: {
 									pattern: '^xx[a-z]{4}$'

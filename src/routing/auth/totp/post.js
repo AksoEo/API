@@ -6,6 +6,7 @@ export default {
 	schema: {
 		query: null,
 		body: {
+			type: 'object',
 			properties: {
 				totp: {
 					type: 'string',

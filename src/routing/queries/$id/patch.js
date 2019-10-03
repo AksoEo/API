@@ -2,6 +2,7 @@ export default {
 	schema: {
 		query: null,
 		body: {
+			type: 'object',
 			properties: {
 				category: {
 					type: 'string',
@@ -16,16 +17,10 @@ export default {
 					pattern: '^[^\\n]+$'
 				},
 				description: {
-					oneOf: [
-						{
-							type: 'null'
-						},
-						{
-							type: 'string',
-							minLength: 1,
-							maxLength: 1000
-						}
-					]
+					type: 'string',
+					minLength: 1,
+					maxLength: 1000,
+					nullable: true
 				},
 				query: {
 					type: 'object'

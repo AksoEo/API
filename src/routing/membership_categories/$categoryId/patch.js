@@ -2,6 +2,7 @@ export default {
 	schema: {
 		query: 'null',
 		body: {
+			type: 'object',
 			properties: {
 				nameAbbrev: {
 					type: 'string',

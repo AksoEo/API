@@ -15,6 +15,7 @@ const schema = {
 	...{
 		query: 'collection',
 		body: {
+			type: 'object',
 			properties: {
 				email: {
 					type: 'string',
@@ -42,6 +43,7 @@ const schema = {
 					enum: [ 'A3', 'A4', 'A5', 'LETTER', 'FOLIO', 'LEGAL', 'EXECUTIVE' ]
 				},
 				margins: {
+					type: 'object',
 					properties: {
 						top: {
 							type: 'number',

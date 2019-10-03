@@ -8,6 +8,7 @@ const schema = {
 	...{
 		query: null,
 		body: {
+			type: 'object',
 			properties: {
 				categoryId: {
 					type: 'number',
