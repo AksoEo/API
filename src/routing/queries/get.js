@@ -16,6 +16,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('savedQueries');
-		await QueryUtil.handleCollection(req, res, schema, query);
+		await QueryUtil.handleCollection({ req, res, schema, query });
 	}
 };

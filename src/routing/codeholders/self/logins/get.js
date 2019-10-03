@@ -28,6 +28,6 @@ export default {
 		const query = AKSO.db('codeholders_logins')
 			.where('codeholderId', req.user.user);
 
-		await QueryUtil.handleCollection(req, res, schema, query, CodeholderLoginResource);
+		await QueryUtil.handleCollection({ req, res, schema, query, Res: CodeholderLoginResource });
 	}
 };

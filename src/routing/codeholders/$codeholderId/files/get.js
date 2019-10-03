@@ -40,6 +40,6 @@ export default {
 		const query = AKSO.db('codeholders_files')
 			.where('codeholderId', req.params.codeholderId);
 
-		await QueryUtil.handleCollection(req, res, schema, query);
+		await QueryUtil.handleCollection({ req, res, schema, query });
 	}
 };

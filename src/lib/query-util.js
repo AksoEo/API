@@ -84,33 +84,63 @@ function getAlias (fieldAliases, field, includeAs = true) {
 }
 
 const filterLogicOps = {
-	$and: function filterLogicOpAnd (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
-		filterAssertArray(filterArr);
-		filterArr.forEach(filterAssertObject);
+	$and: function filterLogicOpAnd ({
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+	} = {}) {
+		filterAssertArray(filter);
+		filter.forEach(filterAssertObject);
 
 		query.where(function () {
-			for (let obj of filterArr) {
-				QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
-			}
-		});
-	},
-	$or: function filterLogicOpOr (fields, query, filterArr, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
-		filterAssertArray(filterArr);
-		filterArr.forEach(filterAssertObject);
-
-		query.where(function () {
-			for (let obj of filterArr) {
-				this.orWhere(function () {
-					QueryUtil.filter(fields, this, obj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
+			for (let obj of filter) {
+				QueryUtil.filter({
+					fields,
+					query: this,
+					filter: obj,
+					fieldAliases,
+					fieldWhitelist,
+					customCompOps,
+					customLogicOps
 				});
 			}
 		});
 	},
-	$not: function filterLogicOpNot (fields, query, filterObj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps) {
-		filterAssertObject(filterObj);
+	$or: function filterLogicOpOr ({
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+	} = {}) {
+		filterAssertArray(filter);
+		filter.forEach(filterAssertObject);
+
+		query.where(function () {
+			for (let obj of filter) {
+				this.orWhere(function () {
+					QueryUtil.filter({
+						fields,
+						query: this,
+						filter: obj,
+						fieldAliases,
+						fieldWhitelist,
+						customCompOps,
+						customLogicOps
+					});
+				});
+			}
+		});
+	},
+	$not: function filterLogicOpNot ({
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+	} = {}) {
+		filterAssertObject(filter);
 
 		query.whereNot(function () {
-			QueryUtil.filter(fields, this, filterObj, fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
+			QueryUtil.filter({
+				fields,
+				query: this,
+				filter,
+				fieldAliases,
+				fieldWhitelist,
+				customCompOps,
+				customLogicOps
+			});
 		});
 	}
 };
@@ -184,17 +214,25 @@ const QueryUtil = {
 	 * Handles the ?filter parameter
 	 * @param {string[]}          fields           The permitted filterable fields
 	 * @param {knex.QueryBuilder} query            The query builder to apply the where statement to
-	 * @param {Object}            filterObj        The filter object as supplied by `req.query.filter`
+	 * @param {Object}            filter           The filter object as supplied by `req.query.filter`
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
 	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
 	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/routing/codeholders/schema.js` for usage
 	 * @param {Object}            [customLogicOps] Custom logic operators. See `/src/routing/codeholders/schema.js` for usage
 	 */
-	filter: function queryUtilFilter (fields, query, filterObj, fieldAliases = {}, fieldWhitelist = null, customCompOps = {}, customLogicOps = {}) {
+	filter: function queryUtilFilter ({
+		fields,
+		query,
+		filter,
+		fieldAliases = {},
+		fieldWhitelist = null,
+		customCompOps = {},
+		customLogicOps = {}
+	} = {}) {
 		if (!fieldWhitelist) { fieldWhitelist = fields; }
 
 		query.where(function () {
-			for (let key in filterObj) { // Iterate through each key
+			for (let key in filter) { // Iterate through each key
 				if (fields.indexOf(key) > -1) { // key is a field
 					// Ensure the client has the necessary permissions
 					if (fieldWhitelist.indexOf(key) === -1) {
@@ -203,7 +241,7 @@ const QueryUtil = {
 						throw err;
 					}
 
-					let val = filterObj[key];
+					let val = filter[key];
 					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
 						val = { $eq: val }; // turn into an $eq comparison operator
 					}
@@ -236,11 +274,19 @@ const QueryUtil = {
 					// Check if the field is an alias
 					key = getAlias(fieldAliases, key);
 
-					let filter;
-					if (key in filterLogicOps) { filter = filterLogicOps[key]; }
-					else { filter = customLogicOps[key]; }
+					let filterFn;
+					if (key in filterLogicOps) { filterFn = filterLogicOps[key]; }
+					else { filterFn = customLogicOps[key]; }
 
-					filter(fields, this, filterObj[key], fieldAliases, fieldWhitelist, customCompOps, customLogicOps);
+					filterFn({
+						fields,
+						query: this,
+						filter: filter[key],
+						fieldAliases,
+						fieldWhitelist,
+						customCompOps,
+						customLogicOps
+					});
 				} else {
 					const err = new Error(`Unknown field or logical operator ${key} used in ?filter`);
 					err.statusCode = 400;
@@ -330,16 +376,16 @@ const QueryUtil = {
 		if (schema.alwaysWhere) { schema.alwaysWhere(query, req); }
 		// ?filter
 		if (req.query.filter) {
-			QueryUtil.filter(
-				Object.keys(schema.fields)
+			QueryUtil.filter({
+				fields: Object.keys(schema.fields)
 					.filter(x => schema.fields[x].indexOf('f' > -1)),
 				query,
-				req.query.filter,
-				schema.fieldAliases || {},
+				filter: req.query.filter,
+				fieldAliases: schema.fieldAliases || {},
 				fieldWhitelist,
-				schema.customFilterCompOps,
-				schema.customFilterLogicOps
-			);
+				customCompOps: schema.customFilterCompOps,
+				customLogicOps: schema.customFilterLogicOps
+			});
 		}
 
 		// ?order
@@ -408,7 +454,17 @@ const QueryUtil = {
 	 * @param {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
 	 * @param {Function}          [afterQuery]     A function to run after the query has been performed, before it's passed to the collection. Receives two arguments, the returned array and a callback to run when all modifications are done.
 	 */
-	async handleCollection (req, res, schema, query, Res = SimpleResource, Col = SimpleCollection, passToCol = [], fieldWhitelist = null, afterQuery) {
+	async handleCollection ({
+		req,
+		res,
+		schema,
+		query,
+		Res = SimpleResource,
+		Col = SimpleCollection,
+		passToCol = [],
+		fieldWhitelist = null,
+		afterQuery
+	} = {}) {
 		await QueryUtil.collectionMetadata(res,
 			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
 		);

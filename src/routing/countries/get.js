@@ -17,6 +17,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('countries');
-		await QueryUtil.handleCollection(req, res, schema, query, CountryResource);
+		await QueryUtil.handleCollection({ req, res, schema, query, Res: CountryResource });
 	}
 };

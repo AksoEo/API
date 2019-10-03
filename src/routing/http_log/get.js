@@ -29,6 +29,6 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('httpLog');
-		await QueryUtil.handleCollection(req, res, schema, query, HttpLogResource);
+		await QueryUtil.handleCollection({ req, res, schema, query, Res: HttpLogResource });
 	}
 };

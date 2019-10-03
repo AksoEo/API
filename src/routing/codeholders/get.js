@@ -1,6 +1,5 @@
 import QueryUtil from '../../lib/query-util';
 import CodeholderResource from '../../lib/resources/codeholder-resource';
-import SimpleCollection from '../../lib/simple-collection';
 
 import { schema as parSchema, memberFilter, memberFields, afterQuery } from './schema';
 
@@ -25,6 +24,15 @@ export default {
 
 		let fieldWhitelist = null;
 		if (req.memberFields) { fieldWhitelist = Object.keys(req.memberFields); }
-		await QueryUtil.handleCollection(req, res, schema, query, CodeholderResource, SimpleCollection, [[ req, schema ]], fieldWhitelist, afterQuery);
+		await QueryUtil.handleCollection({
+			req,
+			res,
+			schema,
+			query,
+			Res: CodeholderResource,
+			passToCol: [[ req, schema ]],
+			fieldWhitelist,
+			afterQuery
+		});
 	}
 };

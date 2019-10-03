@@ -148,29 +148,29 @@ export const schema = {
 					.innerJoin('membershipCategories', 'membershipCategories.id', 'membershipCategories_codeholders.categoryId')
 					.whereRaw('`codeholderId` = `view_codeholders`.`id`');
 
-				QueryUtil.filter(
-					[
+				QueryUtil.filter({
+					fields: [
 						'categoryId',
 						'givesMembership',
 						'lifetime',
 						'year'
 					],
-					this,
-					obj
-				);
+					query: this,
+					filter: obj
+				});
 			});
 		}
 	}
 };
 
 export function memberFilter (schema, query, req) {
-	QueryUtil.filter(
-		Object.keys(schema.fields)
+	QueryUtil.filter({
+		fields: Object.keys(schema.fields)
 			.filter(x => schema.fields[x].indexOf('f' > -1)),
 		query,
-		req.memberFilter,
-		schema.fieldAliases
-	);
+		filter: req.memberFilter,
+		fieldAliases: schema.fieldAliases
+	});
 }
 
 export function memberFields (defaultFields, req, res, flag, memberFields) {

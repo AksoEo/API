@@ -18,6 +18,6 @@ export default {
 		const query = AKSO.db('countries_groups')
 			.leftJoin('countries_groups_members', 'code', 'group_code')
 			.groupBy('code');
-		await QueryUtil.handleCollection(req, res, schema, query, CountryGroupResource);
+		await QueryUtil.handleCollection({ req, res, schema, query, Res: CountryGroupResource });
 	}
 };

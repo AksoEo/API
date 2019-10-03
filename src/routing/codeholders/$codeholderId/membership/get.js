@@ -37,6 +37,8 @@ export default {
 			.innerJoin('membershipCategories', 'membershipCategories.id', 'membershipCategories_codeholders.categoryId')
 			.where('codeholderId', req.params.codeholderId);
 
-		await QueryUtil.handleCollection(req, res, schema, query, CodeholderMembershipResource);
+		await QueryUtil.handleCollection({
+			req, res, schema, query, Res: CodeholderMembershipResource
+		});
 	}
 };
