@@ -376,7 +376,6 @@ export default {
 			});
 		}
 
-		await fs.unlink(tmpFile.path);
 		await AKSO.db('addressLabelOrders')
 			.where(orderObj)
 			.delete();

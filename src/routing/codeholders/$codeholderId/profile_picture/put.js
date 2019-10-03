@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-
 import { schema as parSchema, memberFilter, memberFieldsManual } from '../../schema';
 import { modQuerySchema, setProfilePicture } from '../../../../lib/codeholder-utils';
 
@@ -32,7 +30,6 @@ export default {
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
-			await cleanUp(file);
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
@@ -42,21 +39,11 @@ export default {
 			.first(1);
 		memberFilter(parSchema, codeholderQuery, req);
 		if (!await codeholderQuery) {
-			await cleanUp(file);
 			return res.sendStatus(404);
 		}
 
-		try {
-			await setProfilePicture(req.params.codeholderId, file.path, file.mimetype, req.user.modBy, req.query.modCmt);
-		} catch (e) {
-			cleanUp();
-			throw e;
-		}
+		await setProfilePicture(req.params.codeholderId, file.path, file.mimetype, req.user.modBy, req.query.modCmt);
 
 		res.sendStatus(204);
 	}
 };
-
-async function cleanUp (file) {
-	await fs.unlink(file.path);
-}

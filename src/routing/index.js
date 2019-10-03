@@ -277,6 +277,21 @@ export function bindMethod (router, path, method, bind) {
 						});
 					});
 
+					// Always clean up temp files
+					res.on('finish', async () => {
+						for (let fileArr of Object.values(req.files)) {
+							for (let file of fileArr) {
+								try {
+									await fs.unlink(file.path);
+								} catch (e) {
+									if (e.code !== 'ENOENT') {
+										throw e;
+									}
+								}
+							}
+						}
+					});
+
 					for (let fileSchema of uploadFields) {
 						const fileArr = req.files[fileSchema.name] || [];
 

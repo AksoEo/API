@@ -40,7 +40,6 @@ export default {
 
 		// Delete from the drive
 		const filePath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.fileId);
-		await fs.unlink(filePath);
 		res.sendStatus(204);
 	}
 };

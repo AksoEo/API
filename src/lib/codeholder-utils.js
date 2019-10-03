@@ -121,7 +121,4 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 			modCmt: modCmt,
 			profilePictureHash: hash
 		});
-
-	// Remove the temp file
-	await fs.unlink(tmpFile);
 }

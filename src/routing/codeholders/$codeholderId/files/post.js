@@ -44,7 +44,6 @@ export default {
 			'files'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
-			await cleanUp(file);
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
@@ -54,7 +53,6 @@ export default {
 			.first(1);
 		memberFilter(parSchema, codeholderQuery, req);
 		if (!await codeholderQuery) {
-			await cleanUp(file);
 			return res.sendStatus(404);
 		}
 
@@ -75,7 +73,3 @@ export default {
 		res.sendStatus(201);
 	}
 };
-
-async function cleanUp (file) {
-	await fs.unlink(file.path);
-}
