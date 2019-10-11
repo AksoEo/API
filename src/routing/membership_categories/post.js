@@ -2,7 +2,7 @@ import path from 'path';
 
 export default {
 	schema: {
-		query: 'null',
+		query: null,
 		body: {
 			type: 'object',
 			properties: {
