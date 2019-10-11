@@ -63,7 +63,11 @@ async function authentication (app) {
 		const totpData = await AKSO.db.first('secret', 'iv').from('codeholders_totp').where({
 			codeholderId: user.user
 		});
-		if (!totpData) { return done(new Error('User has not set up TOTP')); }
+		if (!totpData) {
+			const err = new Error('User has not set up TOTP');
+			err.statusCode = 403;
+			return done(err);
+		}
 		// Decrypt the TOTP secret
 		const decipher = crypto.createDecipheriv('aes-256-cbc', AKSO.conf.totpAESKey, totpData.iv);
 		const secret = Buffer.concat([
