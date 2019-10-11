@@ -14,6 +14,7 @@ import msgpack from 'msgpack-lite';
 import { urlRegex } from '../util';
 
 import { init as route$auth } from './auth';
+import { init as route$clients } from './clients';
 import { init as route$perms } from './perms';
 import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
@@ -138,6 +139,7 @@ export function init () {
 	// TOTP required endpoints
 	router.use(checkTOTPRequired);
 
+	router.use('/clients', route$clients());
 	router.use('/codeholders', route$codeholders());
 	router.use('/countries', route$countries());
 	router.use('/country_groups', route$country_groups());
