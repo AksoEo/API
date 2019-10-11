@@ -71,18 +71,6 @@ function filterAssertObject (val) {
 	}
 }
 
-function getAlias (fieldAliases, field, includeAs = true) {
-	if (!fieldAliases) { return field; }
-	const alias = fieldAliases[field];
-	if (!alias) { return field; }
-	if (typeof alias === 'string') { return alias; }
-	if (typeof alias === 'function') {
-		let newField = alias();
-		if (includeAs) { newField = AKSO.db.raw(newField + ' as ??', field); }
-		return newField;
-	}
-}
-
 const filterLogicOps = {
 	$and: function filterLogicOpAnd ({
 		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
@@ -210,6 +198,18 @@ const filterCompOps = {
 };
 
 const QueryUtil = {
+	getAlias: function getAlias (fieldAliases, field, includeAs = true) {
+		if (!fieldAliases) { return field; }
+		const alias = fieldAliases[field];
+		if (!alias) { return field; }
+		if (typeof alias === 'string') { return alias; }
+		if (typeof alias === 'function') {
+			let newField = alias();
+			if (includeAs) { newField = AKSO.db.raw(newField + ' as ??', field); }
+			return newField;
+		}
+	},
+
 	/**
 	 * Handles the ?filter parameter
 	 * @param {string[]}          fields           The permitted filterable fields
@@ -251,7 +251,7 @@ const QueryUtil = {
 						for (let compOp in val) {
 							// Check if the field is an alias
 							const orgKey = key;
-							key = getAlias(fieldAliases, key, false);
+							key = QueryUtil.getAlias(fieldAliases, key, false);
 
 							if (compOp in filterCompOps) {
 								filterCompOps[compOp](key, this, val[compOp]);
@@ -272,7 +272,7 @@ const QueryUtil = {
 
 				} else if (key in filterLogicOps || key in customLogicOps) {
 					// Check if the field is an alias
-					key = getAlias(fieldAliases, key);
+					key = QueryUtil.getAlias(fieldAliases, key);
 
 					let filterFn;
 					if (key in filterLogicOps) { filterFn = filterLogicOps[key]; }
@@ -309,7 +309,7 @@ const QueryUtil = {
 		// Get the actual db col names
 		const selectFields = fields
 			.concat(schema.alwaysSelect || [])
-			.map(f => getAlias(schema.fieldAliases, f));
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
 		query.first(selectFields);
 	},
 
@@ -329,7 +329,7 @@ const QueryUtil = {
 		// Get the actual db col names
 		const selectFields = fields
 			.concat(schema.alwaysSelect || [])
-			.map(f => getAlias(schema.fieldAliases, f));
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
 
 		if (req.query.search) {
 			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {
@@ -355,7 +355,7 @@ const QueryUtil = {
 				query.whereRaw(searchStmt);
 
 			} else {
-				const searchCols = req.query.search.cols.map(f => getAlias(schema.fieldAliases, f));
+				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
 				selectFields.push(AKSO.db.raw(
 					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 					AGAINST (? IN BOOLEAN MODE) as ??`,
@@ -397,7 +397,7 @@ const QueryUtil = {
 			}
 			const order = req.query.order.map(x => {
 				return {
-					column: getAlias(schema.fieldAliases, x.column, false),
+					column: QueryUtil.getAlias(schema.fieldAliases, x.column, false),
 					order: x.order
 				};
 			});

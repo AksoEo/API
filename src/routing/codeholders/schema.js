@@ -280,3 +280,53 @@ export async function afterQuery (arr, done) {
 export const profilePictureSizes = [
 	32, 64, 128, 256, 512
 ];
+
+export const histFields = {
+	// Codeholder
+	'newCode': 'newCode',
+	'password': '',
+	'address': [
+		'address.country',
+		'address.countryArea',
+		'addressLatin.countryArea',
+		'address.city',
+		'addressLatin.city',
+		'address.cityArea',
+		'addressLatin.cityArea',
+		'address.streetAddress',
+		'addressLatin.streetAddress',
+		'address.postalCode',
+		'addressLatin.postalCode',
+		'address.sortingCode',
+		'addressLatin.sortingCode'
+	],
+	'feeCountry': 'feeCountry',
+	'email': 'email',
+	'enabled': 'enabled',
+	'notes': 'notes',
+	'officePhone': 'officePhone',
+	'isDead': 'isDead',
+	'deathdate': 'deathdate',
+	'profilePictureHash': 'profilePictureHash',
+
+	// HumanCodeholder
+	'firstName': 'firstName',
+	'firstNameLegal': 'firstNameLegal',
+	'lastName': 'lastName',
+	'lastNameLegal': 'lastNameLegal',
+	'honorific': 'honorific',
+	'birthdate': 'birthdate',
+	'landlinePhone': 'landlinePhone',
+	'cellphone': 'cellphone',
+
+	// OrgCodeholder
+	'fullName': 'fullName',
+	'fullNameLocal': 'fullNameLocal',
+	'careOf': 'careOf',
+	'nameAbbrev': 'nameAbbrev',
+	'website': 'website'
+};
+for (let field in histFields) {
+	if (Array.isArray(histFields[field])) { continue; }
+	histFields[field] = [ histFields[field] ].filter(x => x.length);
+}

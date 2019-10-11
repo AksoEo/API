@@ -9,7 +9,8 @@ WHERE
 	or TABLE_NAME in (
 		\"httpLog\",
 		\"codeholders_totp_remember\",
-		\"codeholders_logins\"
+		\"codeholders_logins\",
+		\"codeholders_files\",
 	);
 "
 mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso --execute "$command" | sed 1d | mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso

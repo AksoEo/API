@@ -358,7 +358,12 @@ export default {
 				modCmt: req.query.modCmt
 			};
 			if (field === 'address') {
-				histEntry = {...histEntry, ...oldAddress};
+				const oldAddressWithPrefixes = {};
+				for (let key in oldAddress) {
+					if (key === 'codeholderId') { continue; }
+					oldAddressWithPrefixes['address_' + key] = oldAddress[key];
+				}
+				histEntry = {...histEntry, ...oldAddressWithPrefixes};
 			} else {
 				histEntry[field] = oldData[field];
 			}
