@@ -289,7 +289,13 @@ CREATE TABLE `clients` (
   `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ownerName` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ownerEmail` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`apiKey`)
+  PRIMARY KEY (`apiKey`),
+  KEY `name_2` (`name`),
+  KEY `ownerName_2` (`ownerName`),
+  KEY `ownerEmail_2` (`ownerEmail`),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `ownerName` (`ownerName`),
+  FULLTEXT KEY `ownerEmail` (`ownerEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -299,7 +305,7 @@ CREATE TABLE `clients` (
 
 LOCK TABLES `clients` WRITE;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
-INSERT INTO `clients` VALUES (_binary 'T˝˘\Ì¥f|\Õm\Â%0\ÿ',_binary 'üÜ–ÅàL}eö/\Í†\≈Z\–£øO+Ç,\—]l∞\n','random app (p: test)','TEJO','mia@tejo.org');
+INSERT INTO `clients` VALUES (_binary 'T˝˘\Ì¥f|\Õm\Â%0\ÿ',_binary 'üÜ–ÅàL}eö/\Í†\≈Z\–£øO+Ç,\—]l∞\n','random app (p: test)','Tutmonda Esperantista Junulara Organizo','mia@tejo.org');
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -426,7 +432,7 @@ CREATE TABLE `codeholders_files` (
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `codeholders_files_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `codeholders_files_ibfk_2` FOREIGN KEY (`addedBy`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1930,4 +1936,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-02 13:40:02
+-- Dump completed on 2019-10-11 14:00:17
