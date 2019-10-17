@@ -6,7 +6,7 @@ import method$put from './put';
 import method$delete from './delete';
 
 /**
- * Sets up /admin_groups/{adminGroupId}/clients/{apiKey}
+ * Sets up /admin_groups/{adminGroupId}/codeholders/{codeholderId}
  * @return {express.Router}
  */
 export function init () {
