@@ -5,5 +5,8 @@ export default {
 		name: 'fs',
 		ownerName: 'fs',
 		ownerEmail: 'fs'
+	},
+	fieldAliases: {
+		apiKey: 'clients.apiKey'
 	}
 };

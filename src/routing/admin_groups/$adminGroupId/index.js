@@ -2,6 +2,8 @@ import express from 'express';
 
 import { bindMethod } from '../..';
 
+import { init as route$clients } from './clients';
+
 import method$get from './get';
 import method$patch from './patch';
 import method$delete from './delete';
@@ -12,6 +14,8 @@ import method$delete from './delete';
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
+
+	router.use('/clients', route$clients());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
