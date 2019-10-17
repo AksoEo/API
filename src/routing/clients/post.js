@@ -10,12 +10,14 @@ export default {
 				name: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 200
+					maxLength: 200,
+					pattern: '^[^\\n]+$'
 				},
 				ownerName: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 200
+					maxLength: 200,
+					pattern: '^[^\\n]+$'
 				},
 				ownerEmail: {
 					type: 'string',
