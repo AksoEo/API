@@ -58,8 +58,11 @@ DROP TABLE IF EXISTS `admin_groups`;
 CREATE TABLE `admin_groups` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -69,7 +72,7 @@ CREATE TABLE `admin_groups` (
 
 LOCK TABLES `admin_groups` WRITE;
 /*!40000 ALTER TABLE `admin_groups` DISABLE KEYS */;
-INSERT INTO `admin_groups` VALUES (1,'Testgrupo (administranto)');
+INSERT INTO `admin_groups` VALUES (1,'Testgrupo (administranto)','Havas ĉiujn rajtojn.');
 /*!40000 ALTER TABLE `admin_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1936,4 +1939,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-11 14:00:17
+-- Dump completed on 2019-10-17 11:22:35
