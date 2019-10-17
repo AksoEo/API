@@ -4,6 +4,7 @@ import { bindMethod } from '../..';
 
 import { init as route$clients } from './clients';
 import { init as route$codeholders } from './codeholders';
+import { init as route$permissions } from './permissions';
 
 import method$get from './get';
 import method$patch from './patch';
@@ -18,6 +19,7 @@ export function init () {
 
 	router.use('/clients', route$clients());
 	router.use('/codeholders', route$codeholders());
+	router.use('/permissions', route$permissions());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
