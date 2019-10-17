@@ -20,6 +20,14 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
+		// Make sure the admin group exists
+		const exists = await AKSO.db('admin_groups')
+			.where('id', req.params.adminGroupId)
+			.first(1);
+		if (!exists) {
+			return res.sendStatus(404);
+		}
+
 		// Restrictions
 		if (!memberFields(schema, req, res, 'r')) { return; }
 

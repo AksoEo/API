@@ -18,6 +18,14 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
+		// Make sure the admin group exists
+		const exists = await AKSO.db('admin_groups')
+			.where('id', req.params.adminGroupId)
+			.first(1);
+		if (!exists) {
+			return res.sendStatus(404);
+		}
+
 		const query = AKSO.db('clients')
 			.innerJoin('admin_groups_members_clients', 'admin_groups_members_clients.apiKey', 'clients.apiKey')
 			.where('adminGroupId', req.params.adminGroupId);
