@@ -13,6 +13,7 @@ const mimeTypes = [
 
 export default {
 	schema: {
+		query: null,
 		body: null,
 		multipart: [
 			{
