@@ -1683,6 +1683,38 @@ INSERT INTO `magazines` VALUES (1,'uea','Esperanto','# Oficiala organo de Univer
 UNLOCK TABLES;
 
 --
+-- Table structure for table `magazines_editions`
+--
+
+DROP TABLE IF EXISTS `magazines_editions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `magazines_editions` (
+  `id` int(10) unsigned NOT NULL,
+  `magazineId` int(10) unsigned NOT NULL,
+  `idHuman` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date` date NOT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`,`magazineId`),
+  KEY `date` (`date`),
+  KEY `magazineId` (`magazineId`),
+  FULLTEXT KEY `idHuman` (`idHuman`),
+  FULLTEXT KEY `description` (`description`),
+  CONSTRAINT `magazines_editions_ibfk_1` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `magazines_editions`
+--
+
+LOCK TABLES `magazines_editions` WRITE;
+/*!40000 ALTER TABLE `magazines_editions` DISABLE KEYS */;
+INSERT INTO `magazines_editions` VALUES (292,2,'n-ro 4/2019, julio-aŭgusto','2019-07-01',NULL),(1338,1,'n-ro 9/2019, septembro','2019-09-01',NULL),(1339,1,'n-ro 10/2019, oktobro','2019-10-01',NULL);
+/*!40000 ALTER TABLE `magazines_editions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `membershipCategories`
 --
 
@@ -1970,4 +2002,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-18 11:14:38
+-- Dump completed on 2019-10-18 12:01:48
