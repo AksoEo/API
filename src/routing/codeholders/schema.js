@@ -136,8 +136,8 @@ export const schema = {
 		}
 	},
 	customFilterLogicOps: {
-		$membership: (fields, query, obj) => {
-			if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+		$membership: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
 				const err = new Error('$membership expects an object');
 				err.statusCode = 400;
 				throw err;
@@ -156,7 +156,7 @@ export const schema = {
 						'year'
 					],
 					query: this,
-					filter: obj
+					filter
 				});
 			});
 		}
