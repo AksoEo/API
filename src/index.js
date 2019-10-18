@@ -144,6 +144,7 @@ async function init () {
 	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files'));
 	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures'));
 	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_files'));
+	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails'));
 
 	// Init
 	moment.locale('eo');

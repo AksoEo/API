@@ -5,6 +5,7 @@ import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
 
 import { profilePictureSizes } from '../routing/codeholders/schema';
+import { cropImgToSizes } from './canvas-utils';
 
 /**
  * Obtains the names and emails of codeholders by their ids
@@ -72,18 +73,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	const hash = crypto.createHash('sha1').update(img.src).digest();
 
 	// Crop and scale the picture to all the necessary sizes
-	const pictures = {};
-	for (let size of profilePictureSizes) {
-		const canvas = Canvas.createCanvas(size, size);
-		const ctx = canvas.getContext('2d');
-		const hRatio = canvas.width / img.width;
-		const vRatio = canvas.height / img.height;
-		const ratio = Math.max(hRatio, vRatio);
-		const centerShiftX = (canvas.width - img.width * ratio) / 2;
-		const centerShiftY = (canvas.height - img.height * ratio) / 2;
-		ctx.drawImage(img, 0, 0, img.width, img.height, centerShiftX, centerShiftY, img.width * ratio, img.height * ratio);
-		pictures[size] = canvas.toBuffer(mimetype);
-	}
+	const pictures = cropImgToSizes(img, mimetype, profilePictureSizes, true);
 
 	// Ensure the dir for the codeholder's profile picture exists
 	const picDir = path.join(AKSO.conf.dataDir, 'codeholder_pictures', codeholderId.toString());
