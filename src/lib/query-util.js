@@ -1,3 +1,5 @@
+import util from 'util';
+
 import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
 
@@ -469,7 +471,20 @@ const QueryUtil = {
 			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
 		);
 		const rawData = await query;
-		if (afterQuery) { await new Promise(resolve => afterQuery(rawData, resolve)); }
+		try {
+			if (afterQuery) {
+				await new Promise(async (resolve, reject) => {
+					// Awaits if it's async, otherwise goes ahead immediately
+					Promise.resolve(afterQuery(rawData, resolve, req))
+						.catch(e => {
+							AKSO.log.error(e);
+							reject(e);
+						});
+				});
+			}
+		} catch (e) {
+			return res.sendStatus(500);
+		}
 		const data = new Col(rawData, Res, ...passToCol);
 		res.sendObj(data);
 	}
