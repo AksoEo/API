@@ -21,6 +21,7 @@ import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
 import { init as route$country_groups } from './country_groups';
 import { init as route$http_log } from './http_log';
+import { init as route$magazines } from './magazines';
 import { init as route$membership_categories } from './membership_categories';
 import { init as route$queries } from './queries';
 
@@ -146,6 +147,7 @@ export function init () {
 	router.use('/countries', route$countries());
 	router.use('/country_groups', route$country_groups());
 	router.use('/http_log', route$http_log());
+	router.use('/magazines', route$magazines());
 	router.use('/membership_categories', route$membership_categories());
 	router.use('/queries', route$queries());
 

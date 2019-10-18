@@ -1652,6 +1652,37 @@ LOCK TABLES `httpLog` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `magazines`
+--
+
+DROP TABLE IF EXISTS `magazines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `magazines` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `issn` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `magazines`
+--
+
+LOCK TABLES `magazines` WRITE;
+/*!40000 ALTER TABLE `magazines` DISABLE KEYS */;
+INSERT INTO `magazines` VALUES (1,'uea','Esperanto','# Oficiala organo de Universala Esperanto-Asocio\r\n(en konsultaj rilatoj kun UNo kaj Unesko)\r\n\r\nFondita en 1905 de Paul Berthelot (1881-1910).\r\n\r\nEstablita kiel organo de UEA en 1908 de Hector Hodler (1887-1920).\r\n\r\nLegata en 115 landoj. Voĉlegata por vidhandikapitoj.\r\n\r\n*Redaktoroj:* Dmitrij Ŝevĉenko, Anna Striganova.\r\n\r\n*Retejo:* [revuoesperanto.org](http://revuoesperanto.org)\r\n\r\n*Retpoŝto:* [revuo.esperanto@gmail.com](mailto:revuo.esperanto@gmail.com) (ne por abonoj!)\r\n\r\n*Aperas*: en ĉiu monato krom aŭgusto.\r\n\r\n*Redaktofino:* la 10-a de antaŭa monato.','00140635'),(2,'tejo','Kontakto','Jen priskribo','00233692'),(3,'uea','Unesko-Kuriero','Jen priskribo ...','25217356');
+/*!40000 ALTER TABLE `magazines` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `membershipCategories`
 --
 
@@ -1939,4 +1970,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-17 11:22:35
+-- Dump completed on 2019-10-18 11:14:38
