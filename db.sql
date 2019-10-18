@@ -1695,9 +1695,8 @@ CREATE TABLE `magazines_editions` (
   `idHuman` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date NOT NULL,
   `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`,`magazineId`),
+  PRIMARY KEY (`magazineId`,`id`) USING BTREE,
   KEY `date` (`date`),
-  KEY `magazineId` (`magazineId`),
   FULLTEXT KEY `idHuman` (`idHuman`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `magazines_editions_ibfk_1` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1710,7 +1709,7 @@ CREATE TABLE `magazines_editions` (
 
 LOCK TABLES `magazines_editions` WRITE;
 /*!40000 ALTER TABLE `magazines_editions` DISABLE KEYS */;
-INSERT INTO `magazines_editions` VALUES (292,2,'n-ro 4/2019, julio-aŭgusto','2019-07-01',NULL),(1338,1,'n-ro 9/2019, septembro','2019-09-01',NULL),(1339,1,'n-ro 10/2019, oktobro','2019-10-01',NULL);
+INSERT INTO `magazines_editions` VALUES (1338,1,'n-ro 9/2019, septembro','2019-09-01',NULL),(1339,1,'n-ro 10/2019, oktobro','2019-10-01',NULL),(291,2,'n-ro 3/2019','2019-06-01',NULL),(292,2,'n-ro 4/2019','2019-07-01',NULL);
 /*!40000 ALTER TABLE `magazines_editions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2002,4 +2001,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-18 12:01:48
+-- Dump completed on 2019-10-18 12:17:17
