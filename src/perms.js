@@ -51,7 +51,10 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 
 	// Grant active member perms
 	if (req.user && await req.user.isActiveMember()) {
-		req.permissions.push('magazines.read.*');
+		req.permissions.push(
+			'magazines.read.uea',
+			'magazines.read.tejo'
+		);
 	}
 
 	// Override permissions for all authenticated clients
