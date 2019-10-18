@@ -88,11 +88,21 @@ export async function rollbackTransaction (trx) {
 /**
  * Turns a knex insert query into a replace query
  * @param  {knex.QueryBuilder} query
- * @param  {knex.QueryBuilder} [db]  The database or subquery to run the query as
+ * @param  {knex.QueryBuilder} [db] The database or subquery to run the query as
  * @return {knex.Raw}
  */
 export function insertAsReplace (query, db = AKSO.db) {
 	return db.raw(query.toString().replace(/^INSERT/i, 'REPLACE'));
+}
+
+/**
+ * Turns a knex insert query into an insert ignore query
+ * @param  {knex.QueryBuilder} query
+ * @param  {knex.QueryBuilder} [db] The database or subquery to run the query as
+ * @return {knex.Raw}
+ */
+export function insertAsInsertIgnore (query, db = AKSO.db) {
+	return db.raw(query.toString().replace(/^INSERT/i, 'INSERT IGNORE'));
 }
 
 // From: https://gist.github.com/dperini/729294

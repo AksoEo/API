@@ -1,25 +1,21 @@
 import express from 'express';
 
-import { bindMethod } from '../../../..';
-
-import { init as route$files } from './files';
+import { bindMethod } from '../../../../../..';
 
 import method$get from './get';
 import method$delete from './delete';
-import method$patch from './patch';
+import method$put from './put';
 
 /**
- * Sets up /magazines/{magazineId}/editions/{editionId}
+ * Sets up /magazines/{magazineId}/editions/{editionId}/files/{format}
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
-	router.use('/files', route$files());
-
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);
-	bindMethod(router, '/', 'patch', method$patch);
+	bindMethod(router, '/', 'put', method$put);
 
 	return router;
 }
