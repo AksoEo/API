@@ -9,7 +9,8 @@ export default {
 			permissions: req.permissions,
 			memberFields: req.memberFields,
 			memberFilter: req.memberFilter,
-			ownMemberFields: req.ownMemberFields
+			ownMemberFields: req.ownMemberFields,
+			isActiveMember: req.user && await req.user.isActiveMember()
 		});
 	}
 };

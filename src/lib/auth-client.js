@@ -155,4 +155,22 @@ export default class AuthClient {
 		if (this.isUser()) { return 'ch:' + this.user; }
 		else { return 'app:' + this.app.toString('hex'); }
 	}
+
+	async isActiveMember () {
+		if ('_isActiveMember' in this) { return this._isActiveMember; }
+		if (!this.isUser()) { return false; }
+		const result = await AKSO.db('membershipCategories_codeholders')
+			.first(1)
+			.leftJoin('membershipCategories', 'membershipCategories_codeholders.categoryId', 'membershipCategories.id')
+			.whereRaw(`
+				membershipCategories_codeholders.codeholderId = ?
+				AND givesMembership
+				AND (
+					( NOT lifetime AND membershipCategories_codeholders.year = year(curdate()) )
+					OR ( lifetime AND membershipCategories_codeholders.year <= year(curdate()) )
+				)
+			`, this.user);
+		this._isActiveMember = !!result;
+		return this._isActiveMember;
+	}
 }
