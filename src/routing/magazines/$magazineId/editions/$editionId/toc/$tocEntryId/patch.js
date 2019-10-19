@@ -1,5 +1,3 @@
-import path from 'path';
-
 export default {
 	schema: {
 		query: null,
@@ -33,10 +31,7 @@ export default {
 					type: 'boolean'
 				}
 			},
-			required: [
-				'page',
-				'title'
-			],
+			minProperties: 1,
 			additionalProperties: false
 		}
 	},
@@ -50,31 +45,19 @@ export default {
 		const orgPerm = 'magazines.update.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const editionExists = await AKSO.db('magazines_editions')
+		const exists = await AKSO.db('magazines_editions_toc')
 			.first(1)
 			.where({
-				id: req.params.editionId,
-				magazineId: req.params.magazineId
-			});
-		if (!editionExists) { return res.sendStatus(404); }
-
-		const id = (await AKSO.db('magazines_editions_toc').insert({
-			...req.body,
-			...{
 				magazineId: req.params.magazineId,
-				editionId: req.params.editionId
-			}
-		}))[0];
+				editionId: req.params.editionId,
+				id: req.params.tocEntryId
+			});
+		if (!exists) { return res.sendStatus(404); }
 
-		res.set('Location', path.join(
-			AKSO.conf.http.path,
-			'/magazines/',
-			req.params.magazineId,
-			'/editions/',
-			req.params.editionId,
-			'/toc/',
-			id.toString()
-		));
-		res.sendStatus(201);
+		await AKSO.db('magazines_editions_toc')
+			.where('id', req.params.tocEntryId)
+			.update(req.body);
+
+		res.sendStatus(204);
 	}
 };
