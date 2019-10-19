@@ -308,7 +308,6 @@ export default {
 					const height = cellSize[1];
 
 					const widthPad = width - req.body.cellPadding * 2;
-					const heightPad = height - req.body.cellPadding * 2;
 
 					if (req.body.drawOutline) {
 						doc.save()
@@ -323,12 +322,10 @@ export default {
 					const codeText = req.body.includeCode ? data.codeholder.newCode : '';
 					doc.text(codeText, xPtPad, yPtPad, {
 						width: widthPad,
-						height: heightPad,
 						align: 'right'
 					});
 					doc.text(data.address, {
-						width: widthPad,
-						height: heightPad
+						width: widthPad
 					});
 				}
 			}
