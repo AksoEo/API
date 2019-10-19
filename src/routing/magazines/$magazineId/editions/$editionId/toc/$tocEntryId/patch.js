@@ -21,6 +21,13 @@ export default {
 					pattern: '^[^\\n]+$',
 					nullable: true
 				},
+				recitationAuthor: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 100,
+					pattern: '^[^\\n]+$',
+					nullable: true
+				},
 				text: {
 					type: 'string',
 					minLength: 1,
