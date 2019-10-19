@@ -24,8 +24,8 @@ export default {
 
 		const row = await query;
 		try {
-			const country = new MagazineEditionResource(row);
-			res.sendObj(country);
+			const edition = new MagazineEditionResource(row);
+			res.sendObj(edition);
 		} catch (e) {
 			if (e.simpleResourceError) { return res.sendStatus(404); }
 			throw e;

@@ -21,8 +21,8 @@ export default {
 
 		const row = await query;
 		try {
-			const country = new SimpleResource(row);
-			res.sendObj(country);
+			const magazine = new SimpleResource(row);
+			res.sendObj(magazine);
 		} catch (e) {
 			if (e.simpleResourceError) { return res.sendStatus(404); }
 			throw e;
