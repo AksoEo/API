@@ -4,6 +4,7 @@ import { bindMethod } from '../../../..';
 
 import { init as route$files } from './files';
 import { init as route$thumbnail } from './thumbnail';
+import { init as route$toc } from './toc';
 
 import method$get from './get';
 import method$delete from './delete';
@@ -18,6 +19,7 @@ export function init () {
 
 	router.use('/files', route$files());
 	router.use('/thumbnail', route$thumbnail());
+	router.use('/toc', route$toc());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);

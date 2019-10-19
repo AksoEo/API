@@ -1741,6 +1741,45 @@ LOCK TABLES `magazines_editions_files` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `magazines_editions_toc`
+--
+
+DROP TABLE IF EXISTS `magazines_editions_toc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `magazines_editions_toc` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `magazineId` int(10) unsigned NOT NULL,
+  `editionId` int(10) unsigned NOT NULL,
+  `page` int(10) unsigned NOT NULL,
+  `title` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text` mediumtext COLLATE utf8mb4_unicode_ci,
+  `highlighted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `page` (`page`),
+  KEY `author` (`author`),
+  KEY `highlighted` (`highlighted`),
+  KEY `magazineId` (`magazineId`,`editionId`),
+  KEY `title` (`title`),
+  FULLTEXT KEY `text` (`text`),
+  FULLTEXT KEY `title_2` (`title`),
+  FULLTEXT KEY `author_2` (`author`),
+  CONSTRAINT `magazines_editions_toc_ibfk_1` FOREIGN KEY (`magazineId`, `editionId`) REFERENCES `magazines_editions` (`magazineId`, `id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `magazines_editions_toc`
+--
+
+LOCK TABLES `magazines_editions_toc` WRITE;
+/*!40000 ALTER TABLE `magazines_editions_toc` DISABLE KEYS */;
+INSERT INTO `magazines_editions_toc` VALUES (1,1,1339,195,'**Malferme:** Regionaj Komisionoj – niaj pordoj al la landa agado',NULL,NULL,1),(2,1,1339,197,'**UEA:** Nova Afrika Komisiono kun novaj vizaĝoj',NULL,NULL,1);
+/*!40000 ALTER TABLE `magazines_editions_toc` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `membershipCategories`
 --
 
@@ -2028,4 +2067,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-18 13:35:29
+-- Dump completed on 2019-10-19 11:16:51
