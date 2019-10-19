@@ -1,25 +1,21 @@
 import express from 'express';
 
-import { bindMethod } from '../../../../../..';
-
-import { init as route$recitation } from './recitation';
+import { bindMethod } from '../../../../../../../..';
 
 import method$get from './get';
-import method$patch from './patch';
 import method$delete from './delete';
+import method$put from './put';
 
 /**
- * Sets up /magazines/{magazineId}/editions/{editionId}/toc/{tocEntryId}
+ * Sets up /magazines/{magazineId}/editions/{editionId}/toc/{tocEntryId}/recitation/{format}
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
-	router.use('/recitation', route$recitation());
-
 	bindMethod(router, '/', 'get', method$get);
-	bindMethod(router, '/', 'patch', method$patch);
 	bindMethod(router, '/', 'delete', method$delete);
+	bindMethod(router, '/', 'put', method$put);
 
 	return router;
 }

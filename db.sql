@@ -1780,6 +1780,32 @@ INSERT INTO `magazines_editions_toc` VALUES (1,1,1339,195,'**Malferme:** Regiona
 UNLOCK TABLES;
 
 --
+-- Table structure for table `magazines_editions_toc_recitations`
+--
+
+DROP TABLE IF EXISTS `magazines_editions_toc_recitations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `magazines_editions_toc_recitations` (
+  `tocEntryId` int(10) unsigned NOT NULL,
+  `format` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `downloads` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tocEntryId`,`format`),
+  KEY `downloads` (`downloads`),
+  CONSTRAINT `magazines_editions_toc_recitations_ibfk_1` FOREIGN KEY (`tocEntryId`) REFERENCES `magazines_editions_toc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `magazines_editions_toc_recitations`
+--
+
+LOCK TABLES `magazines_editions_toc_recitations` WRITE;
+/*!40000 ALTER TABLE `magazines_editions_toc_recitations` DISABLE KEYS */;
+/*!40000 ALTER TABLE `magazines_editions_toc_recitations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `membershipCategories`
 --
 
@@ -2067,4 +2093,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-19 11:25:18
+-- Dump completed on 2019-10-19 11:58:53
