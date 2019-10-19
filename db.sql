@@ -1754,6 +1754,7 @@ CREATE TABLE `magazines_editions_toc` (
   `page` int(10) unsigned NOT NULL,
   `title` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recitationAuthor` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `text` mediumtext COLLATE utf8mb4_unicode_ci,
   `highlighted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -1762,9 +1763,11 @@ CREATE TABLE `magazines_editions_toc` (
   KEY `highlighted` (`highlighted`),
   KEY `magazineId` (`magazineId`,`editionId`),
   KEY `title` (`title`),
+  KEY `recitationAuthor` (`recitationAuthor`),
   FULLTEXT KEY `text` (`text`),
   FULLTEXT KEY `title_2` (`title`),
   FULLTEXT KEY `author_2` (`author`),
+  FULLTEXT KEY `recitationAuthor_2` (`recitationAuthor`),
   CONSTRAINT `magazines_editions_toc_ibfk_1` FOREIGN KEY (`magazineId`, `editionId`) REFERENCES `magazines_editions` (`magazineId`, `id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1775,7 +1778,7 @@ CREATE TABLE `magazines_editions_toc` (
 
 LOCK TABLES `magazines_editions_toc` WRITE;
 /*!40000 ALTER TABLE `magazines_editions_toc` DISABLE KEYS */;
-INSERT INTO `magazines_editions_toc` VALUES (1,1,1339,195,'**Malferme:** Regionaj Komisionoj – niaj pordoj al la landa agado',NULL,NULL,1),(2,1,1339,197,'**UEA:** Nova Afrika Komisiono kun novaj vizaĝoj',NULL,NULL,1),(3,1,1339,198,'**Montrealo-2020:** LKK respondas',NULL,NULL,1);
+INSERT INTO `magazines_editions_toc` VALUES (1,1,1339,195,'**Malferme:** Regionaj Komisionoj – niaj pordoj al la landa agado',NULL,NULL,NULL,1),(2,1,1339,197,'**UEA:** Nova Afrika Komisiono kun novaj vizaĝoj',NULL,NULL,NULL,1),(3,1,1339,198,'**Montrealo-2020:** LKK respondas',NULL,NULL,NULL,1);
 /*!40000 ALTER TABLE `magazines_editions_toc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2093,4 +2096,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-19 11:58:53
+-- Dump completed on 2019-10-19 12:45:37
