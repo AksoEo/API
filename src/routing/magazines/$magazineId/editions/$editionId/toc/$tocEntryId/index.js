@@ -4,6 +4,7 @@ import { bindMethod } from '../../../../../..';
 
 import method$get from './get';
 import method$patch from './patch';
+import method$delete from './delete';
 
 /**
  * Sets up /magazines/{magazineId}/editions/{editionId}/toc/{tocEntryId}
@@ -14,6 +15,7 @@ export function init () {
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
+	bindMethod(router, '/', 'delete', method$delete);
 
 	return router;
 }
