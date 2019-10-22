@@ -5,8 +5,31 @@ const schema = {
 	...parSchema,
 	...{
 		query: null,
-		body: null,
-		requirePerms: 'codeholders.update'
+		body: {
+			type: 'object',
+			properties: {
+				durationFrom: {
+					type: 'integer',
+					format: 'uint64',
+					nullable: true
+				},
+				durationTo: {
+					type: 'integer',
+					format: 'uint64',
+					nullable: true
+				},
+				roleId: {
+					type: 'integer',
+					format: 'uint32'
+				}
+			},
+			minProperties: 1,
+			additionalProperties: false
+		},
+		requirePerms: [
+			'codeholders.update',
+			'codeholder_roles.read'
+		]
 	}
 };
 
@@ -16,7 +39,7 @@ export default {
 	run: async function run (req, res) {
 		// Check member fields
 		const requiredMemberFields = [
-			'membership'
+			'roles'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
@@ -29,14 +52,13 @@ export default {
 		memberFilter(codeholderSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
-		const deleted = await AKSO.db('membershipCategories_codeholders')
+		const updated = await AKSO.db('codeholderRoles_codeholders')
 			.where({
-				'membershipCategories_codeholders.id': req.params.membershipId,
-				'codeholderId': req.params.codeholderId
+				id: req.params.roleEntryId,
+				codeholderId: req.params.codeholderId
 			})
-			.delete();
+			.update(req.body);
 
-		if (deleted) { res.sendStatus(204); }
-		else { res.sendStatus(404); }
+		res.sendStatus(updated ? 204 : 404);
 	}
 };

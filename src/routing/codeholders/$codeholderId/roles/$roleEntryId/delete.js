@@ -6,7 +6,10 @@ const schema = {
 	...{
 		query: null,
 		body: null,
-		requirePerms: 'codeholders.update'
+		requirePerms: [
+			'codeholders.update',
+			'codeholder_roles.read'
+		]
 	}
 };
 
@@ -16,7 +19,7 @@ export default {
 	run: async function run (req, res) {
 		// Check member fields
 		const requiredMemberFields = [
-			'membership'
+			'roles'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
@@ -29,9 +32,9 @@ export default {
 		memberFilter(codeholderSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
-		const deleted = await AKSO.db('membershipCategories_codeholders')
+		const deleted = await AKSO.db('codeholderRoles_codeholders')
 			.where({
-				'membershipCategories_codeholders.id': req.params.membershipId,
+				'codeholderRoles_codeholders.id': req.params.roleEntryId,
 				'codeholderId': req.params.codeholderId
 			})
 			.delete();

@@ -1,12 +1,18 @@
+import QueryUtil from '../../../../../lib/query-util';
+import CodeholderRoleEntryResource from '../../../../../lib/resources/codeholder-role-entry-resource';
+
 import { schema as codeholderSchema, memberFilter, memberFieldsManual } from '../../../schema';
 import parSchema from '../schema';
 
 const schema = {
 	...parSchema,
 	...{
-		query: null,
+		query: 'resource',
 		body: null,
-		requirePerms: 'codeholders.update'
+		requirePerms: [
+			'codeholders.read',
+			'codeholder_roles.read'
+		]
 	}
 };
 
@@ -16,9 +22,10 @@ export default {
 	run: async function run (req, res) {
 		// Check member fields
 		const requiredMemberFields = [
-			'membership'
+			'id',
+			'roles'
 		];
-		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
+		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
@@ -29,14 +36,21 @@ export default {
 		memberFilter(codeholderSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
-		const deleted = await AKSO.db('membershipCategories_codeholders')
+		const query = AKSO.db('codeholderRoles_codeholders')
+			.innerJoin('codeholderRoles', 'codeholderRoles.id', 'codeholderRoles_codeholders.roleId')
 			.where({
-				'membershipCategories_codeholders.id': req.params.membershipId,
+				'codeholderRoles_codeholders.id': req.params.roleEntryId,
 				'codeholderId': req.params.codeholderId
-			})
-			.delete();
+			});
+		QueryUtil.simpleResource(req, schema, query);
 
-		if (deleted) { res.sendStatus(204); }
-		else { res.sendStatus(404); }
+		const row = await query;
+		try {
+			const obj = new CodeholderRoleEntryResource(row);
+			res.sendObj(obj);
+		} catch (e) {
+			if (e.simpleResourceError) { return res.sendStatus(404); }
+			throw e;
+		}
 	}
 };

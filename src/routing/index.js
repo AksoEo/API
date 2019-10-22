@@ -114,7 +114,7 @@ ajv.addFormat('int64', {
 		return Number.isSafeInteger(val) && val >= -(2**63) && val < 2**63;
 	}
 });
-ajv.addFormat('uint32', {
+ajv.addFormat('uint64', {
 	type: 'number',
 	validate: function (val) {
 		return Number.isSafeInteger(val) && val >= 0 && val < 2**64;

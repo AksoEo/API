@@ -7,6 +7,7 @@ import { init as route$hist } from './hist';
 import { init as route$logins } from './logins';
 import { init as route$membership } from './membership';
 import { init as route$profile_picture } from './profile_picture';
+import { init as route$roles } from './roles';
 
 import method$get from './get';
 import method$patch from './patch';
@@ -24,6 +25,7 @@ export function init () {
 	router.use('/logins', route$logins());
 	router.use('/membership', route$membership());
 	router.use('/profile_picture', route$profile_picture());
+	router.use('/roles', route$roles());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
