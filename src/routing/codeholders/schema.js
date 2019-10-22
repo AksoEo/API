@@ -159,6 +159,43 @@ export const schema = {
 					filter
 				});
 			});
+		},
+		$roles: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('$roles expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1)
+					.from('codeholderRoles_codeholders')
+					.innerJoin('codeholderRoles', 'codeholderRoles.id', 'codeholderRoles_codeholders.roleId')
+					.whereRaw('codeholderId = view_codeholders.id');
+
+				QueryUtil.filter({
+					fields: [
+						'roleId',
+						'durationFrom',
+						'durationTo',
+						'isActive'
+					],
+					fieldAliases: {
+						isActive: () => AKSO.db.raw(`
+							(
+								durationFrom IS NULL
+								OR durationFrom <= UNIX_TIMESTAMP()
+							)
+							AND
+							(
+								durationTo IS NULL
+								OR durationTO > UNIX_TIMESTAMP()
+							)
+						`)
+					},
+					query: this,
+					filter
+				});
+			});
 		}
 	}
 };

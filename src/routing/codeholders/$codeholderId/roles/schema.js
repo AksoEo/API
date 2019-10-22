@@ -16,7 +16,7 @@ export default {
 				durationFrom IS NULL
 				OR durationFrom <= UNIX_TIMESTAMP()
 			)
-			and
+			AND
 			(
 				durationTo IS NULL
 				OR durationTO > UNIX_TIMESTAMP()
