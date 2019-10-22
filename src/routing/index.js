@@ -17,6 +17,7 @@ import { init as route$admin_groups } from './admin_groups';
 import { init as route$auth } from './auth';
 import { init as route$clients } from './clients';
 import { init as route$perms } from './perms';
+import { init as route$codeholder_roles } from './codeholder_roles';
 import { init as route$codeholders } from './codeholders';
 import { init as route$countries } from './countries';
 import { init as route$country_groups } from './country_groups';
@@ -143,6 +144,7 @@ export function init () {
 
 	router.use('/admin_groups', route$admin_groups());
 	router.use('/clients', route$clients());
+	router.use('/codeholder_roles', route$codeholder_roles());
 	router.use('/codeholders', route$codeholders());
 	router.use('/countries', route$countries());
 	router.use('/country_groups', route$country_groups());

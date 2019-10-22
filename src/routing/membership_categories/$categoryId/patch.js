@@ -35,6 +35,7 @@ export default {
 					format: 'year'
 				}
 			},
+			minProperties: 1,
 			additionalProperties: false
 		},
 		requirePerms: 'membership_categories.update'
