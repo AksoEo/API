@@ -25,6 +25,7 @@ import { init as route$http_log } from './http_log';
 import { init as route$magazines } from './magazines';
 import { init as route$membership_categories } from './membership_categories';
 import { init as route$queries } from './queries';
+import { init as route$votes } from './votes';
 
 const ajv = new Ajv({
 	format: 'full',
@@ -152,6 +153,7 @@ export function init () {
 	router.use('/magazines', route$magazines());
 	router.use('/membership_categories', route$membership_categories());
 	router.use('/queries', route$queries());
+	router.use('/votes', route$votes());
 
 	return router;
 }

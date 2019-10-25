@@ -1,0 +1,40 @@
+export default {
+	defaultFields: [ 'id' ],
+	fields: {
+		'id': 'f',
+		'org': 'f',
+		'name': 'fs',
+		'description': 's',
+		'voterCodeholders': '',
+		'viewerCodeholders': '',
+		'timeStart': 'f',
+		'timeEnd': 'f',
+		'hasStarted': 'f',
+		'hasEnded': 'f',
+		'isActive': 'f',
+		'ballotsSecret': '',
+		'type': 'f',
+		'blankBallotsLimit': '',
+		'blankBallotsLimitInclusive': '',
+		'quorum': '',
+		'quorumInclusive': '',
+		'majorityBallots': '',
+		'majorityBallotsInclusive': '',
+		'majorityVoters': '',
+		'majorityVotersInclusive': '',
+		'majorityMustReachBoth': '',
+		'numChosenOptions': '',
+		'mentionThreshold': '',
+		'mentionThresholdInclusive': '',
+		'maxOptionsPerBallot': '',
+		'tieBreakerCodeholder': '',
+		'publishVoters': '',
+		'publishVotersPercentage': '',
+		'options': ''
+	},
+	fieldAliases: {
+		hasStarted: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP()'),
+		hasEnded: () => AKSO.db.raw('timeEnd <= UNIX_TIMESTAMP()'),
+		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()')
+	}
+};

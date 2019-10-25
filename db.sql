@@ -2022,6 +2022,64 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Table structure for table `votes`
+--
+
+DROP TABLE IF EXISTS `votes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `votes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(10000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `voterCodeholders` json NOT NULL,
+  `viewerCodeholders` json DEFAULT NULL,
+  `timeStart` bigint(20) unsigned NOT NULL,
+  `timeEnd` bigint(20) unsigned NOT NULL,
+  `ballotsSecret` tinyint(1) NOT NULL DEFAULT '1',
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `blankBallotsLimit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
+  `blankBallotsLimitInclusive` tinyint(1) NOT NULL DEFAULT '1',
+  `quorum` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `quorumInclusive` tinyint(1) NOT NULL DEFAULT '1',
+  `majorityBallots` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `majorityBallotsInclusive` tinyint(1) NOT NULL DEFAULT '1',
+  `majorityVoters` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `majorityVotersInclusive` tinyint(1) NOT NULL DEFAULT '1',
+  `majorityMustReachBoth` tinyint(1) NOT NULL DEFAULT '1',
+  `numChosenOptions` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `mentionThreshold` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `mentionThresholdInclusive` tinyint(1) NOT NULL DEFAULT '1',
+  `maxOptionsPerBallot` tinyint(3) unsigned DEFAULT NULL,
+  `tieBreakerCodeholder` int(10) unsigned DEFAULT NULL,
+  `publishVoters` tinyint(1) NOT NULL DEFAULT '0',
+  `publishVotersPercentage` tinyint(1) NOT NULL DEFAULT '1',
+  `options` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  KEY `name` (`name`),
+  KEY `timeEnd` (`timeEnd`),
+  KEY `timeStart` (`timeStart`),
+  KEY `type` (`type`),
+  KEY `votes_ibfk_1` (`tieBreakerCodeholder`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`tieBreakerCodeholder`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `votes`
+--
+
+LOCK TABLES `votes` WRITE;
+/*!40000 ALTER TABLE `votes` DISABLE KEYS */;
+INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020)',NULL,'{\"agePrimo\": {\"$lte\": 35}}',NULL,1572012318,1579960415,1,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,0,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
+/*!40000 ALTER TABLE `votes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping events for database 'akso'
 --
 /*!50106 SET @save_time_zone= @@TIME_ZONE */ ;
@@ -2157,4 +2215,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-22 11:21:10
+-- Dump completed on 2019-10-25 16:09:19
