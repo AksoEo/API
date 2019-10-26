@@ -1,5 +1,6 @@
 import QueryUtil from '../../lib/query-util';
 import VoteResource from '../../lib/resources/vote-resource';
+import AKSOOrganization from '../../lib/enums/akso-organization';
 
 import parSchema from './schema';
 
@@ -15,7 +16,13 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		const query = AKSO.db('votes');
+		// Check perms
+		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+			.filter(org => req.hasPermission('votes.read.' + org));
+		if (!orgs.length) { return res.sendStatus(403); }
+
+		const query = AKSO.db('votes')
+			.whereIn('org', orgs);
 		await QueryUtil.handleCollection({ req, res, schema, query, Res: VoteResource });
 	}
 };
