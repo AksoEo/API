@@ -85,6 +85,18 @@ ajv.addFormat('safe-uri', {
 		return true;
 	}
 });
+ajv.addFormat('int8', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**7) && val < 2**7;
+	}
+});
+ajv.addFormat('uint8', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**8;
+	}
+});
 ajv.addFormat('int16', {
 	type: 'number',
 	validate: function (val) {
