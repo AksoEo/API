@@ -2075,7 +2075,7 @@ CREATE TABLE `votes` (
 
 LOCK TABLES `votes` WRITE;
 /*!40000 ALTER TABLE `votes` DISABLE KEYS */;
-INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020)',NULL,'{\"agePrimo\": {\"$lte\": 35}}',NULL,1572012318,1579960415,1,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,0,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
+INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}',NULL,1572012318,1579960415,1,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,0,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
 /*!40000 ALTER TABLE `votes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2215,4 +2215,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-25 16:09:19
+-- Dump completed on 2019-10-27 13:46:32
