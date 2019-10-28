@@ -1,27 +1,49 @@
-import sendgrid from '@sendgrid/mail';
 import path from 'path';
-import fs from 'pn/fs';
+import fs from 'fs-extra';
 import { default as deepmerge } from 'deepmerge';
+import tmp from 'tmp-promise';
+import msgpack from 'msgpack-lite';
 
-import * as CodeholderUtils from './lib/codeholder-utils';
 import { promiseAllObject, renderTemplate } from './util';
 import AKSOOrganization from './lib/enums/akso-organization';
 
-let notifsDir;
+/**
+ * Obtains the names and emails of codeholders by their ids
+ * @param  {...number} ids The internal ids of the codeholders to look up
+ * @return {Object[]} The names and emails of the codeholders in the same order as they were provided
+ */
+export async function getNamesAndEmails (...ids) {
+	const map = {};
+	ids.forEach((id, i) => {
+		map[id] = i;
+	});
+	const codeholders = await AKSO.db('view_codeholders')
+		.whereIn('id', ids)
+		.whereNotNull('email')
+		.select('id', 'codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
 
-export async function init () {
-	AKSO.log.info('Establishing connection to Sendgrid mail server ...');
+	const newArr = [];
+	for (let codeholder of codeholders) {
+		const index = map[codeholder.id];
+		let name;
+		if (codeholder.codeholderType === 'human') {
+			if (codeholder.honorific) { name += codeholder.honorific + ' '; }
+			name = codeholder.firstName || codeholder.firstNameLegal;
+			name += ' ' + (codeholder.lastName || codeholder.lastNameLegal);
 
-	AKSO.mail = new sendgrid.MailService();
-	AKSO.mail.setApiKey(AKSO.conf.sendgrid.apiKey);
-
-	notifsDir = path.join(AKSO.dir, 'notifs');
-
-	AKSO.log.info('... Sendgrid mail client ready');
+		} else if (codeholder.codeholderType === 'org') {
+			name = codeholder.fullName;
+		}
+		newArr[index] = {
+			email: codeholder.email,
+			name: name
+		};
+	}
+	return newArr;
 }
 
 /**
- * Renders and sends an email to a number of recipients
+ * Renders and schedules an email to a number of recipients
  * @param  {Object} options
  * @param  {string} options.org                The organization of the email
  * @param  {string} options.tmpl               The name of the notification template
@@ -38,6 +60,9 @@ export async function renderSendEmail ({
 	view = {},
 	msgData = {}
 } = {}) {
+	const notifsDir = path.join(AKSO.dir, 'notifs');
+	const scheduleDir = path.join(AKSO.conf.dataDir, 'notifs_mail');
+
 	if (to !== undefined) {
 		if (!Array.isArray(to)) { to = [to]; }
 		personalizations.push(...to.map(r => { return { to: r }; }));
@@ -55,7 +80,7 @@ export async function renderSendEmail ({
 			});
 		}
 		if (codeholderIds.length) {
-			const names = await CodeholderUtils.getNamesAndEmails(codeholderIds.map(x => x.id));
+			const names = await getNamesAndEmails(codeholderIds.map(x => x.id));
 			for (let i = 0; i < codeholderIds.length; i++) {
 				const index = codeholderIds[i].index;
 				personalizations[index].to = names[i];
@@ -101,7 +126,7 @@ export async function renderSendEmail ({
 	msg.html = renderTemplate(templs.outerHtml, {...outerView, ...{ content: innerHtml } });
 	msg.text = renderTemplate(templs.outerText, {...outerView, ...{ content: innerText } }, false);
 
-	// Split the mail into chunks of 100 recipients and send
+	// Split the mail into chunks of 100 recipients and schedule
 	const sendPromises = [];
 	for (let i = 0; i < msg.personalizations.length; i += 100) {
 		const msgChunk = {
@@ -110,14 +135,13 @@ export async function renderSendEmail ({
 				personalizations: msg.personalizations.slice(i, i + 100)
 			}
 		};
-		sendPromises.push(AKSO.mail.send(msgChunk));
+		const promise = async () => {
+			const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
+			await fs.writeFile(tmpName, msgpack.encode(msgChunk, { codec: AKSO.msgpack }));
+			const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' });
+			await fs.move(tmpName, newName);
+		};
+		sendPromises.push(promise());
 	}
-	try {
-		return await Promise.all(sendPromises);
-	} catch (e) {
-		if (e.response.body && e.response.body.errors) {
-			AKSO.log.error(e);
-			console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
-		} else { throw e; }
-	}
+	return await Promise.all(sendPromises);
 }

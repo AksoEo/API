@@ -1,12 +1,10 @@
+import cluster from 'cluster';
 import winston from 'winston';
 import moment from 'moment-timezone';
 import msgpack from 'msgpack-lite';
 import path from 'path';
 import fs from 'fs-extra';
 
-import * as AKSOMail from './mail';
-import * as AKSOTelegram from './telegram';
-import * as AKSOHttp from './http';
 import * as AKSODb from './db';
 
 async function init () {
@@ -45,7 +43,9 @@ async function init () {
 				loginSlowDown:		process.env.AKSO_HTTP_DISABLE_SLOW_DOWN === undefined ?
 					true : process.env.AKSO_HTTP_DISABLE_SLOW_DOWN == '0',
 				path:				process.env.AKSO_HTTP_PATH === undefined ?
-					'/' : process.env.AKSO.HTTP_PATH
+					'/' : process.env.AKSO.HTTP_PATH,
+				threads: 			process.env.AKSO_HTTP_THREADS === undefined ?
+					3 : parseInt(process.env.AKSO_HTTP_THREADS, 10)
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -106,16 +106,22 @@ async function init () {
 		SUBDIVISIONS: require('../data/subdivisions.json'),
 
 		// Constants used by internal APIs, not to be touched directly
-		mail: null,
 		msgpack: msgpack.createCodec({
 			int64: true
 		}),
-		db: null,
-		telegram: null,
-		telegramQueue: null
+		db: null
 	};
 
+	if (cluster.isMaster) {
+		AKSO.log.info('AKSO version %s', AKSO.version);
+		AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
+	}
+
 	// Complain about missing/invalid env vars
+	if (!Number.isSafeInteger(AKSO.conf.http.threads) || AKSO.conf.http.threads > 32 || AKSO.conf.http.threads < 1) {
+		AKSO.log.error('AKSO_HTTP_THREADS must be an integer in the range 1-32');
+		process.exit(1);
+	}
 	if (!AKSO.conf.sendgrid.apiKey) {
 		AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 		process.exit(1);
@@ -140,45 +146,116 @@ async function init () {
 		process.exit(1);
 	}
 
-	// Set up subdirs in data dir
-	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files'));
-	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures'));
-	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_files'));
-	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails'));
-	await fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_toc_recitation'));
+	if (cluster.isMaster) {
+		// Set up subdirs in data dir
+		AKSO.log.info('Setting up data dirs');
+		await Promise.all([
+			// State machines
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'notifs_telegram')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'notifs_mail')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'address_label_orders')),
+
+			// Resources
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_files')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails')),
+			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_toc_recitation'))
+		]);
+	}
 
 	// Init
 	moment.locale('eo');
 
-	AKSO.log.info('AKSO version %s', AKSO.version);
-	AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
-
 	// Warn about used values
-	if (!AKSO.conf.loginNotifsEnabled) {
-		AKSO.log.warn('Login notifications disabled');
+	if (cluster.isMaster) {
+		if (!AKSO.conf.loginNotifsEnabled) {
+			AKSO.log.warn('Login notifications disabled');
+		}
+
+		// http
+		if (AKSO.conf.http.trustLocalProxy) {
+			AKSO.log.warn('Trusting local proxy');
+		}
+		if (!AKSO.conf.http.corsCheck) {
+			AKSO.log.warn('Running without CORS check');
+		}
+		if (!AKSO.conf.http.helmet) {
+			AKSO.log.warn('Running without helmet');
+		}
+		if (!AKSO.conf.http.csrfCheck) {
+			AKSO.log.warn('CSRF check disabled');
+		}
+		if (!AKSO.conf.http.rateLimit) {
+			AKSO.log.warn('Running without rate limit');
+		}
 	}
 
+	// Load shared modules
 	await AKSODb.init();
-	await AKSOMail.init();
-	await AKSOTelegram.init();
-	await AKSOHttp.init();
 
-	AKSO.log.info('AKSO is ready');
+	// Set up cluster
+	if (cluster.isMaster) {
+		const summonWorker = function (type, num = 1) {
+			const worker = cluster.fork({ aksoClusterType: type, aksoClusterNum: num });
+			// Cope with death
+			worker.on('exit', code => {
+				if (code !== 0) {
+					AKSO.log.error(`${type} worker #${num} died with non-zero exit code, killing AKSO`);
+					process.exit(code);
+				}
+				AKSO.log.info(`${type} worker #${num} died for unknown reasons, cloning its DNA ...`);
+				summonWorker(type);
+			});
+		};
 
-	// Handle shutdown signal
-	let shuttingDown = false;
-	const performCleanup = function performCleanup (signal) {
-		if (shuttingDown) { return; }
-		shuttingDown = true;
+		summonWorker('mail');
+		summonWorker('telegram');
+		summonWorker('labels');
+		for (let i = 1; i <= AKSO.conf.http.threads; i++) {
+			summonWorker('http', i);
+		}
 
-		AKSO.log.info(`Received ${signal}, shutting down ...`);
+		// Handle shutdown signal
+		let shuttingDown = false;
+		const performCleanup = function performCleanup (signal) {
+			if (shuttingDown) { return; }
+			shuttingDown = true;
 
-		process.exit();
-	};
+			AKSO.log.info(`Received ${signal}, shutting down ...`);
 
-	const shutdownTriggers = [ 'exit', 'SIGINT', 'SIGHUP', 'SIGTERM' ];
-	for (let trigger of shutdownTriggers) {
-		process.on(trigger, () => { performCleanup(trigger); });
+			process.exit();
+		};
+
+		const shutdownTriggers = [ 'exit', 'SIGINT', 'SIGHUP', 'SIGTERM' ];
+		for (let trigger of shutdownTriggers) {
+			process.on(trigger, () => { performCleanup(trigger); });
+		}
+
+		AKSO.log.info('AKSO master is ready (workers still loading)');
+	} else {
+		switch (process.env.aksoClusterType) {
+		case 'http':
+			const AKSOHttp = require('./workers/http');
+			await AKSOHttp.init();
+			break;
+		case 'mail':
+			const AKSOMail = require('./workers/mail');
+			await AKSOMail.init();
+			break;
+		case 'telegram':
+			const AKSOTelegram = require('./workers/telegram');
+			await AKSOTelegram.init();
+			break;
+		case 'labels':
+			const AKSOLabels = require('./workers/labels');
+			await AKSOLabels.init();
+			break;
+		default:
+			AKSO.log.error(`Unknown cluster type ${process.env.aksoClusterType}, exiting`);
+			process.exit(1);
+		}
+		AKSO.log.info(`${process.env.aksoClusterType} worker #${process.env.aksoClusterNum} is ready`);
 	}
 }
 

@@ -26,29 +26,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `akso` /*!40100 DEFAULT CHARACTER SET u
 USE `akso`;
 
 --
--- Table structure for table `addressLabelOrders`
---
-
-DROP TABLE IF EXISTS `addressLabelOrders`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `addressLabelOrders` (
-  `codeholderId` int(10) unsigned DEFAULT NULL,
-  `apiKey` binary(16) DEFAULT NULL,
-  UNIQUE KEY `codeholderId` (`codeholderId`,`apiKey`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `addressLabelOrders`
---
-
-LOCK TABLES `addressLabelOrders` WRITE;
-/*!40000 ALTER TABLE `addressLabelOrders` DISABLE KEYS */;
-/*!40000 ALTER TABLE `addressLabelOrders` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `admin_groups`
 --
 
@@ -2215,4 +2192,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-27 13:46:32
+-- Dump completed on 2019-10-28 16:28:30

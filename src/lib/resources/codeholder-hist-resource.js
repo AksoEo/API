@@ -1,6 +1,6 @@
 import SimpleResource from './simple-resource';
 import CodeholderResource from './codeholder-resource';
-import { histFields } from '../../routing/codeholders/schema';
+import { histFields } from '../../workers/http/routing/codeholders/schema';
 
 /**
  * A resource representing a codeholder hist entry

@@ -1,5 +1,3 @@
-import util from 'util';
-
 import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
 
