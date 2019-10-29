@@ -2,6 +2,8 @@ import express from 'express';
 
 import { bindMethod } from '../../..';
 
+import { init as route$$voteId } from './$voteId';
+
 import method$get from './get';
 
 /**
@@ -10,6 +12,8 @@ import method$get from './get';
  */
 export function init () {
 	const router = new express.Router();
+
+	router.use('/:voteId(\\d+)', route$$voteId());
 
 	bindMethod(router, '/', 'get', method$get);
 
