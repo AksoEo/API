@@ -1,7 +1,7 @@
 User auth:
 u: test
 p: test
-totp secret: a 20 times
+totp: not set up
 admin: false
 
 u: tejo

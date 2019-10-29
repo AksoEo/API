@@ -5,6 +5,7 @@ import { bindMethod } from '../..';
 import { init as router$logins } from './logins';
 import { init as router$membership } from './membership';
 import { init as router$profile_picture } from './profile_picture';
+import { init as router$votes } from './votes';
 
 import method$get from './get';
 
@@ -25,6 +26,7 @@ export function init () {
 	router.use('/logins', router$logins());
 	router.use('/membership', router$membership());
 	router.use('/profile_picture', router$profile_picture());
+	router.use('/votes', router$votes());
 
 	bindMethod(router, '/', 'get', method$get);
 
