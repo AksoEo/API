@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import tmp from 'tmp-promise';
 import msgpack from 'msgpack-lite';
+import moment from 'moment-timezone';
 
 /**
  * Schedules a telegram notification to an array of recipients
@@ -12,6 +13,6 @@ export async function sendNotification (options) {
 
 	const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
 	await fs.writeFile(tmpName, msgpack.encode(options, { codec: AKSO.msgpack }));
-	const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tg-' });
+	const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tg-' + moment().unix() });
 	await fs.move(tmpName, newName);
 }

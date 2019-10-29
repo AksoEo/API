@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import { default as deepmerge } from 'deepmerge';
 import tmp from 'tmp-promise';
 import msgpack from 'msgpack-lite';
+import moment from 'moment-timezone';
 
 import { promiseAllObject, renderTemplate } from './util';
 import AKSOOrganization from './lib/enums/akso-organization';
@@ -138,7 +139,7 @@ export async function renderSendEmail ({
 		const promise = async () => {
 			const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
 			await fs.writeFile(tmpName, msgpack.encode(msgChunk, { codec: AKSO.msgpack }));
-			const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' });
+			const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' + moment().unix() });
 			await fs.move(tmpName, newName);
 		};
 		sendPromises.push(promise());
