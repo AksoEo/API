@@ -23,12 +23,8 @@ export default {
 		});
 
 		const row = await query;
-		try {
-			const edition = new MagazineEditionResource(row);
-			res.sendObj(edition);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new MagazineEditionResource(row);
+		res.sendObj(obj);
 	}
 };

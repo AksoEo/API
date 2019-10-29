@@ -21,12 +21,8 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 		query.where('id', req.params.adminGroupId);
 		const row = await query;
-		try {
-			const resource = new SimpleResource(row);
-			res.sendObj(resource);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new SimpleResource(row);
+		res.sendObj(obj);
 	}
 };

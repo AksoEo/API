@@ -24,12 +24,8 @@ export default {
 		query.where('id', req.user.user);
 
 		const row = await query;
-		try {
-			const codeholder = new CodeholderResource(row, req, schema);
-			res.sendObj(codeholder);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new CodeholderResource(row);
+		res.sendObj(obj);
 	}
 };

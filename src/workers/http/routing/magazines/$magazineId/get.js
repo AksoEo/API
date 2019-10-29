@@ -20,12 +20,8 @@ export default {
 		query.where('id', req.params.magazineId);
 
 		const row = await query;
-		try {
-			const magazine = new SimpleResource(row);
-			res.sendObj(magazine);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new SimpleResource(row);
+		res.sendObj(obj);
 	}
 };

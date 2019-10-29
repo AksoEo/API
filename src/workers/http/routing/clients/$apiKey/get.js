@@ -21,12 +21,8 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 		query.where('apiKey', Buffer.from(req.params.apiKey, 'hex'));
 		const row = await query;
-		try {
-			const resource = new SimpleResource(row);
-			res.sendObj(resource);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new SimpleResource(row);
+		res.sendObj(obj);
 	}
 };

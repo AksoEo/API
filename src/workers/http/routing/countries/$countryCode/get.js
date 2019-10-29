@@ -20,12 +20,8 @@ export default {
 		query.where('code', req.params.countryCode);
 
 		const row = await query;
-		try {
-			const country = new CountryResource(row);
-			res.sendObj(country);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new CountryResource(row);
+		res.sendObj(obj);
 	}
 };

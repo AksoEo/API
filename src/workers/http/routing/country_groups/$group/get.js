@@ -22,12 +22,8 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 		query.where('code', req.params.group);
 		const row = await query;
-		try {
-			const countryGroup = new CountryGroupResource(row);
-			res.sendObj(countryGroup);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new CountryGroupResource(row);
+		res.sendObj(obj);
 	}
 };

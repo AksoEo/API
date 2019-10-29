@@ -33,12 +33,8 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 
 		const row = await query;
-		try {
-			const obj = new CodeholderLoginResource(row);
-			res.sendObj(obj);
-		} catch (e) {
-			if (e.simpleResourceError) { return res.sendStatus(404); }
-			throw e;
-		}
+		if (!row) { return res.sendStatus(404); }
+		const obj = new CodeholderLoginResource(row);
+		res.sendObj(obj);
 	}
 };
