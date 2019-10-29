@@ -1524,7 +1524,7 @@ CREATE TABLE `codeholders_totp` (
 
 LOCK TABLES `codeholders_totp` WRITE;
 /*!40000 ALTER TABLE `codeholders_totp` DISABLE KEYS */;
-INSERT INTO `codeholders_totp` VALUES (2,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy'),(3,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy');
+INSERT INTO `codeholders_totp` VALUES (3,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy');
 /*!40000 ALTER TABLE `codeholders_totp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2052,8 +2052,69 @@ CREATE TABLE `votes` (
 
 LOCK TABLES `votes` WRITE;
 /*!40000 ALTER TABLE `votes` DISABLE KEYS */;
-INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}',NULL,1572012318,1579960415,1,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,0,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
+INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}',NULL,1572012318,1579960415,0,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,1,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
 /*!40000 ALTER TABLE `votes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `votes_ballots`
+--
+
+DROP TABLE IF EXISTS `votes_ballots`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `votes_ballots` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `voteId` int(10) unsigned NOT NULL,
+  `ballot` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `voteId` (`voteId`),
+  CONSTRAINT `votes_ballots_ibfk_1` FOREIGN KEY (`voteId`) REFERENCES `votes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `votes_ballots`
+--
+
+LOCK TABLES `votes_ballots` WRITE;
+/*!40000 ALTER TABLE `votes_ballots` DISABLE KEYS */;
+INSERT INTO `votes_ballots` VALUES (7,1,'1\n0\n2');
+/*!40000 ALTER TABLE `votes_ballots` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `votes_voters`
+--
+
+DROP TABLE IF EXISTS `votes_voters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `votes_voters` (
+  `voteId` int(10) unsigned NOT NULL,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `mayVote` tinyint(1) NOT NULL,
+  `timeVoted` bigint(20) unsigned DEFAULT NULL,
+  `ballotId` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`voteId`,`codeholderId`),
+  UNIQUE KEY `ballotId` (`ballotId`),
+  KEY `time` (`timeVoted`),
+  KEY `mayVote` (`mayVote`),
+  KEY `votes_voters_ibfk_2` (`codeholderId`),
+  CONSTRAINT `votes_voters_ibfk_1` FOREIGN KEY (`voteId`) REFERENCES `votes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `votes_voters_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `votes_voters_ibfk_3` FOREIGN KEY (`ballotId`) REFERENCES `votes_ballots` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `votes_voters`
+--
+
+LOCK TABLES `votes_voters` WRITE;
+/*!40000 ALTER TABLE `votes_voters` DISABLE KEYS */;
+INSERT INTO `votes_voters` VALUES (1,2,1,1572355176,7),(1,3,1,NULL,NULL);
+/*!40000 ALTER TABLE `votes_voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2192,4 +2253,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-28 16:28:30
+-- Dump completed on 2019-10-29 14:25:49
