@@ -1,19 +1,15 @@
 import express from 'express';
 
-import { bindMethod } from '../../..';
-
-import { init as route$voters } from './voters';
+import { bindMethod } from '../../../..';
 
 import method$get from './get';
 
 /**
- * Sets up /votes/{voteId}/stats
+ * Sets up /votes/{voteId}/stats/voters
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
-
-	router.use('/voters', route$voters());
 
 	bindMethod(router, '/', 'get', method$get);
 
