@@ -30,6 +30,9 @@
             "error",
             "always"
         ],
-        "no-case-declarations": "off"
+        "no-case-declarations": "off",
+        "no-console": [
+            "error"
+        ]
     }
 }
