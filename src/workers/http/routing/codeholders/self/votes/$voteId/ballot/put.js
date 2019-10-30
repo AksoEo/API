@@ -32,7 +32,7 @@ export default {
 
 		// Obtain info on the vote and make sure the codeholder can vote in it
 		const voteData = await AKSO.db('votes')
-			.first('timeVoted', 'ballotsSecret', 'type', 'timeEnd', 'options', 'ballotId')
+			.first('*')
 			.innerJoin('votes_voters', 'votes.id', 'votes_voters.voteId')
 			.where({
 				'votes.id': req.params.voteId,
@@ -63,7 +63,7 @@ export default {
 						return res.type('text/plain').status(400).send('Invalid ballot for vote of type rp.');
 					}
 					for (const col of row) {
-						if (!Number.isSafeInteger(col) || col >= numOptions || usedOptions.includes(col)) {
+						if (!Number.isSafeInteger(col) || col < 0 || col >= numOptions || usedOptions.includes(col)) {
 							return res.type('text/plain').status(400).send('Invalid ballot for vote of type rp.');
 						}
 						usedOptions.push(col);
@@ -72,10 +72,15 @@ export default {
 				ballot = ballot.map(x => x.join(','));
 			} else { // stv, tm
 				for (const row of ballot) {
-					if (!Number.isSafeInteger(row) || row >= numOptions || usedOptions.includes(row)) {
+					if (!Number.isSafeInteger(row) || row < 0 || row >= numOptions || usedOptions.includes(row)) {
 						return res.type('text/plain').status(400).send(`Invalid ballot for vote of type ${voteData.type}.`);
 					}
 					usedOptions.push(row);
+				}
+			}
+			if (voteData.type === 'tm') {
+				if (ballot.length > voteData.maxOptionsPerBallot) {
+					return res.type('text/plain').status(400).send('Too many options on ballot for vote of type tm.');
 				}
 			}
 
