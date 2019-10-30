@@ -1,7 +1,7 @@
-import QueryUtil from '../../../lib/query-util';
-import { insertAsInsertIgnore } from '../../../util';
+import QueryUtil from '../../../../lib/query-util';
+import { insertAsInsertIgnore } from '../../../../util';
 
-import { schema as codeholderSchema } from '../../../workers/http/routing/codeholders/schema';
+import { schema as codeholderSchema } from '../../../../workers/http/routing/codeholders/schema';
 
 export async function updateVoterCodeholdersOnTimeStart () {
 	const votesToUpdate = await AKSO.db('votes')
