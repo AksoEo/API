@@ -80,15 +80,18 @@ const filterLogicOps = {
 
 		query.where(function () {
 			for (let obj of filter) {
-				QueryUtil.filter({
-					fields,
-					query: this,
-					filter: obj,
-					fieldAliases,
-					fieldWhitelist,
-					customCompOps,
-					customLogicOps
-				});
+				if (!Object.keys(obj).length) { this.where(AKSO.db.raw('1')); }
+				else {
+					QueryUtil.filter({
+						fields,
+						query: this,
+						filter: obj,
+						fieldAliases,
+						fieldWhitelist,
+						customCompOps,
+						customLogicOps
+					});
+				}
 			}
 		});
 	},

@@ -41,8 +41,22 @@ export default {
 		if (await manualDataValidation(req, res, vote) !== true) { return; }
 
 		await AKSO.db('votes')
-			.where('id', req.params.voteId)
+			.where('id', vote.id)
 			.update(req.body);
+
+		// Update viewerCodeholders
+		if (req.body.viewerCodeholders && vote.timeStart < time) {
+			await AKSO.db('votes_voters')
+				.where({
+					voteId: vote.id,
+					mayVote: false
+				})
+				.delete();
+
+			await AKSO.db('votes')
+				.where('id', vote.id)
+				.update('codeholdersSet', false);
+		}
 
 		res.sendStatus(204);
 	}

@@ -1,4 +1,5 @@
 import QueryUtil from '../../../lib/query-util';
+import { insertAsInsertIgnore } from '../../../util';
 
 import { schema as codeholderSchema } from '../../../workers/http/routing/codeholders/schema';
 
@@ -45,12 +46,12 @@ export async function updateVoterCodeholdersOnTimeStart () {
 			}
 		});
 
-		await AKSO.db(AKSO.db.raw('?? (??, ??, ??)', [
+		await insertAsInsertIgnore(AKSO.db(AKSO.db.raw('?? (??, ??, ??)', [
 			'votes_voters',
 
 			'voteId', 'codeholderId', 'mayVote'
 		]))
-			.insert(viewerChQuery);
+			.insert(viewerChQuery));
 
 		// Mark the vote as dealt with
 		await AKSO.db('votes')
