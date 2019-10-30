@@ -4,12 +4,25 @@ import * as schedulableTimers from './timers';
  */
 export async function init () {
 	for (const timer of Object.values(schedulableTimers)) {
-		registerTimer(timer.name, timer.intervalMs, timer);
+		registerTimer({
+			name: timer.name, 
+			intervalMs: timer.intervalMs, 
+			fn: timer,
+			disregardExecutionTime: timer.disregardExecutionTime
+		});
 	}
 }
 
 const timers = {};
-export function registerTimer (name, intervalMs, fn, disregardExecutionTime = false) {
+/**
+ * Registers a new timer
+ * @param  {Object}   options
+ * @param  {string}   options.name                     The name of the timer
+ * @param  {number}   options.intervalMs               The interval of the timer in milliseconds
+ * @param  {Function} options.fn                       The function to run
+ * @param  {boolean}  [options.disregardExecutionTime] Whether to use the exact value of `intervalMs` without subtracting the execution time of `fn`
+ */
+function registerTimer ({ name, intervalMs, fn, disregardExecutionTime = false } = {}) {
 	const timer = timers[name] = {
 		intervalMs,
 		fn,
