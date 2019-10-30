@@ -2007,6 +2007,8 @@ DROP TABLE IF EXISTS `votes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `votes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `results` json DEFAULT NULL,
+  `hasResults` tinyint(1) GENERATED ALWAYS AS ((`results` is not null)) STORED,
   `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(10000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -2042,10 +2044,11 @@ CREATE TABLE `votes` (
   KEY `type` (`type`),
   KEY `votes_ibfk_1` (`tieBreakerCodeholder`),
   KEY `codeholdersSet` (`codeholdersSet`),
+  KEY `hasResults` (`hasResults`),
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`tieBreakerCodeholder`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2054,7 +2057,7 @@ CREATE TABLE `votes` (
 
 LOCK TABLES `votes` WRITE;
 /*!40000 ALTER TABLE `votes` DISABLE KEYS */;
-INSERT INTO `votes` VALUES (1,'tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}','{}',1,1572012318,1579960415,0,'stv','1/2',1,'0',1,'0',1,'0',1,1,2,'0',1,NULL,2,1,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
+INSERT INTO `votes` (`id`, `results`, `org`, `name`, `description`, `voterCodeholders`, `viewerCodeholders`, `codeholdersSet`, `timeStart`, `timeEnd`, `ballotsSecret`, `type`, `blankBallotsLimit`, `blankBallotsLimitInclusive`, `quorum`, `quorumInclusive`, `majorityBallots`, `majorityBallotsInclusive`, `majorityVoters`, `majorityVotersInclusive`, `majorityMustReachBoth`, `numChosenOptions`, `mentionThreshold`, `mentionThresholdInclusive`, `maxOptionsPerBallot`, `tieBreakerCodeholder`, `publishVoters`, `publishVotersPercentage`, `options`) VALUES (1,'{\"tally\": {\"0\": 2, \"1\": 3, \"2\": 4}, \"rounds\": [{\"lock\": [[2, 0], [1, 0], [2, 1]], \"graph\": {\"0\": [], \"1\": [0], \"2\": [0, 1]}, \"candStats\": {\"0\": {\"won\": 0, \"lost\": 2, \"mentions\": 2}, \"1\": {\"won\": 1, \"lost\": 1, \"mentions\": 3}, \"2\": {\"won\": 2, \"lost\": 0, \"mentions\": 4}}, \"optChosen\": 2, \"rankedPairs\": [{\"diff\": -3, \"opt0\": 0, \"opt2\": 3, \"pair\": [0, 2], \"loser\": 0, \"winner\": 2}, {\"diff\": -1, \"opt0\": 1, \"opt1\": 2, \"pair\": [0, 1], \"loser\": 0, \"winner\": 1}, {\"diff\": -1, \"opt1\": 1, \"opt2\": 2, \"pair\": [1, 2], \"loser\": 1, \"winner\": 2}]}, {\"lock\": [[1, 0]], \"graph\": {\"0\": [], \"1\": [0]}, \"candStats\": {\"0\": {\"won\": 0, \"lost\": 1, \"mentions\": 4}, \"1\": {\"won\": 1, \"lost\": 0, \"mentions\": 4}, \"2\": {\"won\": 0, \"lost\": 0, \"mentions\": 4}}, \"optChosen\": 1, \"rankedPairs\": [{\"diff\": -1, \"opt0\": 1, \"opt1\": 2, \"pair\": [0, 1], \"loser\": 0, \"winner\": 1}]}], \"numVoters\": 2, \"numBallots\": 4, \"optsChosen\": [2, 1], \"numBlankBallots\": 0, \"optsExcludedByMentionThreshold\": []}','tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}','{\"$and\": [{}, {}]}',1,1572012318,1572427198,0,'rp','1/2',1,'0.5',1,'0',1,'0',1,1,2,'1/2',1,NULL,2,1,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
 /*!40000 ALTER TABLE `votes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2072,7 +2075,7 @@ CREATE TABLE `votes_ballots` (
   PRIMARY KEY (`id`),
   KEY `voteId` (`voteId`),
   CONSTRAINT `votes_ballots_ibfk_1` FOREIGN KEY (`voteId`) REFERENCES `votes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2081,7 +2084,7 @@ CREATE TABLE `votes_ballots` (
 
 LOCK TABLES `votes_ballots` WRITE;
 /*!40000 ALTER TABLE `votes_ballots` DISABLE KEYS */;
-INSERT INTO `votes_ballots` VALUES (7,1,'1\n0\n2');
+INSERT INTO `votes_ballots` VALUES (7,1,'1,2\n0'),(12,1,'0,2\n1'),(13,1,'2'),(14,1,'1\r\n2');
 /*!40000 ALTER TABLE `votes_ballots` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2115,7 +2118,7 @@ CREATE TABLE `votes_voters` (
 
 LOCK TABLES `votes_voters` WRITE;
 /*!40000 ALTER TABLE `votes_voters` DISABLE KEYS */;
-INSERT INTO `votes_voters` VALUES (1,2,1,NULL,NULL),(1,3,0,NULL,NULL),(1,4,0,NULL,NULL),(1,5,0,NULL,NULL),(1,6,0,NULL,NULL),(1,8,0,NULL,NULL),(1,18,0,NULL,NULL),(1,20,0,NULL,NULL),(1,21,0,NULL,NULL),(1,22,0,NULL,NULL),(1,23,0,NULL,NULL),(1,24,0,NULL,NULL),(1,25,0,NULL,NULL),(1,26,0,NULL,NULL),(1,27,0,NULL,NULL),(1,28,0,NULL,NULL),(1,29,0,NULL,NULL),(1,30,0,NULL,NULL),(1,31,0,NULL,NULL),(1,32,0,NULL,NULL),(1,33,0,NULL,NULL),(1,34,0,NULL,NULL),(1,35,0,NULL,NULL),(1,36,0,NULL,NULL);
+INSERT INTO `votes_voters` VALUES (1,2,1,NULL,NULL),(1,3,1,NULL,NULL),(1,4,0,NULL,NULL),(1,5,0,NULL,NULL),(1,6,0,NULL,NULL),(1,8,0,NULL,NULL),(1,18,0,NULL,NULL),(1,20,0,NULL,NULL),(1,21,0,NULL,NULL),(1,22,0,NULL,NULL),(1,23,0,NULL,NULL),(1,24,0,NULL,NULL),(1,25,0,NULL,NULL),(1,26,0,NULL,NULL),(1,27,0,NULL,NULL),(1,28,0,NULL,NULL),(1,29,0,NULL,NULL),(1,30,0,NULL,NULL),(1,31,0,NULL,NULL),(1,32,0,NULL,NULL),(1,33,0,NULL,NULL),(1,34,0,NULL,NULL),(1,35,0,NULL,NULL),(1,36,0,NULL,NULL);
 /*!40000 ALTER TABLE `votes_voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2255,4 +2258,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-30  9:21:48
+-- Dump completed on 2019-10-30 15:01:52
