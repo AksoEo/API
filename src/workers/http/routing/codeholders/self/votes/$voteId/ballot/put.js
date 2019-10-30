@@ -79,7 +79,7 @@ export default {
 				}
 			}
 			if (voteData.type === 'tm') {
-				if (ballot.length > voteData.maxOptionsPerBallot) {
+				if (voteData.maxOptionsPerBallot !== null && ballot.length > voteData.maxOptionsPerBallot) {
 					return res.type('text/plain').status(400).send('Too many options on ballot for vote of type tm.');
 				}
 			}
