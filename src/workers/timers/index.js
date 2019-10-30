@@ -27,6 +27,7 @@ export function registerTimer (name, intervalMs, fn, disregardExecutionTime = fa
 			const timeDiffMs = Number((timeNow - timeBefore) / (10n**6n));
 			let waitTimeMs = intervalMs;
 			if (!disregardExecutionTime) { waitTimeMs -= timeDiffMs; }
+			waitTimeMs = Math.max(200, waitTimeMs); // always wait at least 200ms
 			setTimeout(timer.fnParent, waitTimeMs);
 		}
 	};
