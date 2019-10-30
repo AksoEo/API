@@ -11,10 +11,15 @@ const compileSrc = function (source) {
 		.pipe(header("import '@babel/polyfill';import 'source-map-support/register';"))
 		.pipe(sourcemaps.init())
 		.pipe(babel({
-				presets: ["@babel/env"],
+				presets: [
+					["@babel/env", {
+						"exclude": [ "@babel/plugin-transform-exponentiation-operator" ]
+					}]
+				],
 				plugins: [
 					"@babel/transform-async-to-generator",
-					"@babel/plugin-proposal-export-namespace-from"
+					"@babel/plugin-proposal-export-namespace-from",
+					"@babel/plugin-syntax-bigint"
 				]
 			}))
 		.pipe(sourcemaps.write('.'))

@@ -212,6 +212,7 @@ async function init () {
 		summonWorker('mail');
 		summonWorker('telegram');
 		summonWorker('labels');
+		summonWorker('timers');
 		for (let i = 1; i <= AKSO.conf.http.threads; i++) {
 			summonWorker('http', i);
 		}
@@ -250,6 +251,10 @@ async function init () {
 		case 'labels':
 			const AKSOLabels = require('./workers/labels');
 			await AKSOLabels.init();
+			break;
+		case 'timers':
+			const AKSOTimers = require('./workers/timers');
+			await AKSOTimers.init();
 			break;
 		default:
 			AKSO.log.error(`Unknown cluster type ${process.env.aksoClusterType}, exiting`);

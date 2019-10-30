@@ -100,17 +100,20 @@ const filterLogicOps = {
 
 		query.where(function () {
 			for (let obj of filter) {
-				this.orWhere(function () {
-					QueryUtil.filter({
-						fields,
-						query: this,
-						filter: obj,
-						fieldAliases,
-						fieldWhitelist,
-						customCompOps,
-						customLogicOps
+				if (!Object.keys(obj).length) { this.orWhere(AKSO.db.raw('1')); }
+				else {
+					this.orWhere(function () {
+						QueryUtil.filter({
+							fields,
+							query: this,
+							filter: obj,
+							fieldAliases,
+							fieldWhitelist,
+							customCompOps,
+							customLogicOps
+						});
 					});
-				});
+				}
 			}
 		});
 	},
@@ -471,9 +474,9 @@ const QueryUtil = {
 		const rawData = await query;
 		try {
 			if (afterQuery) {
-				await new Promise(async (resolve, reject) => {
+				await new Promise((resolve, reject) => {
 					// Awaits if it's async, otherwise goes ahead immediately
-					Promise.resolve(afterQuery(rawData, resolve, req))
+					return Promise.resolve(afterQuery(rawData, resolve, req))
 						.catch(e => {
 							AKSO.log.error(e);
 							reject(e);

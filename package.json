@@ -72,10 +72,11 @@
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/plugin-syntax-bigint": "^7.4.4",
     "@babel/plugin-transform-async-to-generator": "^7.5.0",
     "@babel/polyfill": "^7.6.0",
     "@babel/preset-env": "^7.6.3",
-    "eslint": "^5.16.0",
+    "eslint": "^6.6.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-header": "^2.0.9",
