@@ -1,5 +1,5 @@
 /*
-	Copied from vocho-lib with changes 
+	Copied from https://github.com/tejoesperanto/vocho-lib with changes 
 
 	MIT License
 
