@@ -6,6 +6,7 @@ export default {
 		'name': 'fs',
 		'mayVote': 'f',
 		'hasVoted': 'f',
+		'hasResults': 'f',
 		'percentageVoted': '',
 		'description': 's',
 		'timeStart': 'f',

@@ -17,6 +17,7 @@ export const schema = {
 		'viewerCodeholders': '',
 		'timeStart': 'f',
 		'timeEnd': 'f',
+		'hasResults': 'f',
 		'hasStarted': 'f',
 		'hasEnded': 'f',
 		'isActive': 'f',
