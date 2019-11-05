@@ -288,9 +288,9 @@ async function obtainVoteResult (vote) {
 			.map(x => symbToOpt(x.winner));
 
 		result.rounds = algResults.map(round => {
-			const candStats = {};
+			const optStats = {};
 			for (const [candSymb, stats] of Object.entries(round.candStats)) {
-				candStats[symbToOpt(candSymb)] = stats;
+				optStats[symbToOpt(candSymb)] = stats;
 			}
 
 			const graph = {};
@@ -307,13 +307,13 @@ async function obtainVoteResult (vote) {
 						pair: pairName.map(symbToOpt),
 						diff: pairData.diff,
 						winner: symbToOpt(pairData.winner),
-						loser: symbToOpt(pairData.loser)
+						loser: symbToOpt(pairData.loser),
+						opt0: pairData[pairName[0]],
+						opt1: pairData[pairName[1]]
 					};
-					pairObj['opt' + symbToOpt(pairName[0])] = pairData[pairName[0]];
-					pairObj['opt' + symbToOpt(pairName[1])] = pairData[pairName[1]];
 					return pairObj;
 				}),
-				candStats: candStats,
+				optStats,
 				lock: round.lock.map(pair => pair.map(symbToOpt)),
 				graph: graph
 			};

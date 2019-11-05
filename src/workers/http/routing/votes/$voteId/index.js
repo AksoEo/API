@@ -2,6 +2,7 @@ import express from 'express';
 
 import { bindMethod } from '../..';
 
+import { init as route$result } from './result';
 import { init as route$stats } from './stats';
 
 import method$get from './get';
@@ -15,6 +16,7 @@ import method$patch from './patch';
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
+	router.use('/result', route$result());
 	router.use('/stats', route$stats());
 
 	bindMethod(router, '/', 'get', method$get);
