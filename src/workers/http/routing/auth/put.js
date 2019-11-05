@@ -162,7 +162,7 @@ export default {
 
 					await AKSONotif.sendNotification({
 						codeholderIds: [ user.user ],
-						org: 'akso',
+						org: 'uea',
 						notif: 'fishy-location',
 						category: 'account',
 						view: {

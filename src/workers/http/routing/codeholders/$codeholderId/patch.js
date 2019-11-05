@@ -389,7 +389,7 @@ export default {
 						}
 					};
 					histPromises.push(AKSOMail.renderSendEmail({
-						org: 'akso',
+						org: 'uea',
 						tmpl: 'email-changed-admin',
 						view: view,
 						personalizations: [ personalization ]
@@ -398,7 +398,7 @@ export default {
 				// Send to new
 				histPromises.push(AKSONotif.sendNotification({
 					codeholderIds: [ req.params.codeholderId ],
-					org: 'akso',
+					org: 'uea',
 					notif: 'email-changed-admin',
 					category: 'account',
 					view: view

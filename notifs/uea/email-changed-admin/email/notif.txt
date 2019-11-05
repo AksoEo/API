@@ -1,0 +1,13 @@
+Estimata \{{name}},
+
+Oficisto ĵus ŝanĝis vian registritan retpoŝtadreson ĉe UEA/TEJO:
+
+Antaŭe: {{emailFrom}}
+Nun: {{emailTo}}
+
+{{#if note}}
+La ŝanĝo estis prikomentita jene:
+{{note}}
+{{/if}}
+
+Se vi havas komentojn aŭ zorgojn pri la ŝanĝo, ne hezitu kontakti nin per info@uea.org.
