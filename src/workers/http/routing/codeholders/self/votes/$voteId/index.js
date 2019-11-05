@@ -3,6 +3,7 @@ import express from 'express';
 import { bindMethod } from '../../../..';
 
 import { init as route$ballot } from './ballot';
+import { init as route$result } from './result';
 
 import method$get from './get';
 
@@ -14,6 +15,7 @@ export function init () {
 	const router = new express.Router({ mergeParams: true });
 
 	router.use('/ballot', route$ballot());
+	router.use('/result', route$result());
 
 	bindMethod(router, '/', 'get', method$get);
 
