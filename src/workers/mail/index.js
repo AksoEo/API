@@ -15,7 +15,13 @@ export async function init () {
 }
 
 function scheduleTimer (wait = 500) {
-	setTimeout(() => { timer().catch(e => { throw e; }); }, wait);
+	setTimeout(() => {
+		timer().catch(e => {
+			AKSO.log.error(e);
+			console.error(e); // eslint-disable-line no-console
+			process.exit(1);
+		});
+	}, wait);
 }
 
 async function timer () {
@@ -29,20 +35,20 @@ async function timer () {
 		const file = path.join(scheduleDir, entry.name);
 		const rawData = await fs.readFile(file);
 		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
-		await new Promise(resolve => {
-			mail.send(data)
-				.catch(e => {
-					if (e.response.body && e.response.body.errors) {
-						AKSO.log.error(e);
-						console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
-					} else {
-						throw e;
-					}
-				})
-				.finally(() => {
-					fs.unlink(file, resolve);
-				});
-		});
+
+		let sendError = null;
+		try {
+			await mail.send(data);
+		} catch (e) {
+			if (e.response && e.response.body && e.response.body.errors) {
+				AKSO.log.error(e);
+				console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
+			} else {
+				sendError = null;
+			}
+		}
+		await fs.unlink(file);
+		if (sendError) { throw sendError; }
 	} while (entry);
 	await dir.close();
 	scheduleTimer();

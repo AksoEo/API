@@ -44,15 +44,14 @@ async function timer () {
 		const file = path.join(scheduleDir, entry.name);
 		const rawData = await fs.readFile(file);
 		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
-		await new Promise(resolve => {
-			sendNotification(data)
-				.catch(e => {
-					AKSO.log.error(e);
-				})
-				.finally(() => {
-					fs.unlink(file, resolve);
-				});
-		});
+
+		try {
+			await sendNotification(data);
+		} catch (e) {
+			AKSO.log.error(e);
+		}
+		await fs.unlink(file);
+		
 	} while (entry);
 	await dir.close();
 	scheduleTimer();

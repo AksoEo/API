@@ -64,32 +64,36 @@ export async function renderSendEmail ({
 	const notifsDir = path.join(AKSO.dir, 'notifs');
 	const scheduleDir = path.join(AKSO.conf.dataDir, 'notifs_mail');
 
-	if (to !== undefined) {
+	if (typeof to !== 'undefined') {
 		if (!Array.isArray(to)) { to = [to]; }
 		personalizations.push(...to.map(r => { return { to: r }; }));
 	}
 
-	if (personalizations !== undefined) {
-		// Convert codeholder ids in `to` to email addresses
-		const codeholderIds = [];
-		for (let i = 0; i < personalizations.length; i++) {
-			const recipient = personalizations[i].to;
-			if (typeof recipient !== 'number') { continue; }
-			codeholderIds.push({
-				id: recipient,
-				index: i
-			});
-		}
-		if (codeholderIds.length) {
-			const names = await getNamesAndEmails(codeholderIds.map(x => x.id));
-			for (let i = 0; i < codeholderIds.length; i++) {
-				const index = codeholderIds[i].index;
-				personalizations[index].to = names[i];
-				if (!('substitutions' in personalizations[index])) { personalizations[index].substitutions = {}; }
-				personalizations[index].substitutions.name = names[i].name;
+	// Convert codeholder ids in `to` to email addresses
+	const codeholderIds = [];
+	for (let i = 0; i < personalizations.length; i++) {
+		const recipient = personalizations[i].to;
+		if (typeof recipient !== 'number') { continue; }
+		codeholderIds.push({
+			id: recipient,
+			index: i
+		});
+	}
+	if (codeholderIds.length) {
+		const names = await getNamesAndEmails(codeholderIds.map(x => x.id));
+		for (let i = 0; i < codeholderIds.length; i++) {
+			const index = codeholderIds[i].index;
+			if (!names[i]) {
+				personalizations.splice(index, 1);
+				continue;
 			}
+			personalizations[index].to = names[i];
+			if (!('substitutions' in personalizations[index])) { personalizations[index].substitutions = {}; }
+			personalizations[index].substitutions.name = names[i].name;
 		}
 	}
+
+	if (!personalizations.length) { return; }
 
 	const orgDir = path.join(notifsDir, org);
 	const globalDir = path.join(orgDir, '_global', 'email');
