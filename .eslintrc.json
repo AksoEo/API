@@ -33,6 +33,7 @@
         "no-case-declarations": "off",
         "no-console": [
             "error"
-        ]
+        ],
+        "require-atomic-updates": "off"
     }
 }

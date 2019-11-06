@@ -29,7 +29,7 @@ async function timer () {
 		const file = path.join(scheduleDir, entry.name);
 		const rawData = await fs.readFile(file);
 		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
-		await new Promise(async resolve => {
+		await new Promise(resolve => {
 			mail.send(data)
 				.catch(e => {
 					if (e.response.body && e.response.body.errors) {
@@ -39,7 +39,7 @@ async function timer () {
 						throw e;
 					}
 				})
-				.finally(async () => {
+				.finally(() => {
 					fs.unlink(file, resolve);
 				});
 		});

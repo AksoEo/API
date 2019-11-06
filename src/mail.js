@@ -84,11 +84,9 @@ export async function renderSendEmail ({
 			const names = await getNamesAndEmails(codeholderIds.map(x => x.id));
 			for (let i = 0; i < codeholderIds.length; i++) {
 				const index = codeholderIds[i].index;
-				/* eslint-disable require-atomic-updates */
 				personalizations[index].to = names[i];
 				if (!('substitutions' in personalizations[index])) { personalizations[index].substitutions = {}; }
 				personalizations[index].substitutions.name = names[i].name;
-				/* eslint-enable require-atomic-updates */
 			}
 		}
 	}
