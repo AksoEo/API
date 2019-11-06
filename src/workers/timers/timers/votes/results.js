@@ -218,6 +218,12 @@ async function obtainVoteResult (vote) {
 
 	// ONLY RP AND STV remaining
 
+	let tieBreakerBallot = undefined;
+	if (vote.tieBreakerBallot) {
+		tieBreakerBallot = vote.tieBreakerBallot.split('\n');
+		if (vote.type === 'stv') { tieBreakerBallot = tieBreakerBallot.join(''); }
+	}
+
 	const symbOpts = arrRange(0, vote.options.length - 1).map(optToSymb);
 	let symbBallots = ballots
 		.filter(x => x.length) // Disregard blank ballots
@@ -234,10 +240,9 @@ async function obtainVoteResult (vote) {
 
 		let algResult;
 		try {
-			algResult = STV(vote.numChosenOptions, symbOpts, symbBallots);
+			algResult = STV(vote.numChosenOptions, symbOpts, symbBallots, tieBreakerBallot);
 		} catch (e) {
 			if (e.type === 'TIE_BREAKER_NEEDED') {
-				// TODO: Handle this better
 				result.result = 'TIE_BREAKER_NEEDED';
 				return result;
 			}
@@ -271,11 +276,10 @@ async function obtainVoteResult (vote) {
 		while (algResults.length < vote.numChosenOptions) {
 			let algResult;
 			try {
-				algResult = RP(symbOpts, symbBallots, ignoredOpts);
+				algResult = RP(symbOpts, symbBallots, ignoredOpts, tieBreakerBallot);
 				algResults.push(algResult);
 			} catch (e) {
 				if (e.type === 'TIE_BREAKER_NEEDED') {
-					// TODO: Handle this better
 					result.result = 'TIE_BREAKER_NEEDED';
 					return result;
 				}

@@ -16,6 +16,7 @@ class VoteResource extends SimpleResource {
 		if ('hasStarted' in obj) { obj.hasStarted = !!obj.hasStarted; }
 		if ('hasEnded' in obj) { obj.hasEnded = !!obj.hasEnded; }
 		if ('isActive' in obj) { obj.isActive = !!obj.isActive; }
+		if ('usedTieBreaker' in obj) { obj.usedTieBreaker = !!obj.usedTieBreaker; }
 		if ('ballotsSecret' in obj) { obj.ballotsSecret = !!obj.ballotsSecret; }
 		if ('blankBallotsLimitInclusive' in obj) { obj.blankBallotsLimitInclusive = !!obj.blankBallotsLimitInclusive; }
 		if ('quorumInclusive' in obj) { obj.quorumInclusive = !!obj.quorumInclusive; }

@@ -17,6 +17,7 @@ export const schema = {
 		'viewerCodeholders': '',
 		'timeStart': 'f',
 		'timeEnd': 'f',
+		'usedTieBreaker': '',
 		'hasResults': 'f',
 		'hasStarted': 'f',
 		'hasEnded': 'f',
@@ -44,7 +45,8 @@ export const schema = {
 	fieldAliases: {
 		hasStarted: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP()'),
 		hasEnded: () => AKSO.db.raw('timeEnd <= UNIX_TIMESTAMP()'),
-		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()')
+		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()'),
+		usedTieBreaker: () => AKSO.db.raw('tieBreakerBallot IS NOT NULL')
 	}
 };
 

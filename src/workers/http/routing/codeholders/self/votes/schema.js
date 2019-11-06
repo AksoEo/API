@@ -11,9 +11,11 @@ export default {
 		'description': 's',
 		'timeStart': 'f',
 		'timeEnd': 'f',
+		'usedTieBreaker': '',
 		'hasStarted': 'f',
 		'hasEnded': 'f',
 		'isActive': 'f',
+		'isTieBreaker': '',
 		'ballotsSecret': '',
 		'type': 'f',
 		'blankBallotsLimit': '',
@@ -39,6 +41,8 @@ export default {
 		hasVoted: () => AKSO.db.raw('timeVoted IS NOT NULL'),
 		hasStarted: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP()'),
 		hasEnded: () => AKSO.db.raw('timeEnd <= UNIX_TIMESTAMP()'),
-		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()')
+		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()'),
+		isTieBreaker: () => AKSO.db.raw('results->"$.result" = "TIE_BREAKER_NEEDED" AND tieBreakerCodeholder = codeholderId',),
+		usedTieBreaker: () => AKSO.db.raw('tieBreakerBallot IS NOT NULL')
 	}
 };

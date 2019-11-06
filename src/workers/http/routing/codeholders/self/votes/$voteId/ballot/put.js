@@ -28,20 +28,24 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		if (!('ballot' in req.body)) { return res.type('text/plain').status(400).send('Missing ballot in body.'); }
-
 		// Obtain info on the vote and make sure the codeholder can vote in it
 		const voteData = await AKSO.db('votes')
-			.first('*')
+			.first('*', AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.result" = "TIE_BREAKER_NEEDED" AS isTieBreaker', req.user.user))
 			.innerJoin('votes_voters', 'votes.id', 'votes_voters.voteId')
 			.where({
 				'votes.id': req.params.voteId,
-				codeholderId: req.user.user,
-				mayVote: true
+				codeholderId: req.user.user
+			})
+			.where(function () {
+				this
+					.where('mayVote', true)
+					.orWhere(AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.result" = "TIE_BREAKER_NEEDED"', req.user.user));
 			});
 		if (!voteData) { return res.sendStatus(404); }
-		if (voteData.timeEnd <= moment().unix()) { return res.sendStatus(423); }
-		if (voteData.ballotsSecret && voteData.timeVoted !== null) { return res.sendStatus(409); }
+		if (!voteData.isTieBreaker) {
+			if (voteData.timeEnd <= moment().unix()) { return res.sendStatus(423); }
+			if (voteData.ballotsSecret && voteData.timeVoted !== null) { return res.sendStatus(409); }
+		}
 
 		let ballot = req.body.ballot;
 
@@ -62,6 +66,9 @@ export default {
 					if (!Array.isArray(row)) {
 						return res.type('text/plain').status(400).send('Invalid ballot for vote of type rp.');
 					}
+					if (voteData.isTieBreaker && row.length > 1) {
+						return res.type('text/plain').status(400).send('Tie breaker ballots may not have equal options.');
+					}
 					for (const col of row) {
 						if (!Number.isSafeInteger(col) || col < 0 || col >= numOptions || usedOptions.includes(col)) {
 							return res.type('text/plain').status(400).send('Invalid ballot for vote of type rp.');
@@ -78,6 +85,9 @@ export default {
 					usedOptions.push(row);
 				}
 			}
+			if (usedOptions.length !== numOptions) {
+				return res.type('text/plain').status(400).send('Tie breaker ballots must list all options.');
+			}
 			if (voteData.type === 'tm') {
 				if (voteData.maxOptionsPerBallot !== null && ballot.length > voteData.maxOptionsPerBallot) {
 					return res.type('text/plain').status(400).send('Too many options on ballot for vote of type tm.');
@@ -87,32 +97,41 @@ export default {
 			ballot = ballot.join('\n');
 		}
 
-		let ballotId = voteData.ballotId;
-
-		if (voteData.ballotId) {
-			// Update
-			await AKSO.db('votes_ballots')
-				.where('id', ballotId)
-				.update('ballot', ballot);
-		} else {
-			// Insert
-			const query = AKSO.db('votes_ballots')
-				.insert({
-					voteId: req.params.voteId,
-					ballot: ballot
+		if (voteData.isTieBreaker) {
+			await AKSO.db('votes')
+				.where('id', voteData.id)
+				.update({
+					'tieBreakerBallot': ballot,
+					results: null
 				});
-			ballotId = (await query)[0];
-		}
+		} else {
+			let ballotId = voteData.ballotId;
 
-		await AKSO.db('votes_voters')
-			.where({
-				voteId: req.params.voteId,
-				codeholderId: req.user.user
-			})
-			.update({
-				timeVoted: moment().unix(),
-				ballotId: voteData.ballotsSecret ? null : ballotId
-			});
+			if (voteData.ballotId) {
+				// Update
+				await AKSO.db('votes_ballots')
+					.where('id', ballotId)
+					.update('ballot', ballot);
+			} else {
+				// Insert
+				const query = AKSO.db('votes_ballots')
+					.insert({
+						voteId: req.params.voteId,
+						ballot: ballot
+					});
+				ballotId = (await query)[0];
+			}
+
+			await AKSO.db('votes_voters')
+				.where({
+					voteId: req.params.voteId,
+					codeholderId: req.user.user
+				})
+				.update({
+					timeVoted: moment().unix(),
+					ballotId: voteData.ballotsSecret ? null : ballotId
+				});
+		}
 
 		res.sendStatus(204);
 	}

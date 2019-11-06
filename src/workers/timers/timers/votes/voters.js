@@ -38,6 +38,7 @@ export async function updateVoterCodeholdersOnTimeStart () {
 			);
 		const viewerFilter = { $or: [ vote.voterCodeholders ] };
 		if (vote.viewerCodeholders) { viewerFilter.$or.push(vote.viewerCodeholders); }
+		if (vote.tieBreakerCodeholder !== null) { viewerFilter.$or.push({ id: vote.tieBreakerCodeholder }); }
 		QueryUtil.filter({
 			...quFilterOpts,
 			...{
