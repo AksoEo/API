@@ -25,7 +25,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new CodeholderResource(row);
+		const obj = new CodeholderResource(row, req, schema);
 		res.sendObj(obj);
 	}
 };
