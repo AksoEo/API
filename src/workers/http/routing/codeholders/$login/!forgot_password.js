@@ -1,11 +1,23 @@
 import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
+
 import * as AKSONotif from '../../../../../notif';
+import AKSOOrganization from '../../../../../lib/enums/akso-organization';
 
 export default {
 	schema: {
 		query: null,
-		body: null
+		body: {
+			type: 'object',
+			properties: {
+				org: {
+					type: 'string',
+					enum: AKSOOrganization.allLower
+				}
+			},
+			required: [ 'org' ],
+			additionalProperties: false
+		}
 	},
 
 	run: async function run (req, res) {
@@ -49,7 +61,7 @@ export default {
 		// Send the notification
 		await AKSONotif.sendNotification({
 			codeholderIds: [ codeholder.id ],
-			org: 'akso',
+			org: req.body.org,
 			notif: 'forgot-password',
 			category: 'account',
 			view: {

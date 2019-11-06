@@ -1,11 +1,23 @@
 import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
+
 import * as AKSOMail from '../../../../../mail';
+import AKSOOrganization from '../../../../../lib/enums/akso-organization';
 
 export default {
 	schema: {
 		query: null,
-		body: null
+		body: {
+			type: 'object',
+			properties: {
+				org: {
+					type: 'string',
+					enum: AKSOOrganization.allLower
+				}
+			},
+			required: [ 'org' ],
+			additionalProperties: false
+		}
 	},
 
 	run: async function run (req, res) {
@@ -48,7 +60,7 @@ export default {
 
 		// Send the email
 		await AKSOMail.renderSendEmail({
-			org: 'akso',
+			org: req.body.org,
 			tmpl: 'create-password',
 			to: codeholder.id,
 			view: {

@@ -144,39 +144,39 @@
     <!-- Progressive Enhancements : BEGIN -->
     <style>
 
-        /* What it does: Hover styles for buttons */
-        .button-td,
-        .button-a {
-            transition: all 100ms ease-in;
-        }
-        .button-td-primary:hover,
-        .button-a-primary:hover {
-            background: #a6d4f4 !important;
-            border-color: #a6d4f4 !important;
-        }
+	    /* What it does: Hover styles for buttons */
+	    .button-td,
+	    .button-a {
+	        transition: all 100ms ease-in;
+	    }
+	    .button-td-primary:hover,
+	    .button-a-primary:hover {
+	        background: #555555 !important;
+	        border-color: #555555 !important;
+	    }
 
-        /* Media Queries */
-        @media screen and (max-width: 600px) {
+	    /* Media Queries */
+	    @media screen and (max-width: 600px) {
 
-            /* What it does: Adjust typography on small screens to improve readability */
-            .email-container p {
-                font-size: 17px !important;
-            }
+	        /* What it does: Adjust typography on small screens to improve readability */
+	        .email-container p {
+	            font-size: 17px !important;
+	        }
 
-        }
+	    }
 
     </style>
     <!-- Progressive Enhancements : END -->
 
 </head>
 <!--
-    The email background color (#eeeeee) is defined in three places:
-    1. body tag: for most email clients
-    2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
-    3. mso conditional: For Windows 10 Mail
+	The email background color (#eeeeee) is defined in three places:
+	1. body tag: for most email clients
+	2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
+	3. mso conditional: For Windows 10 Mail
 -->
 <body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #eeeeee;">
-    <center style="width: 100%; background-color: #eeeeee;">
+	<center style="width: 100%; background-color: #eeeeee;">
     <!--[if mso | IE]>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #eeeeee;">
     <tr>
@@ -194,16 +194,15 @@
             <td>
             <![endif]-->
 
-            <!-- Email Body : BEGIN -->
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
-                <!-- Email Header : BEGIN -->
-                <tr>
-                    <td style="padding: 20px 0; text-align: center">
-                        <img src="https://i.imgur.com/Djz09bZ.png" width="150" alt="Emblemo de UEA" border="0" style="height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
-                        <h1 style="padding: 20px; font-family: sans-serif; font-size: 20px; line-height: 15px;">Universala Esperanto-Asocio</h1>
-                    </td>
-                </tr>
-                <!-- Email Header : END -->
+	        <!-- Email Body : BEGIN -->
+	        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+		        <!-- Email Header : BEGIN -->
+	            <tr>
+	                <td style="padding: 20px 0; text-align: center">
+	                    <img src="https://i.imgur.com/8uUAnvK.png" width="200" alt="Emblemo de TEJO" border="0" style="height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;">
+	                </td>
+	            </tr>
+		        <!-- Email Header : END -->
 
                 {{{content}}}
 
@@ -211,12 +210,12 @@
             <!-- Email Body : END -->
 
             <!-- Email Footer : BEGIN -->
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+	        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
                 <tr>
                     <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
                         Tiu ĉi mesaĝo estis aŭtomate sendita de:
                         <br>
-                        <a href="https://akso.org" style="color: #888888; text-decoration: underline;">Universala Esperanto-Asocio</a><br><span class="unstyle-auto-detected-links">Nieuwe Binnenweg 176, 3015 BJ, Rotterdam, Nederlando<br>+31 10 436 1044</span>
+						<a href="https://tejo.org" style="color: #888888; text-decoration: underline;">TEJO</a> (Tutmonda Esperantista Junulara Organizo)<br><span class="unstyle-auto-detected-links">Nieuwe Binnenweg 176, 3015 BJ, Rotterdam, Nederlando<br>+31 10 310 4924</span>
                         {{#if unsubscribe}}
                             <br><br>
                             <a href="{{unsubscribe}}" style="color: #888888; text-decoration: underline;">Malaboni aŭ ŝanĝi viajn retpoŝtagordojn</a>
