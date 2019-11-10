@@ -19,6 +19,7 @@ import { init as route$clients } from './clients';
 import { init as route$perms } from './perms';
 import { init as route$codeholder_roles } from './codeholder_roles';
 import { init as route$codeholders } from './codeholders';
+import { init as route$congresses } from './congresses';
 import { init as route$countries } from './countries';
 import { init as route$country_groups } from './country_groups';
 import { init as route$http_log } from './http_log';
@@ -159,6 +160,7 @@ export function init () {
 	router.use('/clients', route$clients());
 	router.use('/codeholder_roles', route$codeholder_roles());
 	router.use('/codeholders', route$codeholders());
+	router.use('/congresses', route$congresses());
 	router.use('/countries', route$countries());
 	router.use('/country_groups', route$country_groups());
 	router.use('/http_log', route$http_log());

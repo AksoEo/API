@@ -1555,6 +1555,334 @@ LOCK TABLES `codeholders_totp_remember` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `congresses`
+--
+
+DROP TABLE IF EXISTS `congresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abbrev` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `abbrev` (`abbrev`),
+  KEY `org` (`org`),
+  FULLTEXT KEY `name_2` (`name`),
+  FULLTEXT KEY `abbrev_2` (`abbrev`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses`
+--
+
+LOCK TABLES `congresses` WRITE;
+/*!40000 ALTER TABLE `congresses` DISABLE KEYS */;
+INSERT INTO `congresses` VALUES (1,'Universala Kongreso','UK','uea'),(2,'Internacia Junulara Kongreso','IJK','tejo');
+/*!40000 ALTER TABLE `congresses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances`
+--
+
+DROP TABLE IF EXISTS `congresses_instances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `congressId` int(10) unsigned NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `humanId` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dateFrom` date NOT NULL,
+  `dateTo` date NOT NULL,
+  `locationName` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locationNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locationCoords` point DEFAULT NULL,
+  `locationAddress` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tz` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `congressId` (`congressId`),
+  KEY `name` (`name`),
+  KEY `humanId` (`humanId`),
+  KEY `dateFrom` (`dateFrom`),
+  KEY `dateTo` (`dateTo`),
+  FULLTEXT KEY `locationName` (`locationName`),
+  FULLTEXT KEY `locationNameLocal` (`locationNameLocal`),
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `congresses_instances_ibfk_1` FOREIGN KEY (`congressId`) REFERENCES `congresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances`
+--
+
+LOCK TABLES `congresses_instances` WRITE;
+/*!40000 ALTER TABLE `congresses_instances` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locationTags`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locationTags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locationTags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `congressInstanceId` (`congressInstanceId`),
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `congresses_instances_locationTags_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locationTags`
+--
+
+LOCK TABLES `congresses_instances_locationTags` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locationTags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locationTags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `congressInstanceId` (`congressInstanceId`),
+  KEY `type` (`type`),
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations`
+--
+
+LOCK TABLES `congresses_instances_locations` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations_external`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations_external`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations_external` (
+  `congressInstanceLocationId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `address` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ll` point NOT NULL,
+  `icon` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'GENERIC',
+  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  KEY `ll` (`ll`(25)),
+  CONSTRAINT `congresses_instances_locations_external_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations_external`
+--
+
+LOCK TABLES `congresses_instances_locations_external` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations_external` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locations_external` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations_external_rating`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations_external_rating`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations_external_rating` (
+  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `rating` decimal(4,2) NOT NULL,
+  `max` tinyint(3) unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  CONSTRAINT `congresses_instances_locations_external_rating_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations_external` (`congressInstanceLocationId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations_external_rating`
+--
+
+LOCK TABLES `congresses_instances_locations_external_rating` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations_external_rating` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locations_external_rating` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations_internal`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations_internal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations_internal` (
+  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `externalLoc` int(10) unsigned DEFAULT NULL,
+  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  KEY `externalLoc` (`externalLoc`),
+  CONSTRAINT `congresses_instances_locations_internal_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_locations_internal_ibfk_2` FOREIGN KEY (`externalLoc`) REFERENCES `congresses_instances_locations_external` (`congressInstanceLocationId`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations_internal`
+--
+
+LOCK TABLES `congresses_instances_locations_internal` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations_internal` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locations_internal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations_tags`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations_tags` (
+  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `congressInstanceLocationTagId` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`congressInstanceLocationId`,`congressInstanceLocationTagId`),
+  KEY `congressInstanceLocationTagId` (`congressInstanceLocationTagId`),
+  CONSTRAINT `congresses_instances_locations_tags_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_locations_tags_ibfk_2` FOREIGN KEY (`congressInstanceLocationTagId`) REFERENCES `congresses_instances_locationTags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations_tags`
+--
+
+LOCK TABLES `congresses_instances_locations_tags` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_locations_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_programTags`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_programTags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_programTags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `congressInstanceId` (`congressInstanceId`),
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `congresses_instances_programTags_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_programTags`
+--
+
+LOCK TABLES `congresses_instances_programTags` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_programTags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_programTags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_programs`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_programs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_programs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owner` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `timeFrom` bigint(20) unsigned NOT NULL,
+  `timeTo` bigint(20) unsigned NOT NULL,
+  `location` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `congressInstanceId` (`congressInstanceId`),
+  KEY `title` (`title`),
+  KEY `timeFrom` (`timeFrom`),
+  KEY `timeTo` (`timeTo`),
+  KEY `location` (`location`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `title_2` (`title`),
+  CONSTRAINT `congresses_instances_programs_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_programs_ibfk_2` FOREIGN KEY (`location`) REFERENCES `congresses_instances_locations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_programs`
+--
+
+LOCK TABLES `congresses_instances_programs` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_programs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_programs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_programs_tags`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_programs_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_programs_tags` (
+  `congressInstanceProgramId` int(10) unsigned NOT NULL,
+  `congressInstanceProgramTagId` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`congressInstanceProgramId`,`congressInstanceProgramTagId`),
+  KEY `congressInstanceProgramTagId` (`congressInstanceProgramTagId`),
+  CONSTRAINT `congresses_instances_programs_tags_ibfk_1` FOREIGN KEY (`congressInstanceProgramTagId`) REFERENCES `congresses_instances_programTags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_programs_tags_ibfk_2` FOREIGN KEY (`congressInstanceProgramId`) REFERENCES `congresses_instances_programs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_programs_tags`
+--
+
+LOCK TABLES `congresses_instances_programs_tags` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_programs_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_programs_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `countries`
 --
 
@@ -2049,7 +2377,7 @@ CREATE TABLE `votes` (
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`tieBreakerCodeholder`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2076,7 +2404,7 @@ CREATE TABLE `votes_ballots` (
   PRIMARY KEY (`id`),
   KEY `voteId` (`voteId`),
   CONSTRAINT `votes_ballots_ibfk_1` FOREIGN KEY (`voteId`) REFERENCES `votes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2259,4 +2587,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-06 11:13:58
+-- Dump completed on 2019-11-10 21:01:44
