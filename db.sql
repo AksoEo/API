@@ -1685,7 +1685,7 @@ CREATE TABLE `congresses_instances_locations` (
 
 LOCK TABLES `congresses_instances_locations` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations` DISABLE KEYS */;
-INSERT INTO `congresses_instances_locations` VALUES (1,3,'external','Kongresejo',NULL),(2,3,'internal','Manĝejo','Kie oni manĝas'),(3,3,'internal','Akceptejo',NULL),(4,3,'external','Amsterdamo Flughaveno','La plej granda flughaveno en Nederlando estas Schiphol (AMS)');
+INSERT INTO `congresses_instances_locations` VALUES (1,3,'external','Kongresejo','La ejo kie okazas ĉio de la IJK!'),(2,3,'internal','Manĝejo','Kie oni manĝas'),(3,3,'internal','Akceptejo',NULL),(4,3,'external','Amsterdamo Flughaveno','La plej granda flughaveno en Nederlando estas Schiphol (AMS)');
 /*!40000 ALTER TABLE `congresses_instances_locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2594,4 +2594,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 14:35:29
+-- Dump completed on 2019-11-11 14:52:57

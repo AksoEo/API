@@ -24,9 +24,9 @@ class CongressInstanceLocationResource extends SimpleResource {
 			};
 		} else {
 			delete obj.rating;
-			delete obj.rating_max;
-			delete obj.rating_type;
 		}
+		delete obj.rating_max;
+		delete obj.rating_type;
 
 		if (obj.type === 'external') {
 			delete obj.externalLoc;
@@ -36,7 +36,7 @@ class CongressInstanceLocationResource extends SimpleResource {
 			delete obj.icon;
 		}
 
-		const fields = req.query.fields || req.schema.defaultFields;
+		const fields = req.query.fields || schema.defaultFields;
 		if (!fields.includes('type')) {
 			delete obj.type;
 		}
