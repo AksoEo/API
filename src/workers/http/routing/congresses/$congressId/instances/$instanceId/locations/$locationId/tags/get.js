@@ -25,8 +25,8 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.read.' + orgData.org)) { return res.sendStatus(403); }
 
-		const query = AKSO.db('congresses_instances_locationTags')
-			.innerJoin('congresses_instances_locations_tags', 'id', 'congressInstanceLocationId')
+		const query = AKSO.db('congresses_instances_locations_tags')
+			.innerJoin('congresses_instances_locationTags', 'id', 'congressInstanceLocationTagId')
 			.where({
 				congressInstanceId: req.params.instanceId,
 				congressInstanceLocationId: req.params.locationId
