@@ -1614,7 +1614,7 @@ CREATE TABLE `congresses_instances` (
   FULLTEXT KEY `locationNameLocal` (`locationNameLocal`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `congresses_instances_ibfk_1` FOREIGN KEY (`congressId`) REFERENCES `congresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1623,7 +1623,7 @@ CREATE TABLE `congresses_instances` (
 
 LOCK TABLES `congresses_instances` WRITE;
 /*!40000 ALTER TABLE `congresses_instances` DISABLE KEYS */;
-INSERT INTO `congresses_instances` VALUES (1,1,'La 105-a UK en Montrealo, Kanado (2020)','2020','2020-08-01','2020-08-08','Montrealo, Kanado','MontrÃ©al',_binary '\0\0\0\0\0\0\0Ôº\rj¿¿F@~Í‘•dRÀ','Le Centre Sheraton Montreal Hotel\r\n1201 RenÃ©-LÃ©vesque Blvd W\r\nMontreal, QC H3B 2L7','America/Montreal'),(2,1,'La 104-a UK en Lahtio, Finnland (2020)','2019','2019-07-20','2019-07-27','Lahtio, Finnlando','Lahti',_binary '\0\0\0\0\0\0\0ð1Xqª}N@~9³]¡£9@','Isku Areena\r\nSvinhufvudinkatu 29\r\nFI-15110 Lahti','Europe/Helsinki');
+INSERT INTO `congresses_instances` VALUES (1,1,'La 105-a UK en Montrealo, Kanado (2020)','2020','2020-08-01','2020-08-08','Montrealo, Kanado','MontrÃ©al',_binary '\0\0\0\0\0\0\0Ôº\rj¿¿F@~Í‘•dRÀ','Le Centre Sheraton Montreal Hotel\r\n1201 RenÃ©-LÃ©vesque Blvd W\r\nMontreal, QC H3B 2L7','America/Montreal'),(2,1,'La 104-a UK en Lahtio, Finnlando (2020)','2019','2019-07-20','2019-07-27','Lahtio, Finnlando','Lahti',_binary '\0\0\0\0\0\0\0ð1Xqª}N@~9³]¡£9@','Isku Areena\r\nSvinhufvudinkatu 29\r\nFI-15110 Lahti','Europe/Helsinki'),(3,2,'La 76-a IJK en Someren, Nederlando (2020)','2020','2020-07-11','2020-07-18','Someren, Nederlando',NULL,_binary '\0\0\0\0\0\0\0·\ïQ½°I@6[y\Éÿ\Ä@','De Hoof 18\n5712 LM Someren','Europe/Amsterdam');
 /*!40000 ALTER TABLE `congresses_instances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2588,4 +2588,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 12:37:26
+-- Dump completed on 2019-11-11 13:02:10

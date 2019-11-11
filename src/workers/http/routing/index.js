@@ -10,6 +10,7 @@ import os from 'os';
 import fs from 'pn/fs';
 import bytesUtil from 'bytes';
 import msgpack from 'msgpack-lite';
+import moment from 'moment-timezone';
 
 import { urlRegex } from '../../../util';
 
@@ -72,6 +73,10 @@ ajv.addFormat('year', {
 ajv.addFormat('tel', {
 	type: 'number',
 	validate: /^\+[a-z0-9]{1,49}$/i
+});
+ajv.addFormat('tz', {
+	type: 'string',
+	validate: val => moment.tz.names().includes(val)
 });
 ajv.addFormat('safe-uri', {
 	type: 'string',
