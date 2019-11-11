@@ -2,6 +2,8 @@ import express from 'express';
 
 import { bindMethod } from '../../..';
 
+import { init as route$$instanceId } from './$instanceId';
+
 import method$get from './get';
 import method$post from './post';
 
@@ -11,6 +13,8 @@ import method$post from './post';
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
+
+	router.use('/:instanceId(\\d+)', route$$instanceId());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'post', method$post);

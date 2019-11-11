@@ -76,7 +76,7 @@ export default {
 			.where('id', req.params.congressId)
 			.first('org');
 		if (!orgData) { return res.sendStatus(404); }
-		if (!req.hasPermission('congress_instances.read.' + orgData.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('congress_instances.create.' + orgData.org)) { return res.sendStatus(403); }
 
 		const data = {
 			...req.body,
