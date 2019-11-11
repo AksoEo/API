@@ -1,12 +1,12 @@
-import QueryUtil from '../../../../../../../../lib/query-util';
-import CongressInstanceLocationResource from '../../../../../../../../lib/resources/congress-instance-location-resource';
+import QueryUtil from '../../../../../../../../../lib/query-util';
+import CongressInstanceLocationResource from '../../../../../../../../../lib/resources/congress-instance-location-resource';
 
-import { schema as parSchema } from './schema';
+import { schema as parSchema } from '../schema';
 
 const schema = {
 	...parSchema,
 	...{
-		query: 'collection',
+		query: 'resource',
 		body: null
 	}
 };
@@ -30,10 +30,15 @@ export default {
 			.leftJoin('congresses_instances_locations_internal', 'id', 'congresses_instances_locations_internal.congressInstanceLocationId')
 			.leftJoin('congresses_instances_locations_external', 'id', 'congresses_instances_locations_external.congressInstanceLocationId')
 			.leftJoin('congresses_instances_locations_external_rating', 'id', 'congresses_instances_locations_external_rating.congressInstanceLocationId')
-			.where('congressInstanceId', req.params.instanceId);
-		await QueryUtil.handleCollection({
-			req, res, schema, query, Res: CongressInstanceLocationResource,
-			passToCol: [[ req, schema ]]
-		});
+			.where({
+				congressInstanceId: req.params.instanceId,
+				id: req.params.locationId
+			});
+		QueryUtil.simpleResource(req, schema, query);
+
+		const row = await query;
+		if (!row) { return res.sendStatus(404); }
+		const obj = new CongressInstanceLocationResource(row, req, schema);
+		res.sendObj(obj);
 	}
 };

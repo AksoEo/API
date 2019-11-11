@@ -17,7 +17,8 @@ export const schema = {
 		'rating.rating': 'rating',
 		'rating.max': 'rating_max',
 		'rating.type': 'rating_type'
-	}
+	},
+	alwaysSelect: [ 'type' ]
 };
 
 export const icons = [
