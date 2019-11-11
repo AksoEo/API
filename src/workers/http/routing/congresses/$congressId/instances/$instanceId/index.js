@@ -3,6 +3,7 @@ import express from 'express';
 import { bindMethod } from '../../../..';
 
 import { init as route$location_tags } from './location_tags';
+import { init as route$locations } from './locations';
 
 import method$get from './get';
 import method$delete from './delete';
@@ -16,6 +17,7 @@ export function init () {
 	const router = new express.Router({ mergeParams: true });
 
 	router.use('/location_tags', route$location_tags());
+	router.use('/locations', route$locations());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);
