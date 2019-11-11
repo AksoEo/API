@@ -1643,7 +1643,7 @@ CREATE TABLE `congresses_instances_locationTags` (
   KEY `congressInstanceId` (`congressInstanceId`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `congresses_instances_locationTags_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1652,7 +1652,7 @@ CREATE TABLE `congresses_instances_locationTags` (
 
 LOCK TABLES `congresses_instances_locationTags` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locationTags` DISABLE KEYS */;
-INSERT INTO `congresses_instances_locationTags` VALUES (1,3,'Kongreso'),(2,3,'Urbo');
+INSERT INTO `congresses_instances_locationTags` VALUES (1,3,'Kongreso'),(2,3,'Urbo'),(3,3,'Alvenebloj');
 /*!40000 ALTER TABLE `congresses_instances_locationTags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2589,4 +2589,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 13:18:32
+-- Dump completed on 2019-11-11 13:22:04
