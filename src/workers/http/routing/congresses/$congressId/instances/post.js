@@ -1,4 +1,5 @@
 import path from 'path';
+import moment from 'moment-timezone';
 
 import latlonSchema from '../../../../lib/latlon-schema';
 
@@ -77,6 +78,11 @@ export default {
 			.first('org');
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.create.' + orgData.org)) { return res.sendStatus(403); }
+
+		// Manual data validation
+		if (moment(req.body.dateTo) < moment(req.body.dateFrom)) {
+			return res.type('text/plain').status(400).send('dateTo must be greater than or equal to dateFrom');
+		}
 
 		const data = {
 			...req.body,

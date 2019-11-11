@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 import latlonSchema from '../../../../../lib/latlon-schema';
 
 export default {
@@ -71,17 +73,28 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
 
+		// Obtain existing data for data validation
+		const data = await AKSO.db('congresses_instances')
+			.first('dateFrom')
+			.where({
+				congressId: req.params.congressId,
+				id: req.params.instanceId
+			});
+		if (!data) { return res.sendStatus(404); }
+
+		const dateFrom = req.body.dateFrom || data.dateFrom;
+		if (req.body.dateTo && moment(req.body.dateTo) < moment(dateFrom)) {
+			return res.type('text/plain').status(400).send('dateTo must be greater than or equal to dateFrom');
+		}
+
 		if (req.body.locationCoords) {
 			req.body.locationCoords = AKSO.db.raw('POINT(?, ?)', req.body.locationCoords);
 		}
 
-		const updated = await AKSO.db('congresses_instances')
-			.where({
-				congressId: req.params.congressId,
-				id: req.params.instanceId
-			})
+		await AKSO.db('congresses_instances')
+			.where('id', req.params.instanceId)
 			.update(req.body);
 
-		res.sendStatus(updated ? 204 : 404);
+		res.sendStatus(204);
 	}
 };
