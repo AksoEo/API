@@ -6,6 +6,7 @@ import SimpleResource from './simple-resource';
 class CongressInstanceLocationResource extends SimpleResource {
 	constructor (obj, req, schema) {
 		super(obj);
+		const fields = [...(req.query.fields || schema.defaultFields)];
 
 		if (obj.ll) {
 			obj.ll = [
@@ -14,19 +15,15 @@ class CongressInstanceLocationResource extends SimpleResource {
 			];
 		}
 
-		if ('rating' in obj) { obj.rating = parseFloat(obj.rating, 10); }
-
-		if (obj.rating !== null && obj.rating_max !== null && obj.rating_type !== null) {
+		if (fields.includes('rating.rating')) { obj.rating = parseFloat(obj.rating, 10); }
+		if (fields.includes('rating.rating') || fields.includes('rating.max') || fields.includes('rating.type')) {
 			obj.rating = {
 				rating: obj.rating,
 				max: obj.rating_max,
 				type: obj.rating_type
 			};
-		} else {
-			delete obj.rating;
+			fields.push('rating');
 		}
-		delete obj.rating_max;
-		delete obj.rating_type;
 
 		if (obj.type === 'external') {
 			delete obj.externalLoc;
@@ -36,10 +33,7 @@ class CongressInstanceLocationResource extends SimpleResource {
 			delete obj.icon;
 		}
 
-		const fields = req.query.fields || schema.defaultFields;
-		if (!fields.includes('type')) {
-			delete obj.type;
-		}
+		this.removeUnnecessary(fields);
 	}
 }
 
