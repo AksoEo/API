@@ -1,7 +1,7 @@
 import QueryUtil from '../../../../../lib/query-util';
 import CountryGroupResource from '../../../../../lib/resources/country-group-resource';
 
-import parSchema from '../schema';
+import { schema as parSchema, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -16,14 +16,13 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('countries_groups')
-			.leftJoin('countries_groups_members', 'code', 'group_code')
-			.groupBy('code');
+			.where('code', req.params.group);
 
 		QueryUtil.simpleResource(req, schema, query);
-		query.where('code', req.params.group);
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new CountryGroupResource(row);
+		await new Promise(resolve => afterQuery([row], resolve));
+		const obj = new CountryGroupResource(row, req, schema);
 		res.sendObj(obj);
 	}
 };
