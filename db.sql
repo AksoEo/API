@@ -1652,7 +1652,7 @@ CREATE TABLE `congresses_instances_locationTags` (
 
 LOCK TABLES `congresses_instances_locationTags` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locationTags` DISABLE KEYS */;
-INSERT INTO `congresses_instances_locationTags` VALUES (1,3,'Kongreso'),(2,3,'Urbo'),(3,3,'Alvenebloj');
+INSERT INTO `congresses_instances_locationTags` VALUES (1,3,'Kongreso'),(2,3,'Urbo'),(3,3,'Alveno');
 /*!40000 ALTER TABLE `congresses_instances_locationTags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1674,8 +1674,9 @@ CREATE TABLE `congresses_instances_locations` (
   KEY `type` (`type`),
   KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
-  FULLTEXT KEY `name_2` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `congresses_instances_locations_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1684,6 +1685,7 @@ CREATE TABLE `congresses_instances_locations` (
 
 LOCK TABLES `congresses_instances_locations` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations` DISABLE KEYS */;
+INSERT INTO `congresses_instances_locations` VALUES (1,3,'external','Kongresejo',NULL),(2,3,'internal','Manƒùejo','Kie oni manƒùas'),(3,3,'internal','Akceptejo',NULL),(4,3,'external','Amsterdamo Flughaveno','La plej granda flughaveno en Nederlando estas Schiphol (AMS)');
 /*!40000 ALTER TABLE `congresses_instances_locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1699,10 +1701,10 @@ CREATE TABLE `congresses_instances_locations_external` (
   `address` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ll` point NOT NULL,
   `icon` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'GENERIC',
-  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  PRIMARY KEY (`congressInstanceLocationId`),
   KEY `ll` (`ll`(25)),
   CONSTRAINT `congresses_instances_locations_external_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1711,6 +1713,7 @@ CREATE TABLE `congresses_instances_locations_external` (
 
 LOCK TABLES `congresses_instances_locations_external` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations_external` DISABLE KEYS */;
+INSERT INTO `congresses_instances_locations_external` VALUES (1,'De Hoof 18\n5712 LM Someren',_binary '\0\0\0\0\0\0\0∑\ÔQΩ∞I@6[y\…ˇ\ƒ@','STAR'),(4,'Evert van de Beekstraat 202, 1118 CP Schiphol, Nederlando',_binary '\0\0\0\0\0\0\0g◊Ωâ\'J@€âíêH@','AIRPORT');
 /*!40000 ALTER TABLE `congresses_instances_locations_external` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1724,9 +1727,9 @@ DROP TABLE IF EXISTS `congresses_instances_locations_external_rating`;
 CREATE TABLE `congresses_instances_locations_external_rating` (
   `congressInstanceLocationId` int(10) unsigned NOT NULL,
   `rating` decimal(4,2) NOT NULL,
-  `max` tinyint(3) unsigned NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  `rating_max` tinyint(3) unsigned NOT NULL,
+  `rating_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`congressInstanceLocationId`),
   CONSTRAINT `congresses_instances_locations_external_rating_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations_external` (`congressInstanceLocationId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1737,6 +1740,7 @@ CREATE TABLE `congresses_instances_locations_external_rating` (
 
 LOCK TABLES `congresses_instances_locations_external_rating` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations_external_rating` DISABLE KEYS */;
+INSERT INTO `congresses_instances_locations_external_rating` VALUES (1,1.50,5,'stars'),(4,5.00,5,'hearts');
 /*!40000 ALTER TABLE `congresses_instances_locations_external_rating` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1750,7 +1754,7 @@ DROP TABLE IF EXISTS `congresses_instances_locations_internal`;
 CREATE TABLE `congresses_instances_locations_internal` (
   `congressInstanceLocationId` int(10) unsigned NOT NULL,
   `externalLoc` int(10) unsigned DEFAULT NULL,
-  KEY `congressInstanceLocationId` (`congressInstanceLocationId`),
+  PRIMARY KEY (`congressInstanceLocationId`),
   KEY `externalLoc` (`externalLoc`),
   CONSTRAINT `congresses_instances_locations_internal_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `congresses_instances_locations_internal_ibfk_2` FOREIGN KEY (`externalLoc`) REFERENCES `congresses_instances_locations_external` (`congressInstanceLocationId`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -1763,6 +1767,7 @@ CREATE TABLE `congresses_instances_locations_internal` (
 
 LOCK TABLES `congresses_instances_locations_internal` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations_internal` DISABLE KEYS */;
+INSERT INTO `congresses_instances_locations_internal` VALUES (2,1),(3,1);
 /*!40000 ALTER TABLE `congresses_instances_locations_internal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2589,4 +2594,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 13:22:04
+-- Dump completed on 2019-11-11 14:25:01

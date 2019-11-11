@@ -1,4 +1,4 @@
-export default {
+export const schema = {
 	defaultFields: [ 'id' ],
 	fields: {
 		id: 'f',
@@ -19,3 +19,13 @@ export default {
 		'rating.type': 'rating_type'
 	}
 };
+
+export const icons = [
+	'GENERIC', 'STAR', 'BUS', 'TRAIN', 'AIRPORT', 'TAXI', 'METRO', 'TRAM',
+	'FERRY', 'BIKE_RENTAL', 'PARKING', 'GAS_STATION', 'ATM', 'HOSPITAL',
+	'PHARMACY', 'PRINT_SHOP', 'MALL', 'LAUNDY_SERVICE', 'POST_OFFICE',
+	'TOURIST_INFORMATION', 'POLICE', 'RESTAURANT', 'FAST_FOOD', 'CAFE', 'BAR',
+	'GROCERY_STORE', 'CONVENIENCE_STORE', 'STORE', 'MUSEUM', 'MOVIE_THEATER',
+	'THEATER', 'CULTURAL_CENTER', 'LIBRARY', 'POINT_OF_INTEREST', 'HOTEL',
+	'HOSTEL'
+];

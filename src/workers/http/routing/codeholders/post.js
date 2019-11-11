@@ -95,7 +95,7 @@ const schema = {
 				{ // HumanCodeholder
 					$merge: {
 						source: { $ref: '#/definitions/Codeholder' },
-						with: { // HumanCodeholder
+						with: {
 							type: 'object',
 							properties: {
 								newCode: {
@@ -149,7 +149,7 @@ const schema = {
 				{ // OrgCodeholder
 					$merge: {
 						source: { $ref: '#/definitions/Codeholder' },
-						with: { // OrgCodeholder
+						with: {
 							type: 'object',
 							properties: {
 								newCode: {

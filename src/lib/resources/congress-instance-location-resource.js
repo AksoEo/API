@@ -14,7 +14,15 @@ class CongressInstanceLocationResource extends SimpleResource {
 			];
 		}
 
-		if (obj.rating) { obj.rating = parseFloat(obj.rating, 10); }
+		if ('rating' in obj) { obj.rating = parseFloat(obj.rating, 10); }
+
+		if ('rating' in obj || 'rating_max' in obj || 'rating_type' in obj) {
+			obj.rating = {
+				rating: obj.rating,
+				max: obj.rating_max,
+				type: obj.rating_type
+			};
+		}
 	}
 }
 

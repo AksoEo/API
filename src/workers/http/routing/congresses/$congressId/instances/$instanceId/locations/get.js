@@ -1,7 +1,7 @@
 import QueryUtil from '../../../../../../../../lib/query-util';
 import CongressInstanceLocationResource from '../../../../../../../../lib/resources/congress-instance-location-resource';
 
-import parSchema from './schema';
+import { schema as parSchema } from './schema';
 
 const schema = {
 	...parSchema,
