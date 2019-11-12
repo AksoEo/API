@@ -1814,7 +1814,7 @@ CREATE TABLE `congresses_instances_programTags` (
   KEY `congressInstanceId` (`congressInstanceId`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `congresses_instances_programTags_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1823,6 +1823,7 @@ CREATE TABLE `congresses_instances_programTags` (
 
 LOCK TABLES `congresses_instances_programTags` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_programTags` DISABLE KEYS */;
+INSERT INTO `congresses_instances_programTags` VALUES (1,3,'Por novuloj');
 /*!40000 ALTER TABLE `congresses_instances_programTags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2595,4 +2596,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 14:58:16
+-- Dump completed on 2019-11-12 15:47:33
