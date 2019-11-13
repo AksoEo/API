@@ -19,7 +19,14 @@ const compileSrc = function (source) {
 				plugins: [
 					"@babel/transform-async-to-generator",
 					"@babel/plugin-proposal-export-namespace-from",
-					"@babel/plugin-syntax-bigint"
+					"@babel/plugin-syntax-bigint",
+					[
+						"module-resolver", {
+							"alias": {
+								"akso": "./dist"
+							}
+						}
+					]
 				]
 			}))
 		.pipe(sourcemaps.write('.'))

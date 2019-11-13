@@ -1,4 +1,4 @@
-import { schema as parSchema, memberFilter } from '../../../../codeholders/schema';
+import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { schema as codeholderSchema, memberFilter, memberFieldsManual } from '../../schema';
+import { schema as codeholderSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 import parSchema from './schema';
 
 const schema = {

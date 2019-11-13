@@ -1,7 +1,7 @@
-import QueryUtil from '../../../../../../lib/query-util';
-import CodeholderResource from '../../../../../../lib/resources/codeholder-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 
-import { schema as parSchema, memberFilter, memberFields, afterQuery } from '../../../codeholders/schema';
+import { schema as parSchema, memberFilter, memberFields, afterQuery } from 'akso/workers/http/routing/codeholders/schema';
 
 const schema = {
 	...parSchema,

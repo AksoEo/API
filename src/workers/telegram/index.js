@@ -6,8 +6,8 @@ import msgpack from 'msgpack-lite';
 import PQueue from 'p-queue';
 const nodeFs = require('fs').promises;
 
-import { renderTemplate } from '../../util';
-import AKSOOrganization from '../../lib/enums/akso-organization';
+import { renderTemplate } from 'akso/util';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 let telegraf;
 const queue = new PQueue({

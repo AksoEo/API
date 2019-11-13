@@ -1,8 +1,8 @@
 import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
 
-import * as AKSOMail from '../../../../../mail';
-import AKSOOrganization from '../../../../../lib/enums/akso-organization';
+import * as AKSOMail from 'akso/mail';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 export default {
 	schema: {

@@ -12,7 +12,7 @@ import bytesUtil from 'bytes';
 import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
-import { urlRegex } from '../../../util';
+import { urlRegex } from 'akso/util';
 
 import { init as route$admin_groups } from './admin_groups';
 import { init as route$auth } from './auth';

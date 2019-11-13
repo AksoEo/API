@@ -1,6 +1,6 @@
-import QueryUtil from '../../../../../../../../../../lib/query-util';
+import QueryUtil from 'akso/lib/query-util';
 
-import parSchema from '../../../location_tags/schema';
+import parSchema from 'akso/workers/http/routing/congresses/$congressId/instances/$instanceId/location_tags/schema';
 
 const schema = {
 	...parSchema,

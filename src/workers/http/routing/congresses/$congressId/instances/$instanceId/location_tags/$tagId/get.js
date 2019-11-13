@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../../../lib/query-util';
-import SimpleResource from '../../../../../../../../../lib/resources/simple-resource';
+import QueryUtil from 'akso/lib/query-util';
+import SimpleResource from 'akso/lib/resources/simple-resource';
 
 import parSchema from '../schema';
 

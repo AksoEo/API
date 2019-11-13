@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment-timezone';
 
-import { schema as parSchema, memberFilter, memberFieldsManual } from '../../schema';
+import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {

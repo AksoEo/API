@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../lib/query-util';
-import AKSOOrganization from '../../../../lib/enums/akso-organization';
+import QueryUtil from 'akso/lib/query-util';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 import parSchema from './schema';
 

@@ -1,6 +1,6 @@
-import QueryUtil from '../../../../lib/query-util';
-import VoteResource from '../../../../lib/resources/vote-resource';
-import AKSOOrganization from '../../../../lib/enums/akso-organization';
+import QueryUtil from 'akso/lib/query-util';
+import VoteResource from 'akso/lib/resources/vote-resource';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 import { schema as parSchema }  from './schema';
 

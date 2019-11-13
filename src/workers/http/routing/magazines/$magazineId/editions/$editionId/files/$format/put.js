@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import { insertAsInsertIgnore } from '../../../../../../../../../util';
+import { insertAsInsertIgnore } from 'akso/util';
 
 export default {
 	schema: {

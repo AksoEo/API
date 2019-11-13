@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../lib/query-util';
-import CodeholderVoteResource from '../../../../../../lib/resources/codeholder-vote-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CodeholderVoteResource from 'akso/lib/resources/codeholder-vote-resource';
 
 import parSchema from './schema';
 

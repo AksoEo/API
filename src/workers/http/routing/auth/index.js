@@ -1,7 +1,7 @@
 import express from 'express';
 import slowDown from 'express-slow-down';
 
-import { bindMethod } from '..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import { init as route$totp } from './totp';
 

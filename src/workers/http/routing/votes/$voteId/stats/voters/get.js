@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../lib/query-util';
-import VoterResource from '../../../../../../../lib/resources/voter-resource';
+import QueryUtil from 'akso/lib/query-util';
+import VoterResource from 'akso/lib/resources/voter-resource';
 
 import parSchema  from './schema';
 

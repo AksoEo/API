@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import { schema as parSchema, memberFilter, memberFieldsManual, profilePictureSizes } from '../../../schema';
+import { schema as parSchema, memberFilter, memberFieldsManual, profilePictureSizes } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {

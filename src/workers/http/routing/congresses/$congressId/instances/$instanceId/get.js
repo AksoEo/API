@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../lib/query-util';
-import CongressInstanceResource from '../../../../../../../lib/resources/congress-instance-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CongressInstanceResource from 'akso/lib/resources/congress-instance-resource';
 
 import parSchema from '../schema';
 

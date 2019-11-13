@@ -1,5 +1,5 @@
-import { schema as parSchema, memberFilter, memberFieldsManual } from '../../schema';
-import { modQuerySchema, setProfilePicture } from '../../../../lib/codeholder-utils';
+import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import { modQuerySchema, setProfilePicture } from 'akso/workers/http/lib/codeholder-utils';
 
 const mimeTypes = [
 	'image/jpeg',

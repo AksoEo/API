@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { bindMethod } from '../..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import operation$create_new_secret from './!create_new_secret';
 

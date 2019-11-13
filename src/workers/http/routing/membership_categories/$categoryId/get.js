@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../lib/query-util';
-import MembershipCategoryResource from '../../../../../lib/resources/membership-category-resource';
+import QueryUtil from 'akso/lib/query-util';
+import MembershipCategoryResource from 'akso/lib/resources/membership-category-resource';
 
 import parSchema from '../schema';
 

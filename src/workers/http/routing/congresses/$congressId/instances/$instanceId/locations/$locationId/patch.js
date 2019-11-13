@@ -1,4 +1,4 @@
-import latlonSchema from '../../../../../../../lib/latlon-schema';
+import latlonSchema from 'akso/workers/http/lib/latlon-schema';
 import { icons } from '../schema';
 
 export default {

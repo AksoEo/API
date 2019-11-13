@@ -1,4 +1,4 @@
-import { insertAsInsertIgnore } from '../../../../../../../../../../../util';
+import { insertAsInsertIgnore } from 'akso/util';
 
 export default {
 	schema: {},

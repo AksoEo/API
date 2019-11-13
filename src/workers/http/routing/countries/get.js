@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../lib/query-util';
-import CountryResource from '../../../../lib/resources/country-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CountryResource from 'akso/lib/resources/country-resource';
 
 import parSchema from './schema';
 

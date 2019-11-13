@@ -1,6 +1,6 @@
-import QueryUtil from '../../../../../../lib/query-util';
+import QueryUtil from 'akso/lib/query-util';
 
-import parSchema from '../../../clients/schema';
+import parSchema from 'akso/workers/http/routing/clients/schema';
 
 const schema = {
 	...parSchema,

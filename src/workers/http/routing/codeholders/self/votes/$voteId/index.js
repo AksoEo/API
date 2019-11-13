@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { bindMethod } from '../../../..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import { init as route$ballot } from './ballot';
 import { init as route$result } from './result';

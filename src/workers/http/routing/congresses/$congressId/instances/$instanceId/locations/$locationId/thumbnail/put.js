@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import * as Canvas from 'canvas';
 
-import { cropImgToSizes } from '../../../../../../../../lib/canvas-utils';
+import { cropImgToSizes } from 'akso/workers/http/lib/canvas-utils';
 
 import { thumbnailSizes } from './schema';
 

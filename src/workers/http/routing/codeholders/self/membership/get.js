@@ -1,8 +1,8 @@
-import QueryUtil from '../../../../../../lib/query-util';
-import CodeholderMembershipResource from '../../../../../../lib/resources/codeholder-membership-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CodeholderMembershipResource from 'akso/lib/resources/codeholder-membership-resource';
 
-import { memberFieldsManual } from '../../schema';
-import parSchema from '../../$codeholderId/membership/schema';
+import { memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import parSchema from 'akso/workers/http/routing/codeholders/$codeholderId/membership/schema';
 
 const schema = {
 	...parSchema,

@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../../lib/query-util';
-import BallotResource from '../../../../../../../../lib/resources/ballot-resource';
+import QueryUtil from 'akso/lib/query-util';
+import BallotResource from 'akso/lib/resources/ballot-resource';
 
 import parSchema from './schema';
 

@@ -1,8 +1,8 @@
 import moment from 'moment-timezone';
 import { default as merge } from 'deepmerge';
 
-import QueryUtil from '../../../../lib/query-util';
-import AKSOOrganization from '../../../../lib/enums/akso-organization';
+import QueryUtil from 'akso/lib/query-util';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 import { schema as codeholderSchema } from '../codeholders/schema';
 

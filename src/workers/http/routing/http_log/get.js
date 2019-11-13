@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../lib/query-util';
-import HttpLogResource from '../../../../lib/resources/http-log-resource';
+import QueryUtil from 'akso/lib/query-util';
+import HttpLogResource from 'akso/lib/resources/http-log-resource';
 
 const schema = {
 	query: 'collection',

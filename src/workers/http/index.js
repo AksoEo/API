@@ -14,7 +14,7 @@ import ipaddr from 'ipaddr.js';
 import rateLimit from 'express-rate-limit';
 import useragent from 'useragent';
 
-import { replaceObject } from '../../util';
+import { replaceObject } from 'akso/util';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';

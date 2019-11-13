@@ -1,5 +1,5 @@
-import STV from '../../../../lib/votes/stv';
-import RP from '../../../../lib/votes/rp';
+import STV from 'akso/lib/votes/stv';
+import RP from 'akso/lib/votes/rp';
 
 const arrRange = (start, end) => Array.from({ length: (end - start + 1) }, (v, k) => k + start);
 const CAND_SYMB = String.fromCharCode(

@@ -1,6 +1,6 @@
-import QueryUtil from '../../../../../../lib/query-util';
+import QueryUtil from 'akso/lib/query-util';
 
-import { schema as parSchema, memberFilter, memberFieldsManual } from '../../schema';
+import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
 const schema = {
 	query: 'collection',

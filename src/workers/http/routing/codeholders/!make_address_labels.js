@@ -4,7 +4,7 @@ import tmp from 'tmp-promise';
 import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
-import QueryUtil from '../../../../lib/query-util';
+import QueryUtil from 'akso/lib/query-util';
 
 import { schema as parSchema, memberFieldsManual } from './schema';
 

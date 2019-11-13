@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { bindMethod } from '../..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import { init as route$files } from './files';
 import { init as route$hist } from './hist';

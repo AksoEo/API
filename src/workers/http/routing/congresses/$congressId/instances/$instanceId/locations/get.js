@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../../lib/query-util';
-import CongressInstanceLocationResource from '../../../../../../../../lib/resources/congress-instance-location-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CongressInstanceLocationResource from 'akso/lib/resources/congress-instance-location-resource';
 
 import { schema as parSchema } from './schema';
 

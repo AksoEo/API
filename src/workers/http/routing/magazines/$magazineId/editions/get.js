@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../lib/query-util';
-import MagazineEditionResource from '../../../../../../lib/resources/magazine-edition-resource';
+import QueryUtil from 'akso/lib/query-util';
+import MagazineEditionResource from 'akso/lib/resources/magazine-edition-resource';
 
 import parSchema from './schema';
 

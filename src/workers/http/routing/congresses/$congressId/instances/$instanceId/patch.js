@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import latlonSchema from '../../../../../lib/latlon-schema';
+import latlonSchema from 'akso/workers/http/lib/latlon-schema';
 
 export default {
 	schema: {

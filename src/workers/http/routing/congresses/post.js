@@ -1,6 +1,6 @@
 import path from 'path';
 
-import AKSOOrganization from '../../../../lib/enums/akso-organization';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 export default {
 	schema: {

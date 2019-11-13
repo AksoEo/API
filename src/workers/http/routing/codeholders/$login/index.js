@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { bindMethod } from '../..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import operation$create_password from './!create_password';
 import operation$create_password_use from './!create_password_use';

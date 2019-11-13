@@ -1,4 +1,4 @@
-import QueryUtil from '../../../../../../../../lib/query-util';
+import QueryUtil from 'akso/lib/query-util';
 
 import { schema as parSchema } from '../locations/schema';
 

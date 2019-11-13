@@ -6,11 +6,11 @@ import PDFDocument from 'pdfkit';
 import tmp from 'tmp-promise';
 const nodeFs = require('fs').promises;
 
-import * as AKSOMail from '../../mail';
-import * as AKSONotif from '../../notif';
-import QueryUtil from '../../lib/query-util';
+import * as AKSOMail from 'akso/mail';
+import * as AKSONotif from 'akso/notif';
+import QueryUtil from 'akso/lib/query-util';
 
-import { schema as parSchema, memberFilter } from '../../workers/http/routing/codeholders/schema';
+import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 const schema = {
 	...parSchema,

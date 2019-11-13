@@ -6,7 +6,7 @@ import ipaddr from 'ipaddr.js';
 import crypto from 'pn/crypto';
 import * as latlon from 'latlon-formatter';
 
-import * as AKSONotif from '../../../../notif';
+import * as AKSONotif from 'akso/notif';
 
 export default {
 	schema: {

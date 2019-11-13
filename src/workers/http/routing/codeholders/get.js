@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../lib/query-util';
-import CodeholderResource from '../../../../lib/resources/codeholder-resource';
+import QueryUtil from 'akso/lib/query-util';
+import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 
 import { schema as parSchema, memberFilter, memberFields, afterQuery } from './schema';
 

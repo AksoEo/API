@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { bindMethod } from '../../../..';
+import { bindMethod } from 'akso/workers/http/routing';
 
 import { init as route$location_tags } from './location_tags';
 import { init as route$locations } from './locations';

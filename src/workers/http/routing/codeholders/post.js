@@ -2,7 +2,7 @@ import path from 'path';
 import AddressFormat from 'google-i18n-address';
 import moment from 'moment-timezone';
 
-import { createTransaction, rollbackTransaction } from '../../../../util';
+import { createTransaction, rollbackTransaction } from 'akso/util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
 
 const codeholderRequiredProps = [ 'newCode', 'codeholderType' ];

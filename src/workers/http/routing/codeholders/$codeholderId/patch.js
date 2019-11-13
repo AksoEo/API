@@ -1,10 +1,10 @@
 import moment from 'moment';
 import AddressFormat from 'google-i18n-address';
 
-import { createTransaction, rollbackTransaction, insertAsReplace } from '../../../../../util';
-import { modQuerySchema } from '../../../lib/codeholder-utils';
-import * as AKSONotif from '../../../../../notif';
-import * as AKSOMail from '../../../../../mail';
+import { createTransaction, rollbackTransaction, insertAsReplace } from 'akso/util';
+import { modQuerySchema } from 'akso/workers/http/lib/codeholder-utils';
+import * as AKSONotif from 'akso/notif';
+import * as AKSOMail from 'akso/mail';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from '../schema';
 

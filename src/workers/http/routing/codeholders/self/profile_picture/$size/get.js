@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import { memberFieldsManual, profilePictureSizes } from '../../../schema';
+import { memberFieldsManual, profilePictureSizes } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {

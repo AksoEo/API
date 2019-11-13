@@ -1,6 +1,6 @@
 import AddressFormat from 'google-i18n-address';
 
-import { schema as parSchema, memberFilter, memberFieldsManual } from '../../../schema';
+import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
 const schema = {
 	...parSchema,

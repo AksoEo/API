@@ -1,7 +1,7 @@
 import fs from 'pn/fs';
 import path from 'path';
 
-import { schema as parSchema, memberFilter, memberFieldsManual } from '../../../schema';
+import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
 const schema = {
 	query: null,

@@ -1,5 +1,5 @@
-import QueryUtil from '../../../../../../../../../../lib/query-util';
-import MagazineRecitationFileMetadataResource from '../../../../../../../../../../lib/resources/magazine-recitation-file-metadata-resource';
+import QueryUtil from 'akso/lib/query-util';
+import MagazineRecitationFileMetadataResource from 'akso/lib/resources/magazine-recitation-file-metadata-resource';
 
 import { schema as parSchema, afterQuery } from './schema';
 
