@@ -1852,8 +1852,8 @@ CREATE TABLE `congresses_instances_programs` (
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `title_2` (`title`),
   CONSTRAINT `congresses_instances_programs_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `congresses_instances_programs_ibfk_2` FOREIGN KEY (`location`) REFERENCES `congresses_instances_locations` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `congresses_instances_programs_ibfk_2` FOREIGN KEY (`location`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1862,6 +1862,7 @@ CREATE TABLE `congresses_instances_programs` (
 
 LOCK TABLES `congresses_instances_programs` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_programs` DISABLE KEYS */;
+INSERT INTO `congresses_instances_programs` VALUES (3,3,'Interkona vespero','Konatiĝu kun ĉiuj la aliaj partoprenantoj!',NULL,1594490400,1594495800,2),(4,3,'Vespermanĝo','Plenigu viajn stomakojn je bongusta nederlanda terpomaĵo',NULL,1594479600,1594483200,3);
 /*!40000 ALTER TABLE `congresses_instances_programs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2596,4 +2597,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-12 15:47:33
+-- Dump completed on 2019-11-13 10:35:56

@@ -6,6 +6,7 @@ import { init as route$location_tags } from './location_tags';
 import { init as route$locations } from './locations';
 import { init as route$map } from './map';
 import { init as route$program_tags } from './program_tags';
+import { init as route$programs } from './programs';
 
 import method$get from './get';
 import method$delete from './delete';
@@ -22,6 +23,7 @@ export function init () {
 	router.use('/locations', route$locations());
 	router.use('/map', route$map());
 	router.use('/program_tags', route$program_tags());
+	router.use('/programs', route$programs());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);

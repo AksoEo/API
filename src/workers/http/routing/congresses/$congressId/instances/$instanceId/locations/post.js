@@ -124,7 +124,7 @@ export default {
 		if (req.body.rating && req.body.rating.rating > req.body.rating.max) {
 			return res.type('text/plain').status(400).send('rating.rating must not exceed rating.max');
 		}
-		if (req.body.externalLoc) {
+		if ('externalLoc' in req.body) {
 			const exists = await AKSO.db('congresses_instances_locations')
 				.first(1)
 				.where({
