@@ -40,7 +40,7 @@ function scheduleTimer (wait = 500) {
 }
 
 async function timer () {
-	const scheduleDir = path.join(AKSO.conf.dataDir, 'address_label_orders');
+	const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
 	const dir = await nodeFs.opendir(scheduleDir);
 	let entry;
 	do {

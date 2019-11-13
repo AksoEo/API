@@ -62,7 +62,7 @@ export async function renderSendEmail ({
 	msgData = {}
 } = {}) {
 	const notifsDir = path.join(AKSO.dir, 'notifs');
-	const scheduleDir = path.join(AKSO.conf.dataDir, 'notifs_mail');
+	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
 
 	if (typeof to !== 'undefined') {
 		if (!Array.isArray(to)) { to = [to]; }

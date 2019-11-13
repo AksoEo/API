@@ -25,7 +25,7 @@ function scheduleTimer (wait = 500) {
 }
 
 async function timer () {
-	const scheduleDir = path.join(AKSO.conf.dataDir, 'notifs_mail');
+	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
 	const dir = await nodeFs.opendir(scheduleDir);
 	let entry;
 	do {

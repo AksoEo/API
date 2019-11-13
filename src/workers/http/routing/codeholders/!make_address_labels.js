@@ -163,7 +163,7 @@ export default {
 			user: req.user.isUser() ? req.user.user : null
 		};
 
-		const scheduleDir = path.join(AKSO.conf.dataDir, 'address_label_orders');
+		const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
 		const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
 		await fs.writeFile(tmpName, msgpack.encode(order, { codec: AKSO.msgpack }));
 		const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'label-' + moment().unix() });

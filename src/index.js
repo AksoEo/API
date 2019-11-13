@@ -62,6 +62,7 @@ async function init () {
 			prodMode: process.env.NODE_ENV || 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex'),
 			dataDir: process.env.AKSO_DATA_DIR,
+			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
 				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0'
 		},
@@ -145,15 +146,22 @@ async function init () {
 		AKSO.log.error('AKSO_DATA_DIR must be a directory');
 		process.exit(1);
 	}
+	if (!AKSO.conf.stateDir) {
+		AKSO.log.error('Missing AKSO_STATE_DIR');
+		process.exit(1);
+	} else if (!fs.statSync(AKSO.conf.stateDir).isDirectory()) {
+		AKSO.log.error('AKSO_STATE_DIR must be a directory');
+		process.exit(1);
+	}
 
 	if (cluster.isMaster) {
 		// Set up subdirs in data dir
 		AKSO.log.info('Setting up data dirs');
 		await Promise.all([
 			// State machines
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'notifs_telegram')),
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'notifs_mail')),
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'address_label_orders')),
+			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_telegram')),
+			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_mail')),
+			fs.ensureDir(path.join(AKSO.conf.stateDir, 'address_label_orders')),
 
 			// Resources
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files')),

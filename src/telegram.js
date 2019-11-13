@@ -9,7 +9,7 @@ import moment from 'moment-timezone';
  * @param {Object} options See `src/workers/telegram/index.js#sendNotification`
  */
 export async function sendNotification (options) {
-	const scheduleDir = path.join(AKSO.conf.dataDir, 'notifs_telegram');
+	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_telegram');
 
 	const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
 	await fs.writeFile(tmpName, msgpack.encode(options, { codec: AKSO.msgpack }));
