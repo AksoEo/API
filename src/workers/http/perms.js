@@ -5,7 +5,8 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 	req.memberFields = {};
 	req.memberFilter = {};
 	req.permissions = [
-		'membership_categories.read'
+		'membership_categories.read',
+		'congresses.read.*'
 	];
 
 	req.ownMemberFields = {
