@@ -197,8 +197,19 @@ async function init () {
 
 	// Set up cluster
 	if (cluster.isMaster) {
+		const workers = {};
+		const workerPromises = {};
 		const summonWorker = function (type, num = 1) {
 			const worker = cluster.fork({ aksoClusterType: type, aksoClusterNum: num });
+			const id = `${type}-${num}`;
+			workers[id] = worker;
+			workerPromises[id] = new Promise(resolve => {
+				// Await ready
+				worker.on('message', msg => {
+					if (msg !== 'ready') { return; }
+					resolve();
+				});
+			});
 			// Cope with death
 			worker.on('exit', code => {
 				if (code !== 0) {
@@ -235,6 +246,11 @@ async function init () {
 		}
 
 		AKSO.log.info('AKSO master is ready (workers still loading)');
+
+		await Promise.all(Object.values(workerPromises));
+		setTimeout(function () {
+			AKSO.log.info('All workers are ready');
+		}, 10); // We do this on a timeout to let the last worker log first
 	} else {
 		switch (process.env.aksoClusterType) {
 		case 'http':
@@ -261,6 +277,7 @@ async function init () {
 			AKSO.log.error(`Unknown cluster type ${process.env.aksoClusterType}, exiting`);
 			process.exit(1);
 		}
+		process.send('ready');
 		AKSO.log.info(`${process.env.aksoClusterType} worker #${process.env.aksoClusterNum} is ready`);
 	}
 }
