@@ -1889,6 +1889,7 @@ CREATE TABLE `congresses_instances_programs_tags` (
 
 LOCK TABLES `congresses_instances_programs_tags` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_programs_tags` DISABLE KEYS */;
+INSERT INTO `congresses_instances_programs_tags` VALUES (3,1);
 /*!40000 ALTER TABLE `congresses_instances_programs_tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2597,4 +2598,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-13 10:35:56
+-- Dump completed on 2019-11-13 10:42:14
