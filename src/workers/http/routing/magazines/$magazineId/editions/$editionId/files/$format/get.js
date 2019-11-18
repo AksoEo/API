@@ -24,6 +24,8 @@ export default {
 		if (!await fs.exists(file)) { return res.sendStatus(404); }
 		res.sendFile(file);
 
+		if (req.method === 'HEAD') { return; }
+
 		// Bump the download count
 		await AKSO.db('magazines_editions_files')
 			.where({
