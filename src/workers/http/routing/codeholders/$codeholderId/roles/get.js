@@ -1,5 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
-import CodeholerRoleEntryResource from 'akso/lib/resources/codeholder-role-entry-resource';
+import CodeholderRoleEntryResource from 'akso/lib/resources/codeholder-role-entry-resource';
 
 import { schema as codeholderSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 import parSchema from './schema';
@@ -26,7 +26,7 @@ export default {
 			'roles'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
-			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
+			return res.status(403).type('text/plain').send('Missing permitted roles codeholder fields, check /perms');
 		}
 
 		// Ensure that the we can access the codeholder through the member filter
@@ -41,7 +41,7 @@ export default {
 			.where('codeholderId', req.params.codeholderId);
 
 		await QueryUtil.handleCollection({
-			req, res, schema, query, Res: CodeholerRoleEntryResource
+			req, res, schema, query, Res: CodeholderRoleEntryResource
 		});
 	}
 };
