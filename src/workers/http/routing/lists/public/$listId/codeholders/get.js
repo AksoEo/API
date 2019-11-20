@@ -115,7 +115,7 @@ export default {
 			}
 
 			if (obj.profilePictureHash) {
-				if (obj.profilePicturePublicity === 'private' || (obj.profilePicturePublicity === 'members' && !isMember)) {
+				if (obj.profilePicturePublicity === 'members' && !isMember) {
 					obj.profilePictureHash = null;
 				}
 			}
@@ -150,27 +150,39 @@ export default {
 				}
 			}
 
-			if (fields.includes('officePhoneFormatted')) {
-				if (obj.officePhone) {
-					obj.officePhoneFormatted = formatPhoneNumber(obj.officePhone);
-				} else {
-					obj.officePhoneFormatted = null;
+			if (obj.officePhonePublicity === 'private' || (obj.officePhonePublicity === 'members' && !isMember)) {
+				obj.officePhone = null;
+			} else {
+				if (fields.includes('officePhoneFormatted')) {
+					if (obj.officePhone) {
+						obj.officePhoneFormatted = formatPhoneNumber(obj.officePhone);
+					} else {
+						obj.officePhoneFormatted = null;
+					}
 				}
 			}
 
-			if (fields.includes('landlinePhoneFormatted')) {
-				if (obj.landlinePhone) {
-					obj.landlinePhoneFormatted = formatPhoneNumber(obj.landlinePhone);
-				} else {
-					obj.landlinePhoneFormatted = null;
+			if (obj.landlinePhonePublicity === 'private' || (obj.landlinePhonePublicity === 'members' && !isMember)) {
+				obj.landlinePhone = null;
+			} else {
+				if (fields.includes('landlinePhoneFormatted')) {
+					if (obj.landlinePhone) {
+						obj.landlinePhoneFormatted = formatPhoneNumber(obj.landlinePhone);
+					} else {
+						obj.landlinePhoneFormatted = null;
+					}
 				}
 			}
 
-			if (fields.includes('cellphoneFormatted')) {
-				if (obj.cellphone) {
-					obj.cellphoneFormatted = formatPhoneNumber(obj.cellphone);
-				} else {
-					obj.cellphoneFormatted = null;
+			if (obj.cellphonePublicity === 'private' || (obj.cellphonePublicity === 'members' && !isMember)) {
+				obj.cellphone = null;
+			} else {
+				if (fields.includes('cellphoneFormatted')) {
+					if (obj.cellphone) {
+						obj.cellphoneFormatted = formatPhoneNumber(obj.cellphone);
+					} else {
+						obj.cellphoneFormatted = null;
+					}
 				}
 			}
 
