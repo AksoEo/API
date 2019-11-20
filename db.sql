@@ -346,7 +346,7 @@ CREATE TABLE `codeholderRoles_codeholders` (
 
 LOCK TABLES `codeholderRoles_codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholderRoles_codeholders` DISABLE KEYS */;
-INSERT INTO `codeholderRoles_codeholders` VALUES (1,1571734894,NULL,14,2),(2,1571735719,NULL,1,2);
+INSERT INTO `codeholderRoles_codeholders` VALUES (1,1571734894,NULL,14,2),(2,1571735719,NULL,1,3);
 /*!40000 ALTER TABLE `codeholderRoles_codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2269,6 +2269,36 @@ LOCK TABLES `httpLog` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `lists`
+--
+
+DROP TABLE IF EXISTS `lists`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lists` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filters` json NOT NULL,
+  `memberFilter` json NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lists`
+--
+
+LOCK TABLES `lists` WRITE;
+/*!40000 ALTER TABLE `lists` DISABLE KEYS */;
+INSERT INTO `lists` VALUES (1,'Komitato (TEJO)','Ĉiuj Komitatanoj (A, B, C kaj Ĉ) de TEJO','[\"{\\\"$roles\\\":{\\\"roleId\\\":3,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":4,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":5,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":6,\\\"isActive\\\":true}}\"]','{}'),(2,'Komitato (UEA)','Ĉiuj Komitatanoj (A, B kaj C) de UEA','[\"{\\\"$roles\\\":{\\\"roleId\\\":11,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":12,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":13,\\\"isActive\\\":true}}\"]','{}');
+/*!40000 ALTER TABLE `lists` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `magazines`
 --
 
@@ -2846,4 +2876,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-20 13:27:11
+-- Dump completed on 2019-11-20 15:24:54
