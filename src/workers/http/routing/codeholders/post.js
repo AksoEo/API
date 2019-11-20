@@ -66,6 +66,10 @@ const schema = {
 							required: [ 'country' ],
 							additionalProperties: false
 						},
+						addressPublicity: {
+							type: 'string',
+							enum: [ 'private', 'public', 'members' ]
+						},
 						feeCountry: {
 							type: 'string',
 							pattern: '^[a-z]{2}$'
@@ -75,6 +79,10 @@ const schema = {
 							format: 'email',
 							minLength: 3,
 							maxLength: 200
+						},
+						emailPublicity: {
+							type: 'string',
+							enum: [ 'private', 'public', 'members' ]
 						},
 						enabled: {
 							type: 'boolean'
@@ -86,6 +94,24 @@ const schema = {
 						officePhone: {
 							type: 'string',
 							format: 'tel'
+						},
+						officePhonePublicity: {
+							type: 'string',
+							enum: [ 'private', 'public', 'members' ]
+						},
+						profilePicturePublicity: {
+							type: 'string',
+							enum: [ 'public', 'members' ]
+						},
+						website: {
+							type: 'string',
+							format: 'safe-uri',
+							maxLength: 50
+						},
+						biography: {
+							type: 'string',
+							minLength: 1,
+							maxLength: 2000
 						}
 					}
 				}
@@ -120,6 +146,10 @@ const schema = {
 									type: 'string',
 									pattern: '^[^\\n]{1,50}$'
 								},
+								lastNamePublicity: {
+									type: 'string',
+									enum: [ 'private', 'public', 'members' ]
+								},
 								honorific: {
 									type: 'string',
 									pattern: '^[^\\n]{2,15}$'
@@ -136,10 +166,18 @@ const schema = {
 									type: 'string',
 									format: 'tel'
 								},
+								landlinePhonePublicity: {
+									type: 'string',
+									enum: [ 'private', 'public', 'members' ]
+								},
 								cellphone: {
 									type: 'string',
 									format: 'tel'
-								}
+								},
+								cellphonePublicity: {
+									type: 'string',
+									enum: [ 'private', 'public', 'members' ]
+								},
 							},
 							required: codeholderRequiredProps.concat([ 'firstNameLegal' ]),
 							additionalProperties: false
@@ -173,11 +211,6 @@ const schema = {
 								nameAbbrev: {
 									type: 'string',
 									pattern: '^[^\\n]{1,12}$'
-								},
-								website: {
-									type: 'string',
-									format: 'safe-uri',
-									maxLength: 50
 								}
 							},
 							required: codeholderRequiredProps.concat([ 'fullName' ]),
@@ -259,11 +292,17 @@ export default {
 				codeholderType: req.body.codeholderType,
 				creationTime: moment().unix(),
 				newCode: req.body.newCode,
+				addressPublicity: req.body.addressPublicity,
 				email: req.body.email,
+				emailPublicity: req.body.emailPublicity,
 				enabled: req.body.enabled,
 				feeCountry: req.body.feeCountry,
 				notes: req.body.notes,
-				officePhone: req.body.officePhone
+				officePhone: req.body.officePhone,
+				officePhonePublicity: req.body.officePhonePublicity,
+				profilePicturePublicity: req.body.profilePicturePublicity,
+				website: req.body.website,
+				biography: req.body.biography
 			}))[0];
 
 		if (req.body.codeholderType === 'human') {
@@ -273,11 +312,14 @@ export default {
 				firstNameLegal: req.body.firstNameLegal,
 				lastName: req.body.lastName,
 				lastNameLegal: req.body.lastNameLegal,
+				lastNamePublicity: req.body.lastNamePublicity,
 				honorific: req.body.honorific,
 				birthdate: req.body.birthdate,
 				profession: req.body.profession,
 				landlinePhone: req.body.landlinePhone,
-				cellphone: req.body.cellphone
+				landlinePhonePublicity: req.body.landlinePhonePublicity,
+				cellphone: req.body.cellphone,
+				cellphonePublicity: req.body.cellphonePublicity
 			});
 		} else if (req.body.codeholderType === 'org') {
 			await trx('codeholders_org').insert({
@@ -285,8 +327,7 @@ export default {
 				fullName: req.body.fullName,
 				fullNameLocal: req.body.fullNameLocal,
 				careOf: req.body.careOf,
-				nameAbbrev: req.body.nameAbbrev,
-				website: req.body.website
+				nameAbbrev: req.body.nameAbbrev
 			});
 		}
 

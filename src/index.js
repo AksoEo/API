@@ -258,7 +258,7 @@ async function init () {
 		await Promise.all(Object.values(workerPromises));
 		setTimeout(function () {
 			AKSO.log.info('All workers are ready');
-		}, 10); // We do this on a timeout to let the last worker log first
+		}, 100); // We do this on a timeout to let the last worker log first
 	} else {
 		switch (process.env.aksoClusterType) {
 		case 'http':

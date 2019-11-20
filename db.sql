@@ -374,6 +374,12 @@ CREATE TABLE `codeholders` (
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
   `deathdate` date DEFAULT NULL,
   `profilePictureHash` binary(20) DEFAULT NULL,
+  `addressPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `emailPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `officePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `profilePicturePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
+  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `biography` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `newCode` (`newCode`) USING BTREE,
   UNIQUE KEY `email` (`email`) USING BTREE,
@@ -399,7 +405,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,NULL),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,NULL),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,NULL),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',NULL),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,NULL),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,NULL),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,NULL),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,NULL),(33,'human',1569580471,NULL,'petepe',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,NULL);
+INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','private','public',NULL,NULL),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','private','public',NULL,NULL),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',NULL,'private','private','private','public',NULL,NULL),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,NULL,'private','private','private','public',NULL,NULL),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(33,'human',1569580471,NULL,'petepe',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -524,7 +530,7 @@ CREATE TABLE `codeholders_hist_address` (
   FULLTEXT KEY `streetAddress_latin` (`address_streetAddress_latin`),
   FULLTEXT KEY `postalCode_latin` (`address_postalCode_latin`),
   CONSTRAINT `codeholders_hist_address_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `codeholders_hist_address_ibfk_2` FOREIGN KEY (`address_country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `codeholders_hist_address_ibfk_2` FOREIGN KEY (`address_country`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -535,6 +541,64 @@ CREATE TABLE `codeholders_hist_address` (
 LOCK TABLES `codeholders_hist_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_hist_address` DISABLE KEYS */;
 /*!40000 ALTER TABLE `codeholders_hist_address` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_addressPublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_addressPublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_addressPublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `addressPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_addressPublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_addressPublicity`
+--
+
+LOCK TABLES `codeholders_hist_addressPublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_addressPublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_addressPublicity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_biography`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_biography`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_biography` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `biography` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_biography_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_biography`
+--
+
+LOCK TABLES `codeholders_hist_biography` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_biography` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_biography` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -627,6 +691,35 @@ LOCK TABLES `codeholders_hist_cellphone` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_cellphonePublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_cellphonePublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_cellphonePublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `cellphonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_cellphonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_cellphonePublicity`
+--
+
+LOCK TABLES `codeholders_hist_cellphonePublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_cellphonePublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_cellphonePublicity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_deathdate`
 --
 
@@ -685,6 +778,35 @@ CREATE TABLE `codeholders_hist_email` (
 LOCK TABLES `codeholders_hist_email` WRITE;
 /*!40000 ALTER TABLE `codeholders_hist_email` DISABLE KEYS */;
 /*!40000 ALTER TABLE `codeholders_hist_email` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_emailPublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_emailPublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_emailPublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `emailPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_emailPublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_emailPublicity`
+--
+
+LOCK TABLES `codeholders_hist_emailPublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_emailPublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_emailPublicity` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -958,6 +1080,35 @@ LOCK TABLES `codeholders_hist_landlinePhone` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_landlinePhonePublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_landlinePhonePublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_landlinePhonePublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `landlinePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_landlinePhonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_landlinePhonePublicity`
+--
+
+LOCK TABLES `codeholders_hist_landlinePhonePublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_landlinePhonePublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_landlinePhonePublicity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_lastName`
 --
 
@@ -1015,6 +1166,35 @@ CREATE TABLE `codeholders_hist_lastNameLegal` (
 LOCK TABLES `codeholders_hist_lastNameLegal` WRITE;
 /*!40000 ALTER TABLE `codeholders_hist_lastNameLegal` DISABLE KEYS */;
 /*!40000 ALTER TABLE `codeholders_hist_lastNameLegal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `codeholders_hist_lastNamePublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_lastNamePublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_lastNamePublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `lastNamePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_lastNamePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_lastNamePublicity`
+--
+
+LOCK TABLES `codeholders_hist_lastNamePublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_lastNamePublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_lastNamePublicity` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1138,6 +1318,35 @@ LOCK TABLES `codeholders_hist_officePhone` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_officePhonePublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_officePhonePublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_officePhonePublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `officePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_officePhonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_officePhonePublicity`
+--
+
+LOCK TABLES `codeholders_hist_officePhonePublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_officePhonePublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_officePhonePublicity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_password`
 --
 
@@ -1225,6 +1434,35 @@ LOCK TABLES `codeholders_hist_profilePicture` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `codeholders_hist_profilePicturePublicity`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_profilePicturePublicity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `codeholders_hist_profilePicturePublicity` (
+  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `modTime` bigint(10) unsigned NOT NULL,
+  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `profilePicturePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_profilePicturePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `codeholders_hist_profilePicturePublicity`
+--
+
+LOCK TABLES `codeholders_hist_profilePicturePublicity` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_profilePicturePublicity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_profilePicturePublicity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `codeholders_hist_website`
 --
 
@@ -1272,6 +1510,9 @@ CREATE TABLE `codeholders_human` (
   `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `landlinePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lastNamePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
+  `landlinePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `cellphonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
   PRIMARY KEY (`codeholderId`),
   KEY `birthdate` (`birthdate`),
   KEY `searchName_2` (`searchName`),
@@ -1292,7 +1533,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL),(20,NULL,'Max',NULL,'Mustermann','Max Mustermann',NULL,NULL,NULL,NULL,NULL),(21,NULL,'Max',NULL,'Mustermann II','Max Mustermann II',NULL,NULL,NULL,NULL,NULL),(22,NULL,'Max',NULL,'Mustermann III','Max Mustermann III',NULL,NULL,NULL,NULL,NULL),(23,NULL,'Max',NULL,'Mustermann IV','Max Mustermann IV',NULL,NULL,NULL,NULL,NULL),(24,NULL,'Max',NULL,'Mustermann V','Max Mustermann V',NULL,NULL,NULL,NULL,NULL),(25,NULL,'Max',NULL,'Mustermann VI','Max Mustermann VI',NULL,NULL,NULL,NULL,NULL),(26,NULL,'Max',NULL,'Mustermann VII','Max Mustermann VII',NULL,NULL,NULL,NULL,NULL),(27,NULL,'Max',NULL,'Mustermann VIII','Max Mustermann VIII',NULL,NULL,NULL,NULL,NULL),(28,NULL,'Max',NULL,'Mustermann IX','Max Mustermann IX',NULL,NULL,NULL,NULL,NULL),(29,NULL,'Max',NULL,'Mustermann X','Max Mustermann X',NULL,NULL,NULL,NULL,NULL),(30,NULL,'Max',NULL,'Mustermann XI','Max Mustermann XI',NULL,NULL,NULL,NULL,NULL),(31,NULL,'Max',NULL,'Mustermann XII','Max Mustermann XII',NULL,NULL,NULL,NULL,NULL),(32,NULL,'Max',NULL,'Mustermann M','Max Mustermann M',NULL,NULL,NULL,NULL,NULL),(35,NULL,'Peter',NULL,'Peterson','Peter Peterson',NULL,NULL,NULL,NULL,NULL),(36,NULL,'derpy',NULL,'hooves','derpy hooves',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL,'public','private','private'),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL,'public','private','private'),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL,'public','private','private'),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL,'public','private','private'),(20,NULL,'Max',NULL,'Mustermann','Max Mustermann',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(21,NULL,'Max',NULL,'Mustermann II','Max Mustermann II',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(22,NULL,'Max',NULL,'Mustermann III','Max Mustermann III',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(23,NULL,'Max',NULL,'Mustermann IV','Max Mustermann IV',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(24,NULL,'Max',NULL,'Mustermann V','Max Mustermann V',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(25,NULL,'Max',NULL,'Mustermann VI','Max Mustermann VI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(26,NULL,'Max',NULL,'Mustermann VII','Max Mustermann VII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(27,NULL,'Max',NULL,'Mustermann VIII','Max Mustermann VIII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(28,NULL,'Max',NULL,'Mustermann IX','Max Mustermann IX',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(29,NULL,'Max',NULL,'Mustermann X','Max Mustermann X',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(30,NULL,'Max',NULL,'Mustermann XI','Max Mustermann XI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(31,NULL,'Max',NULL,'Mustermann XII','Max Mustermann XII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(32,NULL,'Max',NULL,'Mustermann M','Max Mustermann M',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(35,NULL,'Peter',NULL,'Peterson','Peter Peterson',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(36,NULL,'derpy',NULL,'hooves','derpy hooves',NULL,NULL,NULL,NULL,NULL,'public','private','private');
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1442,7 +1683,6 @@ CREATE TABLE `codeholders_org` (
   `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   KEY `searchName_2` (`searchName`),
   FULLTEXT KEY `careOf` (`careOf`),
@@ -1460,7 +1700,7 @@ CREATE TABLE `codeholders_org` (
 
 LOCK TABLES `codeholders_org` WRITE;
 /*!40000 ALTER TABLE `codeholders_org` DISABLE KEYS */;
-INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO','Tutmonda Esperantista Junulara Organizo TEJO Wereld Esperanto-Jongeren Organisatie','https://tejo.org'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA','Universala Esperanto-Asocio UEA','https://uea.org'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA','Dana Esperanto-Asocio DEA Esperanto-Foreningen for Danmark','https://esperanto.dk'),(34,'Test Org',NULL,NULL,NULL,'Test Org',NULL);
+INSERT INTO `codeholders_org` VALUES (3,'Tutmonda Esperantista Junulara Organizo','Wereld Esperanto-Jongeren Organisatie',NULL,'TEJO','Tutmonda Esperantista Junulara Organizo TEJO Wereld Esperanto-Jongeren Organisatie'),(4,'Universala Esperanto-Asocio',NULL,NULL,'UEA','Universala Esperanto-Asocio UEA'),(6,'Dana Esperanto-Asocio','Esperanto-Foreningen for Danmark','Peter Wraae','DEA','Dana Esperanto-Asocio DEA Esperanto-Foreningen for Danmark'),(34,'Test Org',NULL,NULL,NULL,'Test Org');
 /*!40000 ALTER TABLE `codeholders_org` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2296,6 +2536,7 @@ SET character_set_client = utf8;
  1 AS `newCode`,
  1 AS `password`,
  1 AS `email`,
+ 1 AS `emailPublicity`,
  1 AS `enabled`,
  1 AS `feeCountry`,
  1 AS `address_country`,
@@ -2312,8 +2553,10 @@ SET character_set_client = utf8;
  1 AS `address_sortingCode`,
  1 AS `address_sortingCode_latin`,
  1 AS `address_search`,
+ 1 AS `addressPublicity`,
  1 AS `notes`,
  1 AS `officePhone`,
+ 1 AS `officePhonePublicity`,
  1 AS `isDead`,
  1 AS `deathdate`,
  1 AS `profilePictureHash`,
@@ -2321,20 +2564,25 @@ SET character_set_client = utf8;
  1 AS `firstNameLegal`,
  1 AS `lastName`,
  1 AS `lastNameLegal`,
+ 1 AS `lastNamePublicity`,
  1 AS `honorific`,
  1 AS `birthdate`,
  1 AS `age`,
  1 AS `agePrimo`,
  1 AS `profession`,
+ 1 AS `profilePicturePublicity`,
+ 1 AS `website`,
+ 1 AS `biography`,
  1 AS `landlinePhone`,
+ 1 AS `landlinePhonePublicity`,
  1 AS `cellphone`,
+ 1 AS `cellphonePublicity`,
  1 AS `fullName`,
  1 AS `fullNameLocal`,
  1 AS `careOf`,
  1 AS `nameAbbrev`,
  1 AS `searchNameHuman`,
- 1 AS `searchNameOrg`,
- 1 AS `website`*/;
+ 1 AS `searchNameOrg`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -2584,7 +2832,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg`,`codeholders_org`.`website` AS `website` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -2598,4 +2846,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-13 10:42:14
+-- Dump completed on 2019-11-20 13:27:11

@@ -26,25 +26,32 @@ export const schema = {
 		'addressLatin.streetAddress': 'fs',
 		'addressLatin.postalCode': 'fs',
 		'addressLatin.sortingCode': 'fs',
+		'addressPublicity': '',
 		'searchAddress': 's',
 		'email': 'fs',
+		'emailPublicity': 'f',
 		'notes': 'fs',
 		'enabled': 'f',
 		'officePhone': 's',
 		'officePhoneFormatted': '',
+		'officePhonePublicity': '',
 		'isDead': 'f',
 		'deathdate': 'f',
 		'profilePictureHash': 'f',
+		'profilePicturePublicity': '',
 		'membership': '',
 		'hasPassword': 'f',
 		'isActiveMember': 'f',
 		'searchName': 'fs',
+		'website': '',
+		'biography': '',
 
 		// HumanCodeholder
 		'firstName': 'fs',
 		'firstNameLegal': 'fs',
 		'lastName': 'fs',
 		'lastNameLegal': 'fs',
+		'lastNamePublicity': '',
 		'honorific': '',
 		'birthdate': 'f',
 		'age': 'f',
@@ -52,15 +59,16 @@ export const schema = {
 		'profession': '',
 		'landlinePhone': 's',
 		'landlinePhoneFormatted': '',
+		'landlinePhonePublicity': '',
 		'cellphone': 's',
 		'cellphoneFormatted': '',
+		'cellphonePublicity': '',
 
 		// OrgCodeholder
 		'fullName': 'fs',
 		'fullNameLocal': 'fs',
 		'careOf': 'fs',
-		'nameAbbrev': 'fs',
-		'website': ''
+		'nameAbbrev': 'fs'
 	},
 	fieldAliases: {
 		'address.country': 'address_country',
@@ -337,31 +345,39 @@ export const histFields = {
 		'address.sortingCode',
 		'addressLatin.sortingCode'
 	],
+	'addressPublicity': 'addressPublicity',
 	'feeCountry': 'feeCountry',
 	'email': 'email',
+	'emailPublicity': 'emailPublicity',
 	'enabled': 'enabled',
 	'notes': 'notes',
 	'officePhone': 'officePhone',
+	'officePhonePublicity': 'officePhonePublicity',
 	'isDead': 'isDead',
 	'deathdate': 'deathdate',
 	'profilePictureHash': 'profilePictureHash',
+	'profilePicturePublicity': 'profilePicturePublicity',
+	'website': 'website',
+	'biography': 'biography',
 
 	// HumanCodeholder
 	'firstName': 'firstName',
 	'firstNameLegal': 'firstNameLegal',
 	'lastName': 'lastName',
 	'lastNameLegal': 'lastNameLegal',
+	'lastNamePublicity': 'lastNamePublicity',
 	'honorific': 'honorific',
 	'birthdate': 'birthdate',
 	'landlinePhone': 'landlinePhone',
+	'landlinePhonePublicity': 'landlinePhonePublicity',
 	'cellphone': 'cellphone',
+	'cellphonePublicity': 'cellphonePublicity',
 
 	// OrgCodeholder
 	'fullName': 'fullName',
 	'fullNameLocal': 'fullNameLocal',
 	'careOf': 'careOf',
-	'nameAbbrev': 'nameAbbrev',
-	'website': 'website'
+	'nameAbbrev': 'nameAbbrev'
 };
 for (let field in histFields) {
 	if (Array.isArray(histFields[field])) { continue; }

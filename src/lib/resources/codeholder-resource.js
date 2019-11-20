@@ -94,8 +94,7 @@ class CodeholderResource extends SimpleResource {
 				'fullName',
 				'fullNameLocal',
 				'careOf',
-				'nameAbbrev',
-				'website'
+				'nameAbbrev'
 			];
 		} else if (this.obj.codeholderType !== 'human') {
 			deleteProps = [
@@ -103,6 +102,7 @@ class CodeholderResource extends SimpleResource {
 				'firstNameLegal',
 				'lastName',
 				'lastNameLegal',
+				'lastNamePublicity',
 				'honorific',
 				'birthdate',
 				'age',
@@ -110,8 +110,10 @@ class CodeholderResource extends SimpleResource {
 				'profession',
 				'landlinePhone',
 				'landlinePhoneFormatted',
+				'landlinePhonePublicity',
 				'cellphone',
-				'cellphoneFormatted'
+				'cellphoneFormatted',
+				'cellphonePublicity'
 			];
 		}
 		deleteProps.forEach(x => delete this.obj[x]);

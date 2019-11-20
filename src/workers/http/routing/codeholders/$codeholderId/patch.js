@@ -62,6 +62,10 @@ const schema = {
 					additionalProperties: false,
 					required: [ 'country' ]
 				},
+				addressPublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
+				},
 				feeCountry: {
 					type: 'string',
 					pattern: '^[a-z]{2}$'
@@ -72,6 +76,10 @@ const schema = {
 					minLength: 3,
 					maxLength: 200,
 					nullable: true
+				},
+				emailPublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
 				},
 				enabled: {
 					type: 'boolean'
@@ -85,6 +93,10 @@ const schema = {
 					format: 'tel',
 					nullable: true
 				},
+				officePhonePublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
+				},
 				isDead: {
 					type: 'boolean'
 				},
@@ -92,6 +104,20 @@ const schema = {
 					type: 'string',
 					format: 'date',
 					nullable: true
+				},
+				profilePicturePublicity: {
+					type: 'string',
+					enum: [ 'public', 'members' ]
+				},
+				website: {
+					type: 'string',
+					format: 'safe-uri',
+					maxLength: 50
+				},
+				biography: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 2000
 				},
 
 				// HumanCodeholder
@@ -114,6 +140,10 @@ const schema = {
 					pattern: '^[^\\n]{1,50}$',
 					nullable: true
 				},
+				lastNamePublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
+				},
 				honorific: {
 					type: 'string',
 					pattern: '^[^\\n]{2,15}$',
@@ -134,10 +164,18 @@ const schema = {
 					format: 'tel',
 					nullable: true
 				},
+				landlinePhonePublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
+				},
 				cellphone: {
 					type: 'string',
 					format: 'tel',
 					nullable: true
+				},
+				cellphonePublicity: {
+					type: 'string',
+					enum: [ 'private', 'public', 'members' ]
 				},
 
 				// OrgCodeholder
@@ -159,12 +197,6 @@ const schema = {
 					type: 'string',
 					pattern: '^[^\\n]{1,12}$',
 					nullable: true
-				},
-				website: {
-					type: 'string',
-					maxLength: 50,
-					format: 'safe-uri',
-					nullable: true
 				}
 			},
 			additionalProperties: false,
@@ -180,18 +212,20 @@ const exclusiveFields = {
 		'firstNameLegal',
 		'lastName',
 		'lastNameLegal',
+		'lastNamePublicity',
 		'honorific',
 		'birthdate',
 		'profession',
 		'landlinePhone',
-		'cellphone'
+		'landlinePhonePublicity',
+		'cellphone',
+		'cellphonePublicity'
 	],
 	org: [
 		'fullName',
 		'fullNameLocal',
 		'careOf',
-		'nameAbbrev',
-		'website'
+		'nameAbbrev'
 	]
 };
 exclusiveFields.all = Object.values(exclusiveFields).reduce((a, b) => a.concat(b));
