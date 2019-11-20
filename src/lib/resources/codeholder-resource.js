@@ -65,21 +65,21 @@ class CodeholderResource extends SimpleResource {
 		if (this.obj.birthdate) { this.obj.birthdate = moment(this.obj.birthdate).format('Y-MM-DD'); }
 		if (this.obj.deathdate) { this.obj.deathdate = moment(this.obj.deathdate).format('Y-MM-DD'); }
 		
-		if (fields.indexOf('officePhoneFormatted')) {
+		if (fields.includes('officePhoneFormatted')) {
 			if (this.obj.officePhone) {
 				this.obj.officePhoneFormatted = formatPhoneNumber(this.obj.officePhone);
 			} else {
 				this.obj.officePhoneFormatted = null;
 			}
 		}
-		if (fields.indexOf('landlinePhoneFormatted')) {
+		if (fields.includes('landlinePhoneFormatted')) {
 			if (this.obj.landlinePhone) {
 				this.obj.landlinePhoneFormatted = formatPhoneNumber(this.obj.landlinePhone);
 			} else {
 				this.obj.landlinePhoneFormatted = null;
 			}
 		}
-		if (fields.indexOf('cellphoneFormatted')) {
+		if (fields.includes('cellphoneFormatted')) {
 			if (this.obj.cellphone) {
 				this.obj.cellphoneFormatted = formatPhoneNumber(this.obj.cellphone);
 			} else {
