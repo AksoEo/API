@@ -2,18 +2,14 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import { init as route$$listId } from './$listId';
-
 import method$get from './get';
 
 /**
- * Sets up /lists/public
+ * Sets up /lists/public/{listId}
  * @return {express.Router}
  */
 export function init () {
-	const router = new express.Router();
-
-	router.use('/:listId(\\d+)', route$$listId());
+	const router = new express.Router({ mergeParams: true });
 
 	bindMethod(router, '/', 'get', method$get);
 
