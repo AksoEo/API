@@ -313,9 +313,9 @@ const QueryUtil = {
 		const fields = req.query.fields || schema.defaultFields;
 
 		// Get the actual db col names
-		const selectFields = fields
+		const selectFields = [...new Set(fields
 			.concat(schema.alwaysSelect || [])
-			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f)))];
 		query.first(selectFields);
 	},
 
@@ -333,9 +333,9 @@ const QueryUtil = {
 		// ?fields, ?search
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
-		const selectFields = fields
+		const selectFields = [...new Set(fields
 			.concat(schema.alwaysSelect || [])
-			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f)))];
 
 		if (req.query.search) {
 			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {
@@ -411,7 +411,8 @@ const QueryUtil = {
 		}
 
 		// ?limit
-		query.limit(req.query.limit || schema.maxQueryLimit);
+		const limit = req.query.limit || schema.maxQueryLimit;
+		if (typeof limit !== undefined) { query.limit(req.query.limit || schema.maxQueryLimit); }
 
 		// ?offset
 		if (req.query.offset) {
