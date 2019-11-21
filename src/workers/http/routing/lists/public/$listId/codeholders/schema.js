@@ -68,6 +68,9 @@ function formatPhoneNumber (number) {
 	return phoneUtil.format(numberObj, PhoneNumberFormat.INTERNATIONAL);
 }
 
+// TODO: This request causes knex console spam saying
+// "A valid integer must be provided to limit"
+// I've been unable to find the cause
 export async function getCodeholderQuery (listId, req) {
 	const list = await AKSO.db('lists')
 		.where('id', listId)
