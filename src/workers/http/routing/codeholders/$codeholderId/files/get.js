@@ -1,4 +1,8 @@
+import fs from 'fs-extra';
+import path from 'path';
+
 import QueryUtil from 'akso/lib/query-util';
+import CodeholderFileResource from 'akso/lib/resources/codeholder-file-resource';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -13,9 +17,29 @@ const schema = {
 		'addedBy': 'f',
 		'name': 'fs',
 		'description': 's',
-		'mime': ''
-	}
+		'mime': '',
+		'size': ''
+	},
+	fieldAliases: {
+		'size': () => AKSO.db.raw('1')
+	},
+	alwaysSelect: [
+		'id'
+	]
 };
+
+async function afterQuery (arr, done) {
+	if (!arr.length || !arr[0].size) { return done(); }
+	const fileNames = arr.map(row => row.id.toString());
+	const stats = await Promise.all(fileNames.map(file => {
+		return fs.stat(path.join(AKSO.conf.dataDir, 'codeholder_files', file));
+	}));
+	for (let i in stats) {
+		const stat = stats[i];
+		arr[i].size = stat.size;
+	}
+	done();
+}
 
 export default {
 	schema: schema,
@@ -40,6 +64,10 @@ export default {
 		const query = AKSO.db('codeholders_files')
 			.where('codeholderId', req.params.codeholderId);
 
-		await QueryUtil.handleCollection({ req, res, schema, query });
+		await QueryUtil.handleCollection({
+			req, res, schema, query,
+			afterQuery, Res: CodeholderFileResource,
+			passToCol: [[req, schema]]
+		});
 	}
 };
