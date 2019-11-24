@@ -337,7 +337,7 @@ export function bindMethod (router, path, method, bind) {
 								let maxSize = fileSchema.maxSize;
 								if (typeof maxSize === 'string') { maxSize = bytesUtil(maxSize); }
 								if (file.size > maxSize) {
-									return res.status(413).type('text/plain'.send(`${fileSchema.name} must not be larger than ${bytesUtil(maxSize)}`));
+									return res.status(413).type('text/plain').send(`${fileSchema.name} must not be larger than ${bytesUtil(maxSize)}`);
 								}
 							}
 
