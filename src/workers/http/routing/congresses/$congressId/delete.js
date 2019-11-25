@@ -1,3 +1,6 @@
+import path from 'path';
+import fs from 'fs-extra';
+
 export default {
 	schema: {
 		query: null,
@@ -16,6 +19,13 @@ export default {
 		await AKSO.db('congresses')
 			.where('id', req.params.congressId)
 			.delete();
+
+		const dataPath = path.join(
+			AKSO.conf.dataDir,
+			'congress_instance_location_thumbnails',
+			req.params.congressId
+		);
+		await fs.remove(dataPath);
 
 		res.sendStatus(204);
 	}

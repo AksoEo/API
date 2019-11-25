@@ -1,6 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
 
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
+
 export default {
 	schema: {
 		query: null,
@@ -19,15 +21,21 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
 
-		const picDir = path.join(
+		const picParent = path.join(
 			AKSO.conf.dataDir,
 			'congress_instance_location_thumbnails',
-			`${req.params.locationId}`
+			req.params.congressId
+		);
+		const picDir = path.join(
+			picParent,
+			req.params.instanceId,
+			req.params.locationId
 		);
 
 		if (!await fs.exists(picDir)) { return res.sendStatus(404); }
 
-		await fs.remove(picDir);
+		await removePathAndEmptyParents(picParent, picDir);
+
 		res.sendStatus(204);
 	}
 };

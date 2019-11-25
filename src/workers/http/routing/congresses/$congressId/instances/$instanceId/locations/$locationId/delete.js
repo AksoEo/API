@@ -1,3 +1,7 @@
+import path from 'path';
+
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
+
 export default {
 	schema: {
 		query: null,
@@ -22,6 +26,20 @@ export default {
 				id: req.params.locationId
 			})
 			.delete();
+
+		if (deleted) {
+			const locPar = path.join(
+				AKSO.conf.dataDir,
+				'congress_instance_location_thumbnails',
+				req.params.congressId
+			);
+			const locPath = path.join(
+				locPar,
+				req.params.instanceId,
+				req.params.locationId
+			);
+			await removePathAndEmptyParents(locPar, locPath);
+		}
 
 		res.sendStatus(deleted ? 204 : 404);
 	}

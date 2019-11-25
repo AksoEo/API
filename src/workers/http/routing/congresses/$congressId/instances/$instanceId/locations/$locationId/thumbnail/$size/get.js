@@ -22,7 +22,9 @@ export default {
 		const picDir = path.join(
 			AKSO.conf.dataDir,
 			'congress_instance_location_thumbnails',
-			`${req.params.locationId}`
+			req.params.congressId,
+			req.params.instanceId,
+			req.params.locationId
 		);
 
 		if (!await fs.exists(picDir)) { return res.sendStatus(404); }
