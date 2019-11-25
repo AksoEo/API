@@ -30,8 +30,11 @@ export default {
 			.where('id', req.params.codeholderId)
 			.delete();
 
-		// Remove any files the codeholder might have
-		await fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId));
+		// Clean up the codeholder's data
+		await Promise.all([
+			fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId)),
+			fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_pictures', req.params.codeholderId))
+		]);
 
 		res.sendStatus(204);
 	}
