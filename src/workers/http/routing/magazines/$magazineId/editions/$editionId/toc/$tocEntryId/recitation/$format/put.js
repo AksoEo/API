@@ -39,7 +39,10 @@ export default {
 		const filePath = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_toc_recitation',
-			`${req.params.tocEntryId}.${req.params.format}`
+			req.params.magazineId,
+			req.params.editionId,
+			req.params.tocEntryId,
+			req.params.format
 		);
 
 		await Promise.all([

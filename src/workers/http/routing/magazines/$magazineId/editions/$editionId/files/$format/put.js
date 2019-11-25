@@ -38,7 +38,9 @@ export default {
 		const filePath = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_files',
-			`${req.params.magazineId}-${req.params.editionId}.${req.params.format}`
+			req.params.magazineId,
+			req.params.editionId,
+			req.params.format
 		);
 
 		await Promise.all([

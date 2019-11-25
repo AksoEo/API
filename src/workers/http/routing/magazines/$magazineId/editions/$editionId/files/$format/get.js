@@ -19,7 +19,9 @@ export default {
 		const file = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_files',
-			`${req.params.magazineId}-${req.params.editionId}.${req.params.format}`
+			req.params.magazineId,
+			req.params.editionId,
+			req.params.format
 		);
 		if (!await fs.exists(file)) { return res.sendStatus(404); }
 		res.sendFile(file);

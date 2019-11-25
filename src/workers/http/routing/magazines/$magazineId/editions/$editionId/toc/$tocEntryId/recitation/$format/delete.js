@@ -1,5 +1,6 @@
-import fs from 'pn/fs';
 import path from 'path';
+
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
 
 export default {
 	schema: {
@@ -25,12 +26,20 @@ export default {
 
 		if (!deleted) { return res.sendStatus(404); }
 
-		const file = path.join(
+		const recParent = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_toc_recitation',
-			`${req.params.tocEntryId}.${req.params.format}`
+			req.params.magazineId
 		);
-		await fs.unlink(file);
+		const recDir = path.join(
+			recParent,
+			req.params.editionId,
+			req.params.tocEntryId,
+			req.params.format
+		);
+
+		await removePathAndEmptyParents(recParent, recDir);	
+
 		res.sendStatus(204);
 	}
 };

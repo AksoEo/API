@@ -62,7 +62,8 @@ export default {
 		const picDir = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
-			`${req.params.magazineId}-${req.params.editionId}`
+			req.params.magazineId,
+			req.params.editionId
 		);
 		await fs.ensureDir(picDir);
 

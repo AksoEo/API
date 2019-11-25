@@ -1,6 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
 
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
+
 export default {
 	schema: {
 		query: null,
@@ -25,15 +27,20 @@ export default {
 			});
 		if (!editionExists) { return res.sendStatus(404); }
 
-		const picDir = path.join(
+		const picParent = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
-			`${req.params.magazineId}-${req.params.editionId}`
+			req.params.magazineId
+		);
+		const picDir = path.join(
+			picParent,
+			req.params.editionId
 		);
 
 		if (!await fs.exists(picDir)) { return res.sendStatus(404); }
 
-		await fs.remove(picDir);
+		await removePathAndEmptyParents(picParent, picDir);
+		
 		res.sendStatus(204);
 	}
 };

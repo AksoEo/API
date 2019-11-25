@@ -11,7 +11,8 @@ export default {
 		const picDir = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
-			`${req.params.magazineId}-${req.params.editionId}`
+			req.params.magazineId,
+			req.params.editionId
 		);
 
 		if (!await fs.exists(picDir)) { return res.sendStatus(404); }

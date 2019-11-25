@@ -1,3 +1,7 @@
+import path from 'path';
+
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
+
 export default {
 	schema: {},
 
@@ -17,6 +21,21 @@ export default {
 				id: req.params.tocEntryId
 			})
 			.delete();
+
+		if (deleted) {
+			const tocParent = path.join(
+				AKSO.conf.dataDir,
+				'magazine_edition_toc_recitation',
+				req.params.magazineId
+			);
+			const tocDir = path.join(
+				tocParent,
+				req.params.editionId,
+				req.params.tocEntryId
+			);
+
+			await removePathAndEmptyParents(tocParent, tocDir);
+		}
 
 		res.sendStatus(deleted ? 204 : 404);
 	}
