@@ -1,3 +1,6 @@
+import fs from 'fs-extra';
+import path from 'path';
+
 import { schema as parSchema, memberFilter } from '../schema';
 
 const schema = {
@@ -26,6 +29,9 @@ export default {
 		await AKSO.db('codeholders')
 			.where('id', req.params.codeholderId)
 			.delete();
+
+		// Remove any files the codeholder might have
+		await fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId));
 
 		res.sendStatus(204);
 	}

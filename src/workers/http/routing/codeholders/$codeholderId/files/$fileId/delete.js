@@ -1,5 +1,6 @@
-import fs from 'pn/fs';
 import path from 'path';
+
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -39,8 +40,8 @@ export default {
 		if (!deleted) { return res.sendStatus(404); }
 
 		// Delete from the drive
-		const filePath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.fileId);
-		await fs.unlink(filePath);
+		const parPath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId);
+		await removePathAndEmptyParents(parPath, path.join(parPath, req.params.fileId));
 		res.sendStatus(204);
 	}
 };

@@ -38,7 +38,7 @@ export default {
 
 		if (!fileData) { return res.sendStatus(404); }
 
-		const filePath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.fileId);
+		const filePath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId, req.params.fileId);
 		res.type(fileData.mime).sendFile(filePath);
 	}
 };

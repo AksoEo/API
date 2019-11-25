@@ -28,11 +28,11 @@ const schema = {
 	]
 };
 
-async function afterQuery (arr, done) {
+async function afterQuery (arr, done, req) {
 	if (!arr.length || !arr[0].size) { return done(); }
 	const fileNames = arr.map(row => row.id.toString());
 	const stats = await Promise.all(fileNames.map(file => {
-		return fs.stat(path.join(AKSO.conf.dataDir, 'codeholder_files', file));
+		return fs.stat(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId, file));
 	}));
 	for (let i in stats) {
 		const stat = stats[i];
