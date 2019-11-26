@@ -243,7 +243,7 @@ export default {
 		// Generate the member filter lookup before beginning the transaction to reduce latency
 		const findCodeholderQuery = AKSO.db('view_codeholders')
 			.where('id', req.params.codeholderId)
-			.first('codeholderType');
+			.first('*');
 		memberFilter(schema, findCodeholderQuery, req);
 
 		// Ensure that the codeholder exists, is visible through the member filter and is of the right type
@@ -311,6 +311,11 @@ export default {
 				addressUpdateData.country = req.body.address.country;
 				delete addressUpdateData.countryCode;
 				delete addressUpdateData.countryCode_latin;
+
+				// Set feeCountry to address.country if null
+				if (codeholderBefore.feeCountry === null && !req.body.feeCountry) {
+					updateData.feeCountry = req.body.feeCountry = req.body.address.country;
+				}
 			} else {
 				if (field === 'feeCountry') {
 					// Make sure the country exists
@@ -352,6 +357,7 @@ export default {
 		let oldAddress = null;
 
 		const trx = await createTransaction();
+		// TODO: Why is this not using view_codeholders?
 		oldData = await trx('codeholders')
 			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
 			.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')
