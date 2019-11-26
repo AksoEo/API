@@ -336,6 +336,11 @@ export default {
 					if (newCodeTaken) {
 						return res.status(400).type('text/plain').send('newCode taken');
 					}
+				} else if (field === 'deathdate') {
+					// Make sure it's not greater than the current date
+					if (moment(req.body.deathdate).isAfter(moment(), 'day')) {
+						return res.status(400).type('text/plain').send('deathdate is in the future');
+					}
 				}
 
 				updateData[field] = req.body[field];
