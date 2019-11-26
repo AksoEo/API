@@ -359,6 +359,7 @@ export const histFields = {
 	'profilePicturePublicity': 'profilePicturePublicity',
 	'website': 'website',
 	'biography': 'biography',
+	'profession': 'profession',
 
 	// HumanCodeholder
 	'firstName': 'firstName',
