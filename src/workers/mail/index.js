@@ -36,19 +36,18 @@ async function timer () {
 		const rawData = await fs.readFile(file);
 		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
 
-		let sendError = null;
 		try {
 			await mail.send(data);
+			await fs.unlink(file);
 		} catch (e) {
+			AKSO.log.error(e);
 			if (e.response && e.response.body && e.response.body.errors) {
-				AKSO.log.error(e);
 				console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
-			} else {
-				sendError = null;
 			}
+
+			const newName = entry.name.replace('mail-', 'err-');
+			await fs.move(file, path.join(scheduleDir, newName));
 		}
-		await fs.unlink(file);
-		if (sendError) { throw sendError; }
 	} while (entry);
 	await dir.close();
 	scheduleTimer();

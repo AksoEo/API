@@ -47,11 +47,13 @@ async function timer () {
 
 		try {
 			await sendNotification(data);
+			await fs.unlink(file);
 		} catch (e) {
 			AKSO.log.error(e);
+
+			const newName = entry.name.replace('tg-', 'err-');
+			await fs.move(file, path.join(scheduleDir, newName));
 		}
-		await fs.unlink(file);
-		
 	} while (entry);
 	await dir.close();
 	scheduleTimer();
