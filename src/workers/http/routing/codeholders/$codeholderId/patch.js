@@ -346,6 +346,15 @@ export default {
 					if (moment(req.body.deathdate).isAfter(moment(), 'day')) {
 						return res.status(400).type('text/plain').send('deathdate is in the future');
 					}
+				} else if (field === 'isDead') {
+					// Set deathdate to current date if true, null if false assuming it's not manually set
+					if (req.body.isDead) {
+						if (!req.body.deathdate && !codeholderBefore.deathdate) {
+							updateData.deathdate = req.body.deathdate = moment().format('YYYY-MM-DD');
+						}
+					} else {
+						updateData.deathdate = req.body.deathdate = null;
+					}
 				}
 
 				updateData[field] = req.body[field];
