@@ -9,7 +9,7 @@ export default {
 
 	run: async function run (req, res) {
 		const magazine = await AKSO.db('magazines')
-			.first('org')
+			.first('org', 'name')
 			.where('id', req.params.magazineId);
 		if (!magazine) { return res.sendStatus(404); }
 		
@@ -24,7 +24,19 @@ export default {
 			req.params.format
 		);
 		if (!await fs.exists(file)) { return res.sendStatus(404); }
-		res.sendFile(file);
+
+		const edition = await AKSO.db('magazines_editions')
+			.where({
+				id: req.params.editionId,
+				magazineId: req.params.magazineId
+			})
+			.first('idHuman');
+
+		let name = `${magazine.name}-${edition.idHuman || req.params.editionId}.${req.params.format}`;
+		res
+			.type(req.params.format)
+			.set('Content-Disposition', 'inline; filename*=UTF-8\'\'' + encodeURIComponent(name))
+			.sendFile(file);
 
 		if (req.method === 'HEAD') { return; }
 
