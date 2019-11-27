@@ -34,11 +34,14 @@ export default {
 				id: req.params.fileId,
 				codeholderId: req.params.codeholderId
 			})
-			.first('mime');
+			.first('mime', 'name');
 
 		if (!fileData) { return res.sendStatus(404); }
 
 		const filePath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId, req.params.fileId);
-		res.type(fileData.mime).sendFile(filePath);
+		res
+			.type(fileData.mime)
+			.set('Content-Disposition', 'inline; filename*=UTF-8\'\'' + encodeURIComponent(fileData.name))
+			.sendFile(filePath);
 	}
 };
