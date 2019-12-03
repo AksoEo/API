@@ -6,6 +6,7 @@ import { init as route$files } from './files';
 import { init as route$hist } from './hist';
 import { init as route$logins } from './logins';
 import { init as route$membership } from './membership';
+import { init as route$permissions } from './permissions';
 import { init as route$profile_picture } from './profile_picture';
 import { init as route$roles } from './roles';
 
@@ -26,6 +27,7 @@ export function init () {
 	router.use('/hist', route$hist());
 	router.use('/logins', route$logins());
 	router.use('/membership', route$membership());
+	router.use('/permissions', route$permissions());
 	router.use('/profile_picture', route$profile_picture());
 	router.use('/roles', route$roles());
 
