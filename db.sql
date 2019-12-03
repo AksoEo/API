@@ -2665,7 +2665,9 @@ CREATE TABLE `votes` (
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(10000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `voterCodeholders` json NOT NULL,
+  `voterCodeholdersMemberFilter` json NOT NULL,
   `viewerCodeholders` json DEFAULT NULL,
+  `viewerCodeholdersMemberFilter` json DEFAULT NULL,
   `codeholdersSet` tinyint(1) NOT NULL DEFAULT '0',
   `timeStart` bigint(20) unsigned NOT NULL,
   `timeEnd` bigint(20) unsigned NOT NULL,
@@ -2709,7 +2711,7 @@ CREATE TABLE `votes` (
 
 LOCK TABLES `votes` WRITE;
 /*!40000 ALTER TABLE `votes` DISABLE KEYS */;
-INSERT INTO `votes` (`id`, `results`, `tieBreakerBallot`, `org`, `name`, `description`, `voterCodeholders`, `viewerCodeholders`, `codeholdersSet`, `timeStart`, `timeEnd`, `ballotsSecret`, `type`, `blankBallotsLimit`, `blankBallotsLimitInclusive`, `quorum`, `quorumInclusive`, `majorityBallots`, `majorityBallotsInclusive`, `majorityVoters`, `majorityVotersInclusive`, `majorityMustReachBoth`, `numChosenOptions`, `mentionThreshold`, `mentionThresholdInclusive`, `maxOptionsPerBallot`, `tieBreakerCodeholder`, `publishVoters`, `publishVotersPercentage`, `options`) VALUES (1,'{\"tally\": {\"0\": 2, \"1\": 2, \"2\": 2}, \"rounds\": [{\"lock\": [[1, 0], [2, 0], [1, 2]], \"graph\": {\"0\": [], \"1\": [0, 2], \"2\": [0]}, \"optStats\": {\"0\": {\"won\": 0, \"lost\": 2, \"mentions\": 2}, \"1\": {\"won\": 2, \"lost\": 0, \"mentions\": 2}, \"2\": {\"won\": 1, \"lost\": 1, \"mentions\": 2}}, \"optChosen\": 1, \"rankedPairs\": [{\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 1], \"loser\": 0, \"winner\": 1}, {\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 2], \"loser\": 0, \"winner\": 2}, {\"diff\": 0, \"opt0\": 0, \"opt1\": 0, \"pair\": [1, 2], \"loser\": 2, \"winner\": 1}]}, {\"lock\": [[2, 0]], \"graph\": {\"0\": [], \"2\": [0]}, \"optStats\": {\"0\": {\"won\": 0, \"lost\": 1, \"mentions\": 2}, \"1\": {\"won\": 0, \"lost\": 0, \"mentions\": 2}, \"2\": {\"won\": 1, \"lost\": 0, \"mentions\": 2}}, \"optChosen\": 2, \"rankedPairs\": [{\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 2], \"loser\": 0, \"winner\": 2}]}], \"numVoters\": 2, \"numBallots\": 2, \"optsChosen\": [1, 2], \"numBlankBallots\": 0, \"optsExcludedByMentionThreshold\": []}','1\n0\n2','tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}','{\"$and\": [{}, {}]}',1,1572012318,1572427198,0,'rp','1/2',1,'0.5',1,'0',1,'0',1,1,2,'1/2',1,NULL,2,1,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
+INSERT INTO `votes` (`id`, `results`, `tieBreakerBallot`, `org`, `name`, `description`, `voterCodeholders`, `voterCodeholdersMemberFilter`, `viewerCodeholders`, `viewerCodeholdersMemberFilter`, `codeholdersSet`, `timeStart`, `timeEnd`, `ballotsSecret`, `type`, `blankBallotsLimit`, `blankBallotsLimitInclusive`, `quorum`, `quorumInclusive`, `majorityBallots`, `majorityBallotsInclusive`, `majorityVoters`, `majorityVotersInclusive`, `majorityMustReachBoth`, `numChosenOptions`, `mentionThreshold`, `mentionThresholdInclusive`, `maxOptionsPerBallot`, `tieBreakerCodeholder`, `publishVoters`, `publishVotersPercentage`, `options`) VALUES (1,'{\"tally\": {\"0\": 2, \"1\": 2, \"2\": 2}, \"rounds\": [{\"lock\": [[1, 0], [2, 0], [1, 2]], \"graph\": {\"0\": [], \"1\": [0, 2], \"2\": [0]}, \"optStats\": {\"0\": {\"won\": 0, \"lost\": 2, \"mentions\": 2}, \"1\": {\"won\": 2, \"lost\": 0, \"mentions\": 2}, \"2\": {\"won\": 1, \"lost\": 1, \"mentions\": 2}}, \"optChosen\": 1, \"rankedPairs\": [{\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 1], \"loser\": 0, \"winner\": 1}, {\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 2], \"loser\": 0, \"winner\": 2}, {\"diff\": 0, \"opt0\": 0, \"opt1\": 0, \"pair\": [1, 2], \"loser\": 2, \"winner\": 1}]}, {\"lock\": [[2, 0]], \"graph\": {\"0\": [], \"2\": [0]}, \"optStats\": {\"0\": {\"won\": 0, \"lost\": 1, \"mentions\": 2}, \"1\": {\"won\": 0, \"lost\": 0, \"mentions\": 2}, \"2\": {\"won\": 1, \"lost\": 0, \"mentions\": 2}}, \"optChosen\": 2, \"rankedPairs\": [{\"diff\": -2, \"opt0\": 0, \"opt1\": 2, \"pair\": [0, 2], \"loser\": 0, \"winner\": 2}]}], \"numVoters\": 2, \"numBallots\": 2, \"optsChosen\": [1, 2], \"numBlankBallots\": 0, \"optsExcludedByMentionThreshold\": []}','1\n0\n2','tejo','Komitatanoj B (2020-2022)',NULL,'{\"agePrimo\": {\"$lte\": 35}}','{}',NULL,NULL,1,1572012318,1572427198,0,'rp','1/2',1,'0.5',1,'0',1,'0',1,1,2,'1/2',1,NULL,2,1,1,'[{\"name\": \"Opcio A\", \"type\": \"simple\"}, {\"name\": \"Opcio B\", \"type\": \"simple\"}, {\"name\": \"Opcio C\", \"type\": \"simple\"}]');
 /*!40000 ALTER TABLE `votes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2770,7 +2772,7 @@ CREATE TABLE `votes_voters` (
 
 LOCK TABLES `votes_voters` WRITE;
 /*!40000 ALTER TABLE `votes_voters` DISABLE KEYS */;
-INSERT INTO `votes_voters` VALUES (1,2,1,1573034652,NULL),(1,3,1,NULL,NULL),(1,4,0,NULL,NULL),(1,5,0,NULL,NULL),(1,6,0,NULL,NULL),(1,8,0,NULL,NULL),(1,18,0,NULL,NULL),(1,20,0,NULL,NULL),(1,21,0,NULL,NULL),(1,22,0,NULL,NULL),(1,23,0,NULL,NULL),(1,24,0,NULL,NULL),(1,25,0,NULL,NULL),(1,26,0,NULL,NULL),(1,27,0,NULL,NULL),(1,28,0,NULL,NULL),(1,29,0,NULL,NULL),(1,30,0,NULL,NULL),(1,31,0,NULL,NULL),(1,32,0,NULL,NULL),(1,34,0,NULL,NULL),(1,35,0,NULL,NULL),(1,36,0,NULL,NULL);
+INSERT INTO `votes_voters` VALUES (1,2,1,NULL,NULL);
 /*!40000 ALTER TABLE `votes_voters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2910,4 +2912,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-22 17:04:36
+-- Dump completed on 2019-12-03 13:23:56
