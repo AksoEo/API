@@ -2,6 +2,8 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
+import { init as route$permissions } from './permissions';
+
 import method$get from './get';
 import method$patch from './patch';
 import method$delete from './delete';
@@ -14,6 +16,8 @@ import operation$create_new_secret from './!create_new_secret';
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
+
+	router.use('/permissions', route$permissions());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
