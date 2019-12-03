@@ -5,7 +5,7 @@ import { schema as codeholderSchema } from 'akso/workers/http/routing/codeholder
 
 export async function updateVoterCodeholdersOnTimeStart () {
 	const votesToUpdate = await AKSO.db('votes')
-		.select('id', 'viewerCodeholders', 'voterCodeholders')
+		.select('id', 'viewerCodeholders', 'voterCodeholders', 'viewerCodeholdersMemberFilter', 'voterCodeholdersMemberFilter', 'tieBreakerCodeholder')
 		.limit(100)
 		.whereRaw('NOT codeholdersSet AND timeStart < UNIX_TIMESTAMP()');
 
@@ -22,10 +22,16 @@ export async function updateVoterCodeholdersOnTimeStart () {
 		const mayVoteQuery = AKSO.db('view_codeholders')
 			.first(1)
 			.whereRaw('id = codeholderId');
+		const voterFilter = {
+			$and: [
+				vote.voterCodeholdersMemberFilter,
+				vote.voterCodeholders
+			]
+		};
 		QueryUtil.filter({
 			...quFilterOpts,
 			...{
-				filter: vote.voterCodeholders,
+				filter: voterFilter,
 				query: mayVoteQuery
 			}
 		});
@@ -36,8 +42,15 @@ export async function updateVoterCodeholdersOnTimeStart () {
 				AKSO.db.raw('view_codeholders.id AS codeholderId'),
 				AKSO.db.raw('COALESCE((?), 0) AS mayVote', mayVoteQuery),
 			);
-		const viewerFilter = { $or: [ vote.voterCodeholders ] };
-		if (vote.viewerCodeholders) { viewerFilter.$or.push(vote.viewerCodeholders); }
+		const viewerFilter = { $or: [ voterFilter ] };
+		if (vote.viewerCodeholders) {
+			viewerFilter.$or.push({
+				$and: [
+					vote.viewerCodeholdersMemberFilter,
+					vote.viewerCodeholders
+				]
+			});
+		}
 		if (vote.tieBreakerCodeholder !== null) { viewerFilter.$or.push({ id: vote.tieBreakerCodeholder }); }
 		QueryUtil.filter({
 			...quFilterOpts,

@@ -14,7 +14,9 @@ export const schema = {
 		'name': 'fs',
 		'description': 's',
 		'voterCodeholders': '',
+		'voterCodeholdersMemberFilter': '',
 		'viewerCodeholders': '',
+		'viewerCodeholdersMemberFilter': '',
 		'timeStart': 'f',
 		'timeEnd': 'f',
 		'usedTieBreaker': '',
@@ -51,16 +53,20 @@ export const schema = {
 };
 
 export async function manualDataValidation (req, res, vote = undefined) {
-	const validateFilter = { $or: [] };
+	const validateFilterArr = [];
+	const validateFilter = { $and: [
+		req.memberFilter,
+		{
+			$or: validateFilterArr
+		}
+	] };
 	if (req.body.voterCodeholders) {
-		req.body.voterCodeholders = { $and: [ req.memberFilter, req.body.voterCodeholders ] };
-		validateFilter.$or.push(req.body.voterCodeholders);
+		validateFilterArr.push(req.body.voterCodeholders);
 	}
 	if (req.body.viewerCodeholders) {
-		req.body.viewerCodeholders = { $and: [ req.memberFilter, req.body.viewerCodeholders ] };
-		validateFilter.$or.push(req.body.viewerCodeholders);
+		validateFilterArr.push(req.body.viewerCodeholders);
 	}
-	if (validateFilter.$or.length) {
+	if (validateFilterArr.length) {
 		try {
 			const query = AKSO.db('view_codeholders');
 			QueryUtil.filter({
@@ -80,9 +86,11 @@ export async function manualDataValidation (req, res, vote = undefined) {
 	}
 	if (req.body.voterCodeholders) {
 		req.body.voterCodeholders = JSON.stringify(req.body.voterCodeholders);
+		req.body.voterCodeholdersMemberFilter = JSON.stringify(req.memberFilter);
 	}
 	if (req.body.viewerCodeholders) {
 		req.body.viewerCodeholders = JSON.stringify(req.body.viewerCodeholders);
+		req.body.viewerCodeholdersMemberFilter = JSON.stringify(req.memberFilter);
 	}
 	
 	if (req.body.timeStart && req.body.timeStart < moment().unix()) {
