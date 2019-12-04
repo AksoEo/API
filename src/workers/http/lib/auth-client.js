@@ -60,10 +60,7 @@ export default class AuthClient {
 			.from('admin_permissions_memberRestrictions_groups')
 			.whereIn('adminGroupId', groups);
 
-		this._perms.memberFilter = merge.all(
-			[ this._perms.memberFilter ]
-				.concat(groupMemberRestrictions.map(x => x.filter))
-		);
+		this._perms.memberFilter = groupMemberRestrictions.map(x => x.filter);
 
 		for (let fields of groupMemberRestrictions.map(x => x.fields)) {
 			if (fields === null) {
@@ -73,7 +70,7 @@ export default class AuthClient {
 			this._perms.memberFields = merge(
 				this._perms.memberFields,
 				fields
-			);
+			); // TODO: Better merge
 		}
 
 		// Add per-client overrides
@@ -109,10 +106,12 @@ export default class AuthClient {
 
 		const memberRestrictions = await memberRestrictionsQuery;
 		if (memberRestrictions) {
-			this._perms.memberFilter = merge(
-				this._perms.memberFilter,
-				memberRestrictions.filter
-			);
+			this._perms.memberFilter = {
+				$and: [
+					this._perms.memberFilter,
+					memberRestrictions.filter
+				]
+			};
 
 			if (memberRestrictions.fields === null || this._perms.memberFields === null) {
 				this._perms.memberFields = null;
@@ -120,7 +119,7 @@ export default class AuthClient {
 				this._perms.memberFields = merge(
 					this._perms.memberFields,
 					memberRestrictions.fields
-				);
+				); // TODO: Better merge
 			}
 		}
 

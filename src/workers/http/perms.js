@@ -1,5 +1,3 @@
-import { default as merge } from 'deepmerge';
-
 export default async function init (req, res, next) { // eslint-disable-line no-unused-vars
 	// Set default hard-coded business logic
 	req.memberFields = {};
@@ -109,16 +107,10 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		if (clientPerms.memberFields === null) {
 			req.memberFields = null;
 		} else {
-			req.memberFields = merge(
-				req.memberFields,
-				clientPerms.memberFields
-			);
+			req.memberFields = clientPerms.memberFields;
 		}
 		
-		req.memberFilter = merge(
-			req.memberFilter,
-			clientPerms.memberFilter
-		);
+		req.memberFilter = clientPerms.memberFilter;
 	}
 
 	next();
