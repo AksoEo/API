@@ -412,7 +412,7 @@ const QueryUtil = {
 
 		// ?limit
 		const limit = req.query.limit || schema.maxQueryLimit;
-		if (typeof limit !== undefined) { query.limit(req.query.limit || schema.maxQueryLimit); }
+		if (typeof limit !== 'undefined') { query.limit(req.query.limit || schema.maxQueryLimit); }
 
 		// ?offset
 		if (req.query.offset) {

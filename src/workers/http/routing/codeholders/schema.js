@@ -208,6 +208,10 @@ export const schema = {
 	}
 };
 
+export const memberRestrictionFields = Object.keys(schema.fields).map(f => {
+	return f.split('.')[0];
+});
+
 export function memberFilter (schema, query, req) {
 	QueryUtil.filter({
 		fields: Object.keys(schema.fields)
@@ -233,8 +237,7 @@ export function memberFieldsManual (fields, req, flag, memberFields) {
 	if (memberFields === undefined) { memberFields = req.memberFields; }
 	if (req.memberFields === null) { return true; }
 
-	const haveFlag = fields
-		.map(f => f.split('.')[0])
+	const haveFlag = memberRestrictionFields
 		.map(f => {
 			if (!(f in memberFields)) { return false; }
 			return memberFields[f].indexOf(flag) > -1;

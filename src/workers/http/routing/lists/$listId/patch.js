@@ -66,6 +66,7 @@ export default {
 						memberFilter: req.memberFilter,
 						query: json
 					}, schema, query, fieldWhitelist);
+					query.toSQL();
 				} catch (e) {
 					return res.type('text/plain').status(400).send('Invalid filter');
 				}

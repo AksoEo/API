@@ -155,6 +155,7 @@ export default {
 		const query = AKSO.db('view_codeholders');
 		// This throwns an error if the query is in any way invalid
 		QueryUtil.simpleCollection(req, schema, query, fieldWhitelist);
+		query.toSQL();
 
 		const order = {
 			memberFilter: req.memberFilter,
