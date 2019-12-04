@@ -106,7 +106,7 @@ export default class AuthClient {
 
 		const memberRestrictions = await memberRestrictionsQuery;
 		if (memberRestrictions) {
-			this._perms.memberFilter.$and.push(memberRestrictions.filter);
+			this._perms.memberFilter = memberRestrictions.filter;
 
 			if (memberRestrictions.fields === null || this._perms.memberFields === null) {
 				this._perms.memberFields = null;
