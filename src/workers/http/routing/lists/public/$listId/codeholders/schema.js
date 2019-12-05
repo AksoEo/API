@@ -122,9 +122,7 @@ export async function getCodeholderQuery (listId, req) {
 	return { query: query };
 }
 
-export async function getCodeholdersFromList (listId, req) {
-	const query = (await getCodeholderQuery(listId, req)).query;
-
+export async function handleCodeholders (req, codeholders) {
 	const countryNames = [];
 	(await AKSO.db('countries')
 		.select('code', 'name_eo')
@@ -134,7 +132,7 @@ export async function getCodeholdersFromList (listId, req) {
 
 	const fields = req.query.fields || schema.defaultFields;
 	const isMember = req.user ? await req.user.isActiveMember() : false;
-	const col = (await query).map(obj => {
+	const col = codeholders.map(obj => {
 		if (obj.name) {
 			const nameBits = [];
 			if (obj.codeholderType === 'human') {
@@ -234,4 +232,9 @@ export async function getCodeholdersFromList (listId, req) {
 	});
 
 	return col;
+}
+
+export async function getCodeholdersFromList (listId, req) {
+	const query = (await getCodeholderQuery(listId, req)).query;
+	return await handleCodeholders(req, await query);
 }
