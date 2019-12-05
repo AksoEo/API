@@ -1,4 +1,4 @@
-import { handleMemberRestrictions } from './schema';
+import { handleMemberRestrictions } from '../schema';
 
 export default {
 	schema: {

@@ -97,17 +97,13 @@ export async function getCodeholderQuery (listId, req) {
 			const subQuery = AKSO.db('view_codeholders');
 			memberFilter(schema, subQuery, reqData);
 			QueryUtil.simpleCollection(reqData, schema, subQuery);
+			subQuery.toSQL();
 			delete subQuery._single.limit;
 			return subQuery;
 		});
 	} catch (e) {
 		e.statusCode = 500;
 		throw e;
-		// TODO: For some reason this try catch doesn't work at all
-		// It's not that big of a deal considering that broken filters
-		// should never make it into the db in the first place
-		// But we should probably still try to fix this so we don't serve
-		// 400s for no good reason in case something Does happen
 	}
 
 	const query = unionArr.splice(0, 1)[0];
