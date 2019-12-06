@@ -76,7 +76,7 @@ async function sendNotification ({
 	view = {},
 	attach = undefined
 }) {
-	const recipientData = await AKSO.db('codeholders_notif_accounts')
+	const recipientData = await AKSO.db('codeholders_notifAccounts_telegram')
 		.whereIn('codeholderId', codeholderIds)
 		.select('codeholderId', 'telegram_chatId');
 
@@ -131,7 +131,7 @@ async function sendNotification ({
 						.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
 
 					// Unlink the notif account since it clearly doesn't exist
-					await AKSO.db('codeholders_notif_accounts')
+					await AKSO.db('codeholders_notifAccounts_telegram')
 						.where('codeholderId', recipient.codeholderId)
 						.delete();
 
@@ -163,14 +163,14 @@ async function handleDeepLink (ctx) {
 	}
 
 	// Try to find the key
-	const deepLinkData = await AKSO.db('codeholders_notif_accounts')
+	const deepLinkData = await AKSO.db('codeholders_notifAccounts_telegram')
 		.where('telegram_deepLink', deepLink)
 		.first('codeholderId');
 
 	if (!deepLinkData) { return ctx.reply(deepLinkNotFoundMsg); }
 
 	// Ensure the chat id hasn't already been used
-	const chatIdUsed = await AKSO.db('codeholders_notif_accounts')
+	const chatIdUsed = await AKSO.db('codeholders_notifAccounts_telegram')
 		.where('telegram_chatId', chatId)
 		.first(1);
 
@@ -179,7 +179,7 @@ async function handleDeepLink (ctx) {
 	}
 
 	// Update the database
-	await AKSO.db('codeholders_notif_accounts')
+	await AKSO.db('codeholders_notifAccounts_telegram')
 		.where('codeholderId', deepLinkData.codeholderId)
 		.update({
 			telegram_chatId: chatId,

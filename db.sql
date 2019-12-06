@@ -1648,13 +1648,13 @@ LOCK TABLES `codeholders_logins` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `codeholders_notif_accounts`
+-- Table structure for table `codeholders_notifAccounts_telegram`
 --
 
-DROP TABLE IF EXISTS `codeholders_notif_accounts`;
+DROP TABLE IF EXISTS `codeholders_notifAccounts_telegram`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `codeholders_notif_accounts` (
+CREATE TABLE `codeholders_notifAccounts_telegram` (
   `codeholderId` int(10) unsigned NOT NULL,
   `telegram_chatId` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telegram_deepLink` binary(16) DEFAULT NULL,
@@ -1663,18 +1663,18 @@ CREATE TABLE `codeholders_notif_accounts` (
   UNIQUE KEY `telegram_deepLink` (`telegram_deepLink`),
   UNIQUE KEY `telegram_chatId` (`telegram_chatId`),
   KEY `telegram_deepLink_time` (`telegram_deepLink_time`),
-  CONSTRAINT `codeholders_notif_accounts_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`)
+  CONSTRAINT `codeholders_notifAccounts_telegram_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `codeholders_notif_accounts`
+-- Dumping data for table `codeholders_notifAccounts_telegram`
 --
 
-LOCK TABLES `codeholders_notif_accounts` WRITE;
-/*!40000 ALTER TABLE `codeholders_notif_accounts` DISABLE KEYS */;
-INSERT INTO `codeholders_notif_accounts` VALUES (3,'172252715',NULL,NULL);
-/*!40000 ALTER TABLE `codeholders_notif_accounts` ENABLE KEYS */;
+LOCK TABLES `codeholders_notifAccounts_telegram` WRITE;
+/*!40000 ALTER TABLE `codeholders_notifAccounts_telegram` DISABLE KEYS */;
+INSERT INTO `codeholders_notifAccounts_telegram` VALUES (3,'172252715',NULL,NULL);
+/*!40000 ALTER TABLE `codeholders_notifAccounts_telegram` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2912,4 +2912,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-05 16:18:58
+-- Dump completed on 2019-12-06 16:45:06
