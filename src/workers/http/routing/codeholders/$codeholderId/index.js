@@ -2,6 +2,7 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
+import { init as route$admin_groups } from './admin_groups';
 import { init as route$files } from './files';
 import { init as route$hist } from './hist';
 import { init as route$logins } from './logins';
@@ -23,6 +24,7 @@ import operation$disable_totp from './!disable_totp';
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
+	router.use('/admin_groups', route$admin_groups());
 	router.use('/files', route$files());
 	router.use('/hist', route$hist());
 	router.use('/logins', route$logins());
