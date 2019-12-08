@@ -45,6 +45,16 @@ export default {
 		memberFilter(codeholderSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
+		// Make sure the membership entry doesn't already exist
+		const entryExists = await AKSO.db('membershipCategories_codeholders')
+			.where({
+				categoryId: req.body.categoryId,
+				codeholderId: req.params.codeholderId,
+				year: req.body.year
+			})
+			.first(1);
+		if (entryExists) { return res.sendStatus(409); }
+
 		// Make sure the membership category exists
 		const membershipCategory = await AKSO.db('membershipCategories')
 			.where('id', req.body.categoryId)
