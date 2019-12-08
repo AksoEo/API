@@ -46,11 +46,19 @@ export default {
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
 		// Make sure the membership category exists
-		const membershipCategoryExists = await AKSO.db('membershipCategories')
+		const membershipCategory = await AKSO.db('membershipCategories')
 			.where('id', req.body.categoryId)
-			.first(1);
+			.first('availableFrom', 'availableTo');
 
-		if (!membershipCategoryExists) { return res.sendStatus(404); }
+		if (!membershipCategory) { return res.sendStatus(404); }
+
+		// Make sure the year is within the availability bound
+		if (membershipCategory.availableFrom && req.body.year < membershipCategory.availableFrom) {
+			return res.type('text/plain').status(400).send('year must be greater than or equal to availableFrom');
+		}
+		if (membershipCategory.availableTo && req.body.year > membershipCategory.availableTo) {
+			return res.type('text/plain').status(400).send('year must be lower than or equal to availableFrom');
+		}
 
 		const id = (await AKSO.db('membershipCategories_codeholders').insert({
 			categoryId: req.body.categoryId,
