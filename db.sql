@@ -2168,6 +2168,36 @@ INSERT INTO `congresses_instances_programs_tags` VALUES (3,1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `congresses_instances_registrationForm`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_registrationForm`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_registrationForm` (
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `allowUse` tinyint(1) NOT NULL DEFAULT '1',
+  `allowGuests` tinyint(1) NOT NULL DEFAULT '0',
+  `price_currency` char(3) CHARACTER SET ascii DEFAULT NULL,
+  `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `price_minUpfront` int(10) unsigned DEFAULT NULL,
+  `form` json NOT NULL,
+  PRIMARY KEY (`congressInstanceId`),
+  CONSTRAINT `congresses_instances_registrationForm_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_registrationForm`
+--
+
+LOCK TABLES `congresses_instances_registrationForm` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,'EUR','price',2500,'[{}]');
+/*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `countries`
 --
 
@@ -2912,4 +2942,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-06 16:45:06
+-- Dump completed on 2019-12-10 12:54:47
