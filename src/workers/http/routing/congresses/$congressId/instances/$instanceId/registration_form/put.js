@@ -1,5 +1,6 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { insertAsReplace } from 'akso/util';
+import { formSchema, parseForm } from 'akso/workers/http/lib/form-util';
 
 export default {
 	schema: {
@@ -38,13 +39,7 @@ export default {
 					],
 					additionalProperties: false
 				},
-				form: { // TODO: Validate
-					type: 'array',
-					maxItems: 256,
-					items: {
-						type: 'object'
-					}
-				}
+				form: formSchema
 			},
 			required: [
 				'form'
@@ -64,6 +59,15 @@ export default {
 			.first('org');
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
+
+		// Validate the form
+		let parsedForm;
+		try {
+			parsedForm = parseForm(req.body.form);
+		} catch (e) {
+			e.statusCode = 400;
+			throw e;
+		}
 
 		await insertAsReplace(AKSO.db('congresses_instances_registrationForm')
 			.insert({
