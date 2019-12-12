@@ -43,7 +43,7 @@ export default {
 			.update({ profilePictureHash: null });
 
 		// Update datum history
-		await AKSO.db('codeholders_hist_profilePicture')
+		await AKSO.db('codeholders_hist_profilePictureHash')
 			.insert({
 				codeholderId: req.params.codeholderId,
 				modTime: moment().unix(),

@@ -358,7 +358,7 @@ export const histFields = {
 	'officePhonePublicity': 'officePhonePublicity',
 	'isDead': 'isDead',
 	'deathdate': 'deathdate',
-	'profilePictureHash': 'profilePicture',
+	'profilePictureHash': 'profilePictureHash',
 	'profilePicturePublicity': 'profilePicturePublicity',
 	'website': 'website',
 	'biography': 'biography',

@@ -1438,13 +1438,13 @@ LOCK TABLES `codeholders_hist_profession` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `codeholders_hist_profilePicture`
+-- Table structure for table `codeholders_hist_profilePictureHash`
 --
 
-DROP TABLE IF EXISTS `codeholders_hist_profilePicture`;
+DROP TABLE IF EXISTS `codeholders_hist_profilePictureHash`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `codeholders_hist_profilePicture` (
+CREATE TABLE `codeholders_hist_profilePictureHash` (
   `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `codeholderId` int(10) unsigned NOT NULL,
   `modTime` bigint(10) unsigned NOT NULL,
@@ -1454,17 +1454,17 @@ CREATE TABLE `codeholders_hist_profilePicture` (
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   KEY `profilePictureHash` (`profilePictureHash`) USING BTREE,
-  CONSTRAINT `codeholders_hist_profilePicture_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `codeholders_hist_profilePictureHash_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `codeholders_hist_profilePicture`
+-- Dumping data for table `codeholders_hist_profilePictureHash`
 --
 
-LOCK TABLES `codeholders_hist_profilePicture` WRITE;
-/*!40000 ALTER TABLE `codeholders_hist_profilePicture` DISABLE KEYS */;
-/*!40000 ALTER TABLE `codeholders_hist_profilePicture` ENABLE KEYS */;
+LOCK TABLES `codeholders_hist_profilePictureHash` WRITE;
+/*!40000 ALTER TABLE `codeholders_hist_profilePictureHash` DISABLE KEYS */;
+/*!40000 ALTER TABLE `codeholders_hist_profilePictureHash` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2193,7 +2193,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,'EUR','price',2500,'[{}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,'EUR','price',2500,'[{\"el\": \"text\", \"text\": \"# Aliĝilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiĉojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpoŝtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2942,4 +2942,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-10 12:54:47
+-- Dump completed on 2019-12-12 22:32:32

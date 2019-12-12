@@ -68,7 +68,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 		.update({ profilePictureHash: hash });
 
 	// Update datum history
-	await AKSO.db('codeholders_hist_profilePicture')
+	await AKSO.db('codeholders_hist_profilePictureHash')
 		.insert({
 			codeholderId: codeholderId,
 			modTime: moment().unix(),
