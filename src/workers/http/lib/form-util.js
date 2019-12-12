@@ -201,9 +201,11 @@ export const formSchema = {
 							chAutofill: {
 								type: 'string',
 								enum: [
-									'birthdate', 'country', 'email', 'officePhone',
-									'cellphone', 'landlinePhone', 'phone', 'website',
-									'profession', 'name'
+									'birthdate', 'email', 'officePhone', 'cellphone',
+									'landlinePhone', 'phone', 'website', 'profession',
+									'name', 'honorific', 'firstName', 'lastName', 'address',
+									'countryCode', 'countryArea', 'city', 'cityArea',
+									'streetAddress', 'postalCode', 'sortingCode'
 								],
 								nullable: true
 							}
