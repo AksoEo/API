@@ -38,6 +38,10 @@ export default {
 		await fs.remove(picDir);
 
 		// Update the db
+		const oldData = await AKSO.db('codeholders')
+			.where('id', req.params.codeholderId)
+			.first('profilePictureHash');
+
 		await AKSO.db('codeholders')
 			.where('id', req.params.codeholderId)
 			.update({ profilePictureHash: null });
@@ -49,7 +53,7 @@ export default {
 				modTime: moment().unix(),
 				modBy: req.user.modBy,
 				modCmt: req.query.modCmt,
-				profilePictureHash: null
+				profilePictureHash: oldData.profilePictureHash || null
 			});
 
 		res.sendStatus(204);

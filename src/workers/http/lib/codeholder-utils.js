@@ -63,6 +63,10 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	await Promise.all(writePromises);
 
 	// Update the db
+	const oldData = await AKSO.db('codeholders')
+		.where('id', codeholderId)
+		.first('profilePictureHash');
+
 	await AKSO.db('codeholders')
 		.where('id', codeholderId)
 		.update({ profilePictureHash: hash });
@@ -74,6 +78,6 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 			modTime: moment().unix(),
 			modBy: modBy,
 			modCmt: modCmt,
-			profilePictureHash: hash
+			profilePictureHash: oldData.profilePictureHash || null
 		});
 }
