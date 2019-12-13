@@ -34,6 +34,9 @@ const formEntryInputProps = {
 			{ type: 'object' }, // TODO: Validate scripts
 			{ type: 'boolean' }
 		]
+	},
+	editable: {
+		type: 'boolean'
 	}
 };
 const formEntryInputRequiredProps = [

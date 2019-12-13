@@ -3,6 +3,9 @@ export default {
 	fields: {
 		allowUse: '',
 		allowGuests: '',
+		editable: '',
+		cancellable: '',
+		manualApproval: '',
 		'price.currency': '',
 		'price.var': '',
 		'price.minUpfront': '',

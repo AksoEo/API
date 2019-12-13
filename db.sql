@@ -2178,6 +2178,9 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `congressInstanceId` int(10) unsigned NOT NULL,
   `allowUse` tinyint(1) NOT NULL DEFAULT '1',
   `allowGuests` tinyint(1) NOT NULL DEFAULT '0',
+  `editable` tinyint(1) NOT NULL DEFAULT '1',
+  `cancellable` tinyint(1) NOT NULL DEFAULT '1',
+  `manualApproval` tinyint(1) NOT NULL DEFAULT '0',
   `price_currency` char(3) CHARACTER SET ascii DEFAULT NULL,
   `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_minUpfront` int(10) unsigned DEFAULT NULL,
@@ -2193,7 +2196,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,'EUR','price',2500,'[{\"el\": \"text\", \"text\": \"# Aliĝilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiĉojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpoŝtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,1,1,0,'EUR','price',2500,'[{\"el\": \"text\", \"text\": \"# Aliĝilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiĉojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpoŝtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2942,4 +2945,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-12 22:32:32
+-- Dump completed on 2019-12-13 14:34:30

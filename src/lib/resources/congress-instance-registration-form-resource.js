@@ -10,6 +10,9 @@ class CongressInstanceRegistrationFormResource extends SimpleResource {
 
 		if ('allowUse' in obj) { obj.allowUse = !!obj.allowUse; }
 		if ('allowGuests' in obj) { obj.allowGuests = !!obj.allowGuests; }
+		if ('editable' in obj) { obj.editable = !!obj.editable; }
+		if ('cancellable' in obj) { obj.cancellable = !!obj.cancellable; }
+		if ('manualApproval' in obj) { obj.manualApproval = !!obj.manualApproval; }
 
 		if ('price_currency' in obj || 'price_var' in obj || 'price_minUpfront' in obj) {
 			if (obj.price_currency === null) {
