@@ -89,7 +89,9 @@ const schema = {
 						},
 						notes: {
 							type: 'string',
-							maxLength: 10000
+							minLength: 1,
+							maxLength: 10000,
+							nullable: true
 						},
 						officePhone: {
 							type: 'string',
@@ -106,12 +108,14 @@ const schema = {
 						website: {
 							type: 'string',
 							format: 'safe-uri',
-							maxLength: 50
+							maxLength: 50,
+							nullable: true
 						},
 						biography: {
 							type: 'string',
 							minLength: 1,
-							maxLength: 2000
+							maxLength: 2000,
+							nullable: true
 						}
 					}
 				}
@@ -152,7 +156,8 @@ const schema = {
 								},
 								honorific: {
 									type: 'string',
-									pattern: '^[^\\n]{2,15}$'
+									pattern: '^[^\\n]{2,15}$',
+									nullable: true
 								},
 								birthdate: {
 									type: 'string',

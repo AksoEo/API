@@ -86,7 +86,9 @@ const schema = {
 				},
 				notes: {
 					type: 'string',
-					maxLength: 10000
+					minLength: 1,
+					maxLength: 10000,
+					nullable: true
 				},
 				officePhone: {
 					type: 'string',
