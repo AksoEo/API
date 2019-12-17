@@ -131,7 +131,7 @@ export default {
 				.where('code', codeholder.address_country);
 			const countryName = countryData['name_' + req.params.language];
 
-			addresses[codeholder.id] = AddressFormat.formatAddress(
+			addresses[codeholder.id] = await AddressFormat.formatAddress(
 				addressObj,
 				latin,
 				req.params.language,

@@ -275,14 +275,14 @@ export default {
 				delete addressInput.country;
 				let addressNormalized;
 				try {
-					addressNormalized = AddressFormat.normalizeAddress(addressInput);
+					addressNormalized = await AddressFormat.normalizeAddress(addressInput);
 				} catch (e) {
 					if (e instanceof AddressFormat.InvalidAddress) {
 						return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
 					}
 					throw e;
 				}
-				const addressLatin = AddressFormat.latinizeAddress(addressNormalized);
+				const addressLatin = await AddressFormat.latinizeAddress(addressNormalized);
 
 				const addressSearch = [
 					addressLatin.countryCode,

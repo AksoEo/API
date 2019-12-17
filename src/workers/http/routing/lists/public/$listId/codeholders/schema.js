@@ -181,7 +181,7 @@ export async function handleCodeholders (req, codeholders) {
 					}
 				}
 
-				obj.address = AddressFormat.formatAddress(
+				obj.address = await AddressFormat.formatAddress(
 					addressObj,
 					false,
 					'eo',

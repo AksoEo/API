@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/AksoEo/API#readme",
   "dependencies": {
+    "@cpsdqs/google-i18n-address": "^1.0.0",
     "@sendgrid/mail": "^6.4.0",
     "ajv": "^6.10.2",
     "ajv-merge-patch": "^4.1.0",

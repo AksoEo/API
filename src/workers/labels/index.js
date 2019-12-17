@@ -133,7 +133,7 @@ async function processLabelOrder (data) {
 		if (!codeholders.length) { break; }
 		offset += codeholders.length;
 
-		const codeholderData = codeholders.map(codeholder => {
+		const codeholderData = codeholders.map(async codeholder => {
 			const addressObj = {
 				countryCode: 	codeholder.address_country,
 				countryArea: 	codeholder.address_countryArea,
@@ -161,7 +161,7 @@ async function processLabelOrder (data) {
 			}
 
 			const data = {
-				address: AddressFormat.formatAddress(
+				address: await AddressFormat.formatAddress(
 					addressObj,
 					req.body.latin,
 					req.body.language,

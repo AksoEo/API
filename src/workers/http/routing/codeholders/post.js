@@ -337,7 +337,7 @@ export default {
 			delete addressInput.country;
 			let addressNormalized;
 			try {
-				addressNormalized = AddressFormat.normalizeAddress(addressInput);
+				addressNormalized = await AddressFormat.normalizeAddress(addressInput);
 			} catch (e) {
 				await rollbackTransaction(trx);
 				if (e instanceof AddressFormat.InvalidAddress) {
@@ -345,7 +345,7 @@ export default {
 				}
 				throw e;
 			}
-			const addressLatin = AddressFormat.latinizeAddress(addressNormalized);
+			const addressLatin = await AddressFormat.latinizeAddress(addressNormalized);
 
 			const addressSearch = [
 				addressLatin.countryCode,
