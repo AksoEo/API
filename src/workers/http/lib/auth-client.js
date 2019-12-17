@@ -60,7 +60,10 @@ export default class AuthClient {
 			.from('admin_permissions_memberRestrictions_groups')
 			.whereIn('adminGroupId', groups);
 
-		this._perms.memberFilter.$and = groupMemberRestrictions.map(x => x.filter);
+		this._perms.memberFilter.$and = groupMemberRestrictions
+			.map(x => x.filter)
+			.filter(x => Object.keys(x).length);
+		if (!this._perms.memberFilter.$and.length) { this._perms.memberFilter = {}; }
 
 		for (let fields of groupMemberRestrictions.map(x => x.fields)) {
 			if (fields === null) {
