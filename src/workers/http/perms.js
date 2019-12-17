@@ -1,6 +1,8 @@
 export default async function init (req, res, next) { // eslint-disable-line no-unused-vars
 	// Set default hard-coded business logic
-	req.memberFields = {};
+	req.memberFields = {
+		id: 'r'
+	};
 	req.memberFilter = {};
 	req.permissions = [
 		'membership_categories.read',
