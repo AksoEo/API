@@ -114,10 +114,14 @@ export default class AuthClient {
 			if (memberRestrictions.fields === null || this._perms.memberFields === null) {
 				this._perms.memberFields = null;
 			} else {
-				this._perms.memberFields = merge(
-					this._perms.memberFields,
-					memberRestrictions.fields
-				); // TODO: Better merge
+				// Merge the existing memberFields with the new ones
+				for (const [field, flags] of Object.entries(memberRestrictions.fields)) {
+					if (!(field in this._perms.memberFields)) {
+						this._perms.memberFields[field] = flags;
+						continue;
+					}
+					this._perms.memberFields[field] = [...new Set(this._perms.memberFields[field] + flags)].join('');
+				}
 			}
 		}
 
