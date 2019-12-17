@@ -1,4 +1,5 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
+import { analyze, analyzeAll, UnionType, ConcreteType } from '@tejo/akso-script';
 
 const formEntryInputProps = {
 	el: {
@@ -25,13 +26,13 @@ const formEntryInputProps = {
 	},
 	required: {
 		oneOf: [
-			{ type: 'object' }, // TODO: Validate scripts
+			{ type: 'object' },
 			{ type: 'boolean' }
 		]
 	},
 	disabled: {
 		oneOf: [
-			{ type: 'object' }, // TODO: Validate scripts
+			{ type: 'object' },
 			{ type: 'boolean' }
 		]
 	},
@@ -77,7 +78,7 @@ export const formSchema = {
 						type: 'string',
 						const: 'script'
 					},
-					script: { // TODO: Validate scripts
+					script: {
 						type: 'object'
 					}
 				},
@@ -99,7 +100,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'boolean' },
 									{ type: 'null' }
 								]
@@ -118,7 +119,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'number' },
 									{ type: 'null' }
 								]
@@ -161,7 +162,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'string' },
 									{ type: 'null' }
 								]
@@ -226,7 +227,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'number' },
 									{ type: 'null' }
 								]
@@ -269,8 +270,8 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
-									{ type: 'string' }, // TODO: Make sure this is a valid option
+									{ type: 'object' },
+									{ type: 'string' },
 									{ type: 'null' }
 								]
 							},
@@ -337,7 +338,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'string' }, // TODO: Make sure this is a valid option
 									{ type: 'null' }
 								]
@@ -401,7 +402,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'string', format: 'date' },
 									{ type: 'null' }
 								]
@@ -435,7 +436,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'string', format: 'time', pattern: '^\\d\\d?:\\d\\d$' },
 									{ type: 'null' }
 								]
@@ -466,7 +467,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'integer', format: 'uint64' },
 									{ type: 'null' }
 								]
@@ -500,7 +501,7 @@ export const formSchema = {
 							},
 							default: {
 								oneOf: [
-									{ type: 'object' }, // TODO: Validate scripts
+									{ type: 'object' },
 									{ type: 'boolean' },
 									{ type: 'null' }
 								]
@@ -524,7 +525,7 @@ export const formSchema = {
 								minimum: 1,
 								nullable: true
 							},
-							headerTop: { // TODO: Must have `cols`` items
+							headerTop: {
 								type: 'array',
 								nullable: true,
 								items: {
@@ -535,7 +536,7 @@ export const formSchema = {
 									nullable: true
 								}
 							},
-							headerLeft: { // TODO: Must have `cols`` items
+							headerLeft: {
 								type: 'array',
 								nullable: true,
 								items: {
@@ -573,14 +574,71 @@ export const formSchema = {
 export function parseForm (form) {
 	const fields = [];
 
-	for (const formEntry of form) {
+	let scripts = {};
+	const formValues = {};
+
+	const validatePropExpr = function (i, formEntry, prop) {
+		const symb = Symbol(prop);
+		const exprScripts = {
+			...scripts,
+			[symb]: formEntry[prop]
+		};
+		let analysis;
+		try {
+			analysis = analyze(exprScripts, symb, formValues);
+		} catch {
+			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} caused a generic error (might be a stack overflow)`);
+		}
+		if (!analysis.valid) {
+			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+		}
+	};
+
+	for (const [i, formEntry] of Object.entries(form)) {
 		if (formEntry.el === 'input') {
 			if (fields.includes(formEntry.name)) {
 				throw new Error('Duplicate FormEntryInput with name ' + formEntry.name);
 			}
 			fields.push(formEntry.name);
 
-			// Defaults
+			// Form values
+			if (formEntry.type === 'boolean') {
+				formValues[formEntry.name] = new ConcreteType(ConcreteType.types.BOOL);
+			} else if (['number', 'money', 'datetime'].includes(formEntry.type)) {
+				formValues[formEntry.name] = new UnionType([
+					new ConcreteType(ConcreteType.types.NULL),
+					new ConcreteType(ConcreteType.types.NUMBER)
+				]);
+			} else if (['text', 'enum', 'country', 'date', 'time'].includes(formEntry.type)) {
+				formValues[formEntry.name] = new UnionType([
+					new ConcreteType(ConcreteType.types.NULL),
+					new ConcreteType(ConcreteType.types.STRING)
+				]);
+			} else if (formEntry.type === 'boolean-table') {
+				formValues[formEntry.name] = new ConcreteType(
+					ConcreteType.types.ARRAY,
+					new UnionType([
+						new ConcreteType(ConcreteType.types.NULL),
+						new ConcreteType(ConcreteType.types.BOOL)
+					])
+				);
+			}
+
+			// AKSO Script expressions
+			const props = [
+				'required',
+				'disabled',
+				'default'
+			];
+			for (const prop of props) {
+				if (formEntry[prop] && typeof formEntry[prop] === 'object') {
+					validatePropExpr(i, formEntry, prop);
+					// TODO: Make sure it's the right type?
+					// Alternatively, do we just type cast?
+				}
+			}
+
+			// Defaults and per type validation
 			if (!('description' in formEntry)) { formEntry.description = null; }
 			if (!('default' in formEntry)) { formEntry.default = null; }
 			if (!('required' in formEntry)) { formEntry.required = false; }
@@ -613,6 +671,13 @@ export function parseForm (form) {
 				for (const opt of formEntry.options) {
 					if (!('disabled' in opt)) { opt.disabled = false; }
 				}
+
+				if (typeof formEntry.default === 'string') {
+					const optValues = formEntry.options.map(x => x.value);
+					if (!optValues.includes(formEntry.default)) {
+						throw new Error('Invalid default in formEntry ' + formEntry.name);
+					}
+				}
 			} else if (formEntry.type === 'country') {
 				if (!('minSelect' in formEntry)) { formEntry.minSelect = null; }
 				if (!('maxSelect' in formEntry)) { formEntry.maxSelect = null; }
@@ -636,6 +701,32 @@ export function parseForm (form) {
 				if (!('headerTop' in formEntry)) { formEntry.headerTop = null; }
 				if (!('headerLeft' in formEntry)) { formEntry.headerLeft = null; }
 				if (!('excludeCells' in formEntry)) { formEntry.excludeCells = null; }
+
+				if (formEntry.headerTop && formEntry.headerTop.length !== formEntry.cols) {
+					throw new Error(`headerTop in formEntry ${formEntry.name} must have as many items as it has columns`);
+				}
+				if (formEntry.headerLeft && formEntry.headerLeft.length !== formEntry.cols) {
+					throw new Error(`headerLeft in formEntry ${formEntry.name} must have as many items as it has columns`);
+				}
+			}
+		} else if (formEntry.el === 'script') {
+			const thisScript = {};
+			for (const [key, val] of Object.entries(formEntry.script)) {
+				if (key[0] === '_') { continue; }
+				thisScript[key] = val;
+			}
+			const analysisScripts = { ...scripts, ...thisScript };
+			scripts = { ...scripts, ...formEntry.script };
+			let analyses;
+			try {
+				analyses = analyzeAll(analysisScripts, formValues);
+			} catch (e) {
+				throw new Error(`The AKSO Script at pos ${i} caused a generic error (might be a stack overflow)`);
+			}
+			for (const [def, analysis] of Object.entries(analyses)) {
+				if (!analysis.valid) {
+					throw new Error(`The definition for ${def} in the AKSO Script at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+				}
 			}
 		}
 	}

@@ -25,9 +25,9 @@
   "dependencies": {
     "@cpsdqs/google-i18n-address": "^1.0.0",
     "@sendgrid/mail": "^6.4.0",
+    "@tejo/akso-script": "^0.1.2",
     "ajv": "^6.10.2",
     "ajv-merge-patch": "^4.1.0",
-    "akso-script": "github:AksoEo/akso-script-js",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "bytes": "^3.1.0",

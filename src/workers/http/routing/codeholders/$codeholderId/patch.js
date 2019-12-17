@@ -1,5 +1,5 @@
 import moment from 'moment';
-import AddressFormat from 'google-i18n-address';
+import AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction, rollbackTransaction, insertAsReplace } from 'akso/util';
 import { modQuerySchema } from 'akso/workers/http/lib/codeholder-utils';

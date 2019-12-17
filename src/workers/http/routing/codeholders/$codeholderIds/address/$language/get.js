@@ -1,4 +1,4 @@
-import AddressFormat from 'google-i18n-address';
+import AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
