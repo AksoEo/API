@@ -68,6 +68,7 @@ export default {
 		}
 
 		res.set('Location', path.join(AKSO.conf.http.path, '/admin_groups/', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

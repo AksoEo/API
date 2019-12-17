@@ -76,7 +76,14 @@ export default {
 			year: req.body.year
 		}))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, 'codeholders', req.params.codeholderId, 'membership', id.toString()));
+		res.set('Location', path.join(
+			AKSO.conf.http.path,
+			'codeholders',
+			req.params.codeholderId,
+			'membership',
+			id.toString()
+		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

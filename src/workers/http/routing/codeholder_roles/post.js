@@ -29,6 +29,7 @@ export default {
 		const id = (await AKSO.db('codeholderRoles').insert(req.body))[0];
 
 		res.set('Location', path.join(AKSO.conf.http.path, '/codeholder_roles/', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

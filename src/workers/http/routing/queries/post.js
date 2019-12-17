@@ -43,7 +43,8 @@ export default {
 				query: JSON.stringify(req.body.query)
 			}))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, `/queries/${id}`));
+		res.set('Location', path.join(AKSO.conf.http.path, 'queries', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

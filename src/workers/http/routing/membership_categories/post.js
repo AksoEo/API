@@ -49,7 +49,8 @@ export default {
 	run: async function run (req, res) {
 		const id = (await AKSO.db('membershipCategories').insert(req.body))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, '/membership_categories/', id.toString()));
+		res.set('Location', path.join(AKSO.conf.http.path, 'membership_categories', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

@@ -82,6 +82,7 @@ export default {
 			'/toc/',
 			id.toString()
 		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

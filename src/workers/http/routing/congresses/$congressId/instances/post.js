@@ -96,7 +96,14 @@ export default {
 
 		const id = (await AKSO.db('congresses_instances').insert(data))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, 'congresses', req.params.congressId , 'instances', id.toString()));
+		res.set('Location', path.join(
+			AKSO.conf.http.path,
+			'congresses',
+			req.params.congressId,
+			'instances',
+			id.toString()
+		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

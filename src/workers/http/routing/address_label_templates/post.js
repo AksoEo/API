@@ -91,6 +91,7 @@ export default {
 		const id = (await AKSO.db('addressLabelTemplates').insert(data))[0];
 
 		res.set('Location', path.join(AKSO.conf.http.path, '/address_label_templates/', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

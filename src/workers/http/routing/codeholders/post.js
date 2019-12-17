@@ -393,6 +393,7 @@ export default {
 
 		await trx.commit();
 		res.set('Location', path.join(AKSO.conf.http.path, 'codeholders', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

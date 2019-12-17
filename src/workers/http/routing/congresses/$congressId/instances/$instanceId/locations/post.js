@@ -174,6 +174,7 @@ export default {
 			'locations',
 			id.toString()
 		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

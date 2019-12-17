@@ -61,11 +61,14 @@ export default {
 			}
 		});
 
-		res.set('Location', path.join(AKSO.conf.http.path,
-			'/magazines/',
+		res.set('Location', path.join(
+			AKSO.conf.http.path,
+			'magazines',
 			req.params.magazineId,
-			'/editions/',
-			req.body.id.toString()));
+			'editions',
+			req.body.id
+		));
+		res.set('X-Identifier', req.body.id);
 		res.sendStatus(201);
 	}
 };

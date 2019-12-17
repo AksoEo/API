@@ -50,6 +50,7 @@ export default {
 			'program_tags',
 			id.toString()
 		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

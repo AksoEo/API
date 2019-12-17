@@ -82,7 +82,8 @@ export default {
 				memberFilter: JSON.stringify(req.memberFilter || {})
 			}))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, `/lists/${id}`));
+		res.set('Location', path.join(AKSO.conf.http.path, 'lists', id.toString()));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };

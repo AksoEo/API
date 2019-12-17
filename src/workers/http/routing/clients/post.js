@@ -52,6 +52,7 @@ export default {
 		await AKSO.db('clients').insert(data);
 
 		res.set('Location', path.join(AKSO.conf.http.path, '/clients/', apiKey.toString('hex')));
+		res.set('X-Identifier', apiKey.toString('hex'));
 		res.status(201).sendObj({
 			apiKey: apiKey,
 			apiSecret: apiSecret

@@ -34,7 +34,8 @@ export default {
 			name: req.body.name
 		});
 
-		res.set('Location', path.join(AKSO.conf.http.path, '/country_groups/', req.body.code));
+		res.set('Location', path.join(AKSO.conf.http.path, 'country_groups', req.body.code));
+		res.set('X-Identifier', req.body.code);
 		res.sendStatus(201);
 	}
 };

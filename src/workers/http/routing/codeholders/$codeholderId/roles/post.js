@@ -68,7 +68,14 @@ export default {
 			}
 		}))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, 'codeholders', req.params.codeholderId, 'roles', id.toString()));
+		res.set('Location', path.join(
+			AKSO.conf.http.path,
+			'codeholders',
+			req.params.codeholderId,
+			'roles',
+			id.toString()
+		));
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };
