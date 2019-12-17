@@ -132,7 +132,7 @@ export async function handleCodeholders (req, codeholders) {
 
 	const fields = req.query.fields || schema.defaultFields;
 	const isMember = req.user ? await req.user.isActiveMember() : false;
-	const col = codeholders.map(obj => {
+	const col = await Promise.all(codeholders.map(async obj => {
 		if (obj.name) {
 			const nameBits = [];
 			if (obj.codeholderType === 'human') {
@@ -229,7 +229,7 @@ export async function handleCodeholders (req, codeholders) {
 		const res = new SimpleResource(obj);
 		res.removeUnnecessary(fields);
 		return res;
-	});
+	}));
 
 	return col;
 }

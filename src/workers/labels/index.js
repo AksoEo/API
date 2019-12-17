@@ -133,7 +133,7 @@ async function processLabelOrder (data) {
 		if (!codeholders.length) { break; }
 		offset += codeholders.length;
 
-		const codeholderData = codeholders.map(async codeholder => {
+		const codeholderData = await Promise.all(codeholders.map(async codeholder => {
 			const addressObj = {
 				countryCode: 	codeholder.address_country,
 				countryArea: 	codeholder.address_countryArea,
@@ -171,7 +171,7 @@ async function processLabelOrder (data) {
 			};
 
 			return data;
-		});
+		}));
 
 		doc.addPage({
 			size: req.body.paper
