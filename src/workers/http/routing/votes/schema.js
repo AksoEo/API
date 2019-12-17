@@ -245,8 +245,7 @@ const getSchema = type => {
 			},
 			tieBreakerCodeholder: {
 				type: 'integer',
-				format: 'uint32',
-				nullable: true
+				format: 'uint32'
 			},
 			publishVoters: {
 				type: 'boolean'
