@@ -53,6 +53,10 @@ Handlebars.registerHelper('breaklines', text => {
 		.replace(/(\r\n|\n|\r)/gm, '<br>');
 	return new Handlebars.SafeString(text);
 });
+Handlebars.registerHelper('if_eq', function(a, b, opts) {
+	if(a == b) { return opts.fn(this); }
+	else { return opts.inverse(this); }
+});
 
 /**
  * Renders a template using handlebars
@@ -103,6 +107,13 @@ export function insertAsReplace (query, db = AKSO.db) {
  */
 export function insertAsInsertIgnore (query, db = AKSO.db) {
 	return db.raw(query.toString().replace(/^INSERT/i, 'INSERT IGNORE'));
+}
+
+export function escapeHTML(s) { 
+	return s.replace(/&/g, '&amp;')
+		.replace(/"/g, '&quot;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
 }
 
 // From: https://gist.github.com/dperini/729294

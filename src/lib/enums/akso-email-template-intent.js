@@ -76,9 +76,43 @@ const formValues = {
 	}
 };
 
+const bogusData = {
+	CODEHOLDER: {
+		'codeholder.id': 1,
+		'codeholder.name': 'Ludoviko Zamenhof',
+		'codeholder.oldCode': 'zmld-w',
+		'codeholder.newCode': 'zamlud',
+		'codeholder.codeholderType': 'human',
+		'codeholder.hasPassword': true,
+		'codeholder.addressFormatted': 
+`Bjalistokostrato 42
+2020 Bjalistoko
+POLLANDO`,
+		'codeholder.addressLatin.country': 'pl',
+		'codeholder.addressLatin.countryArea': null,
+		'codeholder.addressLatin.city': 'Bjalistoko',
+		'codeholder.addressLatin.cityArea': null,
+		'codeholder.addressLatin.streetAddress': 'Bjalistokostrato 42',
+		'codeholder.addressLatin.postalCode': '2020',
+		'codeholder.addressLatin.sortingCode': null,
+		'codeholder.feeCountry': 'pl',
+		'codeholder.email': 'zamenhof@example.org',
+		'codeholder.birthdate': '1859-12-15',
+		'codeholder.cellphone': null,
+		'codeholder.officePhone': null,
+		'codeholder.landlinePhone': null,
+		'codeholder.age': 57,
+		'codeholder.agePrimo': 56
+	}
+};
+
 class AKSOEmailTemplateIntent extends Enum {
 	static getFormValues (prop) {
 		return formValues[this.normalize(prop)];
+	}
+
+	static getBogusData (prop) {
+		return bogusData[this.normalize(prop)];
 	}
 }
 AKSOEmailTemplateIntent.setProps(...Object.keys(formValues));

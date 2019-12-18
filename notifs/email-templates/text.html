@@ -1,0 +1,68 @@
+{{#if_eq columns.length 1}}
+	<!-- 1 Column Text + Button : BEGIN -->
+	<tr>
+	    <td style="background-color: #ffffff;">
+	        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+	            <tr>
+	                <td style="padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+	                    {{columns.[0]}}
+	                </td>
+	            </tr>
+	            {{#if button}}
+		            <tr>
+		                <td style="padding: 0 20px;">
+		                    <!-- Button : BEGIN -->
+		                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
+		                        <tr>
+		                            <td class="button-td button-td-primary" style="border-radius: 4px; background: #222222;">
+									     <a class="button-a button-a-primary" href="{{button.href}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">{{button.text}}</a>
+									</td>
+		                        </tr>
+		                    </table>
+		                    <!-- Button : END -->
+		                </td>
+		            </tr>
+	            {{/if}}
+	        </table>
+	    </td>
+	</tr>
+	<!-- 1 Column Text + Button : END -->
+{{/if_eq}}
+{{#if columns.[1]}}
+    <!-- 2 Even Columns : BEGIN -->
+    <tr>
+        <td style="padding: 0 10px 40px 10px; background-color: #ffffff;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                	{{#each columns}}
+	                    <td valign="top" width="50%">
+	                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+	                            <tr>
+	                                <td style="text-align: left; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding: 10px 10px 0;">
+	                                   <p style="margin: 0;">{{this}}</p>
+	                                </td>
+	                            </tr>
+	                        </table>
+	                    </td>
+                    {{/each}}
+                </tr>
+                {{#if button}}
+		            <tr>
+		                <td style="padding: 0 20px;">
+		                    <!-- Button : BEGIN -->
+		                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
+		                        <tr>
+		                            <td class="button-td button-td-primary" style="border-radius: 4px; background: #222222;">
+									     <a class="button-a button-a-primary" href="{{button.href}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">{{button.text}}</a>
+									</td>
+		                        </tr>
+		                    </table>
+		                    <!-- Button : END -->
+		                </td>
+		            </tr>
+	            {{/if}}
+            </table>
+        </td>
+    </tr>
+    <!-- 2 Even Columns : END -->
+{{/if}}
