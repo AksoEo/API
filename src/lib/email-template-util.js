@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
+import MarkdownIt from 'markdown-it';
 import { evaluate } from '@tejo/akso-script';
 
 import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
@@ -82,8 +83,13 @@ async function renderInheritTemplate (templateData, viewFn) {
 const ifRegex = /\{\{#if\s+(.+?)}}(.+?)(?:\{\{#else}}(.+?))?\{\{\/if}}/gs;
 const identifierRegex = /\{\{([^#/].*?)}}/gs;
 
+const inheritTextMd = new MarkdownIt('zero');
+inheritTextMd.enable([
+	'blockquote', 'heading', 'emphasis',
+	'strikethrough', 'link', 'list',
+	'table', 'image'
+]);
 function renderInheritModule (type, module, viewFn) {
-	// TODO: Markdown
 	const view = { ...module };
 	if (view.type === 'image') {
 		view.url = renderTemplateStr('text', view.url, viewFn);
@@ -91,7 +97,9 @@ function renderInheritModule (type, module, viewFn) {
 	} else if (view.type === 'text') {
 		if (view.columns) {
 			view.columns = view.columns.map(str => {
-				return renderTemplateStr('text', str, viewFn);
+				str = renderTemplateStr('text', str, viewFn);
+				if (type === 'html') { str = inheritTextMd.render(str); }
+				return str;
 			});
 		}
 		if (view.button) {

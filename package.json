@@ -49,6 +49,7 @@
     "ipaddr.js": "^1.9.1",
     "knex": "^0.19.5",
     "latlon-formatter": "^0.3.0",
+    "markdown-it": "^10.0.0",
     "method-override": "^3.0.0",
     "moment-timezone": "^0.5.27",
     "msgpack-lite": "^0.1.26",
