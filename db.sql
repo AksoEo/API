@@ -2329,7 +2329,7 @@ CREATE TABLE `email_templates` (
 
 LOCK TABLES `email_templates` WRITE;
 /*!40000 ALTER TABLE `email_templates` DISABLE KEYS */;
-INSERT INTO `email_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratulas membron pri ties naskiĝtago','codeholder',NULL,'Feliĉan naskiĝtagon de UEA!','ne-respondu@uea.org','Universala Esperanto-Asocio',NULL,'<p>Teksto!</p>','Teksto!',NULL),(6,'inherit','tejo','Sciigo pri aŭtomata realiĝo kiel Juna Amiko de Esperanto',NULL,'codeholder','{\"var\": {\"f\": \"@codeholder.newCode\", \"t\": \"c\"}}','Vi iĝis Juna Amiko de Esperanto','ne-respondu@tejo.org',NULL,NULL,NULL,NULL,'[{\"type\": \"text\", \"columns\": [\"Vi estis realigita al TEJO kiel Juna Amiko de Esperanto ĉar vi ne memstare remembriĝis al TEJO tiun ĉi jaron kaj ne aparte petis eksmembriĝon.\\n\\nSalutas,\\nTutmonda Esperantista Junulara Organizo\"]}]');
+INSERT INTO `email_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratulas membron pri ties naskiĝtago','codeholder','{\"time\": {\"f\": \"time_now\", \"t\": \"c\"}, \"time_format\": {\"a\": [\"time\"], \"f\": \"datetime_fmt\", \"t\": \"c\"}}','Feliĉan naskiĝtagon de UEA!','ne-respondu@uea.org','Universala Esperanto-Asocio',NULL,'Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{#else}} (neniu malnova kodo) {{/if}} {{@codeholder.email}} {{time_format}}','Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} {{@codeholder.email}} {{time_format}}',NULL),(6,'inherit','tejo','Sciigo pri aŭtomata realiĝo kiel Juna Amiko de Esperanto',NULL,'codeholder','{\"var\": {\"f\": \"@codeholder.newCode\", \"t\": \"c\"}}','Vi iĝis Juna Amiko de Esperanto','ne-respondu@tejo.org',NULL,NULL,NULL,NULL,'[{\"type\": \"text\", \"columns\": [\"Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} Vi estis realigita al TEJO kiel Juna Amiko de Esperanto ĉar vi ne memstare remembriĝis al TEJO tiun ĉi jaron kaj ne aparte petis eksmembriĝon.\\n\\nSalutas,\\nTutmonda Esperantista Junulara Organizo\"]}]');
 /*!40000 ALTER TABLE `email_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2991,4 +2991,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-18 14:01:56
+-- Dump completed on 2019-12-18 16:59:54
