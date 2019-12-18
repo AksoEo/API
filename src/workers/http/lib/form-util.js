@@ -716,16 +716,10 @@ export function parseForm (form, formValues = {}) {
 				}
 			}
 		} else if (formEntry.el === 'script') {
-			const thisScript = {};
-			for (const [key, val] of Object.entries(formEntry.script)) {
-				if (key[0] === '_') { continue; }
-				thisScript[key] = val;
-			}
-			const analysisScripts = { ...scripts, ...thisScript };
 			scripts = { ...scripts, ...formEntry.script };
 			let analyses;
 			try {
-				analyses = analyzeAll(analysisScripts, getFormValue);
+				analyses = analyzeAll(scripts, getFormValue);
 			} catch (e) {
 				throw new Error(`The AKSO Script at pos ${i} caused a generic error (might be a stack overflow)`);
 			}
