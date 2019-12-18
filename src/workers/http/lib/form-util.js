@@ -9,8 +9,7 @@ const formEntryInputProps = {
 	name: {
 		type: 'string',
 		minLength: 1,
-		maxLength: 20,
-		pattern: '^[^\\n]+$'
+		maxLength: 20
 	},
 	label: {
 		type: 'string',
@@ -571,11 +570,13 @@ export const formSchema = {
 	}
 };
 
-export function parseForm (form) {
+export function parseForm (form, formValues = {}) {
 	const fields = [];
 
 	let scripts = {};
-	const formValues = {};
+	const getFormValue = key => {
+		return formValues[key.normalize('NFC')];
+	};
 
 	const validatePropExpr = function (i, formEntry, prop) {
 		const symb = Symbol(prop);
@@ -585,7 +586,7 @@ export function parseForm (form) {
 		};
 		let analysis;
 		try {
-			analysis = analyze(exprScripts, symb, formValues);
+			analysis = analyze(exprScripts, symb, getFormValue);
 		} catch {
 			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} caused a generic error (might be a stack overflow)`);
 		}
@@ -594,8 +595,13 @@ export function parseForm (form) {
 		}
 	};
 
+	const inputNameRegex = /^[\w\-:ĥŝĝĉĵŭ]+$/i;
 	for (const [i, formEntry] of Object.entries(form)) {
 		if (formEntry.el === 'input') {
+			formEntry.name = formEntry.name.normalize('NFC');
+			if (!inputNameRegex.test(formEntry.name)) {
+				throw new Error('Invalid FormEntryInput#name');
+			}
 			if (fields.includes(formEntry.name)) {
 				throw new Error('Duplicate FormEntryInput with name ' + formEntry.name);
 			}
@@ -719,7 +725,7 @@ export function parseForm (form) {
 			scripts = { ...scripts, ...formEntry.script };
 			let analyses;
 			try {
-				analyses = analyzeAll(analysisScripts, formValues);
+				analyses = analyzeAll(analysisScripts, getFormValue);
 			} catch (e) {
 				throw new Error(`The AKSO Script at pos ${i} caused a generic error (might be a stack overflow)`);
 			}

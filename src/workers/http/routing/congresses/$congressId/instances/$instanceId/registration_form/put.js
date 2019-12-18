@@ -1,6 +1,7 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { insertAsReplace } from 'akso/util';
 import { formSchema, parseForm } from 'akso/workers/http/lib/form-util';
+import { UnionType, ConcreteType } from '@tejo/akso-script';
 
 export default {
 	schema: {
@@ -61,9 +62,19 @@ export default {
 		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
 
 		// Validate the form
+		const formValues = {
+			'@registration_time': new UnionType([
+				new ConcreteType(ConcreteType.types.NULL),
+				new ConcreteType(ConcreteType.types.NUMBER)
+			]),
+			'@upfront_time': new UnionType([
+				new ConcreteType(ConcreteType.types.NULL),
+				new ConcreteType(ConcreteType.types.NUMBER)
+			])
+		};
 		let parsedForm;
 		try {
-			parsedForm = parseForm(req.body.form);
+			parsedForm = parseForm(req.body.form, formValues);
 		} catch (e) {
 			e.statusCode = 400;
 			throw e;
