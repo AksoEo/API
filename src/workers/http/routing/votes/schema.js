@@ -346,7 +346,7 @@ delete schemas.rp.properties.majorityBallots;
 delete schemas.rp.properties.majorityBallotsInclusive;
 delete schemas.rp.properties.majorityMustReachBoth;
 delete schemas.rp.properties.maxOptionsPerBallot;
-schemas.rp.required.push('options');
+schemas.rp.required.push('options', 'tieBreakerCodeholder');
 
 delete schemas.stv.properties.majorityBallots;
 delete schemas.stv.properties.majorityBallotsInclusive;
@@ -354,12 +354,13 @@ delete schemas.stv.properties.majorityMustReachBoth;
 delete schemas.stv.properties.mentionThreshold;
 delete schemas.stv.properties.mentionThresholdInclusive;
 delete schemas.stv.properties.maxOptionsPerBallot;
-schemas.stv.required.push('options');
+schemas.stv.required.push('options', 'tieBreakerCodeholder');
 
 delete schemas.tm.properties.majorityBallots;
 delete schemas.tm.properties.majorityBallotsInclusive;
 delete schemas.tm.properties.majorityMustReachBoth;
-delete schemas.tm.properties.majorityMustReachBothtieBreakerCodeholder;
+delete schemas.tm.properties.majorityMustReachBoth;
+delete schemas.tm.properties.tieBreakerCodeholder;
 schemas.tm.required.push('options');
 
 export const postSchema = {

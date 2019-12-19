@@ -6,7 +6,7 @@ import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
 import { promiseAllObject, renderTemplate } from './util';
-import { formatCodeholderNames } from 'akso/workers/http/lib/codeholder-utils';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-utils';
 import AKSOOrganization from './lib/enums/akso-organization';
 
 /**
@@ -27,7 +27,7 @@ export async function getNamesAndEmails (...ids) {
 	const newArr = [];
 	for (let codeholder of codeholders) {
 		const index = map[codeholder.id];
-		const name = formatCodeholderNames(codeholder);
+		const name = formatCodeholderName(codeholder);
 		newArr[index] = {
 			email: codeholder.email,
 			name: name

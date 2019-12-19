@@ -1,0 +1,7 @@
+Estimata \{{name}},
+
+Aperis egaleco en voĉdono en kiu vi estis elektita kiel la egalecrompanto.
+
+Bonvolu iri al la ĉi-suba ligilo por doni vian voĉon:
+
+{{#url}}/vi/vochdonoj/{{../vote}}{{/url}}

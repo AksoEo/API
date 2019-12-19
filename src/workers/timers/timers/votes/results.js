@@ -1,5 +1,6 @@
 import STV from 'akso/lib/votes/stv';
 import RP from 'akso/lib/votes/rp';
+import { renderSendEmail } from 'akso/mail';
 
 const arrRange = (start, end) => Array.from({ length: (end - start + 1) }, (v, k) => k + start);
 const CAND_SYMB = String.fromCharCode(
@@ -243,6 +244,14 @@ async function obtainVoteResult (vote) {
 			algResult = STV(vote.numChosenOptions, symbOpts, symbBallots, tieBreakerBallot);
 		} catch (e) {
 			if (e.type === 'TIE_BREAKER_NEEDED') {
+				await renderSendEmail({
+					org: vote.org,
+					tmpl: 'tie-breaker-needed',
+					to: vote.tieBreakerCodeholder,
+					view: {
+						vote: vote.id
+					}
+				});
 				result.result = 'TIE_BREAKER_NEEDED';
 				return result;
 			}
@@ -280,6 +289,14 @@ async function obtainVoteResult (vote) {
 				algResults.push(algResult);
 			} catch (e) {
 				if (e.type === 'TIE_BREAKER_NEEDED') {
+					await renderSendEmail({
+						org: vote.org,
+						tmpl: 'tie-breaker-needed',
+						to: vote.tieBreakerCodeholder,
+						view: {
+							vote: vote.id
+						}
+					});
 					result.result = 'TIE_BREAKER_NEEDED';
 					return result;
 				}
