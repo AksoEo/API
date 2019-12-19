@@ -16,6 +16,10 @@ const schema = {
 				emailTemplateId: {
 					type: 'integer',
 					format: 'uint32'
+				},
+				deleteTemplateOnComplete: {
+					type: 'boolean',
+					default: false
 				}
 			},
 			required: [ 'emailTemplateId' ],
@@ -52,6 +56,10 @@ export default {
 		if (!templateData) { return res.sendStatus(404); }
 		if (!req.hasPermission('email_templates.read.' + templateData.org)) { return res.sendStatus(403); }
 
+		if (req.body.deleteTemplateOnComplete &&!req.hasPermission('email_templates.delete.' + templateData.org)) {
+			return res.sendStatus(403);
+		}
+
 		let fieldWhitelist = null;
 		if (req.memberFields) { fieldWhitelist = Object.keys(req.memberFields); }
 
@@ -65,6 +73,9 @@ export default {
 		const memberFilterQuery = baseQuery.clone();
 		QueryUtil.simpleCollection(req, schema, memberFilterQuery, fieldWhitelist);
 		memberFilterQuery.toSQL();
+
+		// Respond so the client isn't left hanging
+		res.sendStatus(202);
 
 		// Then make the real request
 		const customReq = { query: {}, ...req };
@@ -169,8 +180,11 @@ export default {
 			await Promise.all(sendPromises);
 		} while (codeholders.length);
 
-
-
-		res.sendStatus(202);
+		// Delete the template if necessary
+		if (req.body.deleteTemplateOnComplete) {
+			await AKSO.db('email_templates')
+				.where('id', req.body.emailTemplateId)
+				.delete();
+		}
 	}
 };
