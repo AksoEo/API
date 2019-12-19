@@ -52,7 +52,7 @@ export default {
 				id: req.body.emailTemplateId,
 				intent: 'codeholder'
 			})
-			.first('org', 'from', 'fromName');
+			.first('*');
 		if (!templateData) { return res.sendStatus(404); }
 		if (!req.hasPermission('email_templates.read.' + templateData.org)) { return res.sendStatus(403); }
 
@@ -158,7 +158,7 @@ export default {
 				};
 
 				sendPromises.push(new Promise((resolve, reject) => {
-					renderEmailTemplate(req.body.emailTemplateId, emailView)
+					renderEmailTemplate(templateData, emailView)
 						.then(renderedEmail => {
 							const msg = {
 								...renderedEmail,

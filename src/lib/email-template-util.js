@@ -5,28 +5,37 @@ import { evaluate } from '@tejo/akso-script';
 
 import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
 
-export async function renderTemplate (templateId, intentData) {
-	const templateData = await AKSO.db('email_templates')
-		.where('id', templateId)
-		.first('*');
+/**
+ * Renders an email template
+ * @param  {number|string|Object} template  The id of the template or an object containing all its data
+ * @param  {Object} intentData              An object containing the context data relevant for the template's intent
+ * @return {Object} Returns an object containing rendered html, text and subject.
+ */
+export async function renderTemplate (template, intentData) {
+	if (typeof template !== 'object') {
+		template = await AKSO.db('email_templates')
+			.where('id', template)
+			.first('*');
+		if (!template) { throw new Error('Could not fetch email template with id ' + template); }
+	}
 
 	const viewFn = key => {
 		if (key[0] === '@') {
 			return intentData[key.substring(1)];
 		} else {
 			try {
-				return evaluate(templateData.script, key, intentData);
+				return evaluate(template.script, key, intentData);
 			} catch { return undefined; } // this should never happen
 		}
 	};
 
 	let data = {};
-	if (templateData.base === 'raw') {
-		data = await renderRawTemplate(templateData, viewFn);
-	} else if (templateData.base === 'inherit') {
-		data = await renderInheritTemplate(templateData, viewFn);
+	if (template.base === 'raw') {
+		data = await renderRawTemplate(template, viewFn);
+	} else if (template.base === 'inherit') {
+		data = await renderInheritTemplate(template, viewFn);
 	}
-	data.subject = renderTemplateStr('text', templateData.subject, viewFn);
+	data.subject = renderTemplateStr('text', template.subject, viewFn);
 	return data;
 }
 
