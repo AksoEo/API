@@ -10,7 +10,7 @@ import * as AKSOMail from './mail';
  * @param  {Object}   [options.emailConf]     Additional settings to pass to sendgrid emails
  * @param  {Map}      [emailPersonalizations] A `Map` of codeholderId:personalization object
  * @param  {Object}   [tgAttach]              A Telegram attachment object
- * @param  {Object}   [view]                  The view for rendering the notification
+ * @param  {Object}   [view]                  A view for rendering the notification
  */
 export async function sendNotification ({
 	codeholderIds,
