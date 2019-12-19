@@ -128,7 +128,7 @@ async function processLabelOrder (data) {
 	let offset = 0;
 	getCodeholders:
 	do {
-		query.offset(offset);
+		query.offset(offset); // TODO: If new codeholders appear this might cause issues, maybe offset by id instead?
 		codeholders = await query;
 		if (!codeholders.length) { break; }
 		offset += codeholders.length;

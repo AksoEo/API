@@ -12,6 +12,7 @@ import method$get from './get';
 import method$post from './post';
 
 import operation$make_address_labels from './!make_address_labels';
+import operation$send_email_template from './!send_email_template';
 
 /**
  * Sets up /codeholders
@@ -42,6 +43,7 @@ export function init () {
 	bindMethod(router, '/', 'post', method$post);
 
 	bindMethod(router, '/!make_address_labels', 'post', operation$make_address_labels);
+	bindMethod(router, '/!send_email_template', 'post', operation$send_email_template);
 
 	return router;
 }

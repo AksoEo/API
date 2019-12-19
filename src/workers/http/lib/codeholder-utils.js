@@ -81,3 +81,24 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 			profilePictureHash: oldData.profilePictureHash || null
 		});
 }
+
+export function formatCodeholderName ({
+	codeholderType,
+	firstName,
+	firstNameLegal,
+	lastName,
+	lastNameLegal,
+	fullName,
+	honorific
+} = {}) {
+	let name = '';
+	if (codeholderType === 'human') {
+		if (honorific) { name += honorific + ' '; }
+		name = firstName || firstNameLegal;
+		name += ' ' + (lastName || lastNameLegal);
+
+	} else if (codeholderType === 'org') {
+		name = fullName;
+	}
+	return name;
+}

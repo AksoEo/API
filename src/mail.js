@@ -6,6 +6,7 @@ import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
 import { promiseAllObject, renderTemplate } from './util';
+import { formatCodeholderNames } from 'akso/workers/http/lib/codeholder-utils';
 import AKSOOrganization from './lib/enums/akso-organization';
 
 /**
@@ -26,15 +27,7 @@ export async function getNamesAndEmails (...ids) {
 	const newArr = [];
 	for (let codeholder of codeholders) {
 		const index = map[codeholder.id];
-		let name;
-		if (codeholder.codeholderType === 'human') {
-			if (codeholder.honorific) { name += codeholder.honorific + ' '; }
-			name = codeholder.firstName || codeholder.firstNameLegal;
-			name += ' ' + (codeholder.lastName || codeholder.lastNameLegal);
-
-		} else if (codeholder.codeholderType === 'org') {
-			name = codeholder.fullName;
-		}
+		const name = formatCodeholderNames(codeholder);
 		newArr[index] = {
 			email: codeholder.email,
 			name: name
@@ -62,7 +55,6 @@ export async function renderSendEmail ({
 	msgData = {}
 } = {}) {
 	const notifsDir = path.join(AKSO.dir, 'notifs');
-	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
 
 	if (typeof to !== 'undefined') {
 		if (!Array.isArray(to)) { to = [to]; }
@@ -140,13 +132,20 @@ export async function renderSendEmail ({
 				personalizations: msg.personalizations.slice(i, i + 100)
 			}
 		};
-		const promise = async () => {
-			const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
-			await fs.writeFile(tmpName, msgpack.encode(msgChunk, { codec: AKSO.msgpack }));
-			const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' + moment().unix() });
-			await fs.move(tmpName, newName);
-		};
-		sendPromises.push(promise());
+		sendPromises.push(sendRawMail(msgChunk));
 	}
 	return await Promise.all(sendPromises);
+}
+
+/**
+ * Schedules a raw mail for sending
+ * @param  {Object} msg A Sendgrid mail object
+ */
+export async function sendRawMail (msg) {
+	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
+
+	const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
+	await fs.writeFile(tmpName, msgpack.encode(msg, { codec: AKSO.msgpack }));
+	const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' + moment().unix() });
+	await fs.move(tmpName, newName);
 }

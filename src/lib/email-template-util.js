@@ -10,11 +10,6 @@ export async function renderTemplate (templateId, intentData) {
 		.where('id', templateId)
 		.first('*');
 
-	let view = {};
-	for (const [formKey, formVal] of Object.entries(intentData)) {
-		view['@' + formKey] = formVal;
-	}
-
 	const viewFn = key => {
 		if (key[0] === '@') {
 			return intentData[key.substring(1)];
@@ -25,11 +20,14 @@ export async function renderTemplate (templateId, intentData) {
 		}
 	};
 
+	let data = {};
 	if (templateData.base === 'raw') {
-		return renderRawTemplate(templateData, viewFn);
+		data = await renderRawTemplate(templateData, viewFn);
 	} else if (templateData.base === 'inherit') {
-		return await renderInheritTemplate(templateData, viewFn);
+		data = await renderInheritTemplate(templateData, viewFn);
 	}
+	data.subject = renderTemplateStr('text', templateData.subject, viewFn);
+	return data;
 }
 
 async function renderRawTemplate (templateData, viewFn) {
@@ -85,6 +83,8 @@ const identifierRegex = /\{\{([^#/].*?)}}/gs;
 
 const inheritTextMd = new MarkdownIt('zero');
 inheritTextMd.enable([
+	'newline',
+	
 	'blockquote', 'heading', 'emphasis',
 	'strikethrough', 'link', 'list',
 	'table', 'image'
