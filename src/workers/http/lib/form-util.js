@@ -306,11 +306,10 @@ export const formSchema = {
 											pattern: '^[^\\n]+$'
 										},
 										value: {
-											oneOf: [
-												{ type: 'string' },
-												{ type: 'number' },
-												{ type: 'boolean' }
-											]
+											type: 'string',
+											minLength: 1,
+											maxLength: 255,
+											pattern: '^[^\\n]+$'
 										},
 										disabled: {
 											oneOf: [
@@ -502,7 +501,7 @@ export const formSchema = {
 							...formEntryInputProps,
 							type: {
 								type: 'string',
-								const: 'boolean-table'
+								const: 'boolean_table'
 							},
 							default: {
 								oneOf: [
@@ -580,6 +579,17 @@ export function parseForm (form, formValues = {}) {
 	const fields = [];
 
 	let scripts = {};
+	formValues = {
+		...formValues,
+		'@created_time': new UnionType([
+			new ConcreteType(ConcreteType.types.NULL),
+			new ConcreteType(ConcreteType.types.NUMBER)
+		]),
+		'@edited_time': new UnionType([
+			new ConcreteType(ConcreteType.types.NULL),
+			new ConcreteType(ConcreteType.types.NUMBER)
+		])
+	};
 	const getFormValue = key => {
 		return formValues[key.normalize('NFC')];
 	};
@@ -626,7 +636,7 @@ export function parseForm (form, formValues = {}) {
 					new ConcreteType(ConcreteType.types.NULL),
 					new ConcreteType(ConcreteType.types.STRING)
 				]);
-			} else if (formEntry.type === 'boolean-table') {
+			} else if (formEntry.type === 'boolean_table') {
 				formValues[formEntry.name] = new ConcreteType(
 					ConcreteType.types.ARRAY,
 					new UnionType([
@@ -720,7 +730,7 @@ export function parseForm (form, formValues = {}) {
 				if (!('tz' in formEntry)) { formEntry.tz = null; }
 				if (!('min' in formEntry)) { formEntry.min = null; }
 				if (!('max' in formEntry)) { formEntry.max = null; }
-			} else if (formEntry.type === 'boolean-table') {
+			} else if (formEntry.type === 'boolean_table') {
 				if (!('minSelect' in formEntry)) { formEntry.minSelect = null; }
 				if (!('maxSelect' in formEntry)) { formEntry.maxSelect = null; }
 				if (!('headerTop' in formEntry)) { formEntry.headerTop = null; }

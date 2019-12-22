@@ -63,10 +63,6 @@ export default {
 
 		// Validate the form
 		const formValues = {
-			'@registration_time': new UnionType([
-				new ConcreteType(ConcreteType.types.NULL),
-				new ConcreteType(ConcreteType.types.NUMBER)
-			]),
 			'@upfront_time': new UnionType([
 				new ConcreteType(ConcreteType.types.NULL),
 				new ConcreteType(ConcreteType.types.NUMBER)
