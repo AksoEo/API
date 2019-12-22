@@ -87,6 +87,26 @@ export default {
 			}
 		}
 
+		// Create Form
+		const formId = (await AKSO.db('forms').insert({}))[0];
+
+		// Populate forms_fields
+		// TODO: This will not work with data migration
+		const formFieldInsertQueries = [];
+		for (const formEntry of req.body.form) {
+			if (formEntry.el !== 'input') { continue; }
+			formFieldInsertQueries.push(
+				insertAsReplace(
+					AKSO.db('forms_fields')
+						.insert({
+							formId,
+							name: formEntry.name,
+							type: formEntry.type
+						})
+				));
+		}
+		await Promise.all(formFieldInsertQueries);
+
 		await insertAsReplace(AKSO.db('congresses_instances_registrationForm')
 			.insert({
 				congressInstanceId: req.params.instanceId,
@@ -95,7 +115,8 @@ export default {
 				form: JSON.stringify(req.body.form),
 				price_currency: req.body.price ? req.body.price.currency : null,
 				price_var: req.body.price ? req.body.price.var : null,
-				price_minUpfront: req.body.price ? req.body.price.minUpfront : null
+				price_minUpfront: req.body.price ? req.body.price.minUpfront : null,
+				formId
 			}));
 
 		res.sendStatus(204);

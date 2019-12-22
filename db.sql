@@ -2073,6 +2073,39 @@ INSERT INTO `congresses_instances_locations_tags` VALUES (1,1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `congresses_instances_participants`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_participants`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_participants` (
+  `congressInstanceId` int(10) unsigned NOT NULL,
+  `codeholderId` int(10) unsigned NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `approved` tinyint(1) NOT NULL DEFAULT '0',
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`congressInstanceId`,`codeholderId`),
+  KEY `dataId` (`dataId`),
+  KEY `approved` (`approved`),
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `notes` (`notes`),
+  CONSTRAINT `congresses_instances_participants_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_participants_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_participants_ibfk_3` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_participants`
+--
+
+LOCK TABLES `congresses_instances_participants` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_participants` DISABLE KEYS */;
+/*!40000 ALTER TABLE `congresses_instances_participants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `congresses_instances_programTags`
 --
 
@@ -2184,9 +2217,12 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `price_currency` char(3) CHARACTER SET ascii DEFAULT NULL,
   `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_minUpfront` int(10) unsigned DEFAULT NULL,
+  `formId` int(10) unsigned NOT NULL,
   `form` json NOT NULL,
   PRIMARY KEY (`congressInstanceId`),
-  CONSTRAINT `congresses_instances_registrationForm_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `formId` (`formId`),
+  CONSTRAINT `congresses_instances_registrationForm_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_registrationForm_ibfk_2` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2196,9 +2232,24 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,1,1,0,'EUR','price',2500,'[{\"el\": \"text\", \"text\": \"# Aliĝilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiĉojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpoŝtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manĝo\", \"type\": \"enum\", \"label\": \"Mi manĝos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"maxSelect\": null, \"minSelect\": null, \"description\": null}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manĝo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@registration_time\", \"t\": \"c\"}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiĝdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,1,1,0,'EUR','price',2500,6,'[{\"el\": \"text\", \"text\": \"# Aliĝilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiĉojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpoŝtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manĝo\", \"type\": \"enum\", \"label\": \"Mi manĝos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"maxSelect\": null, \"minSelect\": null, \"description\": null}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manĝo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiĝdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `delete_form` AFTER DELETE ON `congresses_instances_registrationForm` FOR EACH ROW DELETE FROM `forms` WHERE `id` = OLD.formId */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `countries`
@@ -2343,7 +2394,7 @@ DROP TABLE IF EXISTS `forms`;
 CREATE TABLE `forms` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2352,6 +2403,7 @@ CREATE TABLE `forms` (
 
 LOCK TABLES `forms` WRITE;
 /*!40000 ALTER TABLE `forms` DISABLE KEYS */;
+INSERT INTO `forms` VALUES (3),(4),(6);
 /*!40000 ALTER TABLE `forms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2370,6 +2422,7 @@ CREATE TABLE `forms_data` (
   PRIMARY KEY (`formId`,`dataId`),
   KEY `createdTime` (`createdTime`),
   KEY `editedTime` (`editedTime`),
+  KEY `dataId` (`dataId`),
   CONSTRAINT `forms_data_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `email_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2695,6 +2748,7 @@ CREATE TABLE `forms_fields` (
 
 LOCK TABLES `forms_fields` WRITE;
 /*!40000 ALTER TABLE `forms_fields` DISABLE KEYS */;
+INSERT INTO `forms_fields` VALUES (6,'tos','boolean'),(6,'birthdate','date'),(6,'manĝo','enum'),(6,'money','money'),(6,'cake','number'),(6,'email','text');
 /*!40000 ALTER TABLE `forms_fields` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3356,4 +3410,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-22 14:33:00
+-- Dump completed on 2019-12-22 18:09:46
