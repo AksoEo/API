@@ -594,6 +594,13 @@ export function parseForm (form, formValues = {}) {
 		return formValues[key.normalize('NFC')];
 	};
 
+	const validateDefinition = function (id, definitions = scripts) {
+		const analysis = analyze(definitions, id, getFormValue);
+		if (!analysis.valid) {
+			throw new Error(JSON.stringify(analysis));
+		}
+	};
+
 	const validatePropExpr = function (i, formEntry, prop) {
 		const symb = Symbol(prop);
 		const exprScripts = {
@@ -759,4 +766,9 @@ export function parseForm (form, formValues = {}) {
 			}
 		}
 	}
+
+	return {
+		validateDefinition,
+		scripts
+	};
 }

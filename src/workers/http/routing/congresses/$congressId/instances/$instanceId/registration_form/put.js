@@ -23,7 +23,7 @@ export default {
 							type: 'string',
 							enum: AKSOCurrency.all
 						},
-						var: { // TODO: Make sure this var exists
+						var: {
 							type: 'string',
 							minLength: 1,
 							maxLength: 40
@@ -74,6 +74,17 @@ export default {
 		} catch (e) {
 			e.statusCode = 400;
 			throw e;
+		}
+ 
+		if (req.body.price) {
+			// Validate price var
+			try {
+				parsedForm.validateDefinition(req.body.price.var);
+			} catch (e) {
+				const err = new Error(`The AKSO Script for the price variable ${req.body.price.var} errored: ${e.message}`);
+				err.statusCode = 400;
+				throw err;
+			}
 		}
 
 		await insertAsReplace(AKSO.db('congresses_instances_registrationForm')
