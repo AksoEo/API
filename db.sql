@@ -2334,6 +2334,371 @@ INSERT INTO `email_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratula
 UNLOCK TABLES;
 
 --
+-- Table structure for table `forms`
+--
+
+DROP TABLE IF EXISTS `forms`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms`
+--
+
+LOCK TABLES `forms` WRITE;
+/*!40000 ALTER TABLE `forms` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data`
+--
+
+DROP TABLE IF EXISTS `forms_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data` (
+  `formId` int(10) unsigned NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `createdTime` bigint(20) unsigned NOT NULL,
+  `editedTime` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`formId`,`dataId`),
+  KEY `createdTime` (`createdTime`),
+  KEY `editedTime` (`editedTime`),
+  CONSTRAINT `forms_data_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `email_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data`
+--
+
+LOCK TABLES `forms_data` WRITE;
+/*!40000 ALTER TABLE `forms_data` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_boolean`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_boolean`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_boolean` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_boolean_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_boolean_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_boolean`
+--
+
+LOCK TABLES `forms_data_fields_boolean` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_boolean` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_boolean` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_boolean_table`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_boolean_table`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_boolean_table` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` json DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_boolean_table_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_boolean_table_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_boolean_table`
+--
+
+LOCK TABLES `forms_data_fields_boolean_table` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_boolean_table` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_boolean_table` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_country`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_country`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_country` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_country_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_country_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_country`
+--
+
+LOCK TABLES `forms_data_fields_country` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_country` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_country` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_date`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_date`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_date` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` date DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_date_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_date_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_date`
+--
+
+LOCK TABLES `forms_data_fields_date` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_date` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_date` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_datetime`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_datetime`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_datetime` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_datetime_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_datetime_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_datetime`
+--
+
+LOCK TABLES `forms_data_fields_datetime` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_datetime` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_datetime` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_enum`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_enum`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_enum` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_enum_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_enum_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_enum`
+--
+
+LOCK TABLES `forms_data_fields_enum` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_enum` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_enum` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_money`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_money`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_money` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_money_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_money_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_money`
+--
+
+LOCK TABLES `forms_data_fields_money` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_money` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_money` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_number`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_number`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_number` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` float DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_number_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_number_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_number`
+--
+
+LOCK TABLES `forms_data_fields_number` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_number` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_number` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_text`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_text`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_text` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` varchar(8192) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `formId` (`formId`,`dataId`),
+  FULLTEXT KEY `value` (`value`),
+  CONSTRAINT `forms_data_fields_text_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_text_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_text`
+--
+
+LOCK TABLES `forms_data_fields_text` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_text` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_text` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_data_fields_time`
+--
+
+DROP TABLE IF EXISTS `forms_data_fields_time`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_data_fields_time` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `value` time DEFAULT NULL,
+  PRIMARY KEY (`formId`,`name`,`dataId`),
+  KEY `value` (`value`),
+  KEY `formId` (`formId`,`dataId`),
+  CONSTRAINT `forms_data_fields_time_ibfk_1` FOREIGN KEY (`formId`, `name`) REFERENCES `forms_fields` (`formId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `forms_data_fields_time_ibfk_2` FOREIGN KEY (`formId`, `dataId`) REFERENCES `forms_data` (`formId`, `dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_data_fields_time`
+--
+
+LOCK TABLES `forms_data_fields_time` WRITE;
+/*!40000 ALTER TABLE `forms_data_fields_time` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_data_fields_time` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `forms_fields`
+--
+
+DROP TABLE IF EXISTS `forms_fields`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_fields` (
+  `formId` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`formId`,`name`),
+  KEY `type` (`type`),
+  CONSTRAINT `forms_fields_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `forms_fields`
+--
+
+LOCK TABLES `forms_fields` WRITE;
+/*!40000 ALTER TABLE `forms_fields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `forms_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `httpLog`
 --
 
@@ -2991,4 +3356,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-18 16:59:54
+-- Dump completed on 2019-12-22 14:33:00
