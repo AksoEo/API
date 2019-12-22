@@ -227,7 +227,10 @@ export const formSchema = {
 							default: {
 								oneOf: [
 									{ type: 'object' },
-									{ type: 'number' },
+									{
+										type: 'integer',
+										format: 'uint32'
+									},
 									{ type: 'null' }
 								]
 							},
@@ -436,7 +439,10 @@ export const formSchema = {
 							default: {
 								oneOf: [
 									{ type: 'object' },
-									{ type: 'string', format: 'time', pattern: '^\\d\\d?:\\d\\d$' },
+									{
+										type: 'string',
+										format: 'time',
+										pattern: '^\\d{2}:\\d{2}$' },
 									{ type: 'null' }
 								]
 							},
@@ -639,8 +645,6 @@ export function parseForm (form, formValues = {}) {
 			for (const prop of props) {
 				if (formEntry[prop] && typeof formEntry[prop] === 'object') {
 					validatePropExpr(i, formEntry, prop);
-					// TODO: Make sure it's the right type?
-					// Alternatively, do we just type cast?
 				}
 			}
 
@@ -661,6 +665,21 @@ export function parseForm (form, formValues = {}) {
 						new RegExp(formEntry.pattern);
 					} catch (e) {
 						throw new Error('Invalid pattern in formEntry ' + formEntry.name);
+					}
+				}
+
+				if (typeof formEntry.default === 'string') {
+					if (formEntry.variant === 'textarea') {
+						if (formEntry.default.length > 8192) {
+							throw new Error('default exceeds 8192 chars in formEntry' + formEntry.name);
+						}
+						if (formEntry.default.includes('\n')) {
+							throw new Error('default must not contain newlines in formEntry ' + formEntry.name);
+						}
+					} else {
+						if (formEntry.default.length > 2048) {
+							throw new Error('default exceeds 2048 chars in formEntry' + formEntry.name);
+						}
 					}
 				}
 
