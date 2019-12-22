@@ -5,6 +5,7 @@ import { bindMethod } from 'akso/workers/http/routing';
 import { init as route$location_tags } from './location_tags';
 import { init as route$locations } from './locations';
 import { init as route$map } from './map';
+import { init as route$participants } from './participants';
 import { init as route$program_tags } from './program_tags';
 import { init as route$programs } from './programs';
 import { init as route$registration_form } from './registration_form';
@@ -23,6 +24,7 @@ export function init () {
 	router.use('/location_tags', route$location_tags());
 	router.use('/locations', route$locations());
 	router.use('/map', route$map());
+	router.use('/participants', route$participants());
 	router.use('/program_tags', route$program_tags());
 	router.use('/programs', route$programs());
 	router.use('/registration_form', route$registration_form());

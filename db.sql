@@ -2102,8 +2102,24 @@ CREATE TABLE `congresses_instances_participants` (
 
 LOCK TABLES `congresses_instances_participants` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_participants` DISABLE KEYS */;
+INSERT INTO `congresses_instances_participants` VALUES (3,3,_binary '§dˆl©\'\»\√˙\Ã4',0,NULL);
 /*!40000 ALTER TABLE `congresses_instances_participants` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `delete_forms_data` AFTER DELETE ON `congresses_instances_participants` FOR EACH ROW DELETE FROM `forms_data` WHERE `dataId` = OLD.`dataId` */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `congresses_instances_programTags`
@@ -2232,7 +2248,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,1,1,0,'EUR','price',2500,6,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"maxSelect\": null, \"minSelect\": null, \"description\": null}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,0,1,1,0,'EUR','price',2500,7,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"maxSelect\": null, \"minSelect\": null, \"description\": null}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2394,7 +2410,7 @@ DROP TABLE IF EXISTS `forms`;
 CREATE TABLE `forms` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2403,7 +2419,7 @@ CREATE TABLE `forms` (
 
 LOCK TABLES `forms` WRITE;
 /*!40000 ALTER TABLE `forms` DISABLE KEYS */;
-INSERT INTO `forms` VALUES (3),(4),(6);
+INSERT INTO `forms` VALUES (3),(4),(7);
 /*!40000 ALTER TABLE `forms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2423,7 +2439,7 @@ CREATE TABLE `forms_data` (
   KEY `createdTime` (`createdTime`),
   KEY `editedTime` (`editedTime`),
   KEY `dataId` (`dataId`),
-  CONSTRAINT `forms_data_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `email_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `forms_data_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2433,6 +2449,7 @@ CREATE TABLE `forms_data` (
 
 LOCK TABLES `forms_data` WRITE;
 /*!40000 ALTER TABLE `forms_data` DISABLE KEYS */;
+INSERT INTO `forms_data` VALUES (7,_binary '§dˆl©\'\»\√˙\Ã4',1577042501,NULL);
 /*!40000 ALTER TABLE `forms_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2462,6 +2479,7 @@ CREATE TABLE `forms_data_fields_boolean` (
 
 LOCK TABLES `forms_data_fields_boolean` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_boolean` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_boolean` VALUES (7,'tos',_binary '§dˆl©\'\»\√˙\Ã4',1);
 /*!40000 ALTER TABLE `forms_data_fields_boolean` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2548,6 +2566,7 @@ CREATE TABLE `forms_data_fields_date` (
 
 LOCK TABLES `forms_data_fields_date` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_date` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_date` VALUES (7,'birthdate',_binary '§dˆl©\'\»\√˙\Ã4','1998-09-05');
 /*!40000 ALTER TABLE `forms_data_fields_date` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2606,6 +2625,7 @@ CREATE TABLE `forms_data_fields_enum` (
 
 LOCK TABLES `forms_data_fields_enum` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_enum` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_enum` VALUES (7,'manƒùo',_binary '§dˆl©\'\»\√˙\Ã4','vegan');
 /*!40000 ALTER TABLE `forms_data_fields_enum` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2635,6 +2655,7 @@ CREATE TABLE `forms_data_fields_money` (
 
 LOCK TABLES `forms_data_fields_money` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_money` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_money` VALUES (7,'money',_binary '§dˆl©\'\»\√˙\Ã4',2000);
 /*!40000 ALTER TABLE `forms_data_fields_money` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2664,6 +2685,7 @@ CREATE TABLE `forms_data_fields_number` (
 
 LOCK TABLES `forms_data_fields_number` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_number` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_number` VALUES (7,'cake',_binary '§dˆl©\'\»\√˙\Ã4',20);
 /*!40000 ALTER TABLE `forms_data_fields_number` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2693,6 +2715,7 @@ CREATE TABLE `forms_data_fields_text` (
 
 LOCK TABLES `forms_data_fields_text` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_text` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_text` VALUES (7,'email',_binary '§dˆl©\'\»\√˙\Ã4','something@something.com');
 /*!40000 ALTER TABLE `forms_data_fields_text` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2748,7 +2771,7 @@ CREATE TABLE `forms_fields` (
 
 LOCK TABLES `forms_fields` WRITE;
 /*!40000 ALTER TABLE `forms_fields` DISABLE KEYS */;
-INSERT INTO `forms_fields` VALUES (6,'tos','boolean'),(6,'birthdate','date'),(6,'manƒùo','enum'),(6,'money','money'),(6,'cake','number'),(6,'email','text');
+INSERT INTO `forms_fields` VALUES (7,'tos','boolean'),(7,'birthdate','date'),(7,'manƒùo','enum'),(7,'money','money'),(7,'cake','number'),(7,'email','text');
 /*!40000 ALTER TABLE `forms_fields` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3410,4 +3433,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-22 18:09:46
+-- Dump completed on 2019-12-22 20:23:06

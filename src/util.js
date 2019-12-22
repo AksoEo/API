@@ -1,4 +1,7 @@
 import Handlebars from 'handlebars';
+import Ajv from 'ajv';
+import AjvMergePatch from 'ajv-merge-patch';
+import moment from 'moment-timezone';
 
 /**
  * Traverses through an object recursively and calls a replacement function
@@ -115,6 +118,118 @@ export function escapeHTML(s) {
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;');
 }
+
+const ajv = new Ajv({
+	format: 'full',
+	useDefaults: true,
+	strictKeywords: true,
+	nullable: true
+});
+AjvMergePatch(ajv);
+ajv.addKeyword('isBinary', {
+	modifying: true,
+	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
+		if (!schema) { return true; }
+
+		if (typeof data === 'string') {
+			parentData[propertyName] = Buffer.from(data, 'base64');
+			return true;
+
+		} else if (data instanceof Buffer) {
+			return true;
+		}
+
+		return false;
+	}
+});
+ajv.addKeyword('minBytes', {
+	validate: function (schema, data) {
+		const buf = Buffer.from(data);
+		return buf.length >= schema;
+	}
+});
+ajv.addKeyword('maxBytes', {
+	validate: function (schema, data) {
+		const buf = Buffer.from(data);
+		return buf.length <= schema;
+	}
+});
+ajv.addFormat('year', {
+	type: 'number',
+	validate: function (val) {
+		return val >= 1901 && val <= 2155; // https://dev.mysql.com/doc/refman/5.7/en/year.html
+	}
+});
+ajv.addFormat('tel', {
+	type: 'number',
+	validate: /^\+[a-z0-9]{1,49}$/i
+});
+ajv.addFormat('tz', {
+	type: 'string',
+	validate: val => moment.tz.names().includes(val)
+});
+ajv.addFormat('safe-uri', {
+	type: 'string',
+	validate: function (val) {
+		if (!urlRegex.test(val)) { return false; }
+		let parsedURL;
+		try { parsedURL = new URL(val); }
+		catch (e) { return false; }
+		if (parsedURL.username) { return false; }
+		if (parsedURL.password) { return false; }
+		if (parsedURL.protocol !== 'http:' && parsedURL.protocol !== 'https:') { return false; }
+		return true;
+	}
+});
+ajv.addFormat('int8', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**7) && val < 2**7;
+	}
+});
+ajv.addFormat('uint8', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**8;
+	}
+});
+ajv.addFormat('int16', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**15) && val < 2**15;
+	}
+});
+ajv.addFormat('uint16', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**16;
+	}
+});
+ajv.addFormat('int32', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**31) && val < 2**31;
+	}
+});
+ajv.addFormat('uint32', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**32;
+	}
+});
+ajv.addFormat('int64', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= -(2**63) && val < 2**63;
+	}
+});
+ajv.addFormat('uint64', {
+	type: 'number',
+	validate: function (val) {
+		return Number.isSafeInteger(val) && val >= 0 && val < 2**64;
+	}
+});
+export { ajv };
 
 // From: https://gist.github.com/dperini/729294
 //
