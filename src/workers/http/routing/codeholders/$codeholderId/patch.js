@@ -119,7 +119,8 @@ const schema = {
 				biography: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 2000
+					maxLength: 2000,
+					nullable: true
 				},
 
 				// HumanCodeholder
