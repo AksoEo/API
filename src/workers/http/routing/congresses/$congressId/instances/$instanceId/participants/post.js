@@ -33,7 +33,6 @@ export default {
 				}
 			},
 			required: [
-				'codeholderId',
 				'data'
 			],
 			additionalProperties: false
@@ -55,26 +54,34 @@ export default {
 		// Make sure the form exists
 		const formData = await AKSO.db('congresses_instances_registrationForm')
 			.where('congressInstanceId', req.params.instanceId)
-			.first('form', 'formId');
+			.first('form', 'formId', 'allowGuests');
 		if (!formData) { return res.sendStatus(404); }
 
-		// Ensure that the we can access the codeholder through the member filter
-		const codeholderQuery = AKSO.db('view_codeholders')
-			.where('id', req.body.codeholderId)
-			.first(1);
-		memberFilter(parSchema, codeholderQuery, req);
-		if (!await codeholderQuery) { return res.sendStatus(404); }
+		// Require codeholderId if not allowGuests
+		if (!formData.allowGuests && !('codeholderId' in req.body)) {
+			return res.status(400).type('text/plain')
+				.send('codeholderId is required as allowGuests is false in the registration form');
+		}
 
-		// Make sure the participant doesn't already exist
-		const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
-			.where({
-				congressInstanceId: req.params.instanceId,
-				codeholderId: req.body.codeholderId
-			})
-			.first(1);
-		if (codeholderAlreadyExists) {
-			return res.status(409).type('text/plain')
-				.send('codeholderId already registered');
+		if ('codeholderId' in req.body) {
+			// Ensure that the we can access the codeholder through the member filter
+			const codeholderQuery = AKSO.db('view_codeholders')
+				.where('id', req.body.codeholderId)
+				.first(1);
+			memberFilter(parSchema, codeholderQuery, req);
+			if (!await codeholderQuery) { return res.sendStatus(404); }
+
+			// Make sure the participant doesn't already exist
+			const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
+				.where({
+					congressInstanceId: req.params.instanceId,
+					codeholderId: req.body.codeholderId
+				})
+				.first(1);
+			if (codeholderAlreadyExists) {
+				return res.status(409).type('text/plain')
+					.send('codeholderId already registered');
+			}
 		}
 
 		const formValues = {
@@ -103,6 +110,7 @@ export default {
 				notes: req.body.notes
 			});
 
+		const dataIdHex = dataId.toString('hex');
 		res.set('Location', path.join(
 			AKSO.conf.http.path,
 			'congresses',
@@ -110,9 +118,9 @@ export default {
 			'instances',
 			req.params.instanceId,
 			'participants',
-			req.body.codeholderId.toString()
+			dataIdHex
 		));
-		res.set('X-Identifier', req.body.codeholderId.toString());
+		res.set('X-Identifier', dataIdHex);
 		res.sendStatus(201);
 	}
 };
