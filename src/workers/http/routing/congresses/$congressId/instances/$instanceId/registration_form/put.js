@@ -87,8 +87,16 @@ export default {
 			}
 		}
 
-		// Create Form
-		const formId = (await AKSO.db('forms').insert({}))[0];
+		// Create Form if t doesn't already exists
+		const existingRegistrationForm = await AKSO.db('congresses_instances_registrationForm')
+			.where('congressInstanceId', req.params.instanceId)
+			.first('formId');
+		let formId;
+		if (existingRegistrationForm) {
+			formId = existingRegistrationForm.formId;
+		} else {
+			formId = (await AKSO.db('forms').insert({}))[0];
+		}
 
 		// Populate forms_fields
 		// TODO: This will not work with data migration
@@ -107,17 +115,26 @@ export default {
 		}
 		await Promise.all(formFieldInsertQueries);
 
-		await insertAsReplace(AKSO.db('congresses_instances_registrationForm')
-			.insert({
-				congressInstanceId: req.params.instanceId,
-				allowUse: req.body.allowUse,
-				allowGuests: req.body.allowGuests,
-				form: JSON.stringify(req.body.form),
-				price_currency: req.body.price ? req.body.price.currency : null,
-				price_var: req.body.price ? req.body.price.var : null,
-				price_minUpfront: req.body.price ? req.body.price.minUpfront : null,
-				formId
-			}));
+		const data = {
+			allowUse: req.body.allowUse,
+			allowGuests: req.body.allowGuests,
+			form: JSON.stringify(req.body.form),
+			price_currency: req.body.price ? req.body.price.currency : null,
+			price_var: req.body.price ? req.body.price.var : null,
+			price_minUpfront: req.body.price ? req.body.price.minUpfront : null,
+			formId
+		};
+		if (existingRegistrationForm) {
+			await AKSO.db('congresses_instances_registrationForm')
+				.where('congressInstanceId', req.params.instanceId)
+				.update(data);
+		} else {
+			await AKSO.db('congresses_instances_registrationForm')
+				.insert({
+					...data,
+					congressInstanceId: req.params.instanceId
+				});
+		}
 
 		res.sendStatus(204);
 	}
