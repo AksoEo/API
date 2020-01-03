@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
 import MarkdownIt from 'markdown-it';
-import { evaluate } from '@tejo/akso-script';
 
+import { doAscMagic, evaluateSync } from 'akso/lib/akso-script-util';
 import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
 
 /**
@@ -12,6 +12,8 @@ import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } 
  * @return {Object} Returns an object containing rendered html, text and subject.
  */
 export async function renderTemplate (template, intentData) {
+	await doAscMagic();
+
 	if (typeof template !== 'object') {
 		template = await AKSO.db('email_templates')
 			.where('id', template)
@@ -24,7 +26,7 @@ export async function renderTemplate (template, intentData) {
 			return intentData[key.substring(1)];
 		} else {
 			try {
-				return evaluate(template.script, key, intentData);
+				return evaluateSync(template.script, key, intentData);
 			} catch { return undefined; } // this should never happen
 		}
 	};

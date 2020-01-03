@@ -91,7 +91,7 @@ export default {
 			'@is_member': false // TODO: Add whether the codeholderId is a member at the beginning of the congress
 		};
 		try {
-			validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
+			await validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
 		} catch (e) {
 			e.statusCode = 400;
 			throw e;

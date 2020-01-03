@@ -1,8 +1,9 @@
-import { analyze, analyzeAll, UnionType, ConcreteType, evaluate } from '@tejo/akso-script';
+import { analyze, analyzeAll, union, NULL, NUMBER, BOOL, STRING, array as ascArray } from '@tejo/akso-script';
 import moment from 'moment-timezone';
 
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { ajv } from 'akso/util';
+import { evaluateSync, doAscMagic } from 'akso/lib/akso-script-util';
 
 const formEntryInputProps = {
 	el: {
@@ -562,14 +563,8 @@ export function parseForm (form, formValues = {}) {
 	let scripts = {};
 	formValues = {
 		...formValues,
-		'@created_time': new UnionType([
-			new ConcreteType(ConcreteType.types.NULL),
-			new ConcreteType(ConcreteType.types.NUMBER)
-		]),
-		'@edited_time': new UnionType([
-			new ConcreteType(ConcreteType.types.NULL),
-			new ConcreteType(ConcreteType.types.NUMBER)
-		])
+		'@created_time': union(NULL, NUMBER),
+		'@edited_time': union(NULL, NUMBER)
 	};
 	const getFormValue = key => {
 		return formValues[key.normalize('NFC')];
@@ -613,25 +608,13 @@ export function parseForm (form, formValues = {}) {
 
 			// Form values
 			if (formEntry.type === 'boolean') {
-				formValues[formEntry.name] = new ConcreteType(ConcreteType.types.BOOL);
+				formValues[formEntry.name] = BOOL;
 			} else if (['number', 'money', 'datetime'].includes(formEntry.type)) {
-				formValues[formEntry.name] = new UnionType([
-					new ConcreteType(ConcreteType.types.NULL),
-					new ConcreteType(ConcreteType.types.NUMBER)
-				]);
+				formValues[formEntry.name] = union(NULL, NUMBER);
 			} else if (['text', 'enum', 'country', 'date', 'time'].includes(formEntry.type)) {
-				formValues[formEntry.name] = new UnionType([
-					new ConcreteType(ConcreteType.types.NULL),
-					new ConcreteType(ConcreteType.types.STRING)
-				]);
+				formValues[formEntry.name] = union(NULL, STRING);
 			} else if (formEntry.type === 'boolean_table') {
-				formValues[formEntry.name] = new ConcreteType(
-					ConcreteType.types.ARRAY,
-					new UnionType([
-						new ConcreteType(ConcreteType.types.NULL),
-						new ConcreteType(ConcreteType.types.BOOL)
-					])
-				);
+				formValues[formEntry.name] = ascArray(union([ NULL, BOOL ]));
 			}
 
 			// AKSO Script expressions
@@ -749,7 +732,9 @@ export function parseForm (form, formValues = {}) {
 	};
 }
 
-export function validateDataEntry (form, data, addFormValues = {}, allowInvalidData = false) {
+export async function validateDataEntry (form, data, addFormValues = {}, allowInvalidData = false) {
+	await doAscMagic();
+
 	// Build the schema
 	const dataSchema = {
 		type: 'object',
@@ -852,7 +837,7 @@ export function validateDataEntry (form, data, addFormValues = {}, allowInvalidD
 			...scripts,
 			[symb]: formEntry[prop]
 		};
-		return evaluate(exprScripts, symb, getFormValue);
+		return evaluateSync(exprScripts, symb, getFormValue);
 	};
 
 	const getFieldSchema = formEntry => {

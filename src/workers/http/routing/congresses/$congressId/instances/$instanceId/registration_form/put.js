@@ -1,7 +1,7 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { insertAsReplace } from 'akso/util';
 import { formSchema, parseForm } from 'akso/workers/http/lib/form-util';
-import { UnionType, ConcreteType } from '@tejo/akso-script';
+import { union, NULL, NUMBER, BOOL } from '@tejo/akso-script';
 
 export default {
 	schema: {
@@ -63,11 +63,8 @@ export default {
 
 		// Validate the form
 		const formValues = {
-			'@upfront_time': new UnionType([
-				new ConcreteType(ConcreteType.types.NULL),
-				new ConcreteType(ConcreteType.types.NUMBER)
-			]),
-			'@is_member': new ConcreteType(ConcreteType.types.BOOL)
+			'@upfront_time': union(NULL, NUMBER),
+			'@is_member': BOOL
 		};
 		let parsedForm;
 		try {
