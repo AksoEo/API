@@ -791,7 +791,7 @@ export function validateDataEntry (form, data, addFormValues = {}, allowInvalidD
 		};
 		case 'enum': return {
 			type: 'string',
-			enum: formEntry.options.map(x => x.value)
+			enum: formEntry.options.map(x => x.value) // TODO: Remove disabled options
 		};
 		case 'country': return {
 			type: 'string' // TODO: Make sure it's a valid country
