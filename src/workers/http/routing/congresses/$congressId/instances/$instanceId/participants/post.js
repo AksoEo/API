@@ -87,7 +87,8 @@ export default {
 		const formValues = {
 			'@created_time': null,
 			'@edited_time': null,
-			'@upfront_time': null
+			'@upfront_time': null,
+			'@is_member': false // TODO: Add whether the codeholderId is a member at the beginning of the congress
 		};
 		try {
 			validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);

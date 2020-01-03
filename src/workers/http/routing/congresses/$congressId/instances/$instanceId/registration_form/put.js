@@ -66,7 +66,8 @@ export default {
 			'@upfront_time': new UnionType([
 				new ConcreteType(ConcreteType.types.NULL),
 				new ConcreteType(ConcreteType.types.NUMBER)
-			])
+			]),
+			'@is_member': new ConcreteType(ConcreteType.types.BOOL)
 		};
 		let parsedForm;
 		try {
