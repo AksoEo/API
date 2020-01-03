@@ -210,8 +210,8 @@ export const formSchema = {
 									'birthdate', 'email', 'officePhone', 'cellphone',
 									'landlinePhone', 'phone', 'website', 'profession',
 									'name', 'honorific', 'firstName', 'lastName', 'address',
-									'countryCode', 'countryArea', 'city', 'cityArea',
-									'streetAddress', 'postalCode', 'sortingCode'
+									'feeCountry', 'country', 'countryArea', 'city',
+									'cityArea', 'streetAddress', 'postalCode', 'sortingCode'
 								],
 								nullable: true
 							}
@@ -280,17 +280,6 @@ export const formSchema = {
 									{ type: 'null' }
 								]
 							},
-							minSelect: {
-								type: 'integer',
-								format: 'uint8',
-								nullable: true
-							},
-							maxSelect: {
-								type: 'integer',
-								format: 'uint8',
-								minimum: 1,
-								nullable: true
-							},
 							variant: {
 								type: 'string',
 								enum: [ 'select', 'radio' ]
@@ -347,17 +336,6 @@ export const formSchema = {
 									{ type: 'null' }
 								]
 							},
-							minSelect: {
-								type: 'integer',
-								format: 'uint8',
-								nullable: true
-							},
-							maxSelect: {
-								type: 'integer',
-								format: 'uint8',
-								minimum: 1,
-								nullable: true
-							},
 							add: {
 								type: 'array',
 								maxItems: 100,
@@ -373,7 +351,7 @@ export const formSchema = {
 										code: {
 											type: 'string',
 											pattern: '^_[a-z]{1,2}$'
-										} // TODO: Remove dupes
+										} // TODO: Check for dupes
 									},
 									required: [ 'name', 'code' ],
 									additionalProperties: false
@@ -389,7 +367,7 @@ export const formSchema = {
 							},
 							chAutofill: {
 								type: 'string',
-								enum: [ 'country' ],
+								enum: [ 'country', 'feeCountry' ],
 								nullable: true
 							}
 						},
@@ -710,9 +688,6 @@ export function parseForm (form, formValues = {}) {
 				if (!('maxLength' in formEntry)) { formEntry.maxLength = null; }
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
 			} else if (formEntry.type === 'enum') {
-				if (!('minSelect' in formEntry)) { formEntry.minSelect = null; }
-				if (!('maxSelect' in formEntry)) { formEntry.maxSelect = null; }
-
 				for (const opt of formEntry.options) {
 					if (!('disabled' in opt)) { opt.disabled = false; }
 				}
@@ -724,8 +699,6 @@ export function parseForm (form, formValues = {}) {
 					}
 				}
 			} else if (formEntry.type === 'country') {
-				if (!('minSelect' in formEntry)) { formEntry.minSelect = null; }
-				if (!('maxSelect' in formEntry)) { formEntry.maxSelect = null; }
 				if (!('add' in formEntry)) { formEntry.add = []; }
 				if (!('exclude' in formEntry)) { formEntry.exclude = []; }
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
@@ -903,10 +876,6 @@ export function validateDataEntry (form, data, addFormValues = {}, allowInvalidD
 				if (formEntry.pattern !== null) { fieldSchema.pattern = formEntry.pattern; }
 				if (formEntry.minLength !== null) { fieldSchema.minLength = formEntry.minLength; }
 				if (formEntry.maxLength !== null) { fieldSchema.maxLength = formEntry.maxLength; }
-			} else if (formEntry.type === 'enum') {
-				// TODO: Everything enum
-			} else if (formEntry.type === 'country') {
-				// TODO: Everything country
 			} else if (formEntry.type === 'time') {
 				// TODO: min max
 			} else if (formEntry.type === 'boolean_table') {
