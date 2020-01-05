@@ -67,14 +67,7 @@ export default {
 
 		// Restrictions
 		const requiredMemberFields = [
-			'id',
-			'address.country',
-			'address.countryArea',
-			'address.city',
-			'address.cityArea',
-			'address.streetAddress',
-			'address.postalCode',
-			'address.sortingCode',
+			'address',
 			'honorific',
 			'firstNameLegal',
 			'lastNameLegal',

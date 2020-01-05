@@ -19,7 +19,6 @@ export default {
 
 		// Check member fields
 		const requiredMemberFields = [
-			'id',
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {

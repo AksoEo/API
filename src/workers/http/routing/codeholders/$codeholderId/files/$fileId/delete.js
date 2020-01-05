@@ -7,7 +7,7 @@ import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/work
 const schema = {
 	query: null,
 	body: null,
-	requirePerms: 'codeholders.read'
+	requirePerms: 'codeholders.update'
 };
 
 export default {

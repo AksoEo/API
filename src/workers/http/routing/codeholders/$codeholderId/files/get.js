@@ -47,7 +47,6 @@ export default {
 	run: async function run (req, res) {
 		// Check member fields
 		const requiredMemberFields = [
-			'id',
 			'files'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
