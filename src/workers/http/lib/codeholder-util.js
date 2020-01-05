@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
 
 import { profilePictureSizes } from '../routing/codeholders/schema';
-import { cropImgToSizes } from './canvas-utils';
+import { cropImgToSizes } from './canvas-util';
 
 /**
  * The JSON schema used for validating codeholder mod query params

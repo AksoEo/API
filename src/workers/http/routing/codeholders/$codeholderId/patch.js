@@ -2,7 +2,7 @@ import moment from 'moment';
 import AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction, rollbackTransaction, insertAsReplace } from 'akso/util';
-import { modQuerySchema } from 'akso/workers/http/lib/codeholder-utils';
+import { modQuerySchema } from 'akso/workers/http/lib/codeholder-util';
 import * as AKSONotif from 'akso/notif';
 import * as AKSOMail from 'akso/mail';
 

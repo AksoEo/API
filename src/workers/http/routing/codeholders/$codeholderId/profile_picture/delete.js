@@ -3,7 +3,7 @@ import path from 'path';
 import moment from 'moment-timezone';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
-import { modQuerySchema } from 'akso/workers/http/lib/codeholder-utils';
+import { modQuerySchema } from 'akso/workers/http/lib/codeholder-util';
 
 export default {
 	schema: {

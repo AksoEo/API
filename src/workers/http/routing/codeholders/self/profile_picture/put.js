@@ -1,5 +1,5 @@
 import { memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
-import { setProfilePicture } from 'akso/workers/http/lib/codeholder-utils';
+import { setProfilePicture } from 'akso/workers/http/lib/codeholder-util';
 
 const mimeTypes = [
 	'image/jpeg',

@@ -1,6 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
 import { sendRawMail } from 'akso/mail';
-import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-utils';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import { renderTemplate as renderEmailTemplate } from 'akso/lib/email-template-util';
 

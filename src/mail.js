@@ -6,7 +6,7 @@ import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
 import { promiseAllObject, renderTemplate } from './util';
-import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-utils';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import AKSOOrganization from './lib/enums/akso-organization';
 
 /**
