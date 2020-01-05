@@ -102,3 +102,27 @@ export function formatCodeholderName ({
 	}
 	return name;
 }
+
+/**
+ * Returns whether a codeholder is an active member at a given time
+ * @param  {number|string} codeholderId The id of the codeholder
+ * @param  {any}           [time]       A time identifier understood by moment.js, defaults to now
+ * @return {boolean}
+ */
+export async function isActiveMember (codeholderId, time = moment()) {
+	const result = await AKSO.db('membershipCategories_codeholders')
+		.first(1)
+		.leftJoin('membershipCategories', 'membershipCategories_codeholders.categoryId', 'membershipCategories.id')
+		.whereRaw(`
+			membershipCategories_codeholders.codeholderId = :codeholderId
+			AND givesMembership
+			AND (
+				( NOT lifetime AND membershipCategories_codeholders.year = :year )
+				OR ( lifetime AND membershipCategories_codeholders.year <= :year )
+			)
+		`, {
+			codeholderId,
+			year: moment(time).year()
+		});
+	return !!result;
+}

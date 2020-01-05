@@ -2,6 +2,7 @@ import path from 'path';
 import crypto from 'pn/crypto';
 
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
+import { isActiveMember } from 'akso/workers/lib/codeholder-utils';
 
 import { memberFilter, schema as parSchema } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -41,15 +42,15 @@ export default {
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
-		const orgData = await AKSO.db('congresses')
+		const congressData = await AKSO.db('congresses')
 			.innerJoin('congresses_instances', 'congressId', 'congresses.id')
 			.where({
 				congressId: req.params.congressId,
 				'congresses_instances.id': req.params.instanceId
 			})
-			.first('org');
-		if (!orgData) { return res.sendStatus(404); }
-		if (!req.hasPermission('congress_instances.participants.create.' + orgData.org)) { return res.sendStatus(403); }
+			.first('org', 'dateFrom');
+		if (!congressData) { return res.sendStatus(404); }
+		if (!req.hasPermission('congress_instances.participants.create.' + congressData.org)) { return res.sendStatus(403); }
 
 		// Make sure the form exists
 		const formData = await AKSO.db('congresses_instances_registrationForm')
@@ -88,7 +89,8 @@ export default {
 			'@created_time': null,
 			'@edited_time': null,
 			'@upfront_time': null,
-			'@is_member': false // TODO: Add whether the codeholderId is a member at the beginning of the congress
+			'@is_member': req.body.codeholderId ?
+				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
 		try {
 			await validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
