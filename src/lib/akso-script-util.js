@@ -1,4 +1,4 @@
-import { nativeEvaluate, stdlibExt } from '@tejo/akso-script';
+import { evaluate as nativeEvaluate, stdlibExt } from '@tejo/akso-script';
 import '@tejo/akso-script/phone_fmt';
 
 let countriesList = null;
