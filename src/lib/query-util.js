@@ -223,8 +223,8 @@ const QueryUtil = {
 	 * @param {Object}            filter           The filter object as supplied by `req.query.filter`
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
 	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
-	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/routing/codeholders/schema.js` for usage
-	 * @param {Object}            [customLogicOps] Custom logic operators. See `/src/routing/codeholders/schema.js` for usage
+	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/workers/http/routing/codeholders/schema.js` for usage
+	 * @param {Object}            [customLogicOps] Custom logic operators. See `/src/workers/http/routing/codeholders/schema.js` for usage
 	 */
 	filter: function queryUtilFilter ({
 		fields,

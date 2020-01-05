@@ -2,7 +2,7 @@ import path from 'path';
 import crypto from 'pn/crypto';
 
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
-import { isActiveMember } from 'akso/workers/lib/codeholder-util';
+import { isActiveMember } from 'akso/workers/lib/http/codeholder-util';
 
 import { memberFilter, schema as parSchema } from 'akso/workers/http/routing/codeholders/schema';
 
