@@ -6,8 +6,8 @@ export async function parseForm (form, formValues = {}) {
 	let scripts = {};
 	formValues = {
 		...formValues,
-		'@created_time': union(NULL, NUMBER),
-		'@edited_time': union(NULL, NUMBER)
+		'@created_time': union([ NULL, NUMBER ]),
+		'@edited_time': union([ NULL, NUMBER ])
 	};
 	const getFormValue = key => {
 		return formValues[key.normalize('NFC')];
@@ -56,9 +56,9 @@ export async function parseForm (form, formValues = {}) {
 			if (formEntry.type === 'boolean') {
 				formValues[formEntry.name] = BOOL;
 			} else if (['number', 'money', 'datetime'].includes(formEntry.type)) {
-				formValues[formEntry.name] = union(NULL, NUMBER);
+				formValues[formEntry.name] = union([ NULL, NUMBER ]);
 			} else if (['text', 'enum', 'country', 'date', 'time'].includes(formEntry.type)) {
-				formValues[formEntry.name] = union(NULL, STRING);
+				formValues[formEntry.name] = union([ NULL, STRING ]);
 			} else if (formEntry.type === 'boolean_table') {
 				formValues[formEntry.name] = ascArray(union([ NULL, BOOL ]));
 			}
@@ -131,6 +131,10 @@ export async function parseForm (form, formValues = {}) {
 				if (!('add' in formEntry)) { formEntry.add = []; }
 				if (!('exclude' in formEntry)) { formEntry.exclude = []; }
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
+
+				if (formEntry.add.length !== [...new Set(formEntry.add)].length) {
+					throw new Error('Duplicate entries in add in formEntry ' + formEntry.name);
+				}
 
 				if (typeof formEntry.default === 'string') {
 					const validValues = aksoCountries

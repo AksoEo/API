@@ -63,7 +63,7 @@ export default {
 
 		// Validate the form
 		const formValues = {
-			'@upfront_time': union(NULL, NUMBER),
+			'@upfront_time': union([ NULL, NUMBER ]),
 			'@is_member': BOOL
 		};
 		let parsedForm;
