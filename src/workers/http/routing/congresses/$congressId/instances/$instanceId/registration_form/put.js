@@ -66,13 +66,7 @@ export default {
 			'@upfront_time': union([ NULL, NUMBER ]),
 			'@is_member': BOOL
 		};
-		let parsedForm;
-		try {
-			parsedForm = await parseForm(req.body.form, formValues);
-		} catch (e) {
-			e.statusCode = 400;
-			throw e;
-		}
+		const parsedForm = await parseForm(req.body.form, formValues);
  
 		if (req.body.price) {
 			// Validate price var

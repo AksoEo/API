@@ -16,7 +16,9 @@ export async function parseForm (form, formValues = {}) {
 	const validateDefinition = function (id, definitions = scripts) {
 		const analysis = analyze(definitions, id, getFormValue);
 		if (!analysis.valid) {
-			throw new Error(JSON.stringify(analysis));
+			const err = new Error(JSON.stringify(analysis));
+			err.statusCode = 400;
+			throw err;
 		}
 	};
 
@@ -30,10 +32,14 @@ export async function parseForm (form, formValues = {}) {
 		try {
 			analysis = analyze(exprScripts, symb, getFormValue);
 		} catch {
-			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} caused a generic error (might be a stack overflow)`);
+			const err = new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} caused a generic error (might be a stack overflow)`);
+			err.statusCode = 400;
+			throw err;
 		}
 		if (!analysis.valid) {
-			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+			const err = new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+			err.statusCode = 400;
+			throw err;
 		}
 	};
 
@@ -45,10 +51,14 @@ export async function parseForm (form, formValues = {}) {
 		if (formEntry.el === 'input') {
 			formEntry.name = formEntry.name.normalize('NFC');
 			if (!inputNameRegex.test(formEntry.name)) {
-				throw new Error('Invalid FormEntryInput#name');
+				const err = new Error('Invalid FormEntryInput#name');
+				err.statusCode = 400;
+				throw err;
 			}
 			if (fields.includes(formEntry.name)) {
-				throw new Error('Duplicate FormEntryInput with name ' + formEntry.name);
+				const err = new Error('Duplicate FormEntryInput with name ' + formEntry.name);
+				err.statusCode = 400;
+				throw err;
 			}
 			fields.push(formEntry.name);
 
@@ -90,14 +100,20 @@ export async function parseForm (form, formValues = {}) {
 				if (typeof formEntry.default === 'string') {
 					if (formEntry.variant === 'textarea') {
 						if (formEntry.default.length > 8192) {
-							throw new Error('default exceeds 8192 chars in formEntry' + formEntry.name);
+							const err = new Error('default exceeds 8192 chars in formEntry' + formEntry.name);
+							err.statusCode = 400;
+							throw err;
 						}
 						if (formEntry.default.includes('\n')) {
-							throw new Error('default must not contain newlines in formEntry ' + formEntry.name);
+							const err = new Error('default must not contain newlines in formEntry ' + formEntry.name);
+							err.statusCode = 400;
+							throw err;
 						}
 					} else {
 						if (formEntry.default.length > 2048) {
-							throw new Error('default exceeds 2048 chars in formEntry' + formEntry.name);
+							const err = new Error('default exceeds 2048 chars in formEntry' + formEntry.name);
+							err.statusCode = 400;
+							throw err;
 						}
 					}
 				}
@@ -116,7 +132,9 @@ export async function parseForm (form, formValues = {}) {
 				if (typeof formEntry.default === 'string') {
 					const optValues = formEntry.options.map(x => x.value);
 					if (!optValues.includes(formEntry.default)) {
-						throw new Error('Invalid default in formEntry ' + formEntry.name);
+						const err = new Error('Invalid default in formEntry ' + formEntry.name);
+						err.statusCode = 400;
+						throw err;
 					}
 				}
 			} else if (formEntry.type === 'country') {
@@ -125,11 +143,15 @@ export async function parseForm (form, formValues = {}) {
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
 
 				if (formEntry.add.length !== [...new Set(formEntry.add)].length) {
-					throw new Error('Duplicate entries in add in formEntry ' + formEntry.name);
+					const err = new Error('Duplicate entries in add in formEntry ' + formEntry.name);
+					err.statusCode = 400;
+					throw err;
 				}
 				
 				if (formEntry.exclude.length !== [...new Set(formEntry.exclude)].length) {
-					throw new Error('Duplicate entries in exclude in formEntry ' + formEntry.name);
+					const err = new Error('Duplicate entries in exclude in formEntry ' + formEntry.name);
+					err.statusCode = 400;
+					throw err;
 				}
 
 				if (typeof formEntry.default === 'string') {
@@ -137,7 +159,9 @@ export async function parseForm (form, formValues = {}) {
 						.concat(formEntry.add)
 						.filter(x => !formEntry.exclude.includes(x));
 					if (!validValues.includes(formEntry.default)) {
-						throw new Error('Invalid default in formEntry ' + formEntry.name);
+						const err = new Error('Invalid default in formEntry ' + formEntry.name);
+						err.statusCode = 400;
+						throw err;
 					}
 				}
 			} else if (formEntry.type === 'date') {
@@ -159,10 +183,14 @@ export async function parseForm (form, formValues = {}) {
 				if (!('excludeCells' in formEntry)) { formEntry.excludeCells = null; }
 
 				if (formEntry.headerTop && formEntry.headerTop.length !== formEntry.cols) {
-					throw new Error(`headerTop in formEntry ${formEntry.name} must have as many items as it has columns`);
+					const err = new Error(`headerTop in formEntry ${formEntry.name} must have as many items as it has columns`);
+					err.statusCode = 400;
+					throw err;
 				}
 				if (formEntry.headerLeft && formEntry.headerLeft.length !== formEntry.cols) {
-					throw new Error(`headerLeft in formEntry ${formEntry.name} must have as many items as it has columns`);
+					const err = new Error(`headerLeft in formEntry ${formEntry.name} must have as many items as it has columns`);
+					err.statusCode = 400;
+					throw err;
 				}
 			}
 		} else if (formEntry.el === 'script') {
@@ -171,11 +199,15 @@ export async function parseForm (form, formValues = {}) {
 			try {
 				analyses = analyzeAll(scripts, getFormValue);
 			} catch (e) {
-				throw new Error(`The AKSO Script at pos ${i} caused a generic error (might be a stack overflow)`);
+				const err = new Error(`The AKSO Script at pos ${i} caused a generic error (might be a stack overflow)`);
+				err.statusCode = 400;
+				throw err;
 			}
 			for (const [def, analysis] of Object.entries(analyses)) {
 				if (!analysis.valid) {
-					throw new Error(`The definition for ${def} in the AKSO Script at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+					const err = new Error(`The definition for ${def} in the AKSO Script at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
+					err.statusCode = 400;
+					throw err;
 				}
 			}
 		}
