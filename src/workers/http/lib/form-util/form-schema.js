@@ -174,6 +174,7 @@ export const formSchema = {
 							},
 							pattern: {
 								type: 'string',
+								format: 'regex',
 								minLength: 1,
 								maxLength: 150,
 								nullable: true
@@ -404,21 +405,19 @@ export const formSchema = {
 									{ type: 'object' },
 									{
 										type: 'string',
-										format: 'time',
-										pattern: '^\\d{2}:\\d{2}$' },
+										format: 'short-time'
+									},
 									{ type: 'null' }
 								]
 							},
 							min: {
 								type: 'string',
-								format: 'time',
-								pattern: '^\\d\\d?:\\d\\d$',
+								format: 'short-time',
 								nullable: true
 							},
 							max: {
 								type: 'string',
-								format: 'time',
-								pattern: '^\\d\\d?:\\d\\d$',
+								format: 'short-time',
 								nullable: true
 							}
 						},

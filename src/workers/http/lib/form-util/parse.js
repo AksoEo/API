@@ -87,14 +87,6 @@ export async function parseForm (form, formValues = {}) {
 				if (!('min' in formEntry)) { formEntry.min = null; }
 				if (!('max' in formEntry)) { formEntry.max = null; }
 			} else if (formEntry.type === 'text') {
-				if ('pattern' in formEntry) {
-					try {
-						new RegExp(formEntry.pattern);
-					} catch (e) {
-						throw new Error('Invalid pattern in formEntry ' + formEntry.name);
-					}
-				}
-
 				if (typeof formEntry.default === 'string') {
 					if (formEntry.variant === 'textarea') {
 						if (formEntry.default.length > 8192) {

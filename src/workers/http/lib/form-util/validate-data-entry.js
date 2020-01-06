@@ -62,7 +62,7 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 		};
 		case 'time': return {
 			type: 'string',
-			pattern: '^\\d{2}:\\d{2}$'
+			format: 'short-time'
 		};
 		case 'datetime': return {
 			type: 'number',
@@ -137,7 +137,8 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 				if (formEntry.minLength !== null) { fieldSchema.minLength = formEntry.minLength; }
 				if (formEntry.maxLength !== null) { fieldSchema.maxLength = formEntry.maxLength; }
 			} else if (formEntry.type === 'time') {
-				// TODO: min max
+				if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
+				if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
 			} else if (formEntry.type === 'boolean_table') {
 				// TODO: minSelect maxSelect
 			}
@@ -158,6 +159,8 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 
 	const validateSchema = ajv.compile(dataSchema);
 	if (!validateSchema(data)) {
-		throw new Error(JSON.stringify(validateSchema.errors));
+		const err = new Error(JSON.stringify(validateSchema.errors));
+		err.statusCode = 400;
+		throw err;
 	}
 }

@@ -1,6 +1,7 @@
 import Handlebars from 'handlebars';
 import Ajv from 'ajv';
 import AjvMergePatch from 'ajv-merge-patch';
+import AjvKeywords from 'ajv-keywords';
 import moment from 'moment-timezone';
 
 /**
@@ -126,6 +127,11 @@ const ajv = new Ajv({
 	nullable: true
 });
 AjvMergePatch(ajv);
+AjvKeywords(ajv, [
+	'formatMinimum',
+	'formatMaximum'
+]);
+
 ajv.addKeyword('isBinary', {
 	modifying: true,
 	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
@@ -158,6 +164,27 @@ ajv.addFormat('year', {
 	type: 'number',
 	validate: function (val) {
 		return val >= 1901 && val <= 2155; // https://dev.mysql.com/doc/refman/5.7/en/year.html
+	}
+});
+ajv.addFormat('short-time', {
+	type: 'string',
+	validate: function (val) {
+		if (!/^\d{1,2}:\d{2}$/.test(val)) { return false; }
+		const bits = val.split(':').map(x => parseInt(x, 10));
+		if (bits[0] > 23) { return false; }
+		if (bits[1] > 59) { return false; }
+		return true;
+	},
+	compare: function (a, b) {
+		const times = [ a, b ].map(time => {
+			const arr = time
+				.split(':')
+				.map(x => parseInt(x, 10));
+			return arr[0] * 60 + arr[1];
+		});
+		if (times[0] > times[1]) { return 1; }
+		else if (times[0] < times[1]) { return -1; }
+		else { return 0; }
 	}
 });
 ajv.addFormat('tel', {

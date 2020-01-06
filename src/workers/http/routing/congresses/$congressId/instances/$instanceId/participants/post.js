@@ -92,12 +92,7 @@ export default {
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
-		try {
-			await validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
-		} catch (e) {
-			e.statusCode = 400;
-			throw e;
-		}
+		await validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
 
 		// Insert the participant's data
 		const dataId = await crypto.randomBytes(12);
