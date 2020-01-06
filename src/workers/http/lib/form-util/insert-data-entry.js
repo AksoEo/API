@@ -21,13 +21,18 @@ export async function insertFormDataEntry (form, formId, dataId, data) {
 		const formEntry = getFormEntry(name);
 		const type = formEntry.type;
 
+		let safeValue = value;
+		if (type === 'boolean_table') {
+			safeValue = JSON.stringify(value);
+		}
+
 		insertPromises.push(
 			AKSO.db('forms_data_fields_' + type)
 				.insert({
 					formId,
 					dataId,
 					name: formEntry.name,
-					value
+					value: safeValue
 				})
 		);
 	}

@@ -160,6 +160,12 @@ ajv.addKeyword('maxBytes', {
 		return buf.length <= schema;
 	}
 });
+ajv.addKeyword('validateFunction', {
+	validate: function (schema, data) {
+		return !!schema(data);
+	}
+});
+
 ajv.addFormat('year', {
 	type: 'number',
 	validate: function (val) {

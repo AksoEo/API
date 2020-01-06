@@ -68,13 +68,15 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 			type: 'number',
 			format: 'uint64'
 		};
-		case 'boolean-table':
+		case 'boolean_table':
 			const items = [];
 			for (let x = 0; x < formEntry.cols; x++) {
 				const rowItems = [];
 				items[x] = {
 					type: 'array',
-					items: rowItems
+					items: rowItems,
+					minItems: formEntry.cols,
+					maxItems: formEntry.cols
 				};
 				for (let y = 0; y < formEntry.rows; y++) {
 					rowItems[y] = {
@@ -90,7 +92,9 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 			}
 			return {
 				type: 'array',
-				items: items
+				items: items,
+				minItems: formEntry.rows,
+				maxItems: formEntry.rows
 			};
 		}
 	};
@@ -140,7 +144,19 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 				if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
 				if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
 			} else if (formEntry.type === 'boolean_table') {
-				// TODO: minSelect maxSelect
+				fieldSchema.validateFunction = function (val) {
+					const numValues = []
+						.concat(...val)
+						.filter(x => x === true)
+						.length;
+					if (formEntry.minSelect !== null) {
+						if (numValues < formEntry.minSelect) { return false; }
+					}
+					if (formEntry.maxSelect !== null) {
+						if (numValues > formEntry.maxSelect) { return false; }
+					}
+					return true;
+				};
 			}
 		}
 
