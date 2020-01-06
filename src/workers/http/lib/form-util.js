@@ -735,6 +735,9 @@ export function parseForm (form, formValues = {}) {
 export async function validateDataEntry (form, data, addFormValues = {}, allowInvalidData = false) {
 	await doAscMagic();
 
+	const aksoCountries = (await AKSO.db('countries').select('code'))
+		.map(x => x.code);
+
 	// Build the schema
 	const dataSchema = {
 		type: 'object',
@@ -779,7 +782,8 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 			enum: formEntry.options.map(x => x.value) // TODO: Remove disabled options
 		};
 		case 'country': return {
-			type: 'string' // TODO: Make sure it's a valid country
+			type: 'string',
+			enum: aksoCountries.concat(formEntry.add).filter(x => !formEntry.exclude.includes(x))
 		};
 		case 'date': return {
 			type: 'string',
