@@ -328,8 +328,8 @@ export const formSchema = {
 							default: {
 								oneOf: [
 									{ type: 'object' },
-									{ type: 'string' }, // TODO: Make sure this is a valid option
-									{ type: 'null' }
+									{ type: 'null' },
+									{ type: 'string' }
 								]
 							},
 							add: {

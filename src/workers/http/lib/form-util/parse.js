@@ -1,6 +1,6 @@
 import { analyze, analyzeAll, union, NULL, NUMBER, BOOL, STRING, array as ascArray } from '@tejo/akso-script';
 
-export function parseForm (form, formValues = {}) {
+export async function parseForm (form, formValues = {}) {
 	const fields = [];
 
 	let scripts = {};
@@ -36,6 +36,9 @@ export function parseForm (form, formValues = {}) {
 			throw new Error(`The AKSO Script expression in #${prop} in the form entry at pos ${i} errored with ${JSON.stringify(analysis.error)}`);
 		}
 	};
+
+	const aksoCountries = (await AKSO.db('countries').select('code'))
+		.map(x => x.code);
 
 	const inputNameRegex = /^[\w\-:ĥŝĝĉĵŭ]+$/i;
 	for (const [i, formEntry] of Object.entries(form)) {
@@ -128,6 +131,15 @@ export function parseForm (form, formValues = {}) {
 				if (!('add' in formEntry)) { formEntry.add = []; }
 				if (!('exclude' in formEntry)) { formEntry.exclude = []; }
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
+
+				if (typeof formEntry.default === 'string') {
+					const validValues = aksoCountries
+						.concat(formEntry.add)
+						.filter(x => !formEntry.exclude.includes(x));
+					if (!validValues.includes(formEntry.default)) {
+						throw new Error('Invalid default in formEntry ' + formEntry.name);
+					}
+				}
 			} else if (formEntry.type === 'date') {
 				if (!('min' in formEntry)) { formEntry.min = null; }
 				if (!('max' in formEntry)) { formEntry.max = null; }

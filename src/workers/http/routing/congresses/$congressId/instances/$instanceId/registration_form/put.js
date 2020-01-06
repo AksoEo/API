@@ -68,7 +68,7 @@ export default {
 		};
 		let parsedForm;
 		try {
-			parsedForm = parseForm(req.body.form, formValues);
+			parsedForm = await parseForm(req.body.form, formValues);
 		} catch (e) {
 			e.statusCode = 400;
 			throw e;
