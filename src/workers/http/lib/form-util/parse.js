@@ -135,6 +135,10 @@ export async function parseForm (form, formValues = {}) {
 				if (formEntry.add.length !== [...new Set(formEntry.add)].length) {
 					throw new Error('Duplicate entries in add in formEntry ' + formEntry.name);
 				}
+				
+				if (formEntry.exclude.length !== [...new Set(formEntry.exclude)].length) {
+					throw new Error('Duplicate entries in exclude in formEntry ' + formEntry.name);
+				}
 
 				if (typeof formEntry.default === 'string') {
 					const validValues = aksoCountries
