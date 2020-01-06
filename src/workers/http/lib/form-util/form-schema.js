@@ -336,21 +336,8 @@ export const formSchema = {
 								type: 'array',
 								maxItems: 100,
 								items: {
-									type: 'object',
-									properties: {
-										name: {
-											type: 'string',
-											minLength: 1,
-											maxLength: 50,
-											pattern: '^[^\\n]+$'
-										},
-										code: {
-											type: 'string',
-											pattern: '^_[a-z]{1,2}$'
-										} // TODO: Check for dupes
-									},
-									required: [ 'name', 'code' ],
-									additionalProperties: false
+									type: 'string',
+									pattern: '^_[a-z]{1,2}$'
 								}
 							},
 							exclude: {
