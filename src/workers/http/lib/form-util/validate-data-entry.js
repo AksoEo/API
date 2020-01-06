@@ -48,7 +48,9 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 		};
 		case 'enum': return {
 			type: 'string',
-			enum: formEntry.options.map(x => x.value) // TODO: Remove disabled options
+			enum: formEntry.options
+				.filter(x => x.disabled === false) // TODO: Handle onlyExisting properly
+				.map(x => x.value)
 		};
 		case 'country': return {
 			type: 'string',
