@@ -1,3 +1,5 @@
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
+
 import QueryUtil from 'akso/lib/query-util';
 import { sendRawMail } from 'akso/mail';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
@@ -77,6 +79,13 @@ export default {
 		// Respond so the client isn't left hanging
 		res.sendStatus(202);
 
+		const countryNames = [];
+		(await AKSO.db('countries')
+			.select('code', 'name_eo')
+		).forEach(x => {
+			countryNames[x.code] = x.name_eo;
+		});
+
 		// Then make the real request
 		const customReq = { query: {}, ...req };
 		customReq.query.fields = [
@@ -132,6 +141,24 @@ export default {
 			const sendPromises = [];
 			for (const codeholderObj of codeholders) {
 				const codeholder = new CodeholderResource(codeholderObj, customReq, schema).toJSON();
+
+				const addressObj = {
+					countryCode: 	codeholder.address.country,
+					countryArea: 	codeholder.address.countryArea,
+					city: 			codeholder.address.city,
+					cityArea: 		codeholder.address.cityArea,
+					streetAddress: 	codeholder.address.streetAddress,
+					postalCode: 	codeholder.address.postalCode,
+					sortingCode: 	codeholder.address.sortingCode,
+					name: ''
+				};
+				const address = await AddressFormat.formatAddress(
+					addressObj,
+					false,
+					'eo',
+					countryNames[addressObj.countryCode]
+				);
+
 				const emailView = {
 					'codeholder.id': codeholder.id,
 					'codeholder.name': formatCodeholderName(codeholder),
@@ -139,7 +166,7 @@ export default {
 					'codeholder.newCode': codeholder.newCode,
 					'codeholder.codeholderType': codeholder.codeholderType,
 					'codeholder.hasPassword': codeholder.hasPassword,
-					'codeholder.addressFormatted': null, // TODO
+					'codeholder.addressFormatted': address,
 					'codeholder.addressLatin.country': codeholder.addressLatin.country,
 					'codeholder.addressLatin.countryArea': codeholder.addressLatin.countryArea,
 					'codeholder.addressLatin.city': codeholder.addressLatin.city,

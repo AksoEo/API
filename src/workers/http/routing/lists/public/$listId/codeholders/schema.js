@@ -1,6 +1,6 @@
 import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
-import AddressFormat from '@cpsdqs/google-i18n-address';
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
 
 import QueryUtil from 'akso/lib/query-util';

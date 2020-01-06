@@ -1,5 +1,5 @@
 import path from 'path';
-import AddressFormat from '@cpsdqs/google-i18n-address';
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import moment from 'moment-timezone';
 
 import { createTransaction, rollbackTransaction } from 'akso/util';

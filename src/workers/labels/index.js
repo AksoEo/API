@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import msgpack from 'msgpack-lite';
-import AddressFormat from '@cpsdqs/google-i18n-address';
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import PDFDocument from 'pdfkit';
 import tmp from 'tmp-promise';
 const nodeFs = require('fs').promises;
