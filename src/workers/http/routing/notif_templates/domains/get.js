@@ -7,7 +7,7 @@ export default {
 
 	run: async function run (req, res) {
 		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
-			.filter(org => req.hasPermission('email_templates.read.' + org));
+			.filter(org => req.hasPermission('notif_templates.read.' + org));
 		
 		const filteredDomains = {};
 		for (const [ org, orgDomains ] of Object.entries(domains)) {

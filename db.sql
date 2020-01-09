@@ -2355,52 +2355,6 @@ INSERT INTO `countries_groups_members` VALUES ('x05','ad'),('x05','ae'),('x01','
 UNLOCK TABLES;
 
 --
--- Table structure for table `email_templates`
---
-
-DROP TABLE IF EXISTS `email_templates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `email_templates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `base` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `intent` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `script` json DEFAULT NULL,
-  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `from` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fromName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `replyTo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `html` mediumtext COLLATE utf8mb4_unicode_ci,
-  `text` text COLLATE utf8mb4_unicode_ci,
-  `modules` json DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `base` (`base`),
-  KEY `org` (`org`),
-  KEY `name` (`name`),
-  KEY `intent` (`intent`),
-  KEY `subject` (`subject`),
-  KEY `from` (`from`),
-  KEY `fromName` (`fromName`),
-  FULLTEXT KEY `description` (`description`),
-  FULLTEXT KEY `name_2` (`name`),
-  FULLTEXT KEY `subject_2` (`subject`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `email_templates`
---
-
-LOCK TABLES `email_templates` WRITE;
-/*!40000 ALTER TABLE `email_templates` DISABLE KEYS */;
-INSERT INTO `email_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratulas membron pri ties naskiĝtago','codeholder','{\"time\": {\"f\": \"time_now\", \"t\": \"c\"}, \"time_format\": {\"a\": [\"time\"], \"f\": \"datetime_fmt\", \"t\": \"c\"}}','Feliĉan naskiĝtagon de UEA!','ne-respondu@uea.org','Universala Esperanto-Asocio',NULL,'Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{#else}} (neniu malnova kodo) {{/if}} {{@codeholder.email}} {{time_format}}','Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} {{@codeholder.email}} {{time_format}}',NULL),(6,'inherit','tejo','Sciigo pri aŭtomata realiĝo kiel Juna Amiko de Esperanto',NULL,'codeholder','{\"var\": {\"f\": \"@codeholder.newCode\", \"t\": \"c\"}}','Vi iĝis Juna Amiko de Esperanto','ne-respondu@tejo.org',NULL,NULL,NULL,NULL,'[{\"type\": \"text\", \"columns\": [\"Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} Vi estis realigita al TEJO kiel Juna Amiko de Esperanto ĉar vi ne memstare remembriĝis al TEJO tiun ĉi jaron kaj ne aparte petis eksmembriĝon.\\n\\nSalutas,\\nTutmonda Esperantista Junulara Organizo\"]}]');
-/*!40000 ALTER TABLE `email_templates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `forms`
 --
 
@@ -3071,6 +3025,52 @@ INSERT INTO `membershipCategories_codeholders` VALUES (5,2,3,2017),(1,3,2,2014),
 UNLOCK TABLES;
 
 --
+-- Table structure for table `notif_templates`
+--
+
+DROP TABLE IF EXISTS `notif_templates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notif_templates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `base` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intent` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `script` json DEFAULT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `from` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fromName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `replyTo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `html` mediumtext COLLATE utf8mb4_unicode_ci,
+  `text` text COLLATE utf8mb4_unicode_ci,
+  `modules` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `base` (`base`),
+  KEY `org` (`org`),
+  KEY `name` (`name`),
+  KEY `intent` (`intent`),
+  KEY `subject` (`subject`),
+  KEY `from` (`from`),
+  KEY `fromName` (`fromName`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`),
+  FULLTEXT KEY `subject_2` (`subject`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notif_templates`
+--
+
+LOCK TABLES `notif_templates` WRITE;
+/*!40000 ALTER TABLE `notif_templates` DISABLE KEYS */;
+INSERT INTO `notif_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratulas membron pri ties naskiĝtago','codeholder','{\"time\": {\"f\": \"time_now\", \"t\": \"c\"}, \"time_format\": {\"a\": [\"time\"], \"f\": \"datetime_fmt\", \"t\": \"c\"}}','Feliĉan naskiĝtagon de UEA!','ne-respondu@uea.org','Universala Esperanto-Asocio',NULL,'Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{#else}} (neniu malnova kodo) {{/if}} {{@codeholder.email}} {{time_format}}','Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} {{@codeholder.email}} {{time_format}}',NULL),(6,'inherit','tejo','Sciigo pri aŭtomata realiĝo kiel Juna Amiko de Esperanto',NULL,'codeholder','{\"var\": {\"f\": \"@codeholder.newCode\", \"t\": \"c\"}}','Vi iĝis Juna Amiko de Esperanto','ne-respondu@tejo.org',NULL,NULL,NULL,NULL,'[{\"type\": \"text\", \"columns\": [\"Via UEA-kodo: {{@codeholder.newCode}} {{#if @codeholder.oldCode}} ({{@codeholder.oldCode}}) {{/if}} Vi estis realigita al TEJO kiel Juna Amiko de Esperanto ĉar vi ne memstare remembriĝis al TEJO tiun ĉi jaron kaj ne aparte petis eksmembriĝon.\\n\\nSalutas,\\nTutmonda Esperantista Junulara Organizo\"]}]');
+/*!40000 ALTER TABLE `notif_templates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `savedQueries`
 --
 
@@ -3427,4 +3427,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-03 14:10:14
+-- Dump completed on 2020-01-10  0:19:28

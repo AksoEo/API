@@ -4,7 +4,7 @@ import QueryUtil from 'akso/lib/query-util';
 import { sendRawMail } from 'akso/mail';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
-import { renderTemplate as renderEmailTemplate } from 'akso/lib/email-template-util';
+import { renderTemplate as renderNotifTemplate } from 'akso/lib/notif-template-util';
 
 import { schema as parSchema, memberFilter } from './schema';
 
@@ -15,7 +15,7 @@ const schema = {
 		body: {
 			type: 'object',
 			properties: {
-				emailTemplateId: {
+				notifTemplateId: {
 					type: 'integer',
 					format: 'uint32'
 				},
@@ -24,7 +24,7 @@ const schema = {
 					default: false
 				}
 			},
-			required: [ 'emailTemplateId' ],
+			required: [ 'notifTemplateId' ],
 			additionalProperties: false
 		},
 		requirePerms: [
@@ -49,16 +49,16 @@ export default {
 		}
 
 		// Make sure the user has the necessary perms
-		const templateData = await AKSO.db('email_templates')
+		const templateData = await AKSO.db('notif_templates')
 			.where({
-				id: req.body.emailTemplateId,
+				id: req.body.notifTemplateId,
 				intent: 'codeholder'
 			})
 			.first('*');
 		if (!templateData) { return res.sendStatus(404); }
-		if (!req.hasPermission('email_templates.read.' + templateData.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('notif_templates.read.' + templateData.org)) { return res.sendStatus(403); }
 
-		if (req.body.deleteTemplateOnComplete &&!req.hasPermission('email_templates.delete.' + templateData.org)) {
+		if (req.body.deleteTemplateOnComplete &&!req.hasPermission('notif_templates.delete.' + templateData.org)) {
 			return res.sendStatus(403);
 		}
 
@@ -66,7 +66,7 @@ export default {
 		if (req.memberFields) { fieldWhitelist = Object.keys(req.memberFields); }
 
 		const baseQuery = AKSO.db('view_codeholders')
-			.whereNotNull('email')
+			.whereNotNull('email') // TODO: Remove when adding support for Telegram
 			.where('isDead', false)
 			.orderBy('id', 'asc');
 		memberFilter(schema, baseQuery, req);
@@ -159,7 +159,7 @@ export default {
 					countryNames[addressObj.countryCode]
 				);
 
-				const emailView = {
+				const notifView = {
 					'codeholder.id': codeholder.id,
 					'codeholder.name': formatCodeholderName(codeholder),
 					'codeholder.oldCode': codeholder.oldCode,
@@ -185,12 +185,12 @@ export default {
 				};
 
 				sendPromises.push(new Promise((resolve, reject) => {
-					renderEmailTemplate(templateData, emailView)
+					renderNotifTemplate(templateData, notifView)
 						.then(renderedEmail => {
 							const msg = {
 								...renderedEmail,
 								to: {
-									name: emailView['codeholder.name'],
+									name: notifView['codeholder.name'],
 									email: codeholder.email
 								},
 								from: {
@@ -209,8 +209,8 @@ export default {
 
 		// Delete the template if necessary
 		if (req.body.deleteTemplateOnComplete) {
-			await AKSO.db('email_templates')
-				.where('id', req.body.emailTemplateId)
+			await AKSO.db('notif_templates')
+				.where('id', req.body.notifTemplateId)
 				.delete();
 		}
 	}

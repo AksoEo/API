@@ -58,7 +58,7 @@ POLLANDO`,
 	}
 };
 
-class AKSOEmailTemplateIntent extends Enum {
+class AKSONotifTemplateIntent extends Enum {
 	static getFormValues (prop) {
 		return formValues[this.normalize(prop)];
 	}
@@ -67,6 +67,6 @@ class AKSOEmailTemplateIntent extends Enum {
 		return bogusData[this.normalize(prop)];
 	}
 }
-AKSOEmailTemplateIntent.setProps(...Object.keys(formValues));
+AKSONotifTemplateIntent.setProps(...Object.keys(formValues));
 
-export default AKSOEmailTemplateIntent;
+export default AKSONotifTemplateIntent;

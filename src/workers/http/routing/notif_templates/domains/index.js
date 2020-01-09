@@ -5,7 +5,7 @@ import { bindMethod } from 'akso/workers/http/routing';
 import method$get from './get';
 
 /**
- * Sets up /email_templates/domains
+ * Sets up /notif_templates/domains
  * @return {express.Router}
  */
 export function init () {

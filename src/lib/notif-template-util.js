@@ -6,7 +6,7 @@ import { doAscMagic, evaluateSync } from 'akso/lib/akso-script-util';
 import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
 
 /**
- * Renders an email template
+ * Renders a notif template
  * @param  {number|string|Object} template  The id of the template or an object containing all its data
  * @param  {Object} intentData              An object containing the context data relevant for the template's intent
  * @return {Object} Returns an object containing rendered html, text and subject.
@@ -15,10 +15,10 @@ export async function renderTemplate (template, intentData) {
 	await doAscMagic();
 
 	if (typeof template !== 'object') {
-		template = await AKSO.db('email_templates')
+		template = await AKSO.db('notif_templates')
 			.where('id', template)
 			.first('*');
-		if (!template) { throw new Error('Could not fetch email template with id ' + template); }
+		if (!template) { throw new Error('Could not fetch notif template with id ' + template); }
 	}
 
 	const viewFn = key => {
@@ -50,7 +50,7 @@ async function renderRawTemplate (templateData, viewFn) {
 
 async function renderInheritTemplate (templateData, viewFn) {
 	const notifsDir = path.join(AKSO.dir, 'notifs');
-	const tmplsDir = path.join(notifsDir, 'email-templates');
+	const tmplsDir = path.join(notifsDir, 'notif-templates');
 	const orgDir = path.join(notifsDir, templateData.org);
 	const globalDir = path.join(orgDir, '_global', 'email');
 

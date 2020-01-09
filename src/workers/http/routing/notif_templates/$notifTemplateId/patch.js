@@ -1,6 +1,6 @@
 import { analyzeAll } from '@tejo/akso-script';
 
-import AKSOEmailTemplateIntent from 'akso/lib/enums/akso-email-template-intent';
+import AKSONotifTemplateIntent from 'akso/lib/enums/akso-notif-template-intent';
 
 import { domains } from '../schema';
 
@@ -143,11 +143,11 @@ export default {
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
-		const templateData = await AKSO.db('email_templates')
-			.where('id', req.params.emailTemplateId)
+		const templateData = await AKSO.db('notif_templates')
+			.where('id', req.params.notifTemplateId)
 			.first('org', 'base', 'intent');
 		if (!templateData) { return res.sendStatus(404); }
-		if (!req.hasPermission('email_templates.update.' + templateData.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('notif_templates.update.' + templateData.org)) { return res.sendStatus(403); }
 
 		// Manual data validation
 		// Verify base
@@ -167,7 +167,7 @@ export default {
 		if (req.body.script) {
 			let analyses;
 			try {
-				analyses = analyzeAll(req.body.script, AKSOEmailTemplateIntent.getFormValues(templateData.intent));
+				analyses = analyzeAll(req.body.script, AKSONotifTemplateIntent.getFormValues(templateData.intent));
 			} catch {
 				return res.status(400).type('text/plain')
 					.send('The AKSO Script in script caused a generic error (might be a stack overflow)');
@@ -193,8 +193,8 @@ export default {
 		if (data.script) { data.script = JSON.stringify(data.script); }
 		if (data.modules) { data.modules = JSON.stringify(data.modules); }
 
-		await AKSO.db('email_templates')
-			.where('id', req.params.emailTemplateId)
+		await AKSO.db('notif_templates')
+			.where('id', req.params.notifTemplateId)
 			.update(data);
 
 		res.sendStatus(204);

@@ -9,7 +9,7 @@ import method$delete from './delete';
 import method$patch from './patch';
 
 /**
- * Sets up /email_templates/{emailTemplateId}
+ * Sets up /notif_templates/{notifTemplateId}
  * @return {express.Router}
  */
 export function init () {

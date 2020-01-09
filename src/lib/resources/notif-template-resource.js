@@ -1,9 +1,9 @@
 import SimpleResource from './simple-resource';
 
 /**
- * A resource representing an email template
+ * A resource representing a notif template
  */
-class EmailTemplateResource extends SimpleResource {
+class NotifTemplateResource extends SimpleResource {
 	constructor (obj, req, schema) {
 		super(obj);
 		const fields = [...(req.query.fields || schema.defaultFields)];
@@ -19,4 +19,4 @@ class EmailTemplateResource extends SimpleResource {
 	}
 }
 
-export default EmailTemplateResource;
+export default NotifTemplateResource;

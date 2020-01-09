@@ -2,7 +2,7 @@ import path from 'path';
 import { analyzeAll } from '@tejo/akso-script';
 
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
-import AKSOEmailTemplateIntent from 'akso/lib/enums/akso-email-template-intent';
+import AKSONotifTemplateIntent from 'akso/lib/enums/akso-notif-template-intent';
 
 import { domains } from './schema';
 
@@ -14,7 +14,7 @@ const schema = {
 	query: null,
 	body: {
 		definitions: {
-			EmailTemplate: {
+			NotifTemplate: {
 				type: 'object',
 				properties: {
 					base: {
@@ -38,7 +38,7 @@ const schema = {
 					},
 					intent: {
 						type: 'string',
-						enum: AKSOEmailTemplateIntent.allLower
+						enum: AKSONotifTemplateIntent.allLower
 					},
 					script: {
 						type: 'object',
@@ -74,9 +74,9 @@ const schema = {
 		},
 
 		oneOf: [
-			{ // EmailTemplateRaw
+			{ // NotifTemplateRaw
 				$merge: {
-					source: { $ref: '#/definitions/EmailTemplate' },
+					source: { $ref: '#/definitions/NotifTemplate' },
 					with: {
 						type: 'object',
 						properties: {
@@ -99,9 +99,9 @@ const schema = {
 					}
 				}
 			},
-			{ // EmailTemplateInherit
+			{ // NotifTemplateInherit
 				$merge: {
-					source: { $ref: '#/definitions/EmailTemplate' },
+					source: { $ref: '#/definitions/NotifTemplate' },
 					with: {
 						type: 'object',
 						properties: {
@@ -194,7 +194,7 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		const orgPerm = 'email_templates.create.' + req.body.org;
+		const orgPerm = 'notif_templates.create.' + req.body.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
 		// Manual data validation
@@ -202,7 +202,7 @@ export default {
 		if (req.body.script) {
 			let analyses;
 			try {
-				analyses = analyzeAll(req.body.script, AKSOEmailTemplateIntent.getFormValues(req.body.intent));
+				analyses = analyzeAll(req.body.script, AKSONotifTemplateIntent.getFormValues(req.body.intent));
 			} catch {
 				return res.status(400).type('text/plain')
 					.send('The AKSO Script in script caused a generic error (might be a stack overflow)');
@@ -226,9 +226,9 @@ export default {
 		if (data.script) { data.script = JSON.stringify(data.script); }
 		if (data.modules) { data.modules = JSON.stringify(data.modules); }
 
-		const id = (await AKSO.db('email_templates').insert(data))[0];
+		const id = (await AKSO.db('notif_templates').insert(data))[0];
 
-		res.set('Location', path.join(AKSO.conf.http.path, 'email_templates', id.toString()));
+		res.set('Location', path.join(AKSO.conf.http.path, 'notif_templates', id.toString()));
 		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
