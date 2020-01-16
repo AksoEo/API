@@ -55,7 +55,7 @@ export default {
 		// Make sure the form exists
 		const formData = await AKSO.db('congresses_instances_registrationForm')
 			.where('congressInstanceId', req.params.instanceId)
-			.first('form', 'formId', 'allowGuests');
+			.first('*');
 		if (!formData) { return res.sendStatus(404); }
 
 		// Require codeholderId if not allowGuests
@@ -92,7 +92,7 @@ export default {
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
-		await validateDataEntry(formData.form, req.body.data, formValues, req.body.allowInvalidData);
+		const participantMetadata = await validateDataEntry(formData, req.body.data, formValues, req.body.allowInvalidData);
 
 		// Insert the participant's data
 		const dataId = await crypto.randomBytes(12);
@@ -105,7 +105,8 @@ export default {
 				codeholderId: req.body.codeholderId,
 				dataId,
 				approved: req.body.approved,
-				notes: req.body.notes
+				notes: req.body.notes,
+				price: participantMetadata.price
 			});
 
 		const dataIdHex = dataId.toString('hex');

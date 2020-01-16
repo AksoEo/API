@@ -1,7 +1,7 @@
 import { ajv } from 'akso/util';
 import { evaluateSync, doAscMagic } from 'akso/lib/akso-script-util';
 
-export async function validateDataEntry (form, data, addFormValues = {}, allowInvalidData = false) {
+export async function validateDataEntry (formData, data, addFormValues = {}, allowInvalidData = false) {
 	await doAscMagic();
 
 	const aksoCountries = (await AKSO.db('countries').select('code'))
@@ -163,7 +163,7 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 		return fieldSchema;
 	};
 
-	for (const formEntry of form) {
+	for (const formEntry of formData.form) {
 		if (formEntry.el === 'input') {
 			const name = formEntry.name;
 			dataSchema.required.push(name);
@@ -179,4 +179,11 @@ export async function validateDataEntry (form, data, addFormValues = {}, allowIn
 		err.statusCode = 400;
 		throw err;
 	}
+
+	const metadata = {};
+	if (formData.price_var) {
+		metadata.price = evaluateSync(scripts, 'price', getFormValue);
+	}
+
+	return metadata;
 }

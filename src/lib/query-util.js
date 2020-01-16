@@ -1,3 +1,5 @@
+import { escapeId } from 'mysql2';
+
 import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
 
@@ -208,12 +210,12 @@ const QueryUtil = {
 		if (!fieldAliases) { return field; }
 		const alias = fieldAliases[field];
 		if (!alias) { return field; }
-		if (typeof alias === 'string') { return alias; }
 		if (typeof alias === 'function') {
 			let newField = alias();
-			if (includeAs) { newField = AKSO.db.raw(newField + ' as ??', field); }
+			if (includeAs) { newField = AKSO.db.raw(`${newField} as ${escapeId(field, true)}`); }
 			return newField;
 		}
+		return alias;
 	},
 
 	/**
@@ -314,8 +316,9 @@ const QueryUtil = {
 
 		// Get the actual db col names
 		const selectFields = [...new Set(fields
-			.concat(schema.alwaysSelect || [])
-			.map(f => QueryUtil.getAlias(schema.fieldAliases, f)))];
+			.concat(schema.alwaysSelect || []))]
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
+
 		query.first(selectFields);
 	},
 
@@ -334,8 +337,8 @@ const QueryUtil = {
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
 		const selectFields = [...new Set(fields
-			.concat(schema.alwaysSelect || [])
-			.map(f => QueryUtil.getAlias(schema.fieldAliases, f)))];
+			.concat(schema.alwaysSelect || []))]
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
 
 		if (req.query.search) {
 			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {

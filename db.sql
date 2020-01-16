@@ -2085,10 +2085,12 @@ CREATE TABLE `congresses_instances_participants` (
   `codeholderId` int(10) unsigned DEFAULT NULL,
   `approved` tinyint(1) NOT NULL DEFAULT '0',
   `notes` text COLLATE utf8mb4_unicode_ci,
+  `price` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
   UNIQUE KEY `codeholderId` (`codeholderId`) USING BTREE,
   KEY `dataId` (`dataId`),
   KEY `approved` (`approved`),
+  KEY `price` (`price`),
   FULLTEXT KEY `notes` (`notes`),
   CONSTRAINT `congresses_instances_participants_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `congresses_instances_participants_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2102,7 +2104,7 @@ CREATE TABLE `congresses_instances_participants` (
 
 LOCK TABLES `congresses_instances_participants` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_participants` DISABLE KEYS */;
-INSERT INTO `congresses_instances_participants` VALUES (3,_binary '\Â£˙7a›ë6¸\ƒ',NULL,0,NULL);
+INSERT INTO `congresses_instances_participants` VALUES (3,_binary 'gH©#R¶FT\Ÿ',NULL,0,NULL,1000),(3,_binary '≤ˇo\·Å@zjPt∏',NULL,0,NULL,NULL),(3,_binary '∏%∫âm(óE≤\ﬂ',NULL,0,NULL,NULL),(3,_binary '\“\€\Z¿¸VZ\'\\¯',NULL,0,NULL,NULL);
 /*!40000 ALTER TABLE `congresses_instances_participants` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2248,7 +2250,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,1,1,1,0,'EUR','price',2500,11,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,1,1,1,0,'EUR','price',2500,11,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": \"08:00\", \"name\": \"alvenhoro\", \"type\": \"time\", \"label\": \"Alvenhoro\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"cols\": 2, \"name\": \"manƒùoj\", \"rows\": 2, \"type\": \"boolean_table\", \"label\": \"Manƒùoj\", \"default\": null, \"disabled\": false, \"required\": false, \"headerTop\": null, \"maxSelect\": 2, \"minSelect\": 1, \"headerLeft\": null, \"description\": null, \"excludeCells\": [[0, 0]]}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2403,7 +2405,7 @@ CREATE TABLE `forms_data` (
 
 LOCK TABLES `forms_data` WRITE;
 /*!40000 ALTER TABLE `forms_data` DISABLE KEYS */;
-INSERT INTO `forms_data` VALUES (11,_binary '\Â£˙7a›ë6¸\ƒ',1578056995,NULL);
+INSERT INTO `forms_data` VALUES (11,_binary 'gH©#R¶FT\Ÿ',1579195149,NULL),(11,_binary '≤ˇo\·Å@zjPt∏',1579195087,NULL),(11,_binary '∏%∫âm(óE≤\ﬂ',1579195049,NULL),(11,_binary '\“\€\Z¿¸VZ\'\\¯',1579120173,NULL);
 /*!40000 ALTER TABLE `forms_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2433,6 +2435,7 @@ CREATE TABLE `forms_data_fields_boolean` (
 
 LOCK TABLES `forms_data_fields_boolean` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_boolean` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_boolean` VALUES (11,'tos',_binary 'gH©#R¶FT\Ÿ',1),(11,'tos',_binary '≤ˇo\·Å@zjPt∏',1),(11,'tos',_binary '∏%∫âm(óE≤\ﬂ',1),(11,'tos',_binary '\“\€\Z¿¸VZ\'\\¯',1);
 /*!40000 ALTER TABLE `forms_data_fields_boolean` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2461,6 +2464,7 @@ CREATE TABLE `forms_data_fields_boolean_table` (
 
 LOCK TABLES `forms_data_fields_boolean_table` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_boolean_table` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_boolean_table` VALUES (11,'manƒùoj',_binary 'gH©#R¶FT\Ÿ','[[null, true], [false, true]]'),(11,'manƒùoj',_binary '≤ˇo\·Å@zjPt∏','[[null, true], [false, true]]'),(11,'manƒùoj',_binary '∏%∫âm(óE≤\ﬂ','[[null, true], [false, true]]'),(11,'manƒùoj',_binary '\“\€\Z¿¸VZ\'\\¯','[[null, true], [false, true]]');
 /*!40000 ALTER TABLE `forms_data_fields_boolean_table` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2519,6 +2523,7 @@ CREATE TABLE `forms_data_fields_date` (
 
 LOCK TABLES `forms_data_fields_date` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_date` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_date` VALUES (11,'birthdate',_binary '\“\€\Z¿¸VZ\'\\¯','1998-09-05'),(11,'birthdate',_binary 'gH©#R¶FT\Ÿ','1999-09-05'),(11,'birthdate',_binary '≤ˇo\·Å@zjPt∏','1999-09-05'),(11,'birthdate',_binary '∏%∫âm(óE≤\ﬂ','1999-09-05');
 /*!40000 ALTER TABLE `forms_data_fields_date` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2577,6 +2582,7 @@ CREATE TABLE `forms_data_fields_enum` (
 
 LOCK TABLES `forms_data_fields_enum` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_enum` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_enum` VALUES (11,'manƒùo',_binary 'gH©#R¶FT\Ÿ','vegetarian'),(11,'manƒùo',_binary '≤ˇo\·Å@zjPt∏','vegetarian'),(11,'manƒùo',_binary '∏%∫âm(óE≤\ﬂ','vegetarian'),(11,'manƒùo',_binary '\“\€\Z¿¸VZ\'\\¯','vegetarian');
 /*!40000 ALTER TABLE `forms_data_fields_enum` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2606,6 +2612,7 @@ CREATE TABLE `forms_data_fields_money` (
 
 LOCK TABLES `forms_data_fields_money` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_money` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_money` VALUES (11,'money',_binary 'gH©#R¶FT\Ÿ',2001),(11,'money',_binary '≤ˇo\·Å@zjPt∏',2001),(11,'money',_binary '∏%∫âm(óE≤\ﬂ',2001),(11,'money',_binary '\“\€\Z¿¸VZ\'\\¯',2001);
 /*!40000 ALTER TABLE `forms_data_fields_money` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2635,6 +2642,7 @@ CREATE TABLE `forms_data_fields_number` (
 
 LOCK TABLES `forms_data_fields_number` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_number` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_number` VALUES (11,'cake',_binary 'gH©#R¶FT\Ÿ',20),(11,'cake',_binary '≤ˇo\·Å@zjPt∏',20),(11,'cake',_binary '∏%∫âm(óE≤\ﬂ',20),(11,'cake',_binary '\“\€\Z¿¸VZ\'\\¯',20);
 /*!40000 ALTER TABLE `forms_data_fields_number` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2664,6 +2672,7 @@ CREATE TABLE `forms_data_fields_text` (
 
 LOCK TABLES `forms_data_fields_text` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_text` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_text` VALUES (11,'email',_binary 'gH©#R¶FT\Ÿ','somethingelse@something.com'),(11,'email',_binary '≤ˇo\·Å@zjPt∏','somethingelse@something.com'),(11,'email',_binary '∏%∫âm(óE≤\ﬂ','something@something.com'),(11,'email',_binary '\“\€\Z¿¸VZ\'\\¯','something@something.com');
 /*!40000 ALTER TABLE `forms_data_fields_text` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2693,6 +2702,7 @@ CREATE TABLE `forms_data_fields_time` (
 
 LOCK TABLES `forms_data_fields_time` WRITE;
 /*!40000 ALTER TABLE `forms_data_fields_time` DISABLE KEYS */;
+INSERT INTO `forms_data_fields_time` VALUES (11,'alvenhoro',_binary '\“\€\Z¿¸VZ\'\\¯','10:30:00'),(11,'alvenhoro',_binary 'gH©#R¶FT\Ÿ','11:30:00'),(11,'alvenhoro',_binary '≤ˇo\·Å@zjPt∏','11:30:00'),(11,'alvenhoro',_binary '∏%∫âm(óE≤\ﬂ','11:30:00');
 /*!40000 ALTER TABLE `forms_data_fields_time` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2719,7 +2729,7 @@ CREATE TABLE `forms_fields` (
 
 LOCK TABLES `forms_fields` WRITE;
 /*!40000 ALTER TABLE `forms_fields` DISABLE KEYS */;
-INSERT INTO `forms_fields` VALUES (11,'tos','boolean'),(11,'birthdate','date'),(11,'manƒùo','enum'),(11,'money','money'),(11,'cake','number'),(11,'email','text');
+INSERT INTO `forms_fields` VALUES (11,'tos','boolean'),(11,'manƒùoj','boolean_table'),(11,'birthdate','date'),(11,'manƒùo','enum'),(11,'money','money'),(11,'cake','number'),(11,'email','text'),(11,'alvenhoro','time');
 /*!40000 ALTER TABLE `forms_fields` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3427,4 +3437,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-10  0:19:28
+-- Dump completed on 2020-01-16 12:19:20
