@@ -1,5 +1,7 @@
 import moment from 'moment-timezone';
 
+import { insertAsReplace } from 'akso/util';
+
 export async function insertFormDataEntry (form, formId, dataId, data) {
 	const getFormEntry = name => {
 		for (const formEntry of form) {
@@ -10,12 +12,23 @@ export async function insertFormDataEntry (form, formId, dataId, data) {
 		}
 	};
 
-	await AKSO.db('forms_data')
-		.insert({
-			formId,
-			dataId,
-			createdTime: moment().unix()
-		});
+	const dataIdExists = await AKSO.db('forms_data')
+		.where('dataId', dataId)
+		.first(1);
+
+	if (dataIdExists) {
+		await AKSO.db('forms_data')
+			.where('dataId', dataId)
+			.update('editedTime', moment().unix());
+	} else {
+		await AKSO.db('forms_data')
+			.insert({
+				formId,
+				dataId,
+				createdTime: moment().unix()
+			});
+	}
+
 	const insertPromises = [];
 	for (const [name, value] of Object.entries(data)) {
 		const formEntry = getFormEntry(name);
@@ -27,13 +40,15 @@ export async function insertFormDataEntry (form, formId, dataId, data) {
 		}
 
 		insertPromises.push(
-			AKSO.db('forms_data_fields_' + type)
-				.insert({
-					formId,
-					dataId,
-					name: formEntry.name,
-					value: safeValue
-				})
+			insertAsReplace(
+				AKSO.db('forms_data_fields_' + type)
+					.insert({
+						formId,
+						dataId,
+						name: formEntry.name,
+						value: safeValue
+					})
+			)
 		);
 	}
 

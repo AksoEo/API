@@ -1,10 +1,9 @@
 import path from 'path';
-import crypto from 'pn/crypto';
 
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
-import { manualDataValidation } from './schema';
+import { manualDataValidation } from '../schema';
 
 export default {
 	schema: {
@@ -58,6 +57,16 @@ export default {
 			.first('*');
 		if (!formData) { return res.sendStatus(404); }
 
+		// Make sure the participant exists
+		const participantData = await AKSO.db('congresses_instances_participants')
+			.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = congresses_instances_participants.dataId')
+			.where({
+				'congressInstanceId': req.params.instanceId,
+				'd.dataId': req.params.dataId
+			})
+			.first('*');
+		if (!participantData) { return res.sendStatus(404); }
+
 		await manualDataValidation(req, res, formData);
 
 		if ('codeholderId' in req.body) {
@@ -67,38 +76,37 @@ export default {
 					congressInstanceId: req.params.instanceId,
 					codeholderId: req.body.codeholderId
 				})
+				.whereNot('dataId', req.params.dataId)
 				.first(1);
 			if (codeholderAlreadyExists) {
 				return res.status(409).type('text/plain')
-					.send('codeholderId already registered');
+					.send('codeholderId already registered with another dataId');
 			}
 		}
 
 		const formValues = {
-			'@created_time': null,
-			'@edited_time': null,
-			'@upfront_time': null,
+			'@created_time': participantData.createdTime,
+			'@edited_time': participantData.editedTime,
+			'@upfront_time': null,// TODO
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
 		const participantMetadata = await validateDataEntry(formData, req.body.data, formValues, req.body.allowInvalidData);
 
-		// Insert the participant's data
-		const dataId = await crypto.randomBytes(12);
-		await insertFormDataEntry(formData.form, formData.formId, dataId, req.body.data);
+		// Insert the participant's dat
+		await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);
 
 		// Insert the participant
 		await AKSO.db('congresses_instances_participants')
-			.insert({
-				congressInstanceId: req.params.instanceId,
+			.where('dataId', req.params.dataId)
+			.update({
 				codeholderId: req.body.codeholderId,
-				dataId,
 				approved: req.body.approved,
 				notes: req.body.notes,
 				price: participantMetadata.price
 			});
 
-		const dataIdHex = dataId.toString('hex');
+		const dataIdHex = req.params.dataId.toString('hex');
 		res.set('Location', path.join(
 			AKSO.conf.http.path,
 			'congresses',
@@ -109,6 +117,6 @@ export default {
 			dataIdHex
 		));
 		res.set('X-Identifier', dataIdHex);
-		res.sendStatus(201);
+		res.sendStatus(204);
 	}
 };

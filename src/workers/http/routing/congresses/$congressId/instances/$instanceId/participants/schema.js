@@ -1,3 +1,5 @@
+import { memberFilter, schema as chSchema } from 'akso/workers/http/routing/codeholders/schema';
+
 export const schema = {
 	defaultFields: [ 'dataId' ],
 	fields: {
@@ -14,6 +16,30 @@ export const schema = {
 	}
 };
 
+// Takes care of additional data validation for POST and PATCH
+export async function manualDataValidation (req, res, formData) {
+	// Require codeholderId if not allowGuests
+	if (!formData.allowGuests && !('codeholderId' in req.body)) {
+		const err = new Error('codeholderId is required as allowGuests is false in the registration form');
+		err.statusCode = 400;
+		throw err;
+	}
+
+	if ('codeholderId' in req.body) {
+		// Ensure that the we can access the codeholder through the member filter
+		const codeholderQuery = AKSO.db('view_codeholders')
+			.where('id', req.body.codeholderId)
+			.first(1);
+		memberFilter(chSchema, codeholderQuery, req);
+		if (!await codeholderQuery) {
+			const err = new Error();
+			err.statusCode = 404;
+			throw err;
+		}
+	}
+}
+
+// Handles read requests for participants
 export async function getFormMetaData (req, res) {
 	const dynSchema = {
 		...schema,

@@ -27,7 +27,7 @@ class CongressParticipantResource extends SimpleResource {
 			obj.data[bits[1]] = parsedVal;
 			delete obj[key];
 		}
-		if (!obj.data.length) { delete obj.data; }
+		if (!Object.keys(obj.data).length) { delete obj.data; }
 
 		if ('approved' in obj) { obj.approved = !!obj.approved; }
 	}
