@@ -5,6 +5,7 @@ import { bindMethod } from 'akso/workers/http/routing';
 import { init as route$$permission } from './$permission';
 
 import method$get from './get';
+import method$put from './put';
 
 /**
  * Sets up /clients/{apiKey}/permissions
@@ -21,6 +22,7 @@ export function init () {
 	router.use('/:permission', route$$permission());
 
 	bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'put', method$put);
 
 	return router;
 }
