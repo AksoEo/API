@@ -44,18 +44,24 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		handleMemberRestrictions(req);
+		handleMemberRestrictions(req.body.memberRestrictions);
+
+		// Make sure the admin group exists
+		const exists = await AKSO.db('admin_groups')
+			.where('id', req.params.adminGroupId)
+			.first(1);
+		if (!exists) { return res.sendStatus(404); }
 
 		const data = {...req.body};
 		if ('memberRestrictions' in req.body) {
 			delete data.memberRestrictions;
 		}
 
-		const updated = await AKSO.db('admin_groups')
-			.where('id', req.params.adminGroupId)
-			.update(data);
-
-		if (!updated) { return res.sendStatus(404); }
+		if (Object.keys(data).length) {
+			await AKSO.db('admin_groups')
+				.where('id', req.params.adminGroupId)
+				.update(data);
+		}
 
 		if ('memberRestrictions' in req.body) {
 			if (req.body.memberRestrictions === null) {

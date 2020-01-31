@@ -48,7 +48,7 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		handleMemberRestrictions(req);
+		handleMemberRestrictions(req.body.memberRestrictions);
 
 		const data = {...req.body};
 		if ('memberRestrictions' in req.body) {

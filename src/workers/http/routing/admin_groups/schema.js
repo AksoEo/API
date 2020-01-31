@@ -25,8 +25,8 @@ export const schema = {
 	alwaysSelect: [ 'filter' ]
 };
 
-export function handleMemberRestrictions (req) {
-	if (!req.body.memberRestrictions) { return; }
+export function handleMemberRestrictions (memberRestrictions) {
+	if (!memberRestrictions) { return; }
 
 	// Verify filter
 	const query = AKSO.db('view_codeholders');
@@ -34,7 +34,7 @@ export function handleMemberRestrictions (req) {
 		// This throwns an error if the query is in any way invalid
 		QueryUtil.simpleCollection({
 			memberFilter: {},
-			query: { filter: req.body.memberRestrictions.filter }
+			query: { filter: memberRestrictions.filter }
 		}, codeholderSchema, query);
 		query.toSQL();
 	} catch (e) {
@@ -44,8 +44,8 @@ export function handleMemberRestrictions (req) {
 	}
 
 	// Verify fields
-	if (req.body.memberRestrictions.fields) {
-		for (const [field, flags] of Object.entries(req.body.memberRestrictions.fields)) {
+	if (memberRestrictions.fields) {
+		for (const [field, flags] of Object.entries(memberRestrictions.fields)) {
 			if (!memberRestrictionFields.includes(field)) {
 				const err = new Error(`Unknown field ${field} in memberRestrictions.fields`);
 				err.statusCode = 400;
