@@ -12,7 +12,7 @@ export default {
 			}
 		},
 		requirePerms: [
-			'clients.update',
+			'clients.read',
 			'clients.perms.update'
 		]
 	},

@@ -5,7 +5,7 @@ export default {
 		query: null,
 		body: null,
 		requirePerms: [
-			'codeholders.update',
+			'codeholders.read',
 			'codeholders.perms.update'
 		]
 	},

@@ -14,7 +14,7 @@ export default {
 			}
 		},
 		requirePerms: [
-			'codeholders.update',
+			'codeholders.read',
 			'codeholders.perms.update'
 		]
 	},

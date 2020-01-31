@@ -3,7 +3,7 @@ export default {
 		query: null,
 		body: null,
 		requirePerms: [
-			'clients.update',
+			'clients.read',
 			'clients.perms.update'
 		]
 	},
