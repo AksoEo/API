@@ -208,9 +208,15 @@ export const schema = {
 	}
 };
 
-export const memberRestrictionFields = Object.keys(schema.fields).map(f => {
-	return [...new Set(f.split('.')[0])];
-});
+export const memberRestrictionFields = [...new Set(
+	Object.keys(schema.fields).flatMap(f => {
+		const bits = f.split('.');
+		const arr = [];
+		for (let i = 0; i < bits.length; i++) {
+			arr.push(bits.slice(0, i + 1).join('.'));
+		}
+		return arr;
+	}))];
 
 export function memberFilter (schema, query, req) {
 	QueryUtil.filter({
