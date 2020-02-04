@@ -1,3 +1,5 @@
+import { insertAsReplace } from 'akso/util';
+
 import { handleMemberRestrictions } from '../schema';
 
 export default {
@@ -69,13 +71,13 @@ export default {
 					.where('adminGroupId', req.params.adminGroupId)
 					.delete();
 			} else {
-				await AKSO.db('admin_permissions_memberRestrictions_groups')
-					.where('adminGroupId', req.params.adminGroupId)
-					.update({
+				await insertAsReplace(AKSO.db('admin_permissions_memberRestrictions_groups')
+					.insert({
+						adminGroupId: req.params.adminGroupId,
 						filter: JSON.stringify(req.body.memberRestrictions.filter),
 						fields: req.body.memberRestrictions.fields ?
 							JSON.stringify(req.body.memberRestrictions.fields) : null
-					});
+					}));
 			}
 		}
 
