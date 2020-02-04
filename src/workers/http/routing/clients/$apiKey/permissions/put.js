@@ -20,6 +20,9 @@ export default {
 	run: async function run (req, res) {
 		const apiKey = Buffer.from(req.params.apiKey, 'hex');
 
+		console.log(apiKey)
+		console.log(apiKey.length)
+
 		// Make sure the client exists
 		const exists = await AKSO.db('clients')
 			.where('apiKey', apiKey)
@@ -29,13 +32,13 @@ export default {
 		}
 
 		const data = req.body.map(perm => {
-			return { apiKey: req.params.apiKey, permission: perm };
+			return { apiKey: apiKey, permission: perm };
 		});
 
 		const trx = await createTransaction();
 
 		await trx('admin_permissions_clients')
-			.where('apiKey', req.params.apiKey)
+			.where('apiKey', apiKey)
 			.delete();
 
 		if (data.length) {
