@@ -7,6 +7,10 @@ class CountryGroupResource extends SimpleResource {
 	constructor (obj, req, schema) {
 		super(obj);
 
+		if (obj.countries === null) {
+			obj.countries = [];
+		}
+
 		const fields = req.query.fields || schema.defaultFields;
 		this.removeUnnecessary(fields);
 	}
