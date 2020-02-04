@@ -13,6 +13,10 @@ import method$get from './get';
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
+	router.param('apiKey', (req, res, next, val) => {
+		req.params.apiKey = Buffer.from(val, 'hex');
+		next();
+	});
 	router.use('/:apiKey', route$$apiKey());
 
 	bindMethod(router, '/', 'get', method$get);

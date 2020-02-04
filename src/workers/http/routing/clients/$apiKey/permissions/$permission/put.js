@@ -9,18 +9,16 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const apiKey = Buffer.from(req.params.apiKey, 'hex');
-
 		// Make sure the client exists
 		const exists = await AKSO.db('clients')
-			.where('apiKey', apiKey)
+			.where('apiKey', req.params.apiKey)
 			.first(1);
 		if (!exists) {
 			return res.sendStatus(404);
 		}
 
 		const data = {
-			apiKey: apiKey,
+			apiKey: req.params.apiKey,
 			permission: req.params.permission
 		};
 

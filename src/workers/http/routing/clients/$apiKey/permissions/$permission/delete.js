@@ -11,7 +11,7 @@ export default {
 	run: async function run (req, res) {
 		const deleted = await AKSO.db('admin_permissions_clients')
 			.where({
-				apiKey: Buffer.from(req.params.apiKey, 'hex'),
+				apiKey: req.params.apiKey,
 				permission: req.params.permission
 			})
 			.delete();

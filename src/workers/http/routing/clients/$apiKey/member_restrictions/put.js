@@ -29,19 +29,17 @@ export default {
 	run: async function run (req, res) {
 		handleMemberRestrictions(req.body);
 
-		const apiKey = Buffer.from(req.params.apiKey, 'hex');
-
 		// Make sure the client exists
 		const exists = await AKSO.db('clients')
 			.first(1)
-			.where('apiKey', apiKey);
+			.where('apiKey', req.params.apiKey);
 		if (!exists) { return res.sendStatus(404); }
 
 		// Set the restrictions
 		await insertAsReplace(
 			AKSO.db('admin_permissions_memberRestrictions_clients')
 				.insert({
-					apiKey: apiKey,
+					apiKey: req.params.apiKey,
 					filter: JSON.stringify(req.body.filter),
 					fields: JSON.stringify(req.body.fields)
 				}));

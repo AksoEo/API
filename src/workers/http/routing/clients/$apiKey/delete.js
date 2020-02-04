@@ -7,7 +7,7 @@ export default {
 
 	run: async function run (req, res) {
 		const deleted = await AKSO.db('clients')
-			.where('apiKey', Buffer.from(req.params.apiKey, 'hex'))
+			.where('apiKey', req.params.apiKey)
 			.delete();
 
 		if (deleted) { res.sendStatus(204); }

@@ -31,7 +31,7 @@ export default {
 
 	run: async function run (req, res) {
 		const updated = await AKSO.db('clients')
-			.where('apiKey', Buffer.from(req.params.apiKey, 'hex'))
+			.where('apiKey', req.params.apiKey)
 			.update(req.body);
 
 		if (updated) {

@@ -19,7 +19,7 @@ export default {
 		const query = AKSO.db('clients');
 
 		QueryUtil.simpleResource(req, schema, query);
-		query.where('apiKey', Buffer.from(req.params.apiKey, 'hex'));
+		query.where('apiKey', req.params.apiKey);
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
 		const obj = new SimpleResource(row);

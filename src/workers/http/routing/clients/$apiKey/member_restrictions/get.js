@@ -6,11 +6,9 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const apiKey = Buffer.from(req.params.apiKey, 'hex');
-
 		const memberRestrictions = await AKSO.db('admin_permissions_memberRestrictions_clients')
 			.first('filter', 'fields')
-			.where('apiKey', apiKey);
+			.where('apiKey', req.params.apiKey);
 
 		if (!memberRestrictions) { return res.sendStatus(404); }
 

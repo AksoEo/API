@@ -9,13 +9,11 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const apiKey = Buffer.from(req.params.apiKey, 'hex');
-
 		// Make sure the admin group and the client exist
 		const exists = await AKSO.db.raw(`
 			SELECT 1 FROM clients WHERE apiKey = ? AND
 			EXISTS(SELECT 1 FROM admin_groups WHERE id = ?)
-		`, [ apiKey, req.params.adminGroupId ]);
+		`, [ req.params.apiKey, req.params.adminGroupId ]);
 
 		if (!exists) {
 			return res.sendStatus(404);
@@ -23,7 +21,7 @@ export default {
 
 		const data = {
 			adminGroupId: req.params.adminGroupId,
-			apiKey: apiKey
+			apiKey: req.params.apiKey
 		};
 
 		// Check if the entry already exists

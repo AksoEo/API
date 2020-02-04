@@ -12,7 +12,7 @@ export default {
 		const apiSecretHashed = crypto.createHash('sha256').update(apiSecret.toString('hex')).digest();
 
 		const updated = await AKSO.db('clients')
-			.where('apiKey',  Buffer.from(req.params.apiKey, 'hex'))
+			.where('apiKey', req.params.apiKey)
 			.update('apiSecret', apiSecretHashed);
 
 		if (!updated) {

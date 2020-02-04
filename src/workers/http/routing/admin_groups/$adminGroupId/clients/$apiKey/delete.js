@@ -12,7 +12,7 @@ export default {
 		const deleted = await AKSO.db('admin_groups_members_clients')
 			.where({
 				adminGroupId: req.params.adminGroupId,
-				apiKey: Buffer.from(req.params.apiKey, 'hex')
+				apiKey: req.params.apiKey
 			})
 			.delete();
 
