@@ -208,8 +208,11 @@ export const schema = {
 	}
 };
 
+const validFields = Object.keys(schema.fields).concat([
+	'files', 'logins', 'roles'
+]);
 export const memberRestrictionFields = [...new Set(
-	Object.keys(schema.fields).flatMap(f => {
+	validFields.flatMap(f => {
 		const bits = f.split('.');
 		const arr = [];
 		for (let i = 0; i < bits.length; i++) {
