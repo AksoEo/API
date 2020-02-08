@@ -10,6 +10,11 @@ const formEntryInputProps = {
 		minLength: 1,
 		maxLength: 20
 	},
+	oldName: {
+		type: 'string',
+		minLength: 1,
+		maxLength: 20
+	},
 	label: {
 		type: 'string',
 		minLength: 1,

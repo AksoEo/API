@@ -1,6 +1,5 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
-import { insertAsReplace } from 'akso/util';
-import { formSchema, parseForm } from 'akso/workers/http/lib/form-util';
+import { formSchema, parseForm, setFormFields} from 'akso/workers/http/lib/form-util';
 import { union, NULL, NUMBER, BOOL } from '@tejo/akso-script';
 
 export default {
@@ -61,12 +60,21 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
 
+		// Obtain the existing form if one exists
+		const existingRegistrationForm = await AKSO.db('congresses_instances_registrationForm')
+			.where('congressInstanceId', req.params.instanceId)
+			.first('formId', 'form');
+
 		// Validate the form
 		const formValues = {
 			'@upfront_time': union([ NULL, NUMBER ]),
 			'@is_member': BOOL
 		};
-		const parsedForm = await parseForm(req.body.form, formValues);
+		const parsedForm = await parseForm({
+			form: req.body.form,
+			existingForm: existingRegistrationForm ? existingRegistrationForm.form : undefined,
+			formValues
+		});
  
 		if (req.body.price) {
 			// Validate price var
@@ -80,9 +88,6 @@ export default {
 		}
 
 		// Create Form if t doesn't already exists
-		const existingRegistrationForm = await AKSO.db('congresses_instances_registrationForm')
-			.where('congressInstanceId', req.params.instanceId)
-			.first('formId');
 		let formId;
 		if (existingRegistrationForm) {
 			formId = existingRegistrationForm.formId;
@@ -91,21 +96,7 @@ export default {
 		}
 
 		// Populate forms_fields
-		// TODO: This will not work with data migration
-		const formFieldInsertQueries = [];
-		for (const formEntry of req.body.form) {
-			if (formEntry.el !== 'input') { continue; }
-			formFieldInsertQueries.push(
-				insertAsReplace(
-					AKSO.db('forms_fields')
-						.insert({
-							formId,
-							name: formEntry.name,
-							type: formEntry.type
-						})
-				));
-		}
-		await Promise.all(formFieldInsertQueries);
+		await setFormFields(formId, req.body.form, parsedForm);
 
 		const data = {
 			allowUse: req.body.allowUse,

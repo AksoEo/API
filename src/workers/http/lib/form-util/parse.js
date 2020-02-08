@@ -1,6 +1,21 @@
 import { analyze, analyzeAll, union, NULL, NUMBER, BOOL, STRING, array as ascArray } from '@tejo/akso-script';
 
-export async function parseForm (form, formValues = {}) {
+const validMigrationCombos = {
+	boolean: ['number', 'text'],
+	number: ['text'],
+	money: ['number', 'text'],
+	enum: ['text'],
+	country: ['text'],
+	date: ['text'],
+	time: ['text'],
+	datetime: ['text', 'number']
+};
+
+export async function parseForm ({
+	form,
+	formValues = {},
+	existingForm = null
+} = {}) {
 	const fields = [];
 
 	let scripts = {};
@@ -46,9 +61,19 @@ export async function parseForm (form, formValues = {}) {
 	const aksoCountries = (await AKSO.db('countries').select('code'))
 		.map(x => x.code);
 
+	const existingFields = {};
+	for (const formEntry of Object.values(existingForm)) {
+		if (formEntry.el !== 'input') { continue; }
+		existingFields[formEntry.name] = formEntry;
+	}
+
+	const renameFields = {};
+	const migrationFields = {};
+
 	const inputNameRegex = /^[\w\-:ĥŝĝĉĵŭ]+$/i;
 	for (const [i, formEntry] of Object.entries(form)) {
 		if (formEntry.el === 'input') {
+			// name
 			formEntry.name = formEntry.name.normalize('NFC');
 			if (!inputNameRegex.test(formEntry.name)) {
 				const err = new Error('Invalid FormEntryInput#name');
@@ -61,6 +86,39 @@ export async function parseForm (form, formValues = {}) {
 				throw err;
 			}
 			fields.push(formEntry.name);
+
+			let oldField = null;
+			// oldName
+			if (formEntry.oldName) {
+				formEntry.oldName = formEntry.oldName.normalize('NFC');
+				if (formEntry.oldName === formEntry.name) { delete formEntry.oldName; }
+				else {
+					if (!(formEntry.oldName in existingFields)) {
+						const err = new Error(`formEntry name ${formEntry.name} references missing existing formEntry ${formEntry.oldName} in oldName`);
+						err.statusCode = 400;
+						throw err;
+					}
+
+					renameFields[formEntry.oldName] = formEntry.name;
+					oldField = existingFields[formEntry.oldName];
+				}
+			} else if (formEntry.name in existingFields) {
+				oldField = existingFields[formEntry.name];
+			}
+
+			// TODO: enum and country migration??
+			if (oldField && oldField.type !== formEntry.type) {
+				const validNewTypes = validMigrationCombos[oldField.type] || [];
+				if (!validNewTypes.includes(formEntry.type)) {
+					const err = new Error(`formEntry {formEntry.name} requests impossible migration from ${oldField.type} to ${formEntry.type}`);
+					err.statusCode = 400;
+					throw err;
+				}
+				migrationFields[formEntry.name] = {
+					old: oldField,
+					new: formEntry
+				};
+			}
 
 			// Form values
 			if (formEntry.type === 'boolean') {
@@ -193,6 +251,9 @@ export async function parseForm (form, formValues = {}) {
 					throw err;
 				}
 			}
+
+			// Don't save oldName
+			delete formEntry.oldName;
 		} else if (formEntry.el === 'script') {
 			scripts = { ...scripts, ...formEntry.script };
 			let analyses;
@@ -213,8 +274,14 @@ export async function parseForm (form, formValues = {}) {
 		}
 	}
 
+	const deletionFields = Object.keys(existingFields)
+		.filter(oldField => !fields.includes(oldField) && !(oldField in renameFields));
+
 	return {
 		validateDefinition,
-		scripts
+		scripts,
+		renameFields,
+		deletionFields,
+		migrationFields
 	};
 }
