@@ -29,8 +29,7 @@ async function init () {
 		conf: {
 			http: {
 				port: 				process.env.AKSO_HTTP_PORT || 1111,
-				trustLocalProxy:	process.env.AKSO_HTTP_TRUST_LOCAL_PROXY === undefined ?
-					false : process.env.AKSO_HTTP_TRUST_LOCAL_PROXY != '0',
+				trustProxy:	process.env.AKSO_HTTP_TRUST_PROXY || false,
 				helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
 					true : process.env.AKSO_HTTP_USE_HELMET != '0',
 				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
@@ -185,8 +184,8 @@ async function init () {
 		}
 
 		// http
-		if (AKSO.conf.http.trustLocalProxy) {
-			AKSO.log.warn('Trusting local proxy');
+		if (AKSO.conf.http.trustProxy) {
+			AKSO.log.warn('Trusting proxy: ' + AKSO.conf.http.trustProxy);
 		}
 		if (!AKSO.conf.http.corsCheck) {
 			AKSO.log.warn('Running without CORS check');

@@ -27,8 +27,8 @@ export function init () {
 			// Set up response time calculation
 			app.use(responseTime());
 
-			if (AKSO.conf.http.trustLocalProxy) {
-				app.set('trust proxy', 'loopback');
+			if (AKSO.conf.http.trustProxy) {
+				app.set('trust proxy', AKSO.conf.http.trustProxy);
 			}
 
 			// Set up CORS
