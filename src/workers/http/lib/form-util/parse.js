@@ -106,7 +106,6 @@ export async function parseForm ({
 				oldField = existingFields[formEntry.name];
 			}
 
-			// TODO: enum and country migration??
 			if (oldField && oldField.type !== formEntry.type) {
 				const validNewTypes = validMigrationCombos[oldField.type] || [];
 				if (!validNewTypes.includes(formEntry.type)) {
