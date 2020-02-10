@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.28, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.29, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	5.7.28-0ubuntu0.18.04.4
+-- Server version	5.7.29-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2085,9 +2085,11 @@ CREATE TABLE `congresses_instances_participants` (
   `codeholderId` int(10) unsigned DEFAULT NULL,
   `approved` tinyint(1) NOT NULL DEFAULT '0',
   `notes` text COLLATE utf8mb4_unicode_ci,
+  `sequenceId` int(11) DEFAULT NULL,
   `price` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
   UNIQUE KEY `codeholderId` (`codeholderId`) USING BTREE,
+  UNIQUE KEY `congressInstanceId` (`congressInstanceId`,`sequenceId`),
   KEY `dataId` (`dataId`),
   KEY `approved` (`approved`),
   KEY `price` (`price`),
@@ -2104,7 +2106,7 @@ CREATE TABLE `congresses_instances_participants` (
 
 LOCK TABLES `congresses_instances_participants` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_participants` DISABLE KEYS */;
-INSERT INTO `congresses_instances_participants` VALUES (3,_binary 'gH©#R¶FT\Ÿ',NULL,0,NULL,1000),(3,_binary '≤ˇo\·Å@zjPt∏',NULL,0,NULL,NULL),(3,_binary '∏%∫âm(óE≤\ﬂ',NULL,0,NULL,NULL),(3,_binary '\“\€\Z¿¸VZ\'\\¯',NULL,0,NULL,NULL);
+INSERT INTO `congresses_instances_participants` VALUES (3,_binary 'gH©#R¶FT\Ÿ',NULL,0,NULL,NULL,1000),(3,_binary '≤ˇo\·Å@zjPt∏',NULL,0,NULL,NULL,NULL),(3,_binary '∏%∫âm(óE≤\ﬂ',NULL,0,NULL,NULL,NULL),(3,_binary '\“\€\Z¿¸VZ\'\\¯',NULL,0,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `congresses_instances_participants` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2232,6 +2234,8 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `editable` tinyint(1) NOT NULL DEFAULT '1',
   `cancellable` tinyint(1) NOT NULL DEFAULT '1',
   `manualApproval` tinyint(1) NOT NULL DEFAULT '0',
+  `sequenceIds_startAt` int(11) DEFAULT NULL,
+  `sequenceIds_requireValid` tinyint(1) DEFAULT NULL,
   `price_currency` char(3) CHARACTER SET ascii DEFAULT NULL,
   `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_minUpfront` int(10) unsigned DEFAULT NULL,
@@ -2250,7 +2254,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
 
 LOCK TABLES `congresses_instances_registrationForm` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` DISABLE KEYS */;
-INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,1,1,1,0,'EUR','price',2500,11,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": \"08:00\", \"name\": \"alvenhoro\", \"type\": \"time\", \"label\": \"Alvenhoro\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"cols\": 2, \"name\": \"manƒùoj\", \"rows\": 2, \"type\": \"boolean_table\", \"label\": \"Manƒùoj\", \"default\": null, \"disabled\": false, \"required\": false, \"headerTop\": null, \"maxSelect\": 2, \"minSelect\": 1, \"headerLeft\": null, \"description\": null, \"excludeCells\": [[0, 0]]}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
+INSERT INTO `congresses_instances_registrationForm` VALUES (3,1,1,1,1,0,NULL,NULL,'EUR','price',2500,11,'[{\"el\": \"text\", \"text\": \"# Aliƒùilo de IJK 2020\\n##Personaj informoj\"}, {\"el\": \"input\", \"name\": \"tos\", \"type\": \"boolean\", \"label\": \"Mi legis kaj komprenis la kondiƒâojn\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"cake\", \"step\": null, \"type\": \"number\", \"label\": \"Mi volas tiom da kukoj\", \"default\": null, \"variant\": \"slider\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"email\", \"type\": \"text\", \"label\": \"Via retpo≈ùtadreso\", \"default\": null, \"pattern\": \"^.+@.+$\", \"variant\": \"email\", \"disabled\": false, \"required\": false, \"maxLength\": null, \"minLength\": null, \"chAutofill\": null, \"description\": null, \"placeholder\": null, \"patternError\": null}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"money\", \"step\": null, \"type\": \"money\", \"label\": \"Mono\", \"default\": null, \"currency\": \"EUR\", \"disabled\": false, \"required\": false, \"description\": null, \"placeholder\": null}, {\"el\": \"input\", \"name\": \"manƒùo\", \"type\": \"enum\", \"label\": \"Mi manƒùos\", \"default\": \"vegetarian\", \"options\": [{\"name\": \"Vegetare\", \"value\": \"vegetarian\", \"disabled\": false}, {\"name\": \"Vegane\", \"value\": \"vegan\", \"disabled\": false}, {\"name\": \"Kunviande\", \"value\": \"meat\", \"disabled\": true}], \"variant\": \"select\", \"disabled\": false, \"required\": false, \"description\": null}, {\"el\": \"input\", \"max\": null, \"min\": \"08:00\", \"name\": \"alvenhoro\", \"type\": \"time\", \"label\": \"Alvenhoro\", \"default\": null, \"disabled\": false, \"required\": true, \"description\": null}, {\"el\": \"input\", \"cols\": 2, \"name\": \"manƒùoj\", \"rows\": 2, \"type\": \"boolean_table\", \"label\": \"Manƒùoj\", \"default\": null, \"disabled\": false, \"required\": false, \"headerTop\": null, \"maxSelect\": 2, \"minSelect\": 1, \"headerLeft\": null, \"description\": null, \"excludeCells\": [[0, 0]]}, {\"el\": \"script\", \"script\": {\"var\": {\"f\": \"@manƒùo\", \"t\": \"c\"}, \"var2\": {\"f\": \"@@created_time\", \"t\": \"c\"}, \"price\": {\"t\": \"n\", \"v\": 1000}}}, {\"el\": \"input\", \"max\": null, \"min\": null, \"name\": \"birthdate\", \"type\": \"date\", \"label\": \"Naskiƒùdato\", \"default\": null, \"disabled\": false, \"required\": {\"a\": [\"var\"], \"f\": \"id\", \"t\": \"c\"}, \"chAutofill\": \"birthdate\", \"description\": null}]');
 /*!40000 ALTER TABLE `congresses_instances_registrationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -3437,4 +3441,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-16 12:19:20
+-- Dump completed on 2020-02-10 15:40:49

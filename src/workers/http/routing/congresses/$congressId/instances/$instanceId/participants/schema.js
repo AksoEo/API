@@ -9,6 +9,7 @@ export const schema = {
 		notes: '',
 		createdTime: 'f',
 		editedTime: 'f',
+		sequenceId: 'f',
 		price: 'f'
 	},
 	fieldAliases: {

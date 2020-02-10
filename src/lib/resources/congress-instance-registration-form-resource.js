@@ -14,6 +14,18 @@ class CongressInstanceRegistrationFormResource extends SimpleResource {
 		if ('cancellable' in obj) { obj.cancellable = !!obj.cancellable; }
 		if ('manualApproval' in obj) { obj.manualApproval = !!obj.manualApproval; }
 
+		if (obj.sequenceIds_startAt === null) {
+			obj.sequenceIds = null;
+		} else if (fields.includes('sequenceIds.startAt') || fields.includes('sequenceIds.requireValid')) {
+			obj.sequenceIds = {};
+			if (fields.includes('sequenceIds.startAt')) {
+				obj.sequenceIds.startAt = obj.sequenceIds_startAt;
+			}
+			if (fields.includes('sequenceIds.requireValid')) {
+				obj.sequenceIds.requireValid = !!obj.sequenceIds_requireValid;
+			}
+		}
+
 		if ('price_currency' in obj || 'price_var' in obj || 'price_minUpfront' in obj) {
 			if (obj.price_currency === null) {
 				obj.price = null;
@@ -25,7 +37,7 @@ class CongressInstanceRegistrationFormResource extends SimpleResource {
 			}
 		}
 
-		this.removeUnnecessary(fields.concat([ 'price' ]));
+		this.removeUnnecessary(fields.concat([ 'price', 'sequenceIds' ]));
 	}
 }
 

@@ -14,6 +14,22 @@ export default {
 				allowGuests: {
 					type: 'boolean'
 				},
+				sequenceIds: {
+					type: 'object',
+					nullable: true,
+					properties: {
+						startAt: {
+							type: 'integer',
+							format: 'int32',
+							default: 1
+						},
+						requireValid: {
+							type: 'boolean',
+							default: true
+						}
+					},
+					additionalProperties: false
+				},
 				price: {
 					type: 'object',
 					nullable: true,
@@ -102,6 +118,8 @@ export default {
 			allowUse: req.body.allowUse,
 			allowGuests: req.body.allowGuests,
 			form: JSON.stringify(req.body.form),
+			sequenceIds_startAt: req.body.sequenceIds ? req.body.sequenceIds.startAt : null,
+			sequenceIds_requireValid: req.body.sequenceIds ? req.body.sequenceIds.requireValid : null,
 			price_currency: req.body.price ? req.body.price.currency : null,
 			price_var: req.body.price ? req.body.price.var : null,
 			price_minUpfront: req.body.price ? req.body.price.minUpfront : null,
