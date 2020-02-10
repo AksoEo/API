@@ -87,7 +87,7 @@ export default {
 			}
 		}
 
-		// Create Form if t doesn't already exists
+		// Create Form if it doesn't already exists
 		let formId;
 		if (existingRegistrationForm) {
 			formId = existingRegistrationForm.formId;
