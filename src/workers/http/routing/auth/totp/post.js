@@ -72,12 +72,15 @@ export default {
 		passport.authenticate('totp', async (err, user) => {
 			if (err) { return next(err); }
 			if (!user) {
-				// Invalid totp, remove it from the db
-				await AKSO.db('codeholders_totp')
-					.where({
-						codeholderId: req.user.user
-					})
-					.delete();
+				// Invalid totp
+				if (req.body.secret) {
+					// Remove it from the db
+					await AKSO.db('codeholders_totp')
+						.where({
+							codeholderId: req.user.user
+						})
+						.delete();
+				}
 				return res.sendStatus(401);
 			}
 
