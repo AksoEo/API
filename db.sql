@@ -1815,7 +1815,8 @@ CREATE TABLE `codeholders_totp_remember` (
   `time` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`rememberKey`),
   KEY `codeholderId` (`codeholderId`),
-  KEY `time` (`time`)
+  KEY `time` (`time`),
+  CONSTRAINT `codeholders_totp_remember_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders_totp` (`codeholderId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3441,4 +3442,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-10 15:40:49
+-- Dump completed on 2020-02-14 18:18:44
