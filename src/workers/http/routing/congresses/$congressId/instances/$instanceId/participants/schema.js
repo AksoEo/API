@@ -86,6 +86,7 @@ export async function getFormMetaData (req, res) {
 		});
 	}
 
+	// TODO: Is there a reason this a separate loop
 	const formFieldsObj = {};
 	for (const field of formFields) {
 		formFieldsObj[field.name] = field.type;

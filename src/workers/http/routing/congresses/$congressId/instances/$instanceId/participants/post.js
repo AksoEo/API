@@ -77,7 +77,7 @@ export default {
 		const formValues = {
 			'@created_time': null,
 			'@edited_time': null,
-			'@upfront_time': null,
+			'@upfront_time': null, // TODO
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
@@ -87,6 +87,11 @@ export default {
 		const dataId = await crypto.randomBytes(12);
 		await insertFormDataEntry(formData.form, formData.formId, dataId, req.body.data);
 
+		let price = null;
+		if (formData.price_var) {
+			price = participantMetadata.evaluate('price');
+		}
+
 		// Insert the participant
 		await AKSO.db('congresses_instances_participants')
 			.insert({
@@ -95,7 +100,7 @@ export default {
 				dataId,
 				approved: req.body.approved,
 				notes: req.body.notes,
-				price: participantMetadata.price
+				price: price
 			});
 
 		const dataIdHex = dataId.toString('hex');

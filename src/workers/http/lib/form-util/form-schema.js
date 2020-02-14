@@ -207,15 +207,13 @@ export const formSchema = {
 								]
 							},
 							chAutofill: {
-								type: 'string',
 								enum: [
-									'birthdate', 'email', 'officePhone', 'cellphone',
+									null, 'birthdate', 'email', 'officePhone', 'cellphone',
 									'landlinePhone', 'phone', 'website', 'profession',
 									'name', 'honorific', 'firstName', 'lastName', 'address',
 									'feeCountry', 'country', 'countryArea', 'city',
 									'cityArea', 'streetAddress', 'postalCode', 'sortingCode'
 								],
-								nullable: true
 							}
 						},
 						required: formEntryInputRequiredProps.concat(['variant']),
@@ -355,9 +353,7 @@ export const formSchema = {
 								}
 							},
 							chAutofill: {
-								type: 'string',
-								enum: [ 'country', 'feeCountry' ],
-								nullable: true
+								enum: [ null, 'country', 'feeCountry' ]
 							}
 						},
 						required: formEntryInputRequiredProps,
@@ -389,9 +385,7 @@ export const formSchema = {
 								nullable: true
 							},
 							chAutofill: {
-								type: 'string',
-								enum: [ 'birthdate' ],
-								nullable: true
+								enum: [ null, 'birthdate' ]
 							}
 						},
 						required: formEntryInputRequiredProps,

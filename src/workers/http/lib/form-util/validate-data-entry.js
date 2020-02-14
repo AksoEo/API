@@ -180,11 +180,9 @@ export async function validateDataEntry (formData, data, addFormValues = {}, all
 		throw err;
 	}
 
-	// TODO: This should return a function to evaluate certain vars instead of the price itself
-	const metadata = {};
-	if (formData.price_var) {
-		metadata.price = evaluateSync(scripts, 'price', getFormValue);
-	}
+	const metadata = {
+		evaluate: function (def) { return evaluateSync(scripts, def, getFormValue); }
+	};
 
 	return metadata;
 }
