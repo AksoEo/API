@@ -28,6 +28,7 @@ export function init () {
 			app.use(responseTime());
 
 			if (AKSO.conf.http.trustProxy) {
+				AKSO.log.warn('Trusting HTTP proxy with settings: ' + AKSO.conf.http.trustProxy);
 				app.set('trust proxy', AKSO.conf.http.trustProxy);
 			}
 
