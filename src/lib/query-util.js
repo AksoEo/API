@@ -295,10 +295,12 @@ const QueryUtil = {
 					if (!fields) { fields = []; }
 					else if (!Array.isArray(fields)) { fields = [fields]; }
 
-					if (!fieldWhitelist.includes(key)) {
-						const err = new Error(`Disallowed logic op ${key} used in ?filter`);
-						err.statusCode = 403;
-						throw err;
+					for (const field of fields) {
+						if (!fieldWhitelist.includes(field)) {
+							const err = new Error(`Disallowed logic op ${key} used in ?filter`);
+							err.statusCode = 403;
+							throw err;
+						}
 					}
 
 					filterFn({
