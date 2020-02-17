@@ -15,6 +15,7 @@ export async function updateVoterCodeholdersOnTimeStart () {
 				.filter(x => codeholderSchema.fields[x].indexOf('f' > -1)),
 			fieldAliases: codeholderSchema.fieldAliases,
 			customCompOps: codeholderSchema.customFilterCompOps,
+			customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,
 			customLogicOps: codeholderSchema.customFilterLogicOps
 		};
 

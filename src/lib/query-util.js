@@ -75,7 +75,7 @@ function filterAssertObject (val) {
 
 const filterLogicOps = {
 	$and: function filterLogicOpAnd ({
-		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOpsFields, customLogicOps
 	} = {}) {
 		filterAssertArray(filter);
 		filter.forEach(filterAssertObject);
@@ -91,6 +91,7 @@ const filterLogicOps = {
 						fieldAliases,
 						fieldWhitelist,
 						customCompOps,
+						customLogicOpsFields,
 						customLogicOps
 					});
 				}
@@ -98,7 +99,7 @@ const filterLogicOps = {
 		});
 	},
 	$or: function filterLogicOpOr ({
-		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOpsFields, customLogicOps
 	} = {}) {
 		filterAssertArray(filter);
 		filter.forEach(filterAssertObject);
@@ -115,6 +116,7 @@ const filterLogicOps = {
 							fieldAliases,
 							fieldWhitelist,
 							customCompOps,
+							customLogicOpsFields,
 							customLogicOps
 						});
 					});
@@ -123,7 +125,7 @@ const filterLogicOps = {
 		});
 	},
 	$not: function filterLogicOpNot ({
-		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOps
+		fields, query, filter, fieldAliases, fieldWhitelist, customCompOps, customLogicOpsFields, customLogicOps
 	} = {}) {
 		filterAssertObject(filter);
 
@@ -135,6 +137,7 @@ const filterLogicOps = {
 				fieldAliases,
 				fieldWhitelist,
 				customCompOps,
+				customLogicOpsFields,
 				customLogicOps
 			});
 		});
@@ -235,7 +238,8 @@ const QueryUtil = {
 		fieldAliases = {},
 		fieldWhitelist = null,
 		customCompOps = {},
-		customLogicOps = {}
+		customLogicOps = {},
+		customLogicOpsFields = {}
 	} = {}) {
 		if (!fieldWhitelist) { fieldWhitelist = fields; }
 
@@ -243,7 +247,7 @@ const QueryUtil = {
 			for (let key in filter) { // Iterate through each key
 				if (fields.indexOf(key) > -1) { // key is a field
 					// Ensure the client has the necessary permissions
-					if (fieldWhitelist.indexOf(key) === -1) {
+					if (!fieldWhitelist.includes(key)) {
 						const err = new Error(`Disallowed field ${key} used in ?filter`);
 						err.statusCode = 403;
 						throw err;
@@ -285,6 +289,17 @@ const QueryUtil = {
 					let filterFn;
 					if (key in filterLogicOps) { filterFn = filterLogicOps[key]; }
 					else { filterFn = customLogicOps[key]; }
+
+					// Make sure the user has access to the logic op
+					let fields = customLogicOpsFields[key];
+					if (!fields) { fields = []; }
+					else if (!Array.isArray(fields)) { fields = [fields]; }
+
+					if (!fieldWhitelist.includes(key)) {
+						const err = new Error(`Disallowed logic op ${key} used in ?filter`);
+						err.statusCode = 403;
+						throw err;
+					}
 
 					filterFn({
 						fields,
@@ -393,6 +408,7 @@ const QueryUtil = {
 				fieldAliases: schema.fieldAliases || {},
 				fieldWhitelist,
 				customCompOps: schema.customFilterCompOps,
+				customLogicOpsFields: schema.customFilterLogicOpsFields,
 				customLogicOps: schema.customFilterLogicOps
 			});
 		}

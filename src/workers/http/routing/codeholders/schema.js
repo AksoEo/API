@@ -143,6 +143,10 @@ export const schema = {
 			}
 		}
 	},
+	customFilterLogicOpsFields: {
+		$membership: 'membership',
+		$roles: 'roles'
+	},
 	customFilterLogicOps: {
 		$membership: ({ query, filter } = {}) => {
 			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {

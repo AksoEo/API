@@ -75,6 +75,7 @@ export async function manualDataValidation (req, res, vote = undefined) {
 				fieldAliases: codeholderSchema.fieldAliases,
 				fieldWhitelist: req.memberFields,
 				customCompOps: codeholderSchema.customFilterCompOps,
+				customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,
 				customLogicOps: codeholderSchema.customFilterLogicOps,
 				query,
 				filter: validateFilter
