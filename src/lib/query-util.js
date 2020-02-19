@@ -236,18 +236,16 @@ const QueryUtil = {
 		query,
 		filter,
 		fieldAliases = {},
-		fieldWhitelist = null,
+		fieldWhitelist,
 		customCompOps = {},
 		customLogicOps = {},
 		customLogicOpsFields = {}
 	} = {}) {
-		if (!fieldWhitelist) { fieldWhitelist = fields; }
-
 		query.where(function () {
 			for (let key in filter) { // Iterate through each key
 				if (fields.indexOf(key) > -1) { // key is a field
 					// Ensure the client has the necessary permissions
-					if (!fieldWhitelist.includes(key)) {
+					if (fieldWhitelist && !fieldWhitelist.includes(key)) {
 						const err = new Error(`Disallowed field ${key} used in ?filter`);
 						err.statusCode = 403;
 						throw err;
@@ -291,15 +289,17 @@ const QueryUtil = {
 					else { filterFn = customLogicOps[key]; }
 
 					// Make sure the user has access to the logic op
-					let fields = customLogicOpsFields[key];
-					if (!fields) { fields = []; }
-					else if (!Array.isArray(fields)) { fields = [fields]; }
+					if (fieldWhitelist) {
+						let fields = customLogicOpsFields[key];
+						if (!fields) { fields = []; }
+						else if (!Array.isArray(fields)) { fields = [fields]; }
 
-					for (const field of fields) {
-						if (!fieldWhitelist.includes(field)) {
-							const err = new Error(`Disallowed logic op ${key} used in ?filter`);
-							err.statusCode = 403;
-							throw err;
+						for (const field of fields) {
+							if (!fieldWhitelist.includes(field)) {
+								const err = new Error(`Disallowed logic op ${key} used in ?filter`);
+								err.statusCode = 403;
+								throw err;
+							}
 						}
 					}
 
@@ -349,7 +349,7 @@ const QueryUtil = {
 	 *     {knex.QueryBuilder} `totalItems`        The total amount of items in the collection without `?limit` and `?offset`
 	 *     {knex.QueryBuilder} `totalItemNoFilter` The total amount of items in the collection without `?limit`, `?offset`, `?search` and `?filter`
 	 */
-	simpleCollection: function queryUtilSimpleCollection (req, schema, query, fieldWhitelist = null) {
+	simpleCollection: function queryUtilSimpleCollection (req, schema, query, fieldWhitelist) {
 		// ?fields, ?search
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
@@ -490,7 +490,7 @@ const QueryUtil = {
 		Res = SimpleResource,
 		Col = SimpleCollection,
 		passToCol = [],
-		fieldWhitelist = null,
+		fieldWhitelist,
 		afterQuery
 	} = {}) {
 		await QueryUtil.collectionMetadata(res,
