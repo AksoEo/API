@@ -114,17 +114,20 @@ export async function manualDataValidation (req, res, vote = undefined) {
 		req.body[key] = oneNumberOrFractionToStr(req.body[key]);
 	}
 
-	const options = req.body.options || vote.options;
-	if ('numChosenOptions' in req.body) {
-		if (req.body.numChosenOptions > options.length) {
-			return res.status(400).type('text/plain').send('numChosenOptions must not be greater than the amount of options');
+	if (req.body.options || (vote && vote.options)) {
+		const options = req.body.options || vote.options;
+		if ('numChosenOptions' in req.body) {
+			if (req.body.numChosenOptions > options.length) {
+				return res.status(400).type('text/plain').send('numChosenOptions must not be greater than the amount of options');
+			}
+		}
+		if ('maxOptionsPerBallot' in req.body) {
+			if (req.body.maxOptionsPerBallot > options.length) {
+				return res.status(400).type('text/plain').send('maxOptionsPerBallot must not be greater than the amount of options');
+			}
 		}
 	}
-	if ('maxOptionsPerBallot' in req.body) {
-		if (req.body.maxOptionsPerBallot > options.length) {
-			return res.status(400).type('text/plain').send('maxOptionsPerBallot must not be greater than the amount of options');
-		}
-	}
+
 	if ('tieBreakerCodeholder' in req.body) {
 		const exists = await AKSO.db('codeholders')
 			.first(1)
