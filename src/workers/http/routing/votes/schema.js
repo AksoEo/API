@@ -371,6 +371,17 @@ export const postSchema = {
 	oneOf: Object.values(schemas).map(x => merge({}, x))
 };
 
+export const templateSchema = {
+	oneOf: Object.values(schemas).map(oldSchema => {
+		const newSchema = merge({}, oldSchema);
+		delete newSchema.required;
+		delete newSchema.properties.org;
+		delete newSchema.properties.timeStart;
+		delete newSchema.properties.timeEnd;
+		return newSchema;
+	})
+};
+
 const patchSchema = getSchema();
 delete patchSchema.required;
 patchSchema.minProperties = 1;

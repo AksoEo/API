@@ -2803,7 +2803,7 @@ CREATE TABLE `lists` (
   KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2812,7 +2812,7 @@ CREATE TABLE `lists` (
 
 LOCK TABLES `lists` WRITE;
 /*!40000 ALTER TABLE `lists` DISABLE KEYS */;
-INSERT INTO `lists` VALUES (1,'Komitato (TEJO)','Ĉiuj Komitatanoj (A, B, C kaj Ĉ) de TEJO','[\"{\\\"$roles\\\":{\\\"roleId\\\":3,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":4,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":5,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":6,\\\"isActive\\\":true}}\"]','{}'),(2,'Komitato (UEA)','Ĉiuj Komitatanoj (A, B kaj C) de UEA','[\"{\\\"$roles\\\":{\\\"roleId\\\":11,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":12,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":13,\\\"isActive\\\":true}}\"]','{}');
+INSERT INTO `lists` VALUES (1,'Komitato (TEJO)','Ĉiuj Komitatanoj (A, B, C kaj Ĉ) de TEJO','[\"{\\\"$roles\\\":{\\\"roleId\\\":3,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":4,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":5,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":6,\\\"isActive\\\":true}}\"]','{}'),(2,'Komitato (UEA)','Ĉiuj Komitatanoj (A, B kaj C) de UEA','[\"{\\\"$roles\\\":{\\\"roleId\\\":11,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":12,\\\"isActive\\\":true}}\", \"{\\\"$roles\\\":{\\\"roleId\\\":13,\\\"isActive\\\":true}}\"]','{}'),(3,'Membroj de TEJO',NULL,'[\"{ \\\"age\\\": { \\\"$lte\\\": 35 } }\"]','{}');
 /*!40000 ALTER TABLE `lists` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3273,6 +3273,36 @@ INSERT INTO `votes_ballots` VALUES (7,1,'1,2\n0'),(12,1,'2,1\n0');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `votes_templates`
+--
+
+DROP TABLE IF EXISTS `votes_templates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `votes_templates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vote` json NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `votes_templates`
+--
+
+LOCK TABLES `votes_templates` WRITE;
+/*!40000 ALTER TABLE `votes_templates` DISABLE KEYS */;
+/*!40000 ALTER TABLE `votes_templates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `votes_voters`
 --
 
@@ -3442,4 +3472,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-14 18:18:44
+-- Dump completed on 2020-03-02 14:41:17
