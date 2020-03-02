@@ -2,6 +2,7 @@ import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/cod
 
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
+import { default as deepmerge } from 'deepmerge';
 
 import QueryUtil from 'akso/lib/query-util';
 import SimpleResource from 'akso/lib/resources/simple-resource';
@@ -62,6 +63,12 @@ export const schema = {
 	}
 };
 
+const combSchemas = {
+	...schema,
+	fields: deepmerge.all([ parSchema.fields, schema.fields ]),
+	fieldAliases: deepmerge.all([ parSchema.fieldAliases, schema.fieldAliases ])
+};
+
 const phoneUtil = PhoneNumberUtil.getInstance();
 function formatPhoneNumber (number) {
 	const numberObj = phoneUtil.parse(number);
@@ -92,8 +99,8 @@ export async function getCodeholderQuery (listId, req) {
 			};
 
 			const subQuery = AKSO.db('view_codeholders');
-			memberFilter(parSchema, subQuery, reqData);
-			QueryUtil.simpleCollection(reqData, parSchema, subQuery);
+			memberFilter(combSchemas, subQuery, reqData);
+			QueryUtil.simpleCollection(reqData, combSchemas, subQuery);
 			subQuery.toSQL();
 			delete subQuery._single.limit;
 			return subQuery;
