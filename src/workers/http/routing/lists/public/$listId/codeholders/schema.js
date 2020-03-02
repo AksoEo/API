@@ -92,8 +92,8 @@ export async function getCodeholderQuery (listId, req) {
 			};
 
 			const subQuery = AKSO.db('view_codeholders');
-			memberFilter(schema, subQuery, reqData);
-			QueryUtil.simpleCollection(reqData, schema, subQuery);
+			memberFilter(parSchema, subQuery, reqData);
+			QueryUtil.simpleCollection(reqData, parSchema, subQuery);
 			subQuery.toSQL();
 			delete subQuery._single.limit;
 			return subQuery;
