@@ -2088,12 +2088,14 @@ CREATE TABLE `congresses_instances_participants` (
   `notes` text COLLATE utf8mb4_unicode_ci,
   `sequenceId` int(11) DEFAULT NULL,
   `price` int(10) unsigned DEFAULT NULL,
+  `cancelledTime` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
   UNIQUE KEY `codeholderId` (`codeholderId`) USING BTREE,
   UNIQUE KEY `congressInstanceId` (`congressInstanceId`,`sequenceId`),
   KEY `dataId` (`dataId`),
   KEY `approved` (`approved`),
   KEY `price` (`price`),
+  KEY `cancelledTime` (`cancelledTime`),
   FULLTEXT KEY `notes` (`notes`),
   CONSTRAINT `congresses_instances_participants_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `congresses_instances_participants_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2107,7 +2109,7 @@ CREATE TABLE `congresses_instances_participants` (
 
 LOCK TABLES `congresses_instances_participants` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_participants` DISABLE KEYS */;
-INSERT INTO `congresses_instances_participants` VALUES (3,_binary 'gH©#R¶FT\Ÿ',NULL,0,NULL,NULL,1000),(3,_binary '≤ˇo\·Å@zjPt∏',NULL,0,NULL,NULL,NULL),(3,_binary '∏%∫âm(óE≤\ﬂ',NULL,0,NULL,NULL,NULL),(3,_binary '\“\€\Z¿¸VZ\'\\¯',NULL,0,NULL,NULL,NULL);
+INSERT INTO `congresses_instances_participants` VALUES (3,_binary 'gH©#R¶FT\Ÿ',NULL,0,NULL,NULL,1000,NULL),(3,_binary '≤ˇo\·Å@zjPt∏',NULL,0,NULL,NULL,NULL,NULL),(3,_binary '∏%∫âm(óE≤\ﬂ',NULL,0,NULL,NULL,NULL,NULL),(3,_binary '\“\€\Z¿¸VZ\'\\¯',NULL,0,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `congresses_instances_participants` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -3472,4 +3474,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-02 14:41:17
+-- Dump completed on 2020-03-04 11:59:59
