@@ -55,7 +55,14 @@ export async function validateDataEntry ({
 		case 'enum': return {
 			type: 'string',
 			enum: formEntry.options
-				.filter(x => x.disabled === false) // TODO: Handle onlyExisting properly
+				.filter(x => {
+					if (x.disabled === true) return false;
+					if (x.disabled === 'onlyExisting') {
+						if (!oldData) return false;
+						if (oldData[formEntry.name] !== x.value) return false;
+					}
+					return true;
+				})
 				.map(x => x.value)
 		};
 		case 'country': return {
@@ -135,7 +142,7 @@ export async function validateDataEntry ({
 			const required = getComputedProp(formEntry, 'required');
 			if (!required) { fieldSchema.nullable = true; }
 
-			if (!formEntry.editable) {
+			if (oldData && !formEntry.editable) {
 				fieldSchema.const = oldData[formEntry.name];
 			}
 
