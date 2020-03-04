@@ -21,6 +21,7 @@ export const schema = {
 // Takes care of additional data validation for POST and PATCH
 export async function manualDataValidation (req, res, formData) {
 	// Require codeholderId if not allowGuests
+	// TODO: In patch this shouldn't be required
 	if (!formData.allowGuests && !('codeholderId' in req.body)) {
 		const err = new Error('codeholderId is required as allowGuests is false in the registration form');
 		err.statusCode = 400;

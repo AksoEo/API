@@ -1,4 +1,7 @@
 import path from 'path';
+import { escapeId } from 'mysql2';
+
+import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
 
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
@@ -57,15 +60,37 @@ export default {
 			.first('*');
 		if (!formData) { return res.sendStatus(404); }
 
-		// Make sure the participant exists
-		const participantData = await AKSO.db('congresses_instances_participants')
+		// Make sure the participant exists, and obtain old data
+		const participantQuery = AKSO.db('congresses_instances_participants')
 			.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = congresses_instances_participants.dataId')
 			.where({
 				'congressInstanceId': req.params.instanceId,
 				'd.dataId': req.params.dataId
-			})
-			.first('*');
+			});
+		const selectFields = [ 'createdTime', 'editedTime' ];
+
+		// Add the fields of the form
+		const formFieldsObj = {};
+		for (const formField of formData.form) {
+			if (formField.el !== 'input') { continue; }
+			formFieldsObj[formField.name] = formField.type;
+
+			const fieldTableAlias = AKSO.db.raw('??', 'table_field_' + formField.name);
+
+			// Add join clauses to the query
+			const fieldTable = 'forms_data_fields_' + formField.type;
+			participantQuery.leftJoin(AKSO.db.raw('?? AS ??', [ fieldTable, fieldTableAlias ]), function () {
+				this.on(AKSO.db.raw('??.formId', fieldTableAlias), 'd.formId')
+					.on(AKSO.db.raw('??.name', fieldTableAlias), AKSO.db.raw('?', formField.name))
+					.on(AKSO.db.raw('??.dataId', fieldTableAlias), 'd.dataId');
+			});
+			selectFields.push(AKSO.db.raw(`??.value AS ${escapeId('data.' + formField.name, true)}`, fieldTableAlias));
+		}
+		participantQuery.first(selectFields);
+		const participantData = await participantQuery;
 		if (!participantData) { return res.sendStatus(404); }
+
+		const oldData = new CongressParticipantResource(participantData, formFieldsObj).obj.data;
 
 		await manualDataValidation(req, res, formData);
 
@@ -91,7 +116,13 @@ export default {
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
-		const participantMetadata = await validateDataEntry(formData, req.body.data, formValues, req.body.allowInvalidData);
+		const participantMetadata = await validateDataEntry({
+			formData,
+			data: req.body.data,
+			oldData: oldData,
+			addFormValues: formValues,
+			allowInvalidData: req.body.allowInvalidData
+		});
 
 		// Insert the participant's data
 		await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);

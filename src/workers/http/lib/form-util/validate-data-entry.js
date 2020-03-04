@@ -1,7 +1,13 @@
 import { ajv } from 'akso/util';
 import { evaluateSync, doAscMagic } from 'akso/lib/akso-script-util';
 
-export async function validateDataEntry (formData, data, addFormValues = {}, allowInvalidData = false) {
+export async function validateDataEntry ({
+	formData,
+	data,
+	oldData = undefined,
+	addFormValues = {},
+	allowInvalidData = false
+} = {}) {
 	await doAscMagic();
 
 	const aksoCountries = (await AKSO.db('countries').select('code'))
@@ -129,7 +135,9 @@ export async function validateDataEntry (formData, data, addFormValues = {}, all
 			const required = getComputedProp(formEntry, 'required');
 			if (!required) { fieldSchema.nullable = true; }
 
-			// TODO: editable
+			if (!formEntry.editable) {
+				fieldSchema.const = oldData[formEntry.name];
+			}
 
 			if (['number','money','date','datetime'].includes(formEntry.type)) {
 				if (formEntry.min !== null) { fieldSchema.minimum = formEntry.min; }

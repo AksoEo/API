@@ -202,7 +202,12 @@ export default {
 				};
 
 				// This should never fail assuming data migration succeeded
-				const participantMetadata = await validateDataEntry(rawData, participant.obj.data, formValues, true);
+				const participantMetadata = await validateDataEntry({
+					formData: rawData,
+					data: participant.obj.data,
+					addFormValues: formValues, 
+					allowInvalidData: true
+				});
 				const price = participantMetadata.evaluate('price');
 				
 				if (price !== participant.obj.price) {
