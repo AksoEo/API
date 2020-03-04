@@ -10,7 +10,8 @@ export const schema = {
 		createdTime: 'f',
 		editedTime: 'f',
 		sequenceId: 'f',
-		price: 'f'
+		price: 'f',
+		cancelledTime: 'f'
 	},
 	fieldAliases: {
 		'dataId': 'congresses_instances_participants.dataId'
