@@ -3096,16 +3096,16 @@ DROP TABLE IF EXISTS `pay_addons`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pay_addons` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `orgId` smallint(5) unsigned NOT NULL,
+  `paymentOrgId` smallint(5) unsigned NOT NULL,
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `orgId_2` (`orgId`,`name`),
-  KEY `orgId` (`orgId`),
+  UNIQUE KEY `orgId_2` (`paymentOrgId`,`name`),
+  KEY `orgId` (`paymentOrgId`),
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
-  CONSTRAINT `pay_addons_ibfk_1` FOREIGN KEY (`orgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `pay_addons_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3114,6 +3114,7 @@ CREATE TABLE `pay_addons` (
 
 LOCK TABLES `pay_addons` WRITE;
 /*!40000 ALTER TABLE `pay_addons` DISABLE KEYS */;
+INSERT INTO `pay_addons` VALUES (1,2,'Ĝenerala kaso de UEA',NULL);
 /*!40000 ALTER TABLE `pay_addons` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3293,7 +3294,7 @@ CREATE TABLE `pay_orgs` (
   UNIQUE KEY `name` (`name`) USING BTREE,
   KEY `org` (`org`),
   FULLTEXT KEY `description` (`description`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3302,6 +3303,7 @@ CREATE TABLE `pay_orgs` (
 
 LOCK TABLES `pay_orgs` WRITE;
 /*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
+INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA',NULL),(3,'tejo','TEJO',NULL);
 /*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3692,4 +3694,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-03 11:58:06
+-- Dump completed on 2020-04-03 13:08:01

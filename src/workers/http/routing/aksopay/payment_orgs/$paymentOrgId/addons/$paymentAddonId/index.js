@@ -2,20 +2,16 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import { init as route$addons } from './addons';
-
 import method$get from './get';
 import method$delete from './delete';
 import method$patch from './patch';
 
 /**
- * Sets up /aksopay/payment_orgs/{paymentOrgId}
+ * Sets up /aksopay/payment_orgs/{paymentOrgId}/addons/{paymentAddonId}
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
-
-	router.use('/addons', route$addons());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);
