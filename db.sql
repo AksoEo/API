@@ -3088,6 +3088,224 @@ INSERT INTO `notif_templates` VALUES (1,'raw','uea','Naskiĝtaggratulo','Gratula
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pay_addons`
+--
+
+DROP TABLE IF EXISTS `pay_addons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_addons` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `orgId` smallint(5) unsigned NOT NULL,
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `orgId_2` (`orgId`,`name`),
+  KEY `orgId` (`orgId`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`),
+  CONSTRAINT `pay_addons_ibfk_1` FOREIGN KEY (`orgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_addons`
+--
+
+LOCK TABLES `pay_addons` WRITE;
+/*!40000 ALTER TABLE `pay_addons` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_addons` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_intents`
+--
+
+DROP TABLE IF EXISTS `pay_intents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents` (
+  `id` binary(15) NOT NULL,
+  `codeholderId` int(10) unsigned DEFAULT NULL,
+  `customer_email` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentMethodId` int(10) unsigned DEFAULT NULL,
+  `paymentMethod` json NOT NULL,
+  `currency` char(3) CHARACTER SET ascii NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `timeCreated` bigint(20) unsigned NOT NULL,
+  `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripePaymentIntentId` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripeClientSecret` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purposes` json NOT NULL,
+  `totalAmount` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `codeholderId` (`codeholderId`),
+  KEY `customer_email` (`customer_email`),
+  KEY `customer_name` (`customer_name`),
+  KEY `paymentMethodId` (`paymentMethodId`),
+  KEY `currency` (`currency`),
+  KEY `status` (`status`),
+  KEY `timeCreated` (`timeCreated`),
+  KEY `foreignId` (`foreignId`),
+  KEY `totalAmount` (`totalAmount`),
+  FULLTEXT KEY `internalNotes` (`internalNotes`),
+  FULLTEXT KEY `customerNotes` (`customerNotes`),
+  FULLTEXT KEY `customer_email_2` (`customer_email`),
+  FULLTEXT KEY `customer_name_2` (`customer_name`),
+  CONSTRAINT `pay_intents_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_ibfk_2` FOREIGN KEY (`paymentMethodId`) REFERENCES `pay_methods` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents`
+--
+
+LOCK TABLES `pay_intents` WRITE;
+/*!40000 ALTER TABLE `pay_intents` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `insert_status_event` AFTER INSERT ON `pay_intents` FOR EACH ROW BEGIN
+
+	INSERT INTO pay_intents_events (paymentIntentId, `time`, `status`) VALUES (NEW.id, UNIX_TIMESTAMP(), NEW.status);
+
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_event` AFTER UPDATE ON `pay_intents` FOR EACH ROW BEGIN
+	IF NEW.status <> OLD.status
+    THEN
+		INSERT INTO pay_intents_events (paymentIntentId, `time`, `status`) VALUES (NEW.id, UNIX_TIMESTAMP(), NEW.status);
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `pay_intents_events`
+--
+
+DROP TABLE IF EXISTS `pay_intents_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_events` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `paymentIntentId` binary(15) NOT NULL,
+  `time` bigint(20) unsigned NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `paymentIntentId` (`paymentIntentId`),
+  CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_events`
+--
+
+LOCK TABLES `pay_intents_events` WRITE;
+/*!40000 ALTER TABLE `pay_intents_events` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_events` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_methods`
+--
+
+DROP TABLE IF EXISTS `pay_methods`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_methods` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `orgId` smallint(5) unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stripeMethods` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `internalDescription` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `currencies` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentValidity` int(11) unsigned DEFAULT NULL,
+  `isRecommended` tinyint(1) NOT NULL DEFAULT '0',
+  `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripePublishableKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `orgId_2` (`orgId`,`name`),
+  KEY `orgId` (`orgId`),
+  KEY `type` (`type`),
+  KEY `paymentValidity` (`paymentValidity`),
+  KEY `isRecommended` (`isRecommended`),
+  FULLTEXT KEY `internalDescription` (`internalDescription`),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`orgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_methods`
+--
+
+LOCK TABLES `pay_methods` WRITE;
+/*!40000 ALTER TABLE `pay_methods` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_methods` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_orgs`
+--
+
+DROP TABLE IF EXISTS `pay_orgs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_orgs` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`) USING BTREE,
+  KEY `org` (`org`),
+  FULLTEXT KEY `description` (`description`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_orgs`
+--
+
+LOCK TABLES `pay_orgs` WRITE;
+/*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `savedQueries`
 --
 
@@ -3354,7 +3572,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_createPassword` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-11 16:04:18' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 24 hours' DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_createPassword` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-11 22:04:18' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 24 hours' DO begin
 
 set @time_delta = 86400;
 
@@ -3378,7 +3596,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_notif_accounts` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-09 13:09:46' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 1 hour' DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_notif_accounts` ON SCHEDULE EVERY 1 HOUR STARTS '2019-04-09 19:09:46' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 1 hour' DO begin
 
 set @time_delta = 3600; 
 
@@ -3402,7 +3620,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_totp_remember` ON SCHEDULE EVERY 12 HOUR STARTS '2019-05-10 13:46:20' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_expired_codeholders_totp_remember` ON SCHEDULE EVERY 12 HOUR STARTS '2019-05-10 19:46:20' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
 
 set @time_delta = 5184000;
 
@@ -3426,7 +3644,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_old_codeholders_logins` ON SCHEDULE EVERY 1 DAY STARTS '2019-05-09 14:46:51' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `remove_old_codeholders_logins` ON SCHEDULE EVERY 1 DAY STARTS '2019-05-09 20:46:51' ON COMPLETION PRESERVE ENABLE COMMENT 'Removes older than 60 days' DO begin
 
 set @time_delta = 5184000; 
 
@@ -3474,4 +3692,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-04 12:44:22
+-- Dump completed on 2020-04-03 11:58:06

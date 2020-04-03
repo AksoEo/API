@@ -13,6 +13,7 @@ import { ajv } from 'akso/util';
 
 import { init as route$address_label_templates } from './address_label_templates';
 import { init as route$admin_groups } from './admin_groups';
+import { init as route$aksopay } from './aksopay';
 import { init as route$auth } from './auth';
 import { init as route$clients } from './clients';
 import { init as route$perms } from './perms';
@@ -53,6 +54,7 @@ export function init () {
 
 	router.use('/address_label_templates', route$address_label_templates());
 	router.use('/admin_groups', route$admin_groups());
+	router.use('/aksopay', route$aksopay());
 	router.use('/clients', route$clients());
 	router.use('/codeholder_roles', route$codeholder_roles());
 	router.use('/codeholders', route$codeholders());
