@@ -107,6 +107,8 @@ async function init () {
 		// https://github.com/timshadel/subdivision-list
 		SUBDIVISIONS: require('../data/subdivisions.json'),
 
+		STRIPE_API_VERSION: '2020-03-02',
+
 		// Constants used by internal APIs, not to be touched directly
 		msgpack: msgpack.createCodec({
 			int64: true

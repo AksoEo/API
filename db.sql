@@ -3114,7 +3114,6 @@ CREATE TABLE `pay_addons` (
 
 LOCK TABLES `pay_addons` WRITE;
 /*!40000 ALTER TABLE `pay_addons` DISABLE KEYS */;
-INSERT INTO `pay_addons` VALUES (1,2,'Ĝenerala kaso de UEA',NULL);
 /*!40000 ALTER TABLE `pay_addons` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3245,7 +3244,7 @@ DROP TABLE IF EXISTS `pay_methods`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pay_methods` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `orgId` smallint(5) unsigned NOT NULL,
+  `paymentOrgId` smallint(5) unsigned NOT NULL,
   `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `stripeMethods` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -3257,16 +3256,16 @@ CREATE TABLE `pay_methods` (
   `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePublishableKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `orgId_2` (`orgId`,`name`),
-  KEY `orgId` (`orgId`),
+  UNIQUE KEY `orgId_2` (`paymentOrgId`,`name`),
+  KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
   KEY `paymentValidity` (`paymentValidity`),
   KEY `isRecommended` (`isRecommended`),
   FULLTEXT KEY `internalDescription` (`internalDescription`),
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
-  CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`orgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3303,7 +3302,6 @@ CREATE TABLE `pay_orgs` (
 
 LOCK TABLES `pay_orgs` WRITE;
 /*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
-INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA',NULL),(3,'tejo','TEJO',NULL);
 /*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3694,4 +3692,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-03 13:08:01
+-- Dump completed on 2020-04-03 19:03:48
