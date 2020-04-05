@@ -3100,7 +3100,6 @@ CREATE TABLE `pay_addons` (
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `orgId_2` (`paymentOrgId`,`name`),
   KEY `orgId` (`paymentOrgId`),
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
@@ -3114,6 +3113,7 @@ CREATE TABLE `pay_addons` (
 
 LOCK TABLES `pay_addons` WRITE;
 /*!40000 ALTER TABLE `pay_addons` DISABLE KEYS */;
+INSERT INTO `pay_addons` VALUES (1,2,'Ĝenerala kaso de UEA',NULL);
 /*!40000 ALTER TABLE `pay_addons` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3256,7 +3256,6 @@ CREATE TABLE `pay_methods` (
   `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePublishableKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `orgId_2` (`paymentOrgId`,`name`),
   KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
   KEY `paymentValidity` (`paymentValidity`),
@@ -3274,6 +3273,7 @@ CREATE TABLE `pay_methods` (
 
 LOCK TABLES `pay_methods` WRITE;
 /*!40000 ALTER TABLE `pay_methods` DISABLE KEYS */;
+INSERT INTO `pay_methods` VALUES (2,2,'stripe','card','Kreditkarto (Stripe)',NULL,NULL,'EUR,USD,JPY',NULL,0,'garbage','garbage'),(3,2,'manual',NULL,'Banko (EUR)',NULL,NULL,'EUR',NULL,0,NULL,NULL);
 /*!40000 ALTER TABLE `pay_methods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3290,8 +3290,8 @@ CREATE TABLE `pay_orgs` (
   `name` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`) USING BTREE,
   KEY `org` (`org`),
+  KEY `name` (`name`) USING BTREE,
   FULLTEXT KEY `description` (`description`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3302,6 +3302,7 @@ CREATE TABLE `pay_orgs` (
 
 LOCK TABLES `pay_orgs` WRITE;
 /*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
+INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA',NULL),(3,'tejo','TEJO',NULL);
 /*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3692,4 +3693,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-03 19:03:48
+-- Dump completed on 2020-04-05 16:56:29
