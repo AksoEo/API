@@ -3131,6 +3131,7 @@ CREATE TABLE `pay_intents` (
   `customer_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentMethodId` int(10) unsigned DEFAULT NULL,
   `paymentMethod` json NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `currency` char(3) CHARACTER SET ascii NOT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint(20) unsigned NOT NULL,
@@ -3151,6 +3152,7 @@ CREATE TABLE `pay_intents` (
   KEY `timeCreated` (`timeCreated`),
   KEY `foreignId` (`foreignId`),
   KEY `totalAmount` (`totalAmount`),
+  KEY `org` (`org`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
@@ -3223,7 +3225,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3693,4 +3695,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-05 16:56:29
+-- Dump completed on 2020-04-05 22:49:38

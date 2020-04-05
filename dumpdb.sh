@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-echo 'Truncating all tables without important data'
-command="
+echo 'Truncating all tables without important data and censoring sensitive data'
+trunc_command="
 SELECT concat('TRUNCATE TABLE ', TABLE_NAME, ';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE
@@ -14,6 +14,11 @@ WHERE
 		\"magazines_editions_files\"
 	);
 "
+command="$trunc_command
+DELETE FROM pay_intents;
+UPDATE pay_methods SET stripeSecretKey = \"garbage\", stripePublishableKey = \"garbage\" WHERE type = \"stripe\";
+"
+
 mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso --execute "$command" | sed 1d | mysql -u "$AKSO_MYSQL_USER" --password="$AKSO_MYSQL_PASSWORD" --database=akso
 
 echo 'Dumping db'
