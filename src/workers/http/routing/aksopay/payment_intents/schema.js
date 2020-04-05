@@ -24,7 +24,7 @@ export const schema = {
 		events: () => AKSO.db.raw('1')
 	},
 	alwaysSelect: [
-		'id', 'paymentMethod'
+		'id', 'paymentMethod', 'org'
 	]
 };
 

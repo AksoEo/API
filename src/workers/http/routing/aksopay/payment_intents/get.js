@@ -21,8 +21,11 @@ export default {
 			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
 		if (!orgs.length) { return res.sendStatus(403); }
 
+		const mayAccessSensitiveData = AKSOOrganization.allLower.filter(x => x !== 'akso')
+			.filter(org => req.hasPermission('pay.payment_intents.sensitive_data.' + org));
+
 		const query = AKSO.db('pay_methods')
 			.whereIn('org', orgs);
-		await QueryUtil.handleCollection({ req, res, schema, query, Res: AKSOPayPaymentIntentResource, passToCol: [[ req, parSchema ]] });
+		await QueryUtil.handleCollection({ req, res, schema, query, Res: AKSOPayPaymentIntentResource, passToCol: [[ req, parSchema, mayAccessSensitiveData ]] });
 	}
 };
