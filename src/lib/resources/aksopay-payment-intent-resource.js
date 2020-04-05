@@ -18,7 +18,7 @@ class AKSOPayPaymentIntentResource extends SimpleResource {
 			obj.stripeClientSecret === null;
 		}
 
-		this.removeUnnecessary(fields);
+		this.removeUnnecessary(fields.concat(['customer']));
 	}
 }
 

@@ -21,6 +21,8 @@ export const schema = {
 		totalAmount: 'f'
 	},
 	fieldAliases: {
+		'customer.email': 'customer_email',
+		'customer.name': 'customer_name',
 		events: () => AKSO.db.raw('1')
 	},
 	alwaysSelect: [
@@ -40,10 +42,10 @@ export async function afterQuery (arr, done) {
 		if (!(event.paymentIntentId in eventsObj)) {
 			eventsObj[event.paymentIntentId] = [];
 		}
-		eventsObj[event.paymentIntentId] = {
+		eventsObj[event.paymentIntentId].push({
 			status: event.status,
 			time: event.time
-		};
+		});
 	}
 	for (const row of arr) {
 		row.events = eventsObj[row.id];
