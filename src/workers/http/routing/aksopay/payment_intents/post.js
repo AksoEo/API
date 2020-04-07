@@ -272,7 +272,7 @@ export default {
 				stripePaymentIntentId = stripePaymentIntent.id;
 				stripeClientSecret = stripePaymentIntent.client_secret;
 			} catch (e) {
-				e.code = 500; // Stripe uses code instead of statusCode
+				e.statusCode = 500;
 				throw e;
 			}
 		}

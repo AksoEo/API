@@ -81,7 +81,7 @@ export default {
 					apiVersion: AKSO.STRIPE_API_VERSION
 				});
 			} catch (e) {
-				e.code = 500; // Stripe uses code instead of statusCode
+				e.statusCode = 500;
 				throw e;
 			}
 
@@ -92,7 +92,8 @@ export default {
 						receipt_email: req.body.customer.email
 					});
 				} catch (e) {
-					e.code = 500; 
+					e.statusCode = 500; 
+					throw e;
 				}
 			}
 		}
