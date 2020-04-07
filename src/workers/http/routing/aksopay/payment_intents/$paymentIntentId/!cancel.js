@@ -38,10 +38,7 @@ export default {
 
 		await AKSO.db('pay_intents')
 			.where('id', req.params.paymentIntentId)
-			.update({
-				status: 'canceled',
-				stripeSecretKey: null
-			});
+			.update('status', 'canceled');
 
 		res.sendStatus(204);
 	}
