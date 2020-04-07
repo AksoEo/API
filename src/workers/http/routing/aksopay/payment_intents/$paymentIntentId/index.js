@@ -7,6 +7,9 @@ import method$patch from './patch';
 
 import operation$cancel from './!cancel';
 import operation$mark_disputed from './!mark_disputed';
+import operation$mark_refunded from './!mark_refunded';
+import operation$mark_succeeded from './!mark_succeeded';
+import operation$submit from './!submit';
 
 /**
  * Sets up /aksopay/payment_intents/{paymentIntentId}
@@ -20,6 +23,9 @@ export function init () {
 
 	bindMethod(router, '/!cancel', 'post', operation$cancel);
 	bindMethod(router, '/!mark_disputed', 'post', operation$mark_disputed);
+	bindMethod(router, '/!mark_refunded', 'post', operation$mark_refunded);
+	bindMethod(router, '/!mark_succeeded', 'post', operation$mark_succeeded);
+	bindMethod(router, '/!submit', 'post', operation$submit);
 
 	return router;
 }

@@ -18,7 +18,8 @@ export const schema = {
 		stripePaymentIntentId: '',
 		stripeClientSecret: '',
 		purposes: '',
-		totalAmount: 'f'
+		totalAmount: 'f',
+		amountRefunded: 'f'
 	},
 	fieldAliases: {
 		'customer.email': 'customer_email',
