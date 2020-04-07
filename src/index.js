@@ -4,6 +4,8 @@ import moment from 'moment-timezone';
 import msgpack from 'msgpack-lite';
 import path from 'path';
 import fs from 'fs-extra';
+import fetch from 'node-fetch';
+import Stripe from 'stripe';
 
 import * as AKSODb from './db';
 
@@ -44,7 +46,8 @@ async function init () {
 				path:				process.env.AKSO_HTTP_PATH === undefined ?
 					'/' : process.env.AKSO.HTTP_PATH,
 				threads: 			process.env.AKSO_HTTP_THREADS === undefined ?
-					3 : parseInt(process.env.AKSO_HTTP_THREADS, 10)
+					3 : parseInt(process.env.AKSO_HTTP_THREADS, 10),
+				outsideAddress:		process.env.AKSO_HTTP_OUTSIDE_ADDRESS || null
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -57,6 +60,10 @@ async function init () {
 			},
 			telegram: {
 				token: process.env.AKSO_TELEGRAM_TOKEN
+			},
+			stripe: {
+				deleteWebhooks: process.env.AKSO_STRIPE_WEBHOOKS_ARE_TEMP === undefined ?
+					false : process.env.AKSO_STRIPE_WEBHOOKS_ARE_TEMP != '0'
 			},
 			prodMode: process.env.NODE_ENV || 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex'),
@@ -108,6 +115,14 @@ async function init () {
 		SUBDIVISIONS: require('../data/subdivisions.json'),
 
 		STRIPE_API_VERSION: '2020-03-02',
+		STRIPE_WEBHOOK_EVENTS: [
+			'payment_intent.canceled',
+			'payment_intent.processing',
+			'payment_intent.succeeded',
+			'charge.refunded',
+			'charge.dispute.created',
+			'charge.dispute.closed'
+		],
 
 		// Constants used by internal APIs, not to be touched directly
 		msgpack: msgpack.createCodec({
@@ -121,43 +136,56 @@ async function init () {
 		AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
 	}
 
-	// Complain about missing/invalid env vars
-	if (!Number.isSafeInteger(AKSO.conf.http.threads) || AKSO.conf.http.threads > 32 || AKSO.conf.http.threads < 1) {
-		AKSO.log.error('AKSO_HTTP_THREADS must be an integer in the range 1-32');
-		process.exit(1);
-	}
-	if (!AKSO.conf.sendgrid.apiKey) {
-		AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
-		process.exit(1);
-	}
-	if (!AKSO.conf.http.sessionSecret) {
-		AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
-		process.exit(1);
-	}
-	if (!AKSO.conf.telegram.token) {
-		AKSO.log.error('Missing AKSO_TELEGRAM_TOKEN');
-		process.exit(1);
-	}
-	if (AKSO.conf.totpAESKey.length != 32) {
-		AKSO.log.error('AKSO_TOTP_AES_KEY must be 32 bytes encoded in hex');
-		process.exit(1);
-	}
-	if (!AKSO.conf.dataDir) {
-		AKSO.log.error('Missing AKSO_DATA_DIR');
-		process.exit(1);
-	} else if (!fs.statSync(AKSO.conf.dataDir).isDirectory()) {
-		AKSO.log.error('AKSO_DATA_DIR must be a directory');
-		process.exit(1);
-	}
-	if (!AKSO.conf.stateDir) {
-		AKSO.log.error('Missing AKSO_STATE_DIR');
-		process.exit(1);
-	} else if (!fs.statSync(AKSO.conf.stateDir).isDirectory()) {
-		AKSO.log.error('AKSO_STATE_DIR must be a directory');
-		process.exit(1);
+	// Determine defaults when needed
+	if (!AKSO.conf.http.outsideAddress) {
+		if (cluster.isMaster) {
+			AKSO.log.warn('AKSO_HTTP_OUTSIDE_ADDRESS not specified, determining IP address ...');
+		}
+		const ip = await (await fetch('https://api6.ipify.org')).text();
+		const url = new URL(`http://${ip}:${AKSO.conf.http.port}`);
+		AKSO.conf.http.outsideAddress = url.toString();
+		if (cluster.isMaster) {
+			AKSO.log.warn('Using address ' + AKSO.conf.http.outsideAddress);
+		}
 	}
 
 	if (cluster.isMaster) {
+		// Complain about missing/invalid env vars
+		if (!Number.isSafeInteger(AKSO.conf.http.threads) || AKSO.conf.http.threads > 32 || AKSO.conf.http.threads < 1) {
+			AKSO.log.error('AKSO_HTTP_THREADS must be an integer in the range 1-32');
+			process.exit(1);
+		}
+		if (!AKSO.conf.sendgrid.apiKey) {
+			AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
+			process.exit(1);
+		}
+		if (!AKSO.conf.http.sessionSecret) {
+			AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
+			process.exit(1);
+		}
+		if (!AKSO.conf.telegram.token) {
+			AKSO.log.error('Missing AKSO_TELEGRAM_TOKEN');
+			process.exit(1);
+		}
+		if (AKSO.conf.totpAESKey.length != 32) {
+			AKSO.log.error('AKSO_TOTP_AES_KEY must be 32 bytes encoded in hex');
+			process.exit(1);
+		}
+		if (!AKSO.conf.dataDir) {
+			AKSO.log.error('Missing AKSO_DATA_DIR');
+			process.exit(1);
+		} else if (!fs.statSync(AKSO.conf.dataDir).isDirectory()) {
+			AKSO.log.error('AKSO_DATA_DIR must be a directory');
+			process.exit(1);
+		}
+		if (!AKSO.conf.stateDir) {
+			AKSO.log.error('Missing AKSO_STATE_DIR');
+			process.exit(1);
+		} else if (!fs.statSync(AKSO.conf.stateDir).isDirectory()) {
+			AKSO.log.error('AKSO_STATE_DIR must be a directory');
+			process.exit(1);
+		}
+
 		// Set up subdirs in data dir
 		AKSO.log.info('Setting up data dirs');
 		await Promise.all([
@@ -201,13 +229,47 @@ async function init () {
 		if (!AKSO.conf.http.rateLimit) {
 			AKSO.log.warn('Running without rate limit');
 		}
+
+		// stripe
+		if (AKSO.conf.stripe.deleteWebhooks) {
+			AKSO.log.warn('Stripe webhooks are deleted upon shutdown');
+		}
 	}
 
 	// Load shared modules
 	await AKSODb.init();
 
-	// Set up cluster
 	if (cluster.isMaster) {
+		// Set up stripe webhooks if needed
+		AKSO.log.info('Setting up Stripe webhooks ...');
+		const methodsWithoutHook = await AKSO.db('pay_methods')
+			.where('type', 'stripe')
+			.whereNotExists(function () {
+				this.select(1).from('pay_stripe_webhooks')
+					.whereRaw('pay_stripe_webhooks.stripeSecretKey = pay_methods.stripeSecretKey');
+			})
+			.select('stripeSecretKey');
+		for (const hooklessMethod of methodsWithoutHook) {
+			const stripeClient = new Stripe(hooklessMethod.stripeSecretKey, {
+				apiVersion: AKSO.STRIPE_API_VERSION
+			});
+			const hook = await stripeClient.webhookEndpoints.create({
+				api_version: AKSO.STRIPE_API_VERSION,
+				enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
+				url: new URL('/aksopay/stripe_webhook_handler', AKSO.conf.http.outsideAddress).toString()
+			});
+			await AKSO.db('pay_stripe_webhooks')
+				.insert({
+					stripeSecretKey: hooklessMethod.stripeSecretKey,
+					stripeId: hook.id,
+					secret: hook.secret,
+					apiVersion: AKSO.STRIPE_API_VERSION,
+					enabledEvents: AKSO.STRIPE_WEBHOOK_EVENTS.join(',')
+				});
+		}
+
+		// Set up cluster
+		let shuttingDown = false;
 		const workers = {};
 		const workerPromises = {};
 		const summonWorker = function (type, num = 1) {
@@ -223,8 +285,9 @@ async function init () {
 			});
 			// Cope with death
 			worker.on('exit', code => {
+				if (shuttingDown) { return; }
 				if (code !== 0) {
-					AKSO.log.error(`${type} worker #${num} died with non-zero exit code, killing AKSO`);
+					AKSO.log.error(`${type} worker #${num} died with non-zero exit code ${code}, killing AKSO`);
 					process.exit(code);
 				}
 				AKSO.log.info(`${type} worker #${num} died for unknown reasons, cloning its DNA ...`);
@@ -241,12 +304,31 @@ async function init () {
 		}
 
 		// Handle shutdown signal
-		let shuttingDown = false;
-		const performCleanup = function performCleanup (signal) {
+		const performCleanup = async function performCleanup (signal) {
 			if (shuttingDown) { return; }
 			shuttingDown = true;
 
 			AKSO.log.info(`Received ${signal}, shutting down ...`);
+
+			// Remove stripe webhooks if necessary
+			if (AKSO.conf.stripe.deleteWebhooks) {
+				AKSO.log.info('Cleaning up Stripe webhooks ...');
+				const webhooks = await AKSO.db('pay_stripe_webhooks')
+					.select('stripeId', 'stripeSecretKey');
+
+				for (const hook of webhooks) {
+					const stripeClient = new Stripe(hook.stripeSecretKey, {
+						apiVersion: AKSO.STRIPE_API_VERSION
+					});
+					try {
+						await stripeClient.webhookEndpoints.del(hook.stripeId);
+					} catch (e) {
+						if (e.statusCode !== 404) { throw e; }
+					}
+				}
+				await AKSO.db('pay_stripe_webhooks')
+					.delete();
+			}
 
 			process.exit();
 		};

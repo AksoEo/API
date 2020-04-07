@@ -122,7 +122,38 @@ export default {
 				if (e.type === 'StripeAuthenticationError') {
 					return res.sendStatus(409);
 				}
+				e.statusCode = 500;
 				throw e;
+			}
+
+			// Check if stripe secretKey has already been used elsewhere, in which case a webhook is not needed
+			const webhookRegistered = await AKSO.db('pay_stripe_webhooks')
+				.where('stripeSecretKey', data.stripeSecretKey)
+				.first(1);
+			if (!webhookRegistered) {
+				// Register the webhook
+				let webhookSecret, webhookId;
+				try {
+					const webhook = await stripe.webhookEndpoints.create({
+						api_version: AKSO.STRIPE_API_VERSION,
+						enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
+						url: new URL('/aksopay/stripe_webhook_handler', AKSO.conf.http.outsideAddress).toString()
+					});
+					webhookSecret = webhook.secret;
+					webhookId = webhook.id;
+				} catch (e) {
+					e.statusCode = 500;
+					throw e;
+				}
+
+				await AKSO.db('pay_stripe_webhooks')
+					.insert({
+						stripeSecretKey: data.stripeSecretKey,
+						stripeId: webhookId,
+						secret: webhookSecret,
+						apiVersion: AKSO.STRIPE_API_VERSION,
+						enabledEvents: AKSO.STRIPE_WEBHOOK_EVENTS.join(',')
+					});
 			}
 		}
 
