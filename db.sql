@@ -3140,6 +3140,7 @@ CREATE TABLE `pay_intents` (
   `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePaymentIntentId` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeClientSecret` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `purposes` json NOT NULL,
   `totalAmount` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
@@ -3225,7 +3226,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3723,4 +3724,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-06 16:01:16
+-- Dump completed on 2020-04-07 11:53:49

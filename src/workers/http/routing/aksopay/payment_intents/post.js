@@ -257,24 +257,24 @@ export default {
 				stripeClient = new Stripe(paymentMethodRaw.stripeSecretKey, {
 					apiVersion: AKSO.STRIPE_API_VERSION
 				});
+
+				// TODO: Improve error handling
+				const stripePaymentIntent = await stripeClient.paymentIntents.create({
+					amount: totalAmount,
+					currency: req.body.currency.toLowerCase(),
+					payment_method_types: paymentMethod.stripeMethods,
+					metadata: {
+						aksopay_id: idEncoded
+					},
+					description: 'AKSOPay-pago',
+					receipt_email: req.body.customer.email
+				});
+				stripePaymentIntentId = stripePaymentIntent.id;
+				stripeClientSecret = stripePaymentIntent.client_secret;
 			} catch (e) {
 				e.code = 500; // Stripe uses code instead of statusCode
 				throw e;
 			}
-			
-			// TODO: Potentially some error handling for the below, unsure how to handle
-			const stripePaymentIntent = await stripeClient.paymentIntents.create({
-				amount: totalAmount,
-				currency: req.body.currency.toLowerCase(),
-				payment_method_types: paymentMethod.stripeMethods,
-				metadata: {
-					aksopay_id: idEncoded
-				},
-				description: 'AKSOPay-pago',
-				receipt_email: req.body.customer.email
-			});
-			stripePaymentIntentId = stripePaymentIntent.id;
-			stripeClientSecret = stripePaymentIntent.client_secret;
 		}
 
 		const data = {
@@ -293,6 +293,7 @@ export default {
 			foreignId: req.body.foreignId,
 			stripePaymentIntentId: stripePaymentIntentId,
 			stripeClientSecret: stripeClientSecret,
+			stripeSecretKey: paymentMethodRaw.stripeSecretKey,
 			purposes: JSON.stringify(storedPurposes),
 			totalAmount: totalAmount
 		};
