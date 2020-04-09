@@ -92,18 +92,25 @@ export function init () {
 			app.use(setupMiddleware);
 
 			// Parse body
+			const saveRawBody = function saveRawBody (req, res, buf) {
+				req.rawBody = buf;
+			};
+
 			app.use(bodyParser.json({
-				limit: '1mb'
+				limit: '1mb',
+				verify: saveRawBody
 			}));
 			app.use(bodyParser.raw({
 				type: 'application/vnd.msgpack',
-				limit: '1mb'
+				limit: '1mb',
+				verify: saveRawBody
 			}));
 			// Allow application/x-www-form-urlencoded only for method overriding
 			app.use(bodyParser.urlencoded({
 				extended: false,
 				limit: '4kb',
-				verify: req => {
+				verify: (req, res, buf) => {
+					saveRawBody(req, res, buf);
 					if (!req.headers['x-http-method-override'] || req.method !== 'POST') {
 						const err = new Error('Unsupported media type');
 						err.statusCode = 415;

@@ -137,7 +137,7 @@ export default {
 					const webhook = await stripe.webhookEndpoints.create({
 						api_version: AKSO.STRIPE_API_VERSION,
 						enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
-						url: new URL('/aksopay/stripe_webhook_handler', AKSO.conf.http.outsideAddress).toString()
+						url: new URL(AKSO.STRIPE_WEBHOOK_URL, AKSO.conf.http.outsideAddress).toString()
 					});
 					webhookSecret = webhook.secret;
 					webhookId = webhook.id;

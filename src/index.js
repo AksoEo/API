@@ -123,6 +123,7 @@ async function init () {
 			'charge.dispute.created',
 			'charge.dispute.closed'
 		],
+		STRIPE_WEBHOOK_URL: '/aksopay/stripe_webhook_handler',
 
 		// Constants used by internal APIs, not to be touched directly
 		msgpack: msgpack.createCodec({
@@ -256,7 +257,7 @@ async function init () {
 			const hook = await stripeClient.webhookEndpoints.create({
 				api_version: AKSO.STRIPE_API_VERSION,
 				enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
-				url: new URL('/aksopay/stripe_webhook_handler', AKSO.conf.http.outsideAddress).toString()
+				url: new URL(AKSO.STRIPE_WEBHOOK_URL, AKSO.conf.http.outsideAddress).toString()
 			});
 			await AKSO.db('pay_stripe_webhooks')
 				.insert({

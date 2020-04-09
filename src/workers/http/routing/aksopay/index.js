@@ -1,7 +1,11 @@
 import express from 'express';
 
+import { bindMethod } from 'akso/workers/http/routing';
+
 import { init as route$payment_orgs } from './payment_orgs';
 import { init as route$payment_intents } from './payment_intents';
+
+import endpoint$stripe_webhook_handler from './stripe_webhook_handler';
 
 /**
  * Sets up /aksopay
@@ -12,6 +16,8 @@ export function init () {
 
 	router.use('/payment_orgs', route$payment_orgs());
 	router.use('/payment_intents', route$payment_intents());
+
+	bindMethod(router, '/stripe_webhook_handler', 'post', endpoint$stripe_webhook_handler);
 
 	return router;
 }

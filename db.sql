@@ -3145,6 +3145,7 @@ CREATE TABLE `pay_intents` (
   `totalAmount` int(10) unsigned NOT NULL,
   `amountRefunded` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `stripePaymentIntentId` (`stripePaymentIntentId`),
   KEY `codeholderId` (`codeholderId`),
   KEY `customer_email` (`customer_email`),
   KEY `customer_name` (`customer_name`),
@@ -3228,7 +3229,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3269,7 +3270,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3278,7 +3279,7 @@ CREATE TABLE `pay_methods` (
 
 LOCK TABLES `pay_methods` WRITE;
 /*!40000 ALTER TABLE `pay_methods` DISABLE KEYS */;
-INSERT INTO `pay_methods` VALUES (2,2,'stripe','card','Kreditkarto (Stripe)',NULL,NULL,'EUR,USD,JPY',NULL,0,'garbage','garbage'),(3,2,'manual',NULL,'Banko (EUR)',NULL,NULL,'EUR',NULL,0,NULL,NULL);
+INSERT INTO `pay_methods` VALUES (3,2,'manual',NULL,'Banko (EUR)',NULL,NULL,'EUR',NULL,0,NULL,NULL),(5,2,'stripe','card','Kreditkarto (Stripe)',NULL,NULL,'EUR,USD,JPY',NULL,0,'garbage','garbage');
 /*!40000 ALTER TABLE `pay_methods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3309,6 +3310,34 @@ LOCK TABLES `pay_orgs` WRITE;
 /*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
 INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA',NULL),(3,'tejo','TEJO',NULL);
 /*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_stripe_webhooks`
+--
+
+DROP TABLE IF EXISTS `pay_stripe_webhooks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_stripe_webhooks` (
+  `stripeSecretKey` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stripeId` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `secret` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `apiVersion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `enabledEvents` varchar(3072) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`stripeSecretKey`),
+  UNIQUE KEY `stripeId` (`stripeId`),
+  KEY `apiVersion` (`apiVersion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_stripe_webhooks`
+--
+
+LOCK TABLES `pay_stripe_webhooks` WRITE;
+/*!40000 ALTER TABLE `pay_stripe_webhooks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_stripe_webhooks` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3698,4 +3727,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-07 13:13:58
+-- Dump completed on 2020-04-09 18:28:28
