@@ -3,6 +3,7 @@ import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import path from 'path';
 import crypto from 'pn/crypto';
@@ -205,10 +206,11 @@ export default {
 
 		// Make sure the codeholder exists
 		if (req.body.codeholderId !== null) {
-			const codeholderExists = await AKSO.db('codeholders')
+			const codeholderQuery = AKSO.db('view_codeholders')
 				.where('id', req.body.codeholderId)
 				.first(1);
-			if (!codeholderExists) {
+			memberFilter(codeholderSchema, codeholderQuery, req);
+			if (!await codeholderQuery) {
 				return res.type('text/plain').status(400).send('Codeholder not found');
 			}
 		}
@@ -250,9 +252,15 @@ export default {
 		const currencyZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(req.body.currency);
 		const totalAmountInUSD = AKSO.cashify.convert(totalAmount / currencyZeroDecimalFactor, { from: req.body.currency, to: 'USD' });
 		if (totalAmountInUSD < 1) {
-			totalAmount = AKSO.cashify.convert(1, { from: 'USD', to: req.body.currency }) * currencyZeroDecimalFactor;
+			totalAmount = Math.round(
+				AKSO.cashify.convert(1, { from: 'USD', to: req.body.currency })
+					* currencyZeroDecimalFactor
+			);
 		} else if (totalAmountInUSD > 500000) {
-			totalAmount = AKSO.cashify.convert(500000, { from: 'USD', to: req.body.currency }) * currencyZeroDecimalFactor;
+			totalAmount = Math.round(
+				AKSO.cashify.convert(500000, { from: 'USD', to: req.body.currency })
+					* currencyZeroDecimalFactor
+			);
 		}
 
 		const id = await crypto.randomBytes(15);

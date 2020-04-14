@@ -1,5 +1,7 @@
 import Stripe from 'stripe';
 
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
+
 export default {
 	schema: {
 		query: null,
@@ -66,10 +68,11 @@ export default {
 
 		// Make sure the codeholder exists
 		if ('codeholderId' in req.body && req.body.codeholderId !== null) {
-			const codeholderExists = await AKSO.db('codeholders')
+			const codeholderQuery = AKSO.db('view_codeholders')
 				.where('id', req.body.codeholderId)
 				.first(1);
-			if (!codeholderExists) {
+			memberFilter(codeholderSchema, codeholderQuery, req);
+			if (!await codeholderQuery) {
 				return res.type('text/plain').status(400).send('Codeholder not found');
 			}
 		}
