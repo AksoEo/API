@@ -6,6 +6,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import fetch from 'node-fetch';
 import Stripe from 'stripe';
+import { Cashify } from 'cashify';
 
 import * as AKSODb from './db';
 
@@ -27,6 +28,15 @@ async function init () {
 			),
 			transports: [ new winston.transports.Console() ]
 		}),
+
+		msgpack: msgpack.createCodec({
+			int64: true
+		}),
+
+		db: null,
+
+		exchangeRates: null,
+		cashify: null,
 
 		conf: {
 			http: {
@@ -70,7 +80,8 @@ async function init () {
 			dataDir: process.env.AKSO_DATA_DIR,
 			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
-				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0'
+				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0',
+			openExchangeRatesAppID: process.env.AKSO_OPEN_EXCHANGE_RATES_APP_ID
 		},
 
 		// Constants, do not change without updating docs
@@ -125,11 +136,7 @@ async function init () {
 		],
 		STRIPE_WEBHOOK_URL: '/aksopay/stripe_webhook_handler',
 
-		// Constants used by internal APIs, not to be touched directly
-		msgpack: msgpack.createCodec({
-			int64: true
-		}),
-		db: null
+		EXCHANGE_RATES_LIFETIME: 3600 * 2 // 2 hours. The Open Exchange Rates API supports 1000 requests/month on the free plan. That's slightly more than once an hour
 	};
 
 	if (cluster.isMaster) {
@@ -186,6 +193,10 @@ async function init () {
 			AKSO.log.error('AKSO_STATE_DIR must be a directory');
 			process.exit(1);
 		}
+		if (!AKSO.conf.openExchangeRatesAppID) {
+			AKSO.log.error('Missing AKSO_OPEN_EXCHANGE_RATES_APP_ID');
+			process.exit(1);
+		}
 
 		// Set up subdirs in data dir
 		AKSO.log.info('Setting up data dirs');
@@ -240,6 +251,15 @@ async function init () {
 	// Load shared modules
 	await AKSODb.init();
 
+	const handleWorkerMessage = function handleMessage (msg) {
+		if (typeof msg !== 'object') { return; }
+		if (msg.action === 'set') {
+			AKSO[msg.prop] = msg.value;
+		} else if (msg.action === 'set_exchange_rates') {
+			AKSO.exchangeRates = msg.data.rates;
+			AKSO.cashify = new Cashify(msg.data);
+		}
+	};
 	if (cluster.isMaster) {
 		// Set up stripe webhooks if needed
 		AKSO.log.info('Setting up Stripe webhooks ...');
@@ -273,15 +293,27 @@ async function init () {
 		let shuttingDown = false;
 		const workers = {};
 		const workerPromises = {};
+		let workersReadyResolve;
+		const workersReadyPromise = new Promise(resolve => { workersReadyResolve = resolve; });
+
 		const summonWorker = function (type, num = 1) {
 			const worker = cluster.fork({ aksoClusterType: type, aksoClusterNum: num });
 			const id = `${type}-${num}`;
 			workers[id] = worker;
 			workerPromises[id] = new Promise(resolve => {
 				// Await ready
-				worker.on('message', msg => {
-					if (msg !== 'ready') { return; }
-					resolve();
+				worker.on('message', async msg => {
+					if (msg === 'ready') { return resolve(); }
+					else if (typeof msg === 'object' && msg.forward === true) {
+						delete msg.forward;
+						await workersReadyPromise;
+						for (const otherWorker of Object.values(workers)) {
+							otherWorker.send(msg);
+						}
+						handleWorkerMessage(msg);
+					} else {
+						handleWorkerMessage(msg);
+					}
 				});
 			});
 			// Cope with death
@@ -291,7 +323,8 @@ async function init () {
 					AKSO.log.error(`${type} worker #${num} died with non-zero exit code ${code}, killing AKSO`);
 					process.exit(code);
 				}
-				AKSO.log.info(`${type} worker #${num} died for unknown reasons, cloning its DNA ...`);
+				AKSO.log.info(`${type} worker #${num} died for an unknown reason, cloning its DNA ...`);
+				delete workers[id];
 				summonWorker(type);
 			});
 		};
@@ -342,6 +375,7 @@ async function init () {
 		AKSO.log.info('AKSO master is ready (workers still loading)');
 
 		await Promise.all(Object.values(workerPromises));
+		workersReadyResolve();
 		setTimeout(function () {
 			AKSO.log.info('All workers are ready');
 		}, 100); // We do this on a timeout to let the last worker log first
@@ -371,8 +405,13 @@ async function init () {
 			AKSO.log.error(`Unknown cluster type ${process.env.aksoClusterType}, exiting`);
 			process.exit(1);
 		}
-		process.send('ready');
-		AKSO.log.info(`${process.env.aksoClusterType} worker #${process.env.aksoClusterNum} is ready`);
+
+		process.on('message', handleWorkerMessage);
+
+		if (!cluster.isMaster) {
+			process.send('ready');
+			AKSO.log.info(`${process.env.aksoClusterType} worker #${process.env.aksoClusterNum} is ready`);
+		}
 	}
 }
 

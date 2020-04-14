@@ -1,7 +1,8 @@
 import { TRIGGER_TYPES } from './schema';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
-import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema'
+import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 
 import path from 'path';
 import crypto from 'pn/crypto';
@@ -245,6 +246,14 @@ export default {
 				return purpose;
 			}
 		}));
+		if (!AKSO.cashify) { return res.sendStatus(503); }
+		const currencyZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(req.body.currency);
+		const totalAmountInUSD = AKSO.cashify.convert(totalAmount / currencyZeroDecimalFactor, { from: req.body.currency, to: 'USD' });
+		if (totalAmountInUSD < 1) {
+			totalAmount = AKSO.cashify.convert(1, { from: 'USD', to: req.body.currency }) * currencyZeroDecimalFactor;
+		} else if (totalAmountInUSD > 500000) {
+			totalAmount = AKSO.cashify.convert(500000, { from: 'USD', to: req.body.currency }) * currencyZeroDecimalFactor;
+		}
 
 		const id = await crypto.randomBytes(15);
 		const idEncoded = base32.stringify(id);
