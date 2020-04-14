@@ -65,22 +65,18 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		// Make sure the payment org exists and is accessible
-		const paymentOrg = await AKSO.db('pay_orgs')
-			.where('id', req.params.paymentOrgId)
+		// Make sure the payment method exists and is accessible
+		const paymentMethod = await AKSO.db('pay_methods')
+			.innerJoin('pay_orgs', 'paymentOrgId', 'pay_orgs.id')
+			.where({
+				'pay_methods.id': req.params.paymentMethodId,
+				'pay_orgs.id': req.params.paymentOrgId
+			})
 			.first('org');
-		if (!paymentOrg) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_methods.update.' + paymentOrg.org)) {
+		if (!paymentMethod) { return res.sendStatus(404); }
+		if (!req.hasPermission('pay.payment_methods.update.' + paymentMethod.org)) {
 			return res.sendStatus(403);
 		}
-		// Make sure the payment method exists
-		const paymentMethod = await AKSO.db('pay_methods')
-			.where({
-				id: req.params.paymentMethodId,
-				paymentOrgId: req.params.paymentOrgId
-			})
-			.first('type');
-		if (!paymentMethod) { return res.sendStatus(404); }
 
 		const data = { ...req.body };
 		if ('stripeMethods' in data) {

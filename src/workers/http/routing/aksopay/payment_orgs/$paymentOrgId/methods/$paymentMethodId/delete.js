@@ -1,3 +1,7 @@
+import path from 'path';
+
+import { removePathAndEmptyParents } from 'akso/lib/file-util';
+
 export default {
 	schema: {},
 
@@ -17,6 +21,19 @@ export default {
 				paymentOrgId: req.params.paymentOrgId
 			})
 			.delete();
+
+		if (deleted) {
+			const locPar = path.join(
+				AKSO.conf.dataDir,
+				'aksopay_payment_method_thumbnails',
+				req.params.paymentOrgId
+			);
+			const locPath = path.join(
+				locPar,
+				req.params.paymentMethodId
+			);
+			await removePathAndEmptyParents(locPar, locPath);
+		}
 
 		res.sendStatus(deleted ? 204 : 404);
 	}

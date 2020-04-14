@@ -1,3 +1,6 @@
+import path from 'path';
+import fs from 'fs-extra';
+
 export default {
 	schema: {},
 
@@ -12,6 +15,13 @@ export default {
 		await AKSO.db('pay_orgs')
 			.where('id', req.params.paymentOrgId)
 			.delete();
+
+		const dataPath = path.join(
+			AKSO.conf.dataDir,
+			'aksopay_payment_method_thumbnails',
+			req.params.paymentOrgId
+		);
+		await fs.remove(dataPath);
 
 		res.sendStatus(204);
 	}
