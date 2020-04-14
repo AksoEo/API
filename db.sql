@@ -3104,7 +3104,7 @@ CREATE TABLE `pay_addons` (
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `pay_addons_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3135,6 +3135,7 @@ CREATE TABLE `pay_intents` (
   `currency` char(3) CHARACTER SET ascii NOT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint(20) unsigned NOT NULL,
+  `statusTime` bigint(20) unsigned NOT NULL,
   `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3157,6 +3158,7 @@ CREATE TABLE `pay_intents` (
   KEY `totalAmount` (`totalAmount`),
   KEY `org` (`org`),
   KEY `amountRefunded` (`amountRefunded`),
+  KEY `statusTime` (`statusTime`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
@@ -3202,10 +3204,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_event` AFTER UPDATE ON `pay_intents` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_event` BEFORE UPDATE ON `pay_intents` FOR EACH ROW BEGIN
 	IF NEW.status <> OLD.status
     THEN
 		INSERT INTO pay_intents_events (paymentIntentId, `time`, `status`) VALUES (NEW.id, UNIX_TIMESTAMP(), NEW.status);
+        SET NEW.statusTime = UNIX_TIMESTAMP();
     END IF;
 END */;;
 DELIMITER ;
@@ -3229,7 +3232,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3299,7 +3302,7 @@ CREATE TABLE `pay_orgs` (
   KEY `org` (`org`),
   KEY `name` (`name`) USING BTREE,
   FULLTEXT KEY `description` (`description`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3727,4 +3730,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-09 18:28:28
+-- Dump completed on 2020-04-14 15:44:54
