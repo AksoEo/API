@@ -294,6 +294,7 @@ export default {
 			}
 		}
 
+		const currentTime = moment().unix();
 		const data = {
 			id: id,
 			codeholderId: req.body.codeholderId,
@@ -304,7 +305,8 @@ export default {
 			org: paymentMethodRaw.org,
 			currency: req.body.currency,
 			status: 'pending',
-			timeCreated: moment().unix(),
+			timeCreated: currentTime,
+			statusTime: currentTime,
 			internalNotes: req.body.internalNotes,
 			customerNotes: req.body.customerNotes,
 			foreignId: req.body.foreignId,
