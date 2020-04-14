@@ -85,7 +85,11 @@ export function init () {
 			app.use(cookieParser());
 			app.use(session({
 				secret: AKSO.conf.http.sessionSecret,
-				name: 'akso_session'
+				name: 'akso_session',
+				signed: true,
+				sameSite: 'lax',
+				overwrite: true,
+				httpOnly: true
 			}));
 
 			// Add custom methods to req and res

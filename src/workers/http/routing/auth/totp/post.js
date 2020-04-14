@@ -104,7 +104,8 @@ export default {
 
 					res.cookie('remember_totp', rememberKey.toString('hex'), {
 						expires: moment.unix(expiration).toDate(),
-						httpOnly: true
+						httpOnly: true,
+						sameSite: 'lax'
 					});
 				}
 

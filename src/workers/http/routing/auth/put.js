@@ -70,7 +70,8 @@ export default {
 
 						res.cookie('remember_totp', req.cookies.remember_totp, {
 							expires: moment.unix(expiration).toDate(),
-							httpOnly: true
+							httpOnly: true,
+							sameSite: 'lax'
 						});
 
 						req.session.totp = true;
