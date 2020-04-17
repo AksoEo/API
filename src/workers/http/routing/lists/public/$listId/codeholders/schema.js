@@ -29,9 +29,9 @@ export const schema = {
 		fieldAliases: {
 			name: () => AKSO.db.raw('1'),
 			address: () => AKSO.db.raw('1'),
-			'officePhoneFormatted': 'officePhone',
-			'landlinePhoneFormatted': 'landlinePhone',
-			'cellphoneFormatted': 'cellphone'
+			'officePhoneFormatted': () => AKSO.db.raw('1'),
+			'landlinePhoneFormatted': () => AKSO.db.raw('1'),
+			'cellphoneFormatted': () => AKSO.db.raw('1')
 		},
 		alwaysSelect: [
 			'id',
@@ -54,8 +54,11 @@ export const schema = {
 			'lastNamePublicity',
 			'emailPublicity',
 			'addressPublicity',
+			'officePhone',
 			'officePhonePublicity',
+			'landlinePhone',
 			'landlinePhonePublicity',
+			'cellphone',
 			'cellphonePublicity',
 			'profilePicturePublicity',
 			'codeholderType'
@@ -194,40 +197,35 @@ export async function handleCodeholders (req, codeholders) {
 			}
 		}
 
-		if (obj.officePhonePublicity === 'private' || (obj.officePhonePublicity === 'members' && !isMember)) {
-			obj.officePhone = null;
-		} else {
+		if (obj.officePhonePublicity === 'public' || (obj.officePhonePublicity === 'members' && isMember)) {
 			if (fields.includes('officePhoneFormatted')) {
-				if (obj.officePhone) {
-					obj.officePhoneFormatted = formatPhoneNumber(obj.officePhone);
-				} else {
-					obj.officePhoneFormatted = null;
-				}
+				obj.officePhoneFormatted = obj.officePhone ? formatPhoneNumber(obj.officePhone) : null;
 			}
+		} else {
+			obj.officePhone = obj.officePhoneFormatted = null;
 		}
 
-		if (obj.landlinePhonePublicity === 'private' || (obj.landlinePhonePublicity === 'members' && !isMember)) {
-			obj.landlinePhone = null;
-		} else {
-			if (fields.includes('landlinePhoneFormatted')) {
-				if (obj.landlinePhone) {
-					obj.landlinePhoneFormatted = formatPhoneNumber(obj.landlinePhone);
-				} else {
-					obj.landlinePhoneFormatted = null;
+		if (obj.codeholderType === 'human') {
+			if (obj.landlinePhonePublicity === 'public' || (obj.landlinePhonePublicity === 'members' && isMember)) {
+				if (fields.includes('landlinePhoneFormatted')) {
+					obj.landlinePhoneFormatted = obj.landlinePhone ? formatPhoneNumber(obj.landlinePhone) : null;
 				}
+			} else {
+				obj.landlinePhone = obj.landlinePhoneFormatted = null;
 			}
-		}
 
-		if (obj.cellphonePublicity === 'private' || (obj.cellphonePublicity === 'members' && !isMember)) {
-			obj.cellphone = null;
-		} else {
-			if (fields.includes('cellphoneFormatted')) {
-				if (obj.cellphone) {
-					obj.cellphoneFormatted = formatPhoneNumber(obj.cellphone);
-				} else {
-					obj.cellphoneFormatted = null;
+			if (obj.cellphonePublicity === 'public' || (obj.cellphonePublicity === 'members' && isMember)) {
+				if (fields.includes('cellphoneFormatted')) {
+					obj.cellphoneFormatted = obj.cellphone ? formatPhoneNumber(obj.cellphone) : null;
 				}
+			} else {
+				obj.cellphone = obj.cellphoneFormatted = null;
 			}
+		} else {
+			delete obj.landlinePhone;
+			delete obj.landlinePhoneFormatted;
+			delete obj.cellphone;
+			delete obj.cellphoneFormatted;
 		}
 
 		const res = new SimpleResource(obj);
