@@ -393,17 +393,17 @@ DROP TABLE IF EXISTS `codeholders`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `codeholders` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderType` enum('human','org') CHARACTER SET ascii NOT NULL,
+  `codeholderType` enum('human','org') COLLATE utf8mb4_unicode_ci NOT NULL,
   `creationTime` bigint(20) unsigned NOT NULL,
-  `oldCode` char(4) CHARACTER SET ascii DEFAULT NULL,
-  `newCode` char(6) CHARACTER SET ascii NOT NULL,
+  `oldCode` char(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `newCode` char(6) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'bcrypt',
   `createPasswordTime` bigint(20) unsigned DEFAULT NULL,
   `createPasswordKey` binary(16) DEFAULT NULL,
   `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `feeCountry` char(2) CHARACTER SET ascii DEFAULT NULL,
-  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_esperanto_ci,
+  `feeCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   `officePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
   `deathdate` date DEFAULT NULL,
@@ -452,7 +452,7 @@ DROP TABLE IF EXISTS `codeholders_address`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `codeholders_address` (
   `codeholderId` int(10) unsigned NOT NULL,
-  `country` char(2) CHARACTER SET ascii NOT NULL,
+  `country` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -538,7 +538,7 @@ CREATE TABLE `codeholders_hist_address` (
   `modTime` bigint(20) unsigned NOT NULL,
   `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `address_country` char(2) CHARACTER SET ascii DEFAULT NULL,
+  `address_country` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address_countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address_countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address_city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -886,7 +886,7 @@ CREATE TABLE `codeholders_hist_feeCountry` (
   `modTime` bigint(10) unsigned NOT NULL,
   `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `feeCountry` char(2) CHARACTER SET ascii DEFAULT NULL,
+  `feeCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   KEY `feeCountry` (`feeCountry`),
@@ -1304,7 +1304,7 @@ CREATE TABLE `codeholders_hist_notes` (
   `modTime` bigint(10) unsigned NOT NULL,
   `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_esperanto_ci,
+  `notes` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `notes` (`notes`),
@@ -1539,7 +1539,7 @@ CREATE TABLE `codeholders_human` (
   `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `honorific` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_esperanto_ci DEFAULT NULL,
+  `honorific` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `landlinePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1620,14 +1620,14 @@ CREATE TABLE `codeholders_logins` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `codeholderId` int(10) unsigned NOT NULL,
   `time` bigint(20) unsigned NOT NULL,
-  `timezone` varchar(32) CHARACTER SET ascii NOT NULL,
+  `timezone` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ip` varbinary(16) NOT NULL,
   `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ll` point NOT NULL,
   `area` smallint(6) NOT NULL,
-  `country` varchar(2) CHARACTER SET ascii DEFAULT NULL,
-  `region` varchar(3) CHARACTER SET ascii DEFAULT NULL,
+  `country` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
@@ -2239,7 +2239,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `manualApproval` tinyint(1) NOT NULL DEFAULT '0',
   `sequenceIds_startAt` int(11) DEFAULT NULL,
   `sequenceIds_requireValid` tinyint(1) DEFAULT NULL,
-  `price_currency` char(3) CHARACTER SET ascii DEFAULT NULL,
+  `price_currency` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_minUpfront` int(10) unsigned DEFAULT NULL,
   `formId` int(10) unsigned NOT NULL,
@@ -2284,17 +2284,17 @@ DROP TABLE IF EXISTS `countries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `countries` (
-  `code` char(2) CHARACTER SET ascii NOT NULL,
+  `code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `name_eo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_esperanto_ci NOT NULL,
+  `name_eo` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_en` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_fr` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_es` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `name_es` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_nl` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_pt` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_sk` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_slovak_ci NOT NULL,
+  `name_sk` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_zh` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_de` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_german2_ci NOT NULL,
+  `name_de` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`),
   KEY `enabled` (`enabled`),
   FULLTEXT KEY `name` (`name_eo`)
@@ -2319,8 +2319,8 @@ DROP TABLE IF EXISTS `countries_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `countries_groups` (
-  `code` char(3) CHARACTER SET ascii NOT NULL,
-  `name` varchar(150) CHARACTER SET ascii NOT NULL,
+  `code` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`),
   FULLTEXT KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2344,8 +2344,8 @@ DROP TABLE IF EXISTS `countries_groups_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `countries_groups_members` (
-  `group_code` char(3) CHARACTER SET ascii NOT NULL,
-  `country_code` char(2) CHARACTER SET ascii NOT NULL,
+  `group_code` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country_code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`group_code`,`country_code`),
   KEY `country_code` (`country_code`),
   CONSTRAINT `countries_groups_members_ibfk_1` FOREIGN KEY (`group_code`) REFERENCES `countries_groups` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -3132,7 +3132,7 @@ CREATE TABLE `pay_intents` (
   `paymentMethodId` int(10) unsigned DEFAULT NULL,
   `paymentMethod` json NOT NULL,
   `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `currency` char(3) CHARACTER SET ascii NOT NULL,
+  `currency` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint(20) unsigned NOT NULL,
   `statusTime` bigint(20) unsigned NOT NULL,
@@ -3730,4 +3730,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-14 15:44:54
+-- Dump completed on 2020-04-17 14:04:48
