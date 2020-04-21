@@ -14,17 +14,24 @@ export const schema = {
 		fields: {
 			id: '',
 			name: '',
+			lastNamePublicity: '',
 			email: '',
+			emailPublicity: '',
 			address: '',
+			addressPublicity: '',
 			officePhone: '',
 			officePhoneFormatted: '',
+			officePhonePublicity: '',
 			landlinePhone: '',
 			landlinePhoneFormatted: '',
+			landlinePhonePublicity: '',
 			cellphone: '',
 			cellphoneFormatted: '',
+			cellphonePublicity: '',
 			biography: '',
 			website: '',
 			profilePictureHash: '',
+			profilePicturePublicity: '',
 		},
 		fieldAliases: {
 			name: () => AKSO.db.raw('1'),
@@ -224,8 +231,10 @@ export async function handleCodeholders (req, codeholders) {
 		} else {
 			delete obj.landlinePhone;
 			delete obj.landlinePhoneFormatted;
+			delete obj.landlinePhonePublicity;
 			delete obj.cellphone;
 			delete obj.cellphoneFormatted;
+			delete obj.cellphonePublicity;
 		}
 
 		const res = new SimpleResource(obj);
