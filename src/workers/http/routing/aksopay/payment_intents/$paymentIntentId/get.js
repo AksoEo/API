@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOPayPaymentIntentResource from 'akso/lib/resources/aksopay-payment-intent-resource';
 
-import { schema as parSchema } from '../schema';
+import { schema as parSchema, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -34,6 +34,7 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 
 		const row = await query;
+		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new AKSOPayPaymentIntentResource(row, req, parSchema, mayAccessSensitiveData);
 		res.sendObj(obj);
 	}
