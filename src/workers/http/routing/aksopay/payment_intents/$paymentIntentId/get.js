@@ -34,6 +34,7 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 
 		const row = await query;
+		if (!row) { return res.sendStatus(404); }
 		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new AKSOPayPaymentIntentResource(row, req, parSchema, mayAccessSensitiveData);
 		res.sendObj(obj);

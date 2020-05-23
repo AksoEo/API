@@ -16,7 +16,11 @@ export function init () {
 	const router = new express.Router();
 
 	router.param('paymentIntentId', (req, res, next, val) => {
-		req.params.paymentIntentId = base32.parse(val, { out: Buffer.allocUnsafe, loose: true });
+		try {
+			req.params.paymentIntentId = base32.parse(val, { out: Buffer.allocUnsafe, loose: true });
+		} catch {
+			return next('route');
+		}
 		next();
 	});
 	router.use('/:paymentIntentId', route$$paymentIntentId());
