@@ -9,13 +9,16 @@ export default {
 
 		const tasks = {};
 		if (aksopayPaymentIntentOrgs.length) {
-			const tasksRaw = await AKSO.db('pay_intents')
-				.whereIn('org', aksopayPaymentIntentOrgs)
-				.count({
-					submitted: AKSO.db.raw('CASE WHEN status = "submitted" THEN 1 ELSE 0 END'),
-					disputed: AKSO.db.raw('CASE WHEN status = "disputed" THEN 1 ELSE 0 END')
-				});
-			tasks.aksopay = tasksRaw[0];
+			tasks.aksopay = {
+				submitted: await AKSO.db('pay_intents')
+					.whereIn('org', aksopayPaymentIntentOrgs)
+					.where('status', 'submitted')
+					.count('1'),
+				disputed: await AKSO.db('pay_intents')
+					.whereIn('org', aksopayPaymentIntentOrgs)
+					.where('status', 'disputed')
+					.count('1')
+			};
 		}
 
 		res.sendObj(tasks);
