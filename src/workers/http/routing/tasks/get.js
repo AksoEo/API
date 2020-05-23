@@ -10,11 +10,10 @@ export default {
 		const tasks = {};
 		if (aksopayPaymentIntentOrgs.length) {
 			const tasksRaw = await AKSO.db('pay_intents')
-				.where('status', 'submitted')
 				.whereIn('org', aksopayPaymentIntentOrgs)
 				.count({
-					submitted: AKSO.db.raw('status = "submitted"'),
-					disputed: AKSO.db.raw('status = "disputed"')
+					submitted: AKSO.db.raw('CASE WHEN status = "submitted" THEN 1 ELSE 0 END'),
+					disputed: AKSO.db.raw('CASE WHEN status = "disputed" THEN 1 ELSE 0 END')
 				});
 			tasks.aksopay = tasksRaw[0];
 		}
