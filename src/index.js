@@ -271,8 +271,12 @@ async function init () {
 					.whereRaw('pay_stripe_webhooks.stripeSecretKey = pay_methods.stripeSecretKey');
 			})
 			.select('stripeSecretKey');
-		for (const hooklessMethod of methodsWithoutHook) {
-			const stripeClient = new Stripe(hooklessMethod.stripeSecretKey, {
+		const uniqueSecretKeys = [
+			...new Set(methodsWithoutHook
+				.map(x => x.stripeSecretKey))
+		];
+		for (const secretKey of uniqueSecretKeys) {
+			const stripeClient = new Stripe(secretKey, {
 				apiVersion: AKSO.STRIPE_API_VERSION
 			});
 			const hook = await stripeClient.webhookEndpoints.create({
@@ -282,7 +286,7 @@ async function init () {
 			});
 			await AKSO.db('pay_stripe_webhooks')
 				.insert({
-					stripeSecretKey: hooklessMethod.stripeSecretKey,
+					stripeSecretKey: secretKey,
 					stripeId: hook.id,
 					secret: hook.secret,
 					apiVersion: AKSO.STRIPE_API_VERSION,
