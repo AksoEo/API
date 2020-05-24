@@ -16,6 +16,7 @@ export async function removePathAndEmptyParents (maxLevel, rmPath) {
 			await fs.rmdir(curPath);
 		} catch (e) {
 			if (e.code === 'ENOTEMPTY') { return; }
+			if (e.code === 'ENOENT') { continue; }
 			throw e;
 		}
 	}
