@@ -96,6 +96,11 @@ export default {
 										maxLength: 500,
 										nullable: true
 									},
+									originalAmount: {
+										type: 'integer',
+										format: 'uint32',
+										nullable: true
+									},
 									amount: {
 										type: 'integer',
 										format: 'uint32'
@@ -132,6 +137,11 @@ export default {
 										type: 'integer',
 										format: 'uint32'
 									},
+									originalAmount: {
+										type: 'integer',
+										format: 'uint32',
+										nullable: true
+									},
 									amount: {
 										type: 'integer',
 										format: 'uint32'
@@ -150,6 +160,11 @@ export default {
 									type: {
 										type: 'string',
 										const: 'manual'
+									},
+									originalAmount: {
+										type: 'integer',
+										format: 'int32',
+										nullable: true
 									},
 									amount: {
 										type: 'integer',
