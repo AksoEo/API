@@ -44,6 +44,10 @@ export default {
 					],
 					additionalProperties: false
 				},
+				paymentOrgId: {
+					type: 'integer',
+					format: 'uint16'
+				},
 				paymentMethodId: {
 					type: 'integer',
 					format: 'uint32'
@@ -180,6 +184,7 @@ export default {
 				'customer',
 				'currency',
 				'purposes',
+				'paymentOrgId',
 				'paymentMethodId'
 			],
 			additionalProperties: false
@@ -195,7 +200,10 @@ export default {
 		// Get the PaymentMethod
 		const paymentMethodRaw = await AKSO.db('pay_methods')
 			.innerJoin('pay_orgs', 'paymentOrgId', 'pay_orgs.id')
-			.where('pay_methods.id', req.body.paymentMethodId)
+			.where({
+				paymentOrgId: req.body.paymentOrgId,
+				'pay_methods.id': req.body.paymentMethodId
+			})
 			.whereIn('org', orgs)
 			.first('pay_methods.*', 'org');
 		if (!paymentMethodRaw) {
@@ -300,6 +308,7 @@ export default {
 			codeholderId: req.body.codeholderId,
 			customer_email: req.body.customer.email,
 			customer_name: req.body.customer.name,
+			paymentOrgId: req.body.paymentOrgId,
 			paymentMethodId: req.body.paymentMethodId,
 			paymentMethod: JSON.stringify(paymentMethod),
 			org: paymentMethodRaw.org,

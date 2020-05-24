@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.29, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.30, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	5.7.29-0ubuntu0.18.04.1
+-- Server version	5.7.30-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -3129,6 +3129,7 @@ CREATE TABLE `pay_intents` (
   `codeholderId` int(10) unsigned DEFAULT NULL,
   `customer_email` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
   `customer_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentOrgId` smallint(5) unsigned DEFAULT NULL,
   `paymentMethodId` int(10) unsigned DEFAULT NULL,
   `paymentMethod` json NOT NULL,
   `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -3159,12 +3160,14 @@ CREATE TABLE `pay_intents` (
   KEY `org` (`org`),
   KEY `amountRefunded` (`amountRefunded`),
   KEY `statusTime` (`statusTime`),
+  KEY `paymentOrgId` (`paymentOrgId`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
   FULLTEXT KEY `customer_name_2` (`customer_name`),
   CONSTRAINT `pay_intents_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `pay_intents_ibfk_2` FOREIGN KEY (`paymentMethodId`) REFERENCES `pay_methods` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `pay_intents_ibfk_2` FOREIGN KEY (`paymentMethodId`) REFERENCES `pay_methods` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_ibfk_3` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3232,7 +3235,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3273,7 +3276,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3729,4 +3732,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-21 13:22:02
+-- Dump completed on 2020-05-24 12:34:23
