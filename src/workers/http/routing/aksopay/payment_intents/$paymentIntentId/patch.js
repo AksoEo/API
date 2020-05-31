@@ -64,8 +64,6 @@ export default {
 		if (!paymentIntent) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
 
-		if (paymentIntent.status !== 'pending') { return res.sendStatus(409); }
-
 		// Make sure the codeholder exists
 		if ('codeholderId' in req.body && req.body.codeholderId !== null) {
 			const codeholderQuery = AKSO.db('view_codeholders')
