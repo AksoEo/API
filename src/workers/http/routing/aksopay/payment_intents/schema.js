@@ -14,6 +14,8 @@ export const schema = {
 		events: '',
 		timeCreated: 'f',
 		statusTime: 'f',
+		succeededTime: 'f',
+		refundedTime: 'f',
 		internalNotes: 's',
 		customerNotes: 's',
 		foreignId: 'f',

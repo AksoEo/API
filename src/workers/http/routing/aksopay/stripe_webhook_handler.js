@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import moment from 'moment-timezone';
 
 export default {
 	schema: {
@@ -26,6 +27,8 @@ export default {
 		res.sendStatus(204);
 
 		const typeBits = req.body.type.split('.');
+
+		const time = req.body.created || moment().unix();
 
 		let stripeClient,
 			stripeSecretKey,
@@ -121,10 +124,17 @@ export default {
 
 		case 'charge.dispute.closed':
 			// Check if anything has been refunded
-			const newStatus = paymentIntent.amountRefunded > 0 ? 'refunded' : 'succeeded';
+			const updateData = {};
+			if (paymentIntent.amountRefunded > 0) {
+				updateData.status = 'refunded';
+				updateData.refundedTime = time;
+			} else {
+				updateData.status = 'succeeded';
+				updateData.succeededTime = time;
+			}
 			await AKSO.db('pay_intents')
 				.where('stripePaymentIntentId', paymentIntentId)
-				.update('status', newStatus);
+				.update(updateData);
 		}
 	}
 };

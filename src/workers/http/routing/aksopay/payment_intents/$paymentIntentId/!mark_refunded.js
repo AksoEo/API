@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 export default {
 	schema: {
 		body: {
@@ -38,7 +40,8 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.update({
 				amountRefunded: totalRefund,
-				status: 'refunded'
+				status: 'refunded',
+				refundedTime: moment().unix()
 			});
 
 		res.sendStatus(204);

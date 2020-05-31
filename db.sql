@@ -3137,6 +3137,8 @@ CREATE TABLE `pay_intents` (
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint(20) unsigned NOT NULL,
   `statusTime` bigint(20) unsigned NOT NULL,
+  `succeededTime` bigint(20) unsigned DEFAULT NULL,
+  `refundedTime` bigint(20) unsigned DEFAULT NULL,
   `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3161,6 +3163,8 @@ CREATE TABLE `pay_intents` (
   KEY `amountRefunded` (`amountRefunded`),
   KEY `statusTime` (`statusTime`),
   KEY `paymentOrgId` (`paymentOrgId`),
+  KEY `succeededTime` (`succeededTime`),
+  KEY `refundedTime` (`refundedTime`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
@@ -3235,7 +3239,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3276,7 +3280,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3285,6 +3289,7 @@ CREATE TABLE `pay_methods` (
 
 LOCK TABLES `pay_methods` WRITE;
 /*!40000 ALTER TABLE `pay_methods` DISABLE KEYS */;
+INSERT INTO `pay_methods` VALUES (8,2,'stripe','card','Kreditkarto (Stripe)',NULL,NULL,'EUR,USD,JPY',NULL,0,'garbage','garbage');
 /*!40000 ALTER TABLE `pay_methods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3732,4 +3737,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-24 12:34:23
+-- Dump completed on 2020-05-31 12:44:11

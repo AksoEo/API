@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 export default {
 	schema: {},
 
@@ -15,7 +17,10 @@ export default {
 
 		await AKSO.db('pay_intents')
 			.where('id', req.params.paymentIntentId)
-			.update('status', 'succeeded');
+			.update({
+				status: 'succeeded',
+				succeedTime: moment().unix()
+			});
 
 		res.sendStatus(204);
 	}
