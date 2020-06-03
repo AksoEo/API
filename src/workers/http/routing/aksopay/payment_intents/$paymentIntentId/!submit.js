@@ -1,3 +1,5 @@
+import * as intentUtil from 'akso/lib/aksopay-intent-util';
+
 export default {
 	schema: {},
 
@@ -13,9 +15,7 @@ export default {
 			return res.sendStatus(409);
 		}
 
-		await AKSO.db('pay_intents')
-			.where('id', req.params.paymentIntentId)
-			.update('status', 'submitted');
+		await intentUtil.updateStatus(paymentIntent.id, 'submitted');
 
 		res.sendStatus(204);
 	}

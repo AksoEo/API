@@ -1,3 +1,5 @@
+import * as intentUtil from 'akso/lib/aksopay-intent-util';
+
 import Stripe from 'stripe';
 
 export default {
@@ -36,9 +38,7 @@ export default {
 			}
 		}
 
-		await AKSO.db('pay_intents')
-			.where('id', req.params.paymentIntentId)
-			.update('status', 'canceled');
+		await intentUtil.updateStatus(paymentIntent.id, 'canceled');
 
 		res.sendStatus(204);
 	}

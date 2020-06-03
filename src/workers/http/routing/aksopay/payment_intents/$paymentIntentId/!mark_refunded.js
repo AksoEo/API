@@ -1,3 +1,5 @@
+import * as intentUtil from 'akso/lib/aksopay-intent-util';
+
 import moment from 'moment-timezone';
 
 export default {
@@ -36,13 +38,10 @@ export default {
 			return res.type('text/plain').status(400).send('totalRefund must not exceed PaymentIntent#totalAmount');
 		}
 
-		await AKSO.db('pay_intents')
-			.where('id', req.params.paymentIntentId)
-			.update({
-				amountRefunded: totalRefund,
-				status: 'refunded',
-				refundedTime: moment().unix()
-			});
+		if (paymentIntent.succeededTime === null) {
+			await intentUtil.updateStatus(paymentIntent.id, 'succeeded');
+		}
+		await intentUtil.updateStatus(paymentIntent.id, 'refunded', moment().unix(), { amountRefunded: totalRefund });
 
 		res.sendStatus(204);
 	}

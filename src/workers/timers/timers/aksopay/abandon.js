@@ -1,3 +1,5 @@
+import * as intentUtil from 'akso/lib/aksopay-intent-util';
+
 import Stripe from 'stripe';
 
 export async function abandonExpiredPaymentIntents () {
@@ -36,9 +38,7 @@ export async function abandonExpiredPaymentIntents () {
 			.map(x => x.id);
 		if (!ids.length) { return; }
 
-		await AKSO.db('pay_intents')
-			.whereIn('id', ids)
-			.update('status', 'abandoned');
+		await intentUtil.updateStatuses(ids, 'abandoned');
 	} while (expiredIntents.length);
 }
 abandonExpiredPaymentIntents.intervalMs = 30000; // Check every 30 seconds

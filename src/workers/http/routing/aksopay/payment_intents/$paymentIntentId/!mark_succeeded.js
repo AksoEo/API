@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+import * as intentUtil from 'akso/lib/aksopay-intent-util';
 
 export default {
 	schema: {},
@@ -15,12 +15,7 @@ export default {
 			return res.sendStatus(409);
 		}
 
-		await AKSO.db('pay_intents')
-			.where('id', req.params.paymentIntentId)
-			.update({
-				status: 'succeeded',
-				succeedTime: moment().unix()
-			});
+		await intentUtil.updateStatus(paymentIntent.id, 'succeeded');
 
 		res.sendStatus(204);
 	}
