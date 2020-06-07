@@ -19,11 +19,11 @@ const zeroDecimalFactors = {
 	USD: 100
 };
 
-class AKSOOrganization extends Enum {
+class AKSOCurrency extends Enum {
 	static getZeroDecimalFactor (prop) {
 		return zeroDecimalFactors[this.normalize(prop)];
 	}
 }
-AKSOOrganization.setProps(...Object.keys(zeroDecimalFactors));
+AKSOCurrency.setProps(...Object.keys(zeroDecimalFactors));
 
-export default AKSOOrganization;
+export default AKSOCurrency;

@@ -291,6 +291,7 @@ export function bindMethod (router, path, method, bind) {
 			}
 
 			if ('query' in schema) {
+				let whitelist = [];
 				if (!schema.query) {
 					if (Object.keys(req.query).length) {
 						const err = new Error('Endpoint expects no query params');
@@ -298,13 +299,7 @@ export function bindMethod (router, path, method, bind) {
 						return next(err);
 					}
 				} else if (Array.isArray(schema.query)) {
-					for (let key of Object.keys(req.query)) {
-						if (schema.query.indexOf(key) === -1) {
-							const err = new Error(`Unknown query parameter ${key}`);
-							err.statusCode = 400;
-							return next(err);
-						}
-					}
+					whitelist = schema.query;
 
 				} else if (typeof schema.query === 'object') {
 					if (!validateQuery(req.query)) {
@@ -313,17 +308,17 @@ export function bindMethod (router, path, method, bind) {
 					}
 
 				} else if (typeof schema.query === 'string') {
-					const whitelist = [];
-
 					if (schema.query === 'collection') {
 						whitelist.push( 'limit', 'offset', 'order', 'fields', 'search', 'filter' );
 					} else if (schema.query === 'resource') {
 						whitelist.push( 'fields' );
 					}
+				}
 
+				if (Array.isArray(schema.query) || typeof schema.query === 'string') {
 					for (let key of Object.keys(req.query)) {
 						if (whitelist.indexOf(key) === -1) {
-							const err = new Error(`Unexpected query parameter ${key}`);
+							const err = new Error(`Unknown query parameter ${key}`);
 							err.statusCode = 400;
 							return next(err);
 						}

@@ -8,6 +8,8 @@ import { init as route$$paymentIntentId } from './$paymentIntentId';
 import method$get from './get';
 import method$post from './post';
 
+import endpoint$balance_report from './balance_report';
+
 /**
  * Sets up /aksopay/payment_intents
  * @return {express.Router}
@@ -27,6 +29,8 @@ export function init () {
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'post', method$post);
+
+	bindMethod(router, '/balance_report', 'get', endpoint$balance_report);
 
 	return router;
 }
