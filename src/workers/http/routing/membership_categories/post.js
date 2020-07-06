@@ -33,11 +33,13 @@ export default {
 				},
 				availableFrom: {
 					type: 'number',
-					format: 'year'
+					format: 'year',
+					nullable: true
 				},
 				availableTo: {
 					type: 'number',
-					format: 'year'
+					format: 'year',
+					nullable: true
 				}
 			},
 			required: [ 'nameAbbrev', 'name' ],
