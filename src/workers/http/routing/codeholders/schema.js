@@ -252,8 +252,14 @@ export function memberFieldsManual (fields, req, flag, memberFields) {
 
 	const haveFlag = fields
 		.map(f => {
-			if (!(f in memberFields || f.split('.')[0] in memberFields)) { return false; }
-			return memberFields[f].includes(flag);
+			const flagsFull = memberFields[f];
+			const flagsSplit = memberFields[f.split('.')[0]];
+
+			let flagsJoined = '';
+			if (flagsFull) { flagsJoined += flagsFull; }
+			if (flagsSplit) { flagsJoined += flagsSplit; }
+
+			return flagsJoined.includes(flag);
 		})
 		.reduce((a, b) => a && b);
 
