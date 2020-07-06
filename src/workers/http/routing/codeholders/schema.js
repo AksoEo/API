@@ -213,7 +213,7 @@ export const schema = {
 };
 
 const validFields = Object.keys(schema.fields).concat([
-	'files', 'logins', 'roles'
+	'files', 'logins', 'roles', 'profilePicture'
 ]);
 export const memberRestrictionFields = [...new Set(
 	validFields.flatMap(f => {
