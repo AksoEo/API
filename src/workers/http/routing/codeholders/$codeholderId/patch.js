@@ -155,7 +155,8 @@ const schema = {
 				birthdate: {
 					type: 'string',
 					format: 'date',
-					nullable: true
+					nullable: true,
+					validateFunction: val => !(moment(val).isAfter(moment()))
 				},
 				profession: {
 					type: 'string',

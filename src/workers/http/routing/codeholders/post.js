@@ -161,7 +161,8 @@ const schema = {
 								},
 								birthdate: {
 									type: 'string',
-									format: 'date'
+									format: 'date',
+									validateFunction: val => !(moment(val).isAfter(moment()))
 								},
 								profession: {
 									type: 'string',
