@@ -1,5 +1,5 @@
 import latlonSchema from 'akso/workers/http/lib/latlon-schema';
-import { icons } from '../schema';
+import { icons, parseOpenHours } from '../schema';
 
 export default {
 	schema: {
@@ -17,6 +17,10 @@ export default {
 					type: 'string',
 					minLength: 1,
 					maxLength: 200,
+					nullable: true
+				},
+				openHours: {
+					type: 'object',
 					nullable: true
 				},
 
@@ -71,15 +75,15 @@ export default {
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
-		const orgData = await AKSO.db('congresses')
+		const congressData = await AKSO.db('congresses')
 			.innerJoin('congresses_instances', 'congressId', 'congresses.id')
 			.where({
 				congressId: req.params.congressId,
 				'congresses_instances.id': req.params.instanceId
 			})
-			.first('org');
-		if (!orgData) { return res.sendStatus(404); }
-		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
+			.first('org', 'dateFrom', 'dateTo');
+		if (!congressData) { return res.sendStatus(404); }
+		if (!req.hasPermission('congress_instances.update.' + congressData.org)) { return res.sendStatus(403); }
 
 		const locData = await AKSO.db('congresses_instances_locations')
 			.first('type')
@@ -112,6 +116,7 @@ export default {
 		if (req.body.rating && req.body.rating.rating > req.body.rating.max) {
 			return res.type('text/plain').status(400).send('rating.rating must not exceed rating.max');
 		}
+
 		if (req.body.externalLoc) {
 			const exists = await AKSO.db('congresses_instances_locations')
 				.first(1)
@@ -121,6 +126,11 @@ export default {
 					type: 'external'
 				});	
 			if (!exists) { return res.type('text/plain').status(400).send('Unknown externalLoc ' + req.body.externalLoc); }
+		}
+
+		let openHours;
+		if ('openHours' in req.body) {
+			openHours = parseOpenHours(req.body.openHours, congressData.dateFrom, congressData.dateTo);
 		}
 
 		const mainData = {};
@@ -158,6 +168,22 @@ export default {
 					rating_max: req.body.rating.max,
 					rating_type: req.body.rating.type
 				});
+		}
+
+		if ('openHours' in req.body) {
+			await AKSO.db('congresses_instances_locations_openHours')
+				.where('congressInstanceLocationId', req.params.locationId)
+				.delete();
+
+			if (openHours !== null) {
+				await AKSO.db('congresses_instances_locations_openHours')
+					.insert(openHours.map(x => {
+						return {
+							congressInstanceLocationId: req.params.locationId,
+							...x
+						};
+					}));
+			}
 		}
 
 		res.sendStatus(204);

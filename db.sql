@@ -1951,7 +1951,7 @@ CREATE TABLE `congresses_instances_locations` (
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
   CONSTRAINT `congresses_instances_locations_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1960,7 +1960,7 @@ CREATE TABLE `congresses_instances_locations` (
 
 LOCK TABLES `congresses_instances_locations` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations` DISABLE KEYS */;
-INSERT INTO `congresses_instances_locations` VALUES (1,3,'external','Kongresejo','La ejo kie okazas ĉio de la IJK!'),(2,3,'internal','Manĝejo','Kie oni manĝas'),(3,3,'internal','Akceptejo',NULL),(4,3,'external','Amsterdamo Flughaveno','La plej granda flughaveno en Nederlando estas Schiphol (AMS)');
+INSERT INTO `congresses_instances_locations` VALUES (1,3,'external','Kongresejo','La ejo kie okazas ĉio de la IJK!'),(2,3,'internal','Manĝejo','Kie oni manĝas'),(3,3,'internal','Akceptejo',NULL),(4,3,'external','Amsterdamo Flughaveno','La plej granda flughaveno en Nederlando estas Schiphol (AMS)'),(5,3,'internal','Necesejo',NULL);
 /*!40000 ALTER TABLE `congresses_instances_locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2042,8 +2042,38 @@ CREATE TABLE `congresses_instances_locations_internal` (
 
 LOCK TABLES `congresses_instances_locations_internal` WRITE;
 /*!40000 ALTER TABLE `congresses_instances_locations_internal` DISABLE KEYS */;
-INSERT INTO `congresses_instances_locations_internal` VALUES (2,1),(3,1);
+INSERT INTO `congresses_instances_locations_internal` VALUES (5,NULL),(2,1),(3,1);
 /*!40000 ALTER TABLE `congresses_instances_locations_internal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `congresses_instances_locations_openHours`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_locations_openHours`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `congresses_instances_locations_openHours` (
+  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `date` date NOT NULL,
+  `openTime` time NOT NULL,
+  `closeTime` time NOT NULL,
+  PRIMARY KEY (`congressInstanceLocationId`,`date`,`openTime`),
+  KEY `closeTime` (`closeTime`),
+  KEY `openTime` (`openTime`),
+  KEY `date` (`date`),
+  CONSTRAINT `congresses_instances_locations_openHours_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `congresses_instances_locations_openHours`
+--
+
+LOCK TABLES `congresses_instances_locations_openHours` WRITE;
+/*!40000 ALTER TABLE `congresses_instances_locations_openHours` DISABLE KEYS */;
+INSERT INTO `congresses_instances_locations_openHours` VALUES (3,'2020-07-12','07:30:00','10:00:00'),(3,'2020-07-12','13:00:00','14:30:00'),(5,'2020-07-12','00:00:00','16:00:00'),(3,'2020-07-11','17:00:00','20:00:00'),(3,'2020-07-12','17:00:00','20:00:00'),(5,'2020-07-11','15:00:00','23:59:00'),(5,'2020-07-12','17:00:00','23:59:00');
+/*!40000 ALTER TABLE `congresses_instances_locations_openHours` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3240,7 +3270,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3696,4 +3726,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-31 14:49:04
+-- Dump completed on 2020-07-13 10:05:17

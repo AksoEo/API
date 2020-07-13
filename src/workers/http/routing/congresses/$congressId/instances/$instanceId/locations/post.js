@@ -1,7 +1,7 @@
 import path from 'path';
 
 import latlonSchema from 'akso/workers/http/lib/latlon-schema';
-import { icons } from './schema';
+import { icons, parseOpenHours } from './schema';
 
 const locationRequiredProps = [ 'type', 'name' ];
 
@@ -27,6 +27,10 @@ export default {
 							type: 'string',
 							minLength: 1,
 							maxLength: 200,
+							nullable: true
+						},
+						openHours: {
+							type: 'object',
 							nullable: true
 						}
 					}
@@ -110,15 +114,15 @@ export default {
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
-		const orgData = await AKSO.db('congresses')
+		const congressData = await AKSO.db('congresses')
 			.innerJoin('congresses_instances', 'congressId', 'congresses.id')
 			.where({
 				congressId: req.params.congressId,
 				'congresses_instances.id': req.params.instanceId
 			})
-			.first('org');
-		if (!orgData) { return res.sendStatus(404); }
-		if (!req.hasPermission('congress_instances.update.' + orgData.org)) { return res.sendStatus(403); }
+			.first('org', 'dateFrom', 'dateTo');
+		if (!congressData) { return res.sendStatus(404); }
+		if (!req.hasPermission('congress_instances.update.' + congressData.org)) { return res.sendStatus(403); }
 
 		// Manual data validation
 		if (req.body.rating && req.body.rating.rating > req.body.rating.max) {
@@ -134,6 +138,8 @@ export default {
 				});	
 			if (!exists) { return res.type('text/plain').status(400).send('Unknown externalLoc ' + req.body.externalLoc); }
 		}
+
+		const openHours = parseOpenHours(req.body.openHours, congressData.dateFrom, congressData.dateTo);
 
 		const id = (await AKSO.db('congresses_instances_locations').insert({
 			congressInstanceId: req.params.instanceId,
@@ -163,6 +169,17 @@ export default {
 				congressInstanceLocationId: id,
 				externalLoc: req.body.externalLoc
 			});
+		}
+
+		if (openHours) {
+			await AKSO.db('congresses_instances_locations_openHours').insert(
+				openHours.map(x => {
+					return {
+						congressInstanceLocationId: id,
+						...x
+					};
+				})
+			);
 		}
 
 		res.set('Location', path.join(

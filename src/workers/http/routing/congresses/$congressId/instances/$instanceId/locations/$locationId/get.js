@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import CongressInstanceLocationResource from 'akso/lib/resources/congress-instance-location-resource';
 
-import { schema as parSchema } from '../schema';
+import { schema as parSchema, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -38,6 +38,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
+		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new CongressInstanceLocationResource(row, req, schema);
 		res.sendObj(obj);
 	}

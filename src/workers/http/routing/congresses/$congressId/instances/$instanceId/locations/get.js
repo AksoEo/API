@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import CongressInstanceLocationResource from 'akso/lib/resources/congress-instance-location-resource';
 
-import { schema as parSchema } from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
@@ -33,7 +33,8 @@ export default {
 			.where('congressInstanceId', req.params.instanceId);
 		await QueryUtil.handleCollection({
 			req, res, schema, query, Res: CongressInstanceLocationResource,
-			passToCol: [[ req, schema ]]
+			passToCol: [[ req, schema ]],
+			afterQuery
 		});
 	}
 };
