@@ -1,3 +1,5 @@
+import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
+
 export default {
 	schema: {
 		query: null,
@@ -17,6 +19,7 @@ export default {
 				totpSetUp: totpSetUp,
 				totpUsed: totpUsed,
 				isAdmin: req.hasPermission('admin'),
+				isActiveMember: await isActiveMember(userData.id),
 				id: userData.id,
 				newCode: userData.newCode
 			});
