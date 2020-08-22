@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.30, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.31, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	5.7.30-0ubuntu0.18.04.1
+-- Server version	5.7.31-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -3172,11 +3172,10 @@ CREATE TABLE `pay_intents` (
   `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totalAmount` int(10) unsigned NOT NULL,
   `stripePaymentIntentId` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeClientSecret` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `purposes` json NOT NULL,
-  `totalAmount` int(10) unsigned NOT NULL,
   `amountRefunded` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `stripePaymentIntentId` (`stripePaymentIntentId`),
@@ -3188,13 +3187,13 @@ CREATE TABLE `pay_intents` (
   KEY `status` (`status`),
   KEY `timeCreated` (`timeCreated`),
   KEY `foreignId` (`foreignId`),
-  KEY `totalAmount` (`totalAmount`),
   KEY `org` (`org`),
   KEY `amountRefunded` (`amountRefunded`),
   KEY `statusTime` (`statusTime`),
   KEY `paymentOrgId` (`paymentOrgId`),
   KEY `succeededTime` (`succeededTime`),
   KEY `refundedTime` (`refundedTime`),
+  KEY `totalAmount` (`totalAmount`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
@@ -3242,6 +3241,118 @@ LOCK TABLES `pay_intents_events` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pay_intents_purposes`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_purposes` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(5) unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` bigint(10) NOT NULL,
+  `originalAmount` bigint(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `type` (`type`),
+  KEY `amount` (`amount`),
+  KEY `originalAmount` (`originalAmount`),
+  CONSTRAINT `pay_intents_purposes_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes`
+--
+
+LOCK TABLES `pay_intents_purposes` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_intents_purposes_addon`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes_addon`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_purposes_addon` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(5) unsigned NOT NULL,
+  `paymentAddonId` int(10) unsigned DEFAULT NULL,
+  `paymentAddon` json NOT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `paymentAddonId` (`paymentAddonId`),
+  CONSTRAINT `pay_intents_purposes_addon_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_purposes_addon_ibfk_2` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes_addon`
+--
+
+LOCK TABLES `pay_intents_purposes_addon` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes_addon` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes_addon` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_intents_purposes_manual`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes_manual`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_purposes_manual` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(5) unsigned NOT NULL,
+  `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  CONSTRAINT `pay_intents_purposes_manual_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes_manual`
+--
+
+LOCK TABLES `pay_intents_purposes_manual` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes_manual` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes_manual` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_intents_purposes_trigger`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes_trigger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_purposes_trigger` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(5) unsigned NOT NULL,
+  `triggers` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `triggers` (`triggers`),
+  CONSTRAINT `pay_intents_purposes_trigger_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes_trigger`
+--
+
+LOCK TABLES `pay_intents_purposes_trigger` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pay_methods`
 --
 
@@ -3270,7 +3381,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3431,6 +3542,26 @@ SET character_set_client = utf8;
  1 AS `nameAbbrev`,
  1 AS `searchNameHuman`,
  1 AS `searchNameOrg`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `view_pay_intents_purposes`
+--
+
+DROP TABLE IF EXISTS `view_pay_intents_purposes`;
+/*!50001 DROP VIEW IF EXISTS `view_pay_intents_purposes`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `view_pay_intents_purposes` AS SELECT 
+ 1 AS `paymentIntentId`,
+ 1 AS `pos`,
+ 1 AS `type`,
+ 1 AS `amount`,
+ 1 AS `originalAmount`,
+ 1 AS `paymentAddonId`,
+ 1 AS `paymentAddon`,
+ 1 AS `title`,
+ 1 AS `description`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3716,6 +3847,24 @@ USE `akso`;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_pay_intents_purposes`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_pay_intents_purposes`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description` from (((`pay_intents_purposes` left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -3726,4 +3875,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-13 10:05:17
+-- Dump completed on 2020-08-22 14:00:27

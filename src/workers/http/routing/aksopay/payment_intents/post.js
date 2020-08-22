@@ -4,6 +4,7 @@ import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
+import { createTransaction } from 'akso/util';
 
 import path from 'path';
 import crypto from 'pn/crypto';
@@ -86,15 +87,9 @@ export default {
 										type: 'string',
 										const: 'trigger'
 									},
-									trigger: {
+									triggers: {
 										type: 'string',
 										enum: TRIGGER_TYPES
-									},
-									id: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 500,
-										nullable: true
 									},
 									originalAmount: {
 										type: 'integer',
@@ -120,7 +115,7 @@ export default {
 								},
 								required: [
 									'type',
-									'trigger',
+									'triggers',
 									'amount',
 									'title'
 								],
@@ -243,12 +238,11 @@ export default {
 			return res.type('text/plain').status(400).send('Currency not supported by PaymentMethod');
 		}
 
-		// Format the stored purposes, sum amounts to totalAmount
+		// Sum amounts to totalAmount, verify existence of addons
 		let totalAmount = 0;
-		const storedPurposes = await Promise.all(req.body.purposes.map(async purpose => {
+		for (const purpose of req.body.purposes) {
 			if (purpose.type === 'trigger') {
 				totalAmount += purpose.amount;
-				return purpose;
 
 			} else if (purpose.type === 'addon') {
 				totalAmount += purpose.amount;
@@ -264,13 +258,12 @@ export default {
 						.send(`PaymentAddon#id=${purpose.paymentAddonId} not found`);
 				}
 				purpose.paymentAddon = addon;
-				return purpose;
 
 			} else if (purpose.type === 'manual') {
 				totalAmount += purpose.amount;
-				return purpose;
 			}
-		}));
+		}
+
 		if (!AKSO.cashify) { return res.sendStatus(503); }
 		const currencyZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(req.body.currency);
 		const totalAmountInUSD = AKSO.cashify.convert(totalAmount / currencyZeroDecimalFactor, { from: req.body.currency, to: 'USD' });
@@ -337,11 +330,47 @@ export default {
 			stripePaymentIntentId: stripePaymentIntentId,
 			stripeClientSecret: stripeClientSecret,
 			stripeSecretKey: paymentMethodRaw.stripeSecretKey,
-			purposes: JSON.stringify(storedPurposes),
 			totalAmount: totalAmount
 		};
 
-		await AKSO.db('pay_intents').insert(data);
+		const trx = await createTransaction();
+
+		await trx('pay_intents').insert(data);
+
+		await trx('pay_intents_purposes').insert(req.body.purposes.map((purpose, index) => {
+			return {
+				paymentIntentId: id,
+				pos: index,
+				type: purpose.type,
+				amount: purpose.amount,
+				originalAmount: purpose.originalAmount
+			};
+		}));
+
+		for (const [index, purpose] of Object.entries(req.body.purposes)) {
+			const purposeDB = {
+				paymentIntentId: id,
+				pos: index
+			};
+
+			if (purpose.type === 'addon') {
+				purposeDB.paymentAddonId = purpose.paymentAddonId;
+				purposeDB.paymentAddon = JSON.stringify(purpose.paymentAddon);
+
+			} else if (purpose.type === 'manual') {
+				purposeDB.title = purpose.title;
+				purposeDB.description = purpose.description;
+
+			} else if (purpose.type === 'trigger') {
+				purposeDB.triggers = purpose.triggers;
+				purposeDB.title = purpose.title;
+				purposeDB.description = purpose.description;
+			}
+
+			await trx('pay_intents_purposes_' + purpose.type).insert(purposeDB);
+		}
+
+		await trx.commit();
 
 		res.set('Location', path.join(AKSO.conf.http.path, 'aksopay/payment_intents', idEncoded));
 		res.set('X-Identifier', idEncoded);
