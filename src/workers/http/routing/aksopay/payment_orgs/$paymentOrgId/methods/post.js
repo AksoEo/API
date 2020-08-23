@@ -40,6 +40,27 @@ const allTypesProps = {
 	},
 	isRecommended: {
 		type: 'boolean'
+	},
+	feePercent: {
+		type: 'number',
+		nullable: true,
+		exclusiveMinimum: 0,
+		exclusiveMaximum: 1
+	},
+	feeFixed: {
+		type: 'object',
+		properties: {
+			val: {
+				type: 'integer',
+				format: 'uint16'
+			},
+			cur: {
+				type: 'string',
+				enum: AKSOCurrency.all
+			}
+		},
+		required: [ 'val', 'cur' ],
+		additionalProperties: false
 	}
 };
 
@@ -110,6 +131,12 @@ export default {
 			data.stripeMethods = data.stripeMethods.join(',');
 		}
 		data.currencies = data.currencies.join(',');
+
+		delete data.feeFixed;
+		if (req.body.feeFixed) {
+			data.feeFixed_val = req.body.feeFixed.val;
+			data.feeFixed_cur = req.body.feeFixed.cur;
+		}
 
 		if (data.type === 'stripe') {
 			// Verify Stripe keys

@@ -10,7 +10,14 @@ export default {
 		currencies: '',
 		paymentValidity: '',
 		isRecommended: 'f',
+		feePercent:  '',
+		'feeFixed.val': '',
+		'feeFixed.cur': '',
 		stripePublishableKey: ''
+	},
+	fieldAliases: {
+		'feeFixed.val': 'feeFixed_val',
+		'feeFixed.cur': 'feeFixed_cur'
 	},
 	alwaysSelect: [ 'type' ]
 };

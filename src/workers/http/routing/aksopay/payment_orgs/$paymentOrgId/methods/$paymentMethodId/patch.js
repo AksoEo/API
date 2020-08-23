@@ -41,6 +41,27 @@ export default {
 				isRecommended: {
 					type: 'boolean'
 				},
+				feePercent: {
+					type: 'number',
+					nullable: true,
+					exclusiveMinimum: 0,
+					exclusiveMaximum: 1
+				},
+				feeFixed: {
+					type: 'object',
+					properties: {
+						val: {
+							type: 'integer',
+							format: 'uint16'
+						},
+						cur: {
+							type: 'string',
+							enum: AKSOCurrency.all
+						}
+					},
+					required: [ 'val', 'cur' ],
+					additionalProperties: false
+				},
 				stripeMethods: {
 					type: 'array',
 					uniqueItems: true,
@@ -82,7 +103,15 @@ export default {
 		if ('stripeMethods' in data) {
 			data.stripeMethods = data.stripeMethods.join(',');
 		}
-		data.currencies = data.currencies.join(',');
+		if ('currencies' in data) {
+			data.currencies = data.currencies.join(',');
+		}
+
+		if (data.feeFixed) {
+			delete data.feeFixed;
+			data.feeFixed_val = req.body.feeFixed.val;
+			data.feeFixed_cur = req.body.feeFixed.cur;
+		}
 
 		if (paymentMethod.type === 'manual') {
 			if ('stripeMethods' in data ||

@@ -23,6 +23,13 @@ class AKSOPayPaymentMethodResource extends SimpleResource {
 		if ('isRecommended' in obj) {
 			obj.isRecommended = !!obj.isRecommended;
 		}
+		if ('feeFixed_val' in obj || 'feeFixed_obj' in obj) {
+			fields.push('feeFixed');
+			obj.feeFixed = {
+				val: obj.feeFixed_val,
+				cur: obj.feeFixed_cur
+			};
+		}
 
 		this.removeUnnecessary(fields);
 	}

@@ -181,8 +181,7 @@ export default {
 								required: [
 									'type',
 									'amount',
-									'title',
-									'description'
+									'title'
 								],
 								additionalProperties: false
 							}
@@ -264,8 +263,23 @@ export default {
 			}
 		}
 
+		// Load cashify
 		if (!AKSO.cashify) { return res.sendStatus(503); }
 		const currencyZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(req.body.currency);
+
+		// Add percentage fee, if it exists
+		if (paymentMethod.feePercent) {
+			totalAmount = Math.round(totalAmount * (1 + paymentMethod.feePercent));
+		}
+
+		// Add fixed fee, if it exists
+		if (paymentMethod.feeFixed) {
+			const feeZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(paymentMethod.feeFixed.cur);
+			const feeInIntentCur = currencyZeroDecimalFactor *
+				AKSO.cashify.convert(paymentMethod.feeFixed.val / feeZeroDecimalFactor, { from: paymentMethod.feeFixed.cur, to: req.body.currency });
+			totalAmount += feeInIntentCur;
+		}
+
 		const totalAmountInUSD = AKSO.cashify.convert(totalAmount / currencyZeroDecimalFactor, { from: req.body.currency, to: 'USD' });
 		if (totalAmountInUSD < 1) {
 			totalAmount = Math.round(
