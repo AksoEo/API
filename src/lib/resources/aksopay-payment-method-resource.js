@@ -25,10 +25,14 @@ class AKSOPayPaymentMethodResource extends SimpleResource {
 		}
 		if ('feeFixed_val' in obj || 'feeFixed_obj' in obj) {
 			fields.push('feeFixed');
-			obj.feeFixed = {
-				val: obj.feeFixed_val,
-				cur: obj.feeFixed_cur
-			};
+			if (obj.feeFixed_val && obj.feeFixed_cur) {
+				obj.feeFixed = {
+					val: obj.feeFixed_val,
+					cur: obj.feeFixed_cur
+				};
+			} else {
+				obj.feeFixed = null;
+			}
 		}
 
 		this.removeUnnecessary(fields);
