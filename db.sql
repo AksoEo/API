@@ -3251,12 +3251,14 @@ CREATE TABLE `pay_intents_purposes` (
   `paymentIntentId` binary(15) NOT NULL,
   `pos` smallint(5) unsigned NOT NULL,
   `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `invalid` tinyint(1) NOT NULL DEFAULT '0',
   `amount` bigint(10) NOT NULL,
   `originalAmount` bigint(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `type` (`type`),
   KEY `amount` (`amount`),
   KEY `originalAmount` (`originalAmount`),
+  KEY `invalid` (`invalid`),
   CONSTRAINT `pay_intents_purposes_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3384,7 +3386,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3878,4 +3880,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-23 16:34:38
+-- Dump completed on 2020-08-30 18:08:50

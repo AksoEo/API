@@ -70,6 +70,7 @@ export async function afterQuery (arr, done) {
 		for (const purpose of purposesArr) {
 			let purposeFormatted = {
 				type: purpose.type,
+				invalid: !!purpose.invalid,
 				amount: purpose.amount,
 				originalAmount: purpose.originalAmount
 			};
