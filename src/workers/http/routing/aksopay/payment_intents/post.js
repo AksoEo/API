@@ -237,15 +237,11 @@ export default {
 			return res.type('text/plain').status(400).send('Currency not supported by PaymentMethod');
 		}
 
-		// Sum amounts to totalAmount, verify existence of addons
+		// Verify existence of addons in purposes
 		let totalAmount = 0;
 		for (const purpose of req.body.purposes) {
-			if (purpose.type === 'trigger') {
-				totalAmount += purpose.amount;
-
-			} else if (purpose.type === 'addon') {
-				totalAmount += purpose.amount;
-
+			totalAmount += purpose.amount;
+			if (purpose.type === 'addon') {
 				const addon = await AKSO.db('pay_addons')
 					.where({
 						id: purpose.paymentAddonId,
@@ -257,9 +253,6 @@ export default {
 						.send(`PaymentAddon#id=${purpose.paymentAddonId} not found`);
 				}
 				purpose.paymentAddon = addon;
-
-			} else if (purpose.type === 'manual') {
-				totalAmount += purpose.amount;
 			}
 		}
 
@@ -267,30 +260,62 @@ export default {
 		if (!AKSO.cashify) { return res.sendStatus(503); }
 		const currencyZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(req.body.currency);
 
-		// Add percentage fee, if it exists
-		if (paymentMethod.feePercent) {
-			totalAmount = Math.round(totalAmount * (1 + paymentMethod.feePercent));
-		}
+		// Add fees if they exist
+		if (paymentMethod.feePercent || paymentMethod.feeFixed) {
+			const feePurpose = {
+				type: 'manual',
+				amount: 0,
+				title: 'Kotizo pro pagmaniero'
+			};
 
-		// Add fixed fee, if it exists
-		if (paymentMethod.feeFixed) {
-			const feeZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(paymentMethod.feeFixed.cur);
-			const feeInIntentCur = currencyZeroDecimalFactor *
-				AKSO.cashify.convert(paymentMethod.feeFixed.val / feeZeroDecimalFactor, { from: paymentMethod.feeFixed.cur, to: req.body.currency });
-			totalAmount += feeInIntentCur;
+			// Add percentage fee, if it exists
+			if (paymentMethod.feePercent) {
+				const percentFee = Math.round(totalAmount * paymentMethod.feePercent);
+
+				feePurpose.amount += percentFee;
+				totalAmount += percentFee;
+
+				feePurpose.description = `Pagmaniera kotizo de ${(paymentMethod.feePercent * 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+			}
+
+			// Add fixed fee, if it exists
+			if (paymentMethod.feeFixed) {
+				const feeZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(paymentMethod.feeFixed.cur);
+				const feeInIntentCur = currencyZeroDecimalFactor *
+					AKSO.cashify.convert(paymentMethod.feeFixed.val / feeZeroDecimalFactor, { from: paymentMethod.feeFixed.cur, to: req.body.currency });
+				
+				feePurpose.amount += feeInIntentCur;
+				totalAmount += feeInIntentCur;
+
+				const formattedFee = `${(feeInIntentCur / currencyZeroDecimalFactor).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${req.body.currency}`;
+				if (paymentMethod.feePercent) {
+					feePurpose.description += ` + ${formattedFee}`;
+				} else {
+					feePurpose.description = `Pagmaniera kotizo de ${formattedFee}`;
+				}
+			}
+
+			req.body.purposes.push(feePurpose);
 		}
 
 		const totalAmountInUSD = AKSO.cashify.convert(totalAmount / currencyZeroDecimalFactor, { from: req.body.currency, to: 'USD' });
 		if (totalAmountInUSD < 1) {
-			totalAmount = Math.round(
+			const minimumAmount = Math.round(
 				AKSO.cashify.convert(1, { from: 'USD', to: req.body.currency })
 					* currencyZeroDecimalFactor
 			);
+			const minimumAmountDelta = minimumAmount - totalAmount;
+
+			req.body.purposes.push({
+				type: 'manual',
+				amount: minimumAmountDelta,
+				title: 'Kotizo pro pagsumo sub minimumo',
+				description: 'Ne eblas pagi malpli ol 1 USD, tial necesas eta kotizo'
+			});
+			totalAmount = minimumAmount;
 		} else if (totalAmountInUSD > 500000) {
-			totalAmount = Math.round(
-				AKSO.cashify.convert(500000, { from: 'USD', to: req.body.currency })
-					* currencyZeroDecimalFactor
-			);
+			return res.type('text/plain').status(417)
+				.send('Payments may not have a total amount of more than USD 500,000');
 		}
 
 		const id = await crypto.randomBytes(15);
