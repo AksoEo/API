@@ -1,4 +1,5 @@
 import * as intentUtil from 'akso/lib/aksopay-intent-util';
+import { schema } from '../schema';
 
 import moment from 'moment-timezone';
 
@@ -21,7 +22,7 @@ export default {
 		// Make sure the user has the necessary perms
 		const paymentIntent = await AKSO.db('pay_intents')
 			.where('id', req.params.paymentIntentId)
-			.first('*');
+			.first('*', { totalAmount: schema.fieldAliases.totalAmount() });
 		if (!paymentIntent) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
 
@@ -32,6 +33,8 @@ export default {
 			
 			return res.sendStatus(409);
 		}
+
+
 
 		const totalRefund = req.body.totalRefund || paymentIntent.totalAmount;
 		if (totalRefund > paymentIntent.totalAmount) {
