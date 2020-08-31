@@ -1,3 +1,5 @@
+import QueryUtil from 'akso/lib/query-util';
+
 export const schema = {
 	defaultFields: [ 'id' ],
 	fields: {
@@ -34,7 +36,34 @@ export const schema = {
 	},
 	alwaysSelect: [
 		'id', 'paymentMethod', 'org'
-	]
+	],
+	customFilterLogicOps: {
+		$purposes: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('$purposes expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1)
+					.from('view_pay_intents_purposes')
+					.whereRaw('`view_pay_intents_purposes`.`paymentIntentId` = `pay_intents`.`id`');
+
+				QueryUtil.filter({
+					fields: [
+						'type',
+						'invalid',
+						'amount',
+						'originalAmount',
+						'paymentAddonId',
+						'triggers'
+					],
+					query: this,
+					filter
+				});
+			});
+		}
+	}
 };
 
 export async function afterQuery (arr, done) {
