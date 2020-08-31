@@ -3172,7 +3172,6 @@ CREATE TABLE `pay_intents` (
   `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `totalAmount` int(10) unsigned NOT NULL,
   `stripePaymentIntentId` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeClientSecret` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3193,7 +3192,6 @@ CREATE TABLE `pay_intents` (
   KEY `paymentOrgId` (`paymentOrgId`),
   KEY `succeededTime` (`succeededTime`),
   KEY `refundedTime` (`refundedTime`),
-  KEY `totalAmount` (`totalAmount`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
@@ -3386,7 +3384,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3880,4 +3878,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-30 18:08:50
+-- Dump completed on 2020-08-31 16:47:07

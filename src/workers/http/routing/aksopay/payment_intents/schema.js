@@ -29,7 +29,8 @@ export const schema = {
 		'customer.email': 'customer_email',
 		'customer.name': 'customer_name',
 		purposes: () => AKSO.db.raw('1'),
-		events: () => AKSO.db.raw('1')
+		events: () => AKSO.db.raw('1'),
+		totalAmount: () => AKSO.db.raw('CAST((SELECT SUM(amount) from pay_intents_purposes where paymentIntentId = id) AS UNSIGNED INTEGER)')
 	},
 	alwaysSelect: [
 		'id', 'paymentMethod', 'org'

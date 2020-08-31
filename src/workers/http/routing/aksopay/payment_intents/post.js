@@ -368,8 +368,7 @@ export default {
 			foreignId: req.body.foreignId,
 			stripePaymentIntentId: stripePaymentIntentId,
 			stripeClientSecret: stripeClientSecret,
-			stripeSecretKey: paymentMethodRaw.stripeSecretKey,
-			totalAmount: totalAmount
+			stripeSecretKey: paymentMethodRaw.stripeSecretKey
 		};
 
 		const trx = await createTransaction();
