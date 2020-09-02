@@ -1,8 +1,5 @@
-import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
-
-import { schema as parSchema } from './schema';
 
 function convertCurrency (curFrom, curTo, amount) {
 	if (typeof amount !== 'number') { amount = parseInt(amount, 10); }
@@ -17,20 +14,47 @@ function convertCurrency (curFrom, curTo, amount) {
 	);
 }
 
-const schema = {
-	...parSchema,
-	...{
-		query: [
-			'filter', 'currency', 'time'
-		],
-		body: null
+function getConvertedReportTotals (req, byCurrency, isInvalid = false) {
+	let converted = null;
+	if (req.query.currency) {
+		converted = {
+			total: 0,
+			earned: 0
+		};
+		if (isInvalid) {
+			converted.invalidated = 0;
+		} else {
+			converted.refunded = 0;
+		}
+
+		for (const [currency, currencyObj] of Object.entries(byCurrency)) {
+			converted.total += convertCurrency(currency, req.query.currency, currencyObj.total);
+			converted.earned += convertCurrency(currency, req.query.currency, currencyObj.earned);
+			if (isInvalid) {
+				converted.invalidated += convertCurrency(currency, req.query.currency, currencyObj.invalidated);
+			} else {
+				converted.refunded += convertCurrency(currency, req.query.currency, currencyObj.refunded);
+			}
+		}
 	}
-};
+
+	return converted;
+}
 
 export default {
-	schema: schema,
+	schema: {
+		query: [
+			'currency', 'time'
+		],
+		body: null
+	},
 
 	run: async function run (req, res) {
+		// Check perms
+		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
+		if (!orgs.length) { return res.sendStatus(403); }
+
 		// Validate ?currency
 		if ('currency' in req.query && !AKSOCurrency.has(req.query.currency)) {
 			const err = new Error('Unknown ?currency');
@@ -56,167 +80,260 @@ export default {
 			parseInt(timeBits[2], 10)
 		];
 
-		// Check perms
-		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
-			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
-		if (!orgs.length) { return res.sendStatus(403); }
-
-		const baseQuery = AKSO.db('pay_intents')
-			.whereIn('org', orgs);
-		QueryUtil.simpleCollection(req, schema, baseQuery);
-		baseQuery
-			.clearSelect()
-			.limit(Number.MAX_SAFE_INTEGER)
-			.offset(0);
-
 		const response = {
-			converted: null,
-			totals: {
-				currency: {},
-				paymentMethod: {}
-			}
+			byCurrency: {},
+			byPaymentOrg: {}
 		};
 
-		// By currency
-		const totalEarnedQuery = baseQuery
-			.clone()
-			.whereBetween('succeededTime', timeRange)
-			.sum({ s: 'totalAmount' })
-			.count({ c: 'totalAmount' })
+		////////////////
+		// byCurrency //
+		////////////////
+		const globalEarnedByCurrency = await AKSO.db('pay_intents')
+			.leftJoin('pay_intents_purposes', 'paymentIntentId', '=', 'id')
 			.select('currency')
+			.countDistinct({ c: 'id' })
+			.sum({ s: 'amount' })
+			.whereIn('org', orgs)
+			.whereBetween('succeededTime', timeRange)
 			.groupBy('currency');
-		const totalEarned = await totalEarnedQuery;
 
-		for (const totalEarnedRow of totalEarned) {
-			// These are strings for whatever reason
-			totalEarnedRow.s = parseInt(totalEarnedRow.s, 10);
-			totalEarnedRow.c = parseInt(totalEarnedRow.c, 10);
-
-			response.totals.currency[totalEarnedRow.currency] = {
-				earned: totalEarnedRow.s,
+		for (const earnedRow of globalEarnedByCurrency) {
+			response.byCurrency[earnedRow.currency] = {
+				total: parseInt(earnedRow.s, 10),
+				earned: parseInt(earnedRow.s, 10),
+				count: earnedRow.c,
 				refunded: 0,
-				total: totalEarnedRow.s,
-				count: totalEarnedRow.c,
 				refunds: 0
 			};
 		}
 
-		const totalRefundedQuery = baseQuery
-			.clone()
-			.whereBetween('refundedTime', timeRange)
-			.sum({ s: 'totalAmount' })
-			.count({ c: 'amountRefunded' })
+		const globalRefundedByCurrency = await AKSO.db('pay_intents')
 			.select('currency')
+			.count({ c: 'id' })
+			.sum({ s: 'amountRefunded' })
+			.whereIn('org', orgs)
+			.whereBetween('refundedTime', timeRange)
 			.groupBy('currency');
-		const totalRefunded = await totalRefundedQuery;
 
-		for (const totalRefundedRow of totalRefunded) {
-			// These are strings for whatever reason
-			totalRefundedRow.s = parseInt(totalRefundedRow.s, 10);
-			totalRefundedRow.c = parseInt(totalRefundedRow.c, 10);
-
-			if (!(totalRefundedRow.currency in response.totals.currency)) {
-				response.totals.currency[totalRefundedRow.currency] = {
-					earned: 0,
+		for (const refundedRow of globalRefundedByCurrency) {
+			if (!(refundedRow.currency in response.byCurrency)) {
+				response.byCurrency[refundedRow.currency] = {
 					total: 0,
+					earned: 0,
 					count: 0
 				};
 			}
-
-			response.totals.currency[totalRefundedRow.currency] = {
-				...response.totals.currency[totalRefundedRow.currency],
-				refunded: totalRefundedRow.s,
-				total: response.totals.currency[totalRefundedRow.currency].earned - totalRefundedRow.s,
-				refunds: totalRefundedRow.c
-			};
-		}
-		response.refunds = totalRefunded.c;
-
-		// Converted (global)
-		if (req.query.currency) {
-			let totalConverted = 0,
-				earnedConverted = 0,
-				refundedConverted = 0;
-			for (const [ currency, currencyObj ] of Object.entries(response.totals.currency)) {
-				totalConverted += convertCurrency(currency, req.query.currency, currencyObj.total);
-				earnedConverted += convertCurrency(currency, req.query.currency, currencyObj.earned);
-				refundedConverted += convertCurrency(currency, req.query.currency, currencyObj.refunded);
-			}
-			response.converted = {
-				total: totalConverted,
-				earned: earnedConverted,
-				refunded: refundedConverted
-			};
+			response.byCurrency[refundedRow.currency].total -= parseInt(refundedRow.s, 10);
+			response.byCurrency[refundedRow.currency].refunded = parseInt(refundedRow.s, 10);
+			response.byCurrency[refundedRow.currency].refunds = refundedRow.c;
 		}
 
-		// By payment method
-		const totalEarnedByMethodQuery = baseQuery
-			.clone()
+		///////////////
+		// converted //
+		///////////////
+		response.converted = getConvertedReportTotals(req, response.byCurrency);
+
+		/////////////////////////////
+		// byPaymentOrg.byCurrency //
+		/////////////////////////////
+		const globalEarnedByCurrencyByOrg = await AKSO.db('pay_intents')
+			.leftJoin('pay_intents_purposes', 'paymentIntentId', '=', 'id')
+			.select('paymentOrgId', 'currency')
+			.countDistinct({ c: 'id' })
+			.sum({ s: 'amount' })
+			.whereIn('org', orgs)
 			.whereBetween('succeededTime', timeRange)
-			.sum({ s: 'totalAmount' })
-			.count({ c: 'totalAmount' })
-			.select('currency', 'paymentOrgId', 'paymentMethodId')
-			.groupBy('currency', 'paymentMethodId', 'paymentOrgId');
-		const totalEarnedByMethod = await totalEarnedByMethodQuery;
+			.groupBy('paymentOrgId', 'currency');
 
-		for (const totalEarnedRow of totalEarnedByMethod) {
-			// These are strings for whatever reason
-			totalEarnedRow.s = parseInt(totalEarnedRow.s, 10);
-			totalEarnedRow.c = parseInt(totalEarnedRow.c, 10);
-
-			if (!(totalEarnedRow.paymentOrgId in response.totals.paymentMethod)) {
-				response.totals.paymentMethod[totalEarnedRow.paymentOrgId] = {};
+		for (const earnedRow of globalEarnedByCurrencyByOrg) {
+			if (!(earnedRow.paymentOrgId in response.byPaymentOrg)) {
+				response.byPaymentOrg[earnedRow.paymentOrgId] = {
+					byCurrency: {},
+					byPaymentMethod: {},
+					byPaymentAddon: {}
+				};
 			}
-			if (!(totalEarnedRow.paymentMethodId in response.totals.paymentMethod[totalEarnedRow.paymentOrgId])) {
-				response.totals.paymentMethod[totalEarnedRow.paymentOrgId][totalEarnedRow.paymentMethodId] = { totals: {} };
-			}
-
-			const obj = response.totals.paymentMethod[totalEarnedRow.paymentOrgId][totalEarnedRow.paymentMethodId].totals;
-			obj[totalEarnedRow.currency] = {
-				earned: totalEarnedRow.s,
-				total: totalEarnedRow.s,
+			const byCurrency = response.byPaymentOrg[earnedRow.paymentOrgId].byCurrency;
+			byCurrency[earnedRow.currency] = {
+				total: parseInt(earnedRow.s, 10),
+				earned: parseInt(earnedRow.s, 10),
+				count: earnedRow.c,
 				refunded: 0,
-				count: totalEarnedRow.c,
 				refunds: 0
 			};
 		}
 
-		const totalRefundedByMethodQuery = baseQuery
-			.clone()
+		const globalRefundedByCurrencyByOrg = await AKSO.db('pay_intents')
+			.select('paymentOrgId', 'currency')
+			.count({ c: 'id' })
+			.sum({ s: 'amountRefunded' })
+			.whereIn('org', orgs)
 			.whereBetween('refundedTime', timeRange)
-			.sum({ s: 'totalAmount' })
-			.count({ c: 'totalAmount' })
-			.select('currency', 'paymentOrgId', 'paymentMethodId')
-			.groupBy('currency', 'paymentMethodId', 'paymentOrgId');
-		const totalRefundedByMethod = await totalRefundedByMethodQuery;
+			.groupBy('paymentOrgId', 'currency');
 
-		for (const totalRefundedRow of totalRefundedByMethod) {
-			// These are strings for whatever reason
-			totalRefundedRow.s = parseInt(totalRefundedRow.s, 10);
-			totalRefundedRow.c = parseInt(totalRefundedRow.c, 10);
-
-			if (!(totalRefundedRow.paymentOrgId in response.totals.paymentMethod)) {
-				response.totals.paymentMethod[totalRefundedRow.paymentOrgId] = {};
+		for (const refundedRow of globalRefundedByCurrencyByOrg) {
+			if (!(refundedRow.paymentOrgId in response.byPaymentOrg)) {
+				response.byPaymentOrg[refundedRow.paymentOrgId] = {
+					byCurrency: {},
+					byPaymentMethod: {},
+					byPaymentAddon: {}
+				};
 			}
-			if (!(totalRefundedRow.paymentMethodId in response.totals.paymentMethod[totalRefundedRow.paymentOrgId])) {
-				response.totals.paymentMethod[totalRefundedRow.paymentOrgId][totalRefundedRow.paymentMethodId] = { totals: {} };
-			}
-			const obj = response.totals.paymentMethod[totalRefundedRow.paymentOrgId][totalRefundedRow.paymentMethodId].totals;
-
-			if (!(totalRefundedRow.currency in obj)) {
-				obj[totalRefundedRow.currency] = {
-					earned: 0,
+			const byCurrency = response.byPaymentOrg[refundedRow.paymentOrgId].byCurrency;
+			if (!(refundedRow.currency in byCurrency)) {
+				byCurrency[refundedRow.currency] = {
 					total: 0,
+					earned: 0,
 					count: 0
 				};
 			}
+			byCurrency[refundedRow.currency].total -= parseInt(refundedRow.s, 10);
+			byCurrency[refundedRow.currency].refunded = parseInt(refundedRow.s, 10);
+			byCurrency[refundedRow.currency].refunds = refundedRow.c;
+		}
 
-			obj[totalRefundedRow.currency] = {
-				...obj[totalRefundedRow.currency],
-				refunded: totalRefundedRow.s,
-				total: obj[totalRefundedRow.currency].total - totalRefundedRow.s,
-				refunds: totalRefundedRow.c
+		////////////////////////////
+		// byPaymentOrg.converted //
+		////////////////////////////
+		for (const orgObj of Object.values(response.byPaymentOrg)) {
+			orgObj.converted = getConvertedReportTotals(req, orgObj.byCurrency);
+		}
+
+		/////////////////////////////////////////////
+		// byPaymentOrg.byPaymentMethod.byCurrency //
+		/////////////////////////////////////////////
+		const globalEarnedByCurrencyByOrgByMethod = await AKSO.db('pay_intents')
+			.leftJoin('pay_intents_purposes', 'paymentIntentId', '=', 'id')
+			.select('paymentMethodId', 'paymentOrgId', 'currency')
+			.countDistinct({ c: 'id' })
+			.sum({ s: 'amount' })
+			.whereIn('org', orgs)
+			.whereBetween('succeededTime', timeRange)
+			.groupBy('paymentMethodId', 'paymentOrgId', 'currency');
+
+		for (const earnedRow of globalEarnedByCurrencyByOrgByMethod) {
+			const byPaymentMethod = response.byPaymentOrg[earnedRow.paymentOrgId].byPaymentMethod;
+			if (!(earnedRow.paymentMethodId in byPaymentMethod)) {
+				byPaymentMethod[earnedRow.paymentMethodId] = {
+					byCurrency: {}
+				};
+			}
+			const byCurrency = byPaymentMethod[earnedRow.paymentMethodId].byCurrency;
+			byCurrency[earnedRow.currency] = {
+				total: parseInt(earnedRow.s, 10),
+				earned: parseInt(earnedRow.s, 10),
+				count: earnedRow.c,
+				refunded: 0,
+				refunds: 0
 			};
+		}
+
+		const globalRefundedByCurrencyByOrgByMethod = await AKSO.db('pay_intents')
+			.select('paymentMethodId', 'paymentOrgId', 'currency')
+			.count({ c: 'id' })
+			.sum({ s: 'amountRefunded' })
+			.whereIn('org', orgs)
+			.whereBetween('refundedTime', timeRange)
+			.groupBy('paymentMethodId', 'paymentOrgId', 'currency');
+
+		for (const refundedRow of globalRefundedByCurrencyByOrgByMethod) {
+			const byPaymentMethod = response.byPaymentOrg[refundedRow.paymentOrgId].byPaymentMethod;
+			if (!(refundedRow.paymentMethodId in byPaymentMethod)) {
+				byPaymentMethod[refundedRow.paymentMethodId] = {
+					byCurrency: {}
+				};
+			}
+			const byCurrency = byPaymentMethod[refundedRow.paymentMethodId].byCurrency;
+			if (!(refundedRow.currency in byCurrency)) {
+				byCurrency[refundedRow.currency] = {
+					total: 0,
+					earned: 0,
+					count: 0
+				};
+			}
+			byCurrency[refundedRow.currency].total -= parseInt(refundedRow.s, 10);
+			byCurrency[refundedRow.currency].refunded = parseInt(refundedRow.s, 10);
+			byCurrency[refundedRow.currency].refunds = refundedRow.c;
+		}
+
+		////////////////////////////////////////////
+		// byPaymentOrg.byPaymentMethod.converted //
+		////////////////////////////////////////////
+		for (const orgObj of Object.values(response.byPaymentOrg)) {
+			for (const methodObj of Object.values(orgObj.byPaymentMethod)) {
+				methodObj.converted = getConvertedReportTotals(req, methodObj.byCurrency);
+			}
+		}
+
+		////////////////////////////////////////////
+		// byPaymentOrg.byPaymentAddon.byCurrency //
+		////////////////////////////////////////////
+		const globalEarnedByCurrencyByOrgByAddon = await AKSO.db('pay_intents')
+			.leftJoin('view_pay_intents_purposes', 'paymentIntentId', '=', 'id')
+			.select('paymentAddonId', 'paymentOrgId', 'currency')
+			.countDistinct({ c: 'id' })
+			.sum({ s: 'amount' })
+			.whereIn('org', orgs)
+			.whereBetween('succeededTime', timeRange)
+			.where('view_pay_intents_purposes.type', 'addon')
+			.where('invalid', false)
+			.groupBy('paymentAddonId', 'paymentOrgId', 'currency');
+
+		for (const earnedRow of globalEarnedByCurrencyByOrgByAddon) {
+			const byPaymentAddon = response.byPaymentOrg[earnedRow.paymentOrgId].byPaymentAddon;
+			if (!(earnedRow.paymentAddonId in byPaymentAddon)) {
+				byPaymentAddon[earnedRow.paymentAddonId] = {
+					byCurrency: {}
+				};
+			}
+			const byCurrency = byPaymentAddon[earnedRow.paymentAddonId].byCurrency;
+			byCurrency[earnedRow.currency] = {
+				total: parseInt(earnedRow.s, 10),
+				earned: parseInt(earnedRow.s, 10),
+				count: earnedRow.c,
+				invalidated: 0,
+				invalidations: 0
+			};
+		}
+
+		const globalInvalidatedByCurrencyByOrgByAddon = await AKSO.db('pay_intents')
+			.leftJoin('view_pay_intents_purposes', 'paymentIntentId', '=', 'id')
+			.select('paymentAddonId', 'paymentOrgId', 'currency')
+			.countDistinct({ c: 'id' })
+			.sum({ s: 'amount' })
+			.whereIn('org', orgs)
+			.whereBetween('succeededTime', timeRange)
+			.where('view_pay_intents_purposes.type', 'addon')
+			.where('invalid', true)
+			.groupBy('paymentAddonId', 'paymentOrgId', 'currency');
+
+		for (const invalidatedRow of globalInvalidatedByCurrencyByOrgByAddon) {
+			const byPaymentAddon = response.byPaymentOrg[invalidatedRow.paymentOrgId].byPaymentAddon;
+			if (!(invalidatedRow.paymentAddonId in byPaymentAddon)) {
+				byPaymentAddon[invalidatedRow.paymentAddonId] = {
+					byCurrency: {}
+				};
+			}
+			const byCurrency = byPaymentAddon[invalidatedRow.paymentAddonId].byCurrency;
+			if (!(invalidatedRow.currency in byCurrency)) {
+				byCurrency[invalidatedRow.currency] = {
+					total: 0,
+					earned: 0,
+					count: 0
+				};
+			}
+			byCurrency[invalidatedRow.currency].total -= parseInt(invalidatedRow.s, 10);
+			byCurrency[invalidatedRow.currency].invalidated = parseInt(invalidatedRow.s, 10);
+			byCurrency[invalidatedRow.currency].invalidations = invalidatedRow.c;
+		}
+
+		///////////////////////////////////////////
+		// byPaymentOrg.byPaymentAddon.converted //
+		///////////////////////////////////////////
+		for (const orgObj of Object.values(response.byPaymentOrg)) {
+			for (const addonObj of Object.values(orgObj.byPaymentAddon)) {
+				addonObj.converted = getConvertedReportTotals(req, addonObj.byCurrency, true);
+			}
 		}
 
 		res.sendObj(response);
