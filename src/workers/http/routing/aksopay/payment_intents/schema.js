@@ -1,4 +1,7 @@
+import { default as deepmerge } from 'deepmerge';
+
 import QueryUtil from 'akso/lib/query-util';
+import AKSOCurrency from 'akso/lib/enums/akso-currency';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -115,6 +118,19 @@ export async function afterQuery (arr, done) {
 				purposeFormatted.triggers = purpose.triggers;
 				purposeFormatted.title = purpose.title;
 				purposeFormatted.description = purpose.description;
+
+				if (purpose.triggerAmount_amount) {
+					purposeFormatted.triggerAmount = {
+						amount: purpose.triggerAmount_amount,
+						currency: purpose.triggerAmount_currency
+					};
+				} else {
+					purposeFormatted.triggerAmount = null;
+				}
+
+				if (purpose.triggers === 'congress_registration') {
+					purposeFormatted.dataId = purpose.trigger_congress_registration_dataId;
+				}
 			}
 
 			if (!(purpose.paymentIntentId in purposesObj)) {
@@ -130,4 +146,150 @@ export async function afterQuery (arr, done) {
 	done();
 }
 
-export const TRIGGER_TYPES = [ 'GARBAGE' ]; // TODO: Add triggers, remove GARBAGE
+export const TRIGGER_TYPES = [ 'congress_registration' ];
+
+// Generic trigger purpose
+const triggerPurposeSchemaGeneric = {
+	type: 'object',
+	properties: {
+		type: {
+			type: 'string',
+			const: 'trigger'
+		},
+		triggerAmount: {
+			type: 'object',
+			nullable: true,
+			properties: {
+				amount: {
+					type: 'integer',
+					format: 'uint32'
+				},
+				currency: {
+					type: 'string',
+					enum: AKSOCurrency.all
+				}
+			},
+			required: [
+				'amount', 'currency'
+			],
+			additionalProperties: false
+		},
+		triggers: {
+			type: 'string'
+		},
+		originalAmount: {
+			type: 'integer',
+			format: 'uint32',
+			nullable: true
+		},
+		amount: {
+			type: 'integer',
+			format: 'uint32'
+		},
+		title: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 128,
+			pattern: '^[^\\n]+$'
+		},
+		description: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 5000,
+			nullable: true
+		}
+	},
+	required: [
+		'type',
+		'triggers',
+		'amount',
+		'title'
+	],
+	additionalProperties: false
+};
+
+// Add triggers
+const triggerPurposeSchema = TRIGGER_TYPES.map(triggerName => {
+	let purpose = deepmerge({}, triggerPurposeSchemaGeneric);
+	purpose.properties.triggers.const = triggerName;
+
+	if (triggerName === 'congress_registration') {
+		purpose.properties.dataId = {
+			isBinary: true,
+			minBytes: 12,
+			maxBytes: 12
+		};
+		purpose.required.push('dataId');
+	}
+	return purpose;
+});
+
+export const purposeSchema = {
+	oneOf: [
+		...triggerPurposeSchema,
+		{
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					const: 'addon'
+				},
+				paymentAddonId: {
+					type: 'integer',
+					format: 'uint32'
+				},
+				originalAmount: {
+					type: 'integer',
+					format: 'uint32',
+					nullable: true
+				},
+				amount: {
+					type: 'integer',
+					format: 'uint32'
+				}
+			},
+			required: [
+				'type',
+				'paymentAddonId',
+				'amount'
+			],
+			additionalProperties: false
+		},
+		{
+			type: 'object',
+			properties: {
+				type: {
+					type: 'string',
+					const: 'manual'
+				},
+				originalAmount: {
+					type: 'integer',
+					format: 'int32',
+					nullable: true
+				},
+				amount: {
+					type: 'integer',
+					format: 'int32'
+				},
+				title: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 128,
+					pattern: '^[^\\n]+$'
+				},
+				description: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 5000,
+					nullable: true
+				}
+			},
+			required: [
+				'type',
+				'amount',
+				'title'
+			],
+			additionalProperties: false
+		}
+	]
+};

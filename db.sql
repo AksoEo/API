@@ -3226,7 +3226,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3335,10 +3335,14 @@ CREATE TABLE `pay_intents_purposes_trigger` (
   `paymentIntentId` binary(15) NOT NULL,
   `pos` smallint(5) unsigned NOT NULL,
   `triggers` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `triggerAmount_amount` int(10) unsigned DEFAULT NULL,
+  `triggerAmount_currency` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `triggers` (`triggers`),
+  KEY `triggerAmount_amount` (`triggerAmount_amount`),
+  KEY `triggerAmount_currency` (`triggerAmount_currency`),
   CONSTRAINT `pay_intents_purposes_trigger_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3350,6 +3354,33 @@ CREATE TABLE `pay_intents_purposes_trigger` (
 LOCK TABLES `pay_intents_purposes_trigger` WRITE;
 /*!40000 ALTER TABLE `pay_intents_purposes_trigger` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pay_intents_purposes_trigger` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_intents_purposes_trigger_congress_registration`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes_trigger_congress_registration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_intents_purposes_trigger_congress_registration` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(6) unsigned NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `dataId` (`dataId`),
+  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_2` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes_trigger_congress_registration`
+--
+
+LOCK TABLES `pay_intents_purposes_trigger_congress_registration` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger_congress_registration` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger_congress_registration` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3384,7 +3415,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3565,7 +3596,11 @@ SET character_set_client = utf8;
  1 AS `paymentAddonId`,
  1 AS `paymentAddon`,
  1 AS `title`,
- 1 AS `description`*/;
+ 1 AS `description`,
+ 1 AS `triggers`,
+ 1 AS `triggerAmount_amount`,
+ 1 AS `triggerAmount_currency`,
+ 1 AS `trigger_congress_registration_dataId`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3865,7 +3900,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description` from (((`pay_intents_purposes` left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) */;
+/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from ((((`pay_intents_purposes` left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3879,4 +3914,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-31 17:09:12
+-- Dump completed on 2020-09-14 14:57:49

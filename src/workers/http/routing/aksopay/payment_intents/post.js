@@ -1,4 +1,4 @@
-import { TRIGGER_TYPES } from './schema';
+import { purposeSchema } from './schema';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
@@ -78,115 +78,7 @@ export default {
 					type: 'array',
 					minItems: 1,
 					maxItems: 1024,
-					items: {
-						oneOf: [
-							{
-								type: 'object',
-								properties: {
-									type: {
-										type: 'string',
-										const: 'trigger'
-									},
-									triggers: {
-										type: 'string',
-										enum: TRIGGER_TYPES
-									},
-									originalAmount: {
-										type: 'integer',
-										format: 'uint32',
-										nullable: true
-									},
-									amount: {
-										type: 'integer',
-										format: 'uint32'
-									},
-									title: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 128,
-										pattern: '^[^\\n]+$'
-									},
-									description: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 5000,
-										nullable: true
-									}
-								},
-								required: [
-									'type',
-									'triggers',
-									'amount',
-									'title'
-								],
-								additionalProperties: false
-							},
-							{
-								type: 'object',
-								properties: {
-									type: {
-										type: 'string',
-										const: 'addon'
-									},
-									paymentAddonId: {
-										type: 'integer',
-										format: 'uint32'
-									},
-									originalAmount: {
-										type: 'integer',
-										format: 'uint32',
-										nullable: true
-									},
-									amount: {
-										type: 'integer',
-										format: 'uint32'
-									}
-								},
-								required: [
-									'type',
-									'paymentAddonId',
-									'amount'
-								],
-								additionalProperties: false
-							},
-							{
-								type: 'object',
-								properties: {
-									type: {
-										type: 'string',
-										const: 'manual'
-									},
-									originalAmount: {
-										type: 'integer',
-										format: 'int32',
-										nullable: true
-									},
-									amount: {
-										type: 'integer',
-										format: 'int32'
-									},
-									title: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 128,
-										pattern: '^[^\\n]+$'
-									},
-									description: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 5000,
-										nullable: true
-									}
-								},
-								required: [
-									'type',
-									'amount',
-									'title'
-								],
-								additionalProperties: false
-							}
-						]
-					}
+					items: purposeSchema
 				}
 			},
 			required: [
@@ -237,11 +129,12 @@ export default {
 			return res.type('text/plain').status(400).send('Currency not supported by PaymentMethod');
 		}
 
-		// Verify existence of addons in purposes
+		// Validate purposes
 		let totalAmount = 0;
 		for (const purpose of req.body.purposes) {
 			totalAmount += purpose.amount;
 			if (purpose.type === 'addon') {
+				// Verify addon existence
 				const addon = await AKSO.db('pay_addons')
 					.where({
 						id: purpose.paymentAddonId,
@@ -253,6 +146,19 @@ export default {
 						.send(`PaymentAddon#id=${purpose.paymentAddonId} not found`);
 				}
 				purpose.paymentAddon = addon;
+			} else if (purpose.type === 'trigger') {
+				if (purpose.triggers === 'congress_registration') {
+					// Fetch congress org
+					const congressData = await AKSO.db('congresses_instances_participants')
+						.innerJoin('congresses_instances', 'congressInstanceId', '=', 'congresses_instances.id')
+						.innerJoin('congresses', 'congressId', '=', 'congresses.id')
+						.first('org')
+						.where('dataId', purpose.dataId);
+					if (!congressData || !req.hasPermission('congress_instances.participants.update.' + congressData.org)) {
+						return res.type('text/plain').status(400)
+							.send(`dataId ${purpose.dataId.toString('hex')} not found or permission missing`);
+					}
+				}
 			}
 		}
 
@@ -310,7 +216,7 @@ export default {
 				type: 'manual',
 				amount: minimumAmountDelta,
 				title: 'Kotizo pro pagsumo sub minimumo',
-				description: 'Ne eblas pagi malpli ol 1 USD, tial necesas eta kotizo'
+				description: 'Ne eblas pagi malpli ol 1 USD, tial necesas krompageto'
 			});
 			totalAmount = minimumAmount;
 		} else if (totalAmountInUSD > 500000) {
@@ -403,9 +309,27 @@ export default {
 				purposeDB.triggers = purpose.triggers;
 				purposeDB.title = purpose.title;
 				purposeDB.description = purpose.description;
+
+				if (purpose.triggerAmount) {
+					purposeDB.triggerAmount_amount = purpose.triggerAmount.amount;
+					purposeDB.triggerAmount_currency = purpose.triggerAmount.currency;
+				}
 			}
 
 			await trx('pay_intents_purposes_' + purpose.type).insert(purposeDB);
+
+			if (purpose.type === 'trigger') {
+				const triggerPurposeDB = {
+					paymentIntentId: id,
+					pos: index
+				};
+
+				if (purpose.triggers === 'congress_registration') {
+					triggerPurposeDB.dataId = purpose.dataId;
+				}
+
+				await trx('pay_intents_purposes_trigger_' + purpose.triggers).insert(triggerPurposeDB);
+			}
 		}
 
 		await trx.commit();
