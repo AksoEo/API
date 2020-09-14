@@ -3226,7 +3226,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3415,7 +3415,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3482,6 +3482,36 @@ CREATE TABLE `pay_stripe_webhooks` (
 LOCK TABLES `pay_stripe_webhooks` WRITE;
 /*!40000 ALTER TABLE `pay_stripe_webhooks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pay_stripe_webhooks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pay_triggerHist`
+--
+
+DROP TABLE IF EXISTS `pay_triggerHist`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pay_triggerHist` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint(5) unsigned NOT NULL,
+  `amountTriggered` int(10) unsigned NOT NULL,
+  `currencyTriggered` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `time` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `time` (`time`),
+  KEY `amountTriggered` (`amountTriggered`),
+  KEY `currencyTriggered` (`currencyTriggered`),
+  CONSTRAINT `pay_triggerHist_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_triggerHist`
+--
+
+LOCK TABLES `pay_triggerHist` WRITE;
+/*!40000 ALTER TABLE `pay_triggerHist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_triggerHist` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3601,6 +3631,25 @@ SET character_set_client = utf8;
  1 AS `triggerAmount_amount`,
  1 AS `triggerAmount_currency`,
  1 AS `trigger_congress_registration_dataId`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary table structure for view `view_pay_triggerable`
+--
+
+DROP TABLE IF EXISTS `view_pay_triggerable`;
+/*!50001 DROP VIEW IF EXISTS `view_pay_triggerable`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `view_pay_triggerable` AS SELECT 
+ 1 AS `paymentIntentId`,
+ 1 AS `pos`,
+ 1 AS `amount`,
+ 1 AS `currency`,
+ 1 AS `triggers`,
+ 1 AS `triggerAmount_amount`,
+ 1 AS `triggerAmount_currency`,
+ 1 AS `targetCurrency`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3904,6 +3953,24 @@ USE `akso`;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_pay_triggerable`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_pay_triggerable`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_pay_triggerable` AS select `view_pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`view_pay_intents_purposes`.`pos` AS `pos`,`view_pay_intents_purposes`.`amount` AS `amount`,`pay_intents`.`currency` AS `currency`,`view_pay_intents_purposes`.`triggers` AS `triggers`,`view_pay_intents_purposes`.`triggerAmount_amount` AS `triggerAmount_amount`,`view_pay_intents_purposes`.`triggerAmount_currency` AS `triggerAmount_currency`,coalesce(`congresses_instances_registrationForm`.`price_currency`) AS `targetCurrency` from (((`view_pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `view_pay_intents_purposes`.`paymentIntentId`))) left join `forms_data` on((`forms_data`.`dataId` = `view_pay_intents_purposes`.`trigger_congress_registration_dataId`))) left join `congresses_instances_registrationForm` on((`congresses_instances_registrationForm`.`formId` = `forms_data`.`formId`))) where ((`view_pay_intents_purposes`.`type` = 'trigger') and (`pay_intents`.`succeededTime` is not null) and (not(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`)))))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -3914,4 +3981,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-14 14:57:49
+-- Dump completed on 2020-09-14 16:01:07
