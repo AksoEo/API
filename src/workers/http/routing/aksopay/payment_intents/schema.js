@@ -59,7 +59,8 @@ export const schema = {
 						'amount',
 						'originalAmount',
 						'paymentAddonId',
-						'triggers'
+						'triggers',
+						'triggerStatus'
 					],
 					query: this,
 					filter
