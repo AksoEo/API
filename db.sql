@@ -3226,7 +3226,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3415,7 +3415,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3630,6 +3630,7 @@ SET character_set_client = utf8;
  1 AS `triggers`,
  1 AS `triggerAmount_amount`,
  1 AS `triggerAmount_currency`,
+ 1 AS `triggerStatus`,
  1 AS `trigger_congress_registration_dataId`*/;
 SET character_set_client = @saved_cs_client;
 
@@ -3949,7 +3950,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from ((((`pay_intents_purposes` left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
+/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,if((`pay_intents_purposes`.`type` = 'trigger'),if(isnull(`pay_intents`.`succeededTime`),'awaiting',if(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `pay_intents_purposes`.`pos`))),'triggered','processing')),NULL) AS `triggerStatus`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from (((((`pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `pay_intents_purposes`.`paymentIntentId`))) left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3981,4 +3982,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-14 16:01:07
+-- Dump completed on 2020-09-15 13:58:08

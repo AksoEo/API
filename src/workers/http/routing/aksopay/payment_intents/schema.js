@@ -118,6 +118,7 @@ export async function afterQuery (arr, done) {
 				purposeFormatted.triggers = purpose.triggers;
 				purposeFormatted.title = purpose.title;
 				purposeFormatted.description = purpose.description;
+				purposeFormatted.triggerStatus = purpose.triggerStatus;
 
 				if (purpose.triggerAmount_amount) {
 					purposeFormatted.triggerAmount = {
