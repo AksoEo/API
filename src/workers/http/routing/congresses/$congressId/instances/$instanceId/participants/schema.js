@@ -11,11 +11,32 @@ export const schema = {
 		editedTime: 'f',
 		sequenceId: 'f',
 		price: 'f',
-		cancelledTime: 'f'
+		cancelledTime: 'f',
+		amountPaid: 'f',
+		hasPaidMinimum: 'f',
+		isValid: 'f'
 	},
 	fieldAliases: {
-		'dataId': 'congresses_instances_participants.dataId'
-	}
+		'dataId': 'congresses_instances_participants.dataId',
+		amountPaid: () =>
+			AKSO.db('pay_triggerHist')
+				.innerJoin('view_pay_intents_purposes', function () {
+					this.on('pay_triggerHist.paymentIntentId', '=', 'view_pay_intents_purposes.paymentIntentId')
+						.on('pay_triggerHist.pos', '=', 'view_pay_intents_purposes.pos');
+				})
+				.sum('pay_triggerHist.amountTriggered')
+				.whereRaw('`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`'),
+		hasPaidMinimum: () => AKSO.db.raw('1'),
+		isValid: () => AKSO.db.raw('1')
+	},
+	alwaysSelect: [
+		'amountPaid',
+		'approved',
+		'price_minUpfront',
+		'price',
+		'hasPaidMinimum',
+		'manualApproval'
+	]
 };
 
 // Takes care of additional data validation for POST and PATCH
@@ -62,8 +83,9 @@ export async function getFormMetaData (req, res) {
 		.select('name', 'type');
 
 	const query = AKSO.db('congresses_instances_participants')
+		.leftJoin('congresses_instances_registrationForm', 'congresses_instances_registrationForm.congressInstanceId', 'congresses_instances_participants.congressInstanceId')
 		.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = congresses_instances_participants.dataId')
-		.where('congressInstanceId', req.params.instanceId);
+		.where('congresses_instances_participants.congressInstanceId', req.params.instanceId);
 
 	// Add the fields of the form
 	for (const formField of formFields) {

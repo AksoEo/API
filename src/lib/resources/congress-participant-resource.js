@@ -6,8 +6,10 @@ import SimpleResource from './simple-resource';
  * A resource representing a congress instance participant
  */
 class CongressParticipantResource extends SimpleResource {
-	constructor (obj, formFieldsObj) {
+	constructor (obj, req, schema, formFieldsObj) {
 		super(obj);
+
+		const fields = req.query.fields || schema.defaultFields;
 
 		obj.data = {};
 		for (const [key, rawVal] of Object.entries(obj)) {
@@ -29,7 +31,26 @@ class CongressParticipantResource extends SimpleResource {
 		}
 		if (!Object.keys(obj.data).length) { delete obj.data; }
 
-		if ('approved' in obj) { obj.approved = !!obj.approved; }
+		obj.approved = !!obj.approved;
+
+		if (obj.amountPaid === null) { obj.amountPaid = 0; }
+		else { obj.amountPaid = parseInt(obj.amountPaid, 10); }
+			
+		obj.hasPaidMinimum = obj.amountPaid >= Math.min(obj.price, obj.price_minUpfront === null ? Math.MAX_SAFE_INTEGER : obj.price_minUpfront);
+
+		if ('isValid' in obj) {
+			if (obj.manualApproval) { obj.isValid = obj.approved; }
+			else {
+				obj.isValid = obj.approved || obj.hasPaidMinimum;
+			}
+		}
+
+		delete obj.price_minUpfront;
+		delete obj.manualApproval;
+		if (!fields.includes('approved')) { delete obj.approved; }
+		if (!fields.includes('amountPaid')) { delete obj.amountPaid; }
+		if (!fields.includes('hasPaidMinimum')) { delete obj.hasPaidMinimum; }
+		if (!fields.includes('price')) { delete obj.price; }
 	}
 }
 

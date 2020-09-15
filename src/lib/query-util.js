@@ -215,7 +215,7 @@ const QueryUtil = {
 		if (!alias) { return field; }
 		if (typeof alias === 'function') {
 			let newField = alias();
-			if (includeAs) { newField = AKSO.db.raw(`${newField} as ${escapeId(field, true)}`); }
+			if (includeAs) { newField = AKSO.db.raw(`(${newField}) as ${escapeId(field, true)}`); }
 			return newField;
 		}
 		return alias;
