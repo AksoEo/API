@@ -111,7 +111,7 @@ export async function validateDataEntry ({
 			};
 		}
 	};
-	let scripts = {};
+	let scripts = [];
 	const formValues = {
 		...addFormValues,
 		...data
@@ -125,10 +125,10 @@ export async function validateDataEntry ({
 		if (typeof propVal !== 'object') { return propVal; }
 
 		const symb = Symbol(prop);
-		const exprScripts = {
+		const exprScripts = [
 			...scripts,
-			[symb]: formEntry[prop]
-		};
+			{ [symb]: formEntry[prop] }
+		];
 		return evaluateSync(exprScripts, symb, getFormValue);
 	};
 
@@ -184,7 +184,7 @@ export async function validateDataEntry ({
 			dataSchema.required.push(name);
 			dataSchema.properties[name] = getFieldSchema(formEntry);
 		} else if (formEntry.el === 'script') {
-			scripts = { ...scripts, ...formEntry.script };
+			scripts.push(formEntry.script);
 		}
 	}
 
