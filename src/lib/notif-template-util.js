@@ -104,7 +104,9 @@ function renderInheritModule (type, module, viewFn) {
 	const view = { ...module };
 	if (view.type === 'image') {
 		view.href = renderTemplateStr('text', view.url, viewFn);
-		view.alt = renderTemplateStr('text', view.alt, viewFn);
+		if (view.alt){
+			view.alt = renderTemplateStr('text', view.alt, viewFn);
+		}
 	} else if (view.type === 'text') {
 		if (view.columns) {
 			view.columns = view.columns.map(str => {
