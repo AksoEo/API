@@ -103,7 +103,7 @@ inheritTextMd.enable([
 function renderInheritModule (type, module, viewFn) {
 	const view = { ...module };
 	if (view.type === 'image') {
-		view.url = renderTemplateStr('text', view.url, viewFn);
+		view.href = renderTemplateStr('text', view.url, viewFn);
 		view.alt = renderTemplateStr('text', view.alt, viewFn);
 	} else if (view.type === 'text') {
 		if (view.columns) {
