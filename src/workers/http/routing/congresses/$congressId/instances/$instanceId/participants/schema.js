@@ -6,7 +6,7 @@ export const schema = {
 		dataId: 'f',
 		codeholderId: 'f',
 		approved: 'f',
-		notes: '',
+		notes: 's',
 		createdTime: 'f',
 		editedTime: 'f',
 		sequenceId: 'f',
