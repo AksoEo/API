@@ -149,7 +149,7 @@ async function init () {
 		if (cluster.isMaster) {
 			AKSO.log.warn('AKSO_HTTP_OUTSIDE_ADDRESS not specified, determining IP address ...');
 		}
-		const ip = await (await fetch('https://api6.ipify.org')).text();
+		const ip = await (await fetch('https://api64.ipify.org')).text();
 		const url = new URL(`http://${ip}:${AKSO.conf.http.port}`);
 		AKSO.conf.http.outsideAddress = url.toString();
 		if (cluster.isMaster) {
