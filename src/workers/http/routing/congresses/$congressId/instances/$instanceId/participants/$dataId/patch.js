@@ -35,9 +35,6 @@ export default {
 					type: 'object'
 				}
 			},
-			required: [
-				'data'
-			],
 			additionalProperties: false
 		}
 	},
@@ -109,30 +106,33 @@ export default {
 			}
 		}
 
-		const formValues = {
-			'@created_time': participantData.createdTime,
-			'@edited_time': participantData.editedTime,
-			'@upfront_time': null, // TODO
-			'@is_member': req.body.codeholderId ?
-				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
-		};
-		const participantMetadata = await validateDataEntry({
-			formData,
-			data: req.body.data,
-			oldData: oldData,
-			addFormValues: formValues,
-			allowInvalidData: req.body.allowInvalidData
-		});
+		let price = undefined;
+		if (req.body.data) {
+			const formValues = {
+				'@created_time': participantData.createdTime,
+				'@edited_time': participantData.editedTime,
+				'@upfront_time': null, // TODO
+				'@is_member': req.body.codeholderId ?
+					await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
+			};
+			const participantMetadata = await validateDataEntry({
+				formData,
+				data: req.body.data,
+				oldData: oldData,
+				addFormValues: formValues,
+				allowInvalidData: req.body.allowInvalidData
+			});
 
-		// Insert the participant's data
-		await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);
+			// Replace the participant's data
+			await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);
 
-		let price = null;
-		if (formData.price_var) {
-			price = participantMetadata.evaluate('price');
-		}
+			price = null;
+			if (formData.price_var) {
+				price = participantMetadata.evaluate('price');
+			}
+		}	
 
-		// Insert the participant
+		// Update the participant
 		await AKSO.db('congresses_instances_participants')
 			.where('dataId', req.params.dataId)
 			.update({
