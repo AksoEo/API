@@ -6,7 +6,7 @@ import CongressParticipantResource from 'akso/lib/resources/congress-participant
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
-import { manualDataValidation, parSchema } from '../schema';
+import { manualDataValidation, schema as parSchema } from '../schema';
 
 export default {
 	schema: {
@@ -28,13 +28,13 @@ export default {
 					nullable: true
 				},
 				allowInvalidData: {
-					type: 'boolean',
-					default: false
+					type: 'boolean'
 				},
 				data: {
 					type: 'object'
 				}
 			},
+			minProperties: 1,
 			additionalProperties: false
 		}
 	},
@@ -87,10 +87,10 @@ export default {
 		const participantData = await participantQuery;
 		if (!participantData) { return res.sendStatus(404); }
 
-		const schemaFields = {
+		const fakeReq = {
 			query: { fields: Object.keys(parSchema.fields) }
 		};
-		const oldData = new CongressParticipantResource(participantData, schemaFields, {}, formFieldsObj).obj.data;
+		const oldData = new CongressParticipantResource(participantData, fakeReq, {}, formFieldsObj).obj.data;
 
 		await manualDataValidation(req, res, formData);
 
