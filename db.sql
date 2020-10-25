@@ -1977,7 +1977,7 @@ CREATE TABLE `congresses_instances_locations_external` (
   `ll` point NOT NULL,
   `icon` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'GENERIC',
   PRIMARY KEY (`congressInstanceLocationId`),
-  KEY `ll` (`ll`(25)),
+  KEY `ll` (`ll`),
   CONSTRAINT `congresses_instances_locations_external_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
