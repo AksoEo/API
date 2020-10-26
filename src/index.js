@@ -54,7 +54,7 @@ async function init () {
 				loginSlowDown:		process.env.AKSO_HTTP_DISABLE_SLOW_DOWN === undefined ?
 					true : process.env.AKSO_HTTP_DISABLE_SLOW_DOWN == '0',
 				path:				process.env.AKSO_HTTP_PATH === undefined ?
-					'/' : process.env.AKSO.HTTP_PATH,
+					'/' : process.env.AKSO_HTTP_PATH,
 				threads: 			process.env.AKSO_HTTP_THREADS === undefined ?
 					3 : parseInt(process.env.AKSO_HTTP_THREADS, 10),
 				outsideAddress:		process.env.AKSO_HTTP_OUTSIDE_ADDRESS || null
