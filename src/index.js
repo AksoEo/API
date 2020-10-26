@@ -140,7 +140,7 @@ async function init () {
 	};
 
 	if (cluster.isMaster) {
-		AKSO.log.info('AKSO version %s', AKSO.version);
+		AKSO.log.info('AKSO API version %s', AKSO.version);
 		AKSO.log.warn('Running in mode: %s', AKSO.conf.prodMode);
 	}
 
