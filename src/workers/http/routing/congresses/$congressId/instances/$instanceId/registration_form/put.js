@@ -4,7 +4,7 @@ import { formSchema, parseForm, setFormFields, validateDataEntry} from 'akso/wor
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 import { escapeId } from 'mysql2';
 import { union, NULL, NUMBER, BOOL } from '@tejo/akso-script';
-import { schema as parSchema } from './participants/schema';
+import { schema as parSchema } from '../participants/schema';
 
 export default {
 	schema: {
