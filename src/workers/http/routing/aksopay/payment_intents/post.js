@@ -187,8 +187,8 @@ export default {
 			// Add fixed fee, if it exists
 			if (paymentMethod.feeFixed) {
 				const feeZeroDecimalFactor = AKSOCurrency.getZeroDecimalFactor(paymentMethod.feeFixed.cur);
-				const feeInIntentCur = currencyZeroDecimalFactor *
-					AKSO.cashify.convert(paymentMethod.feeFixed.val / feeZeroDecimalFactor, { from: paymentMethod.feeFixed.cur, to: req.body.currency });
+				const feeInIntentCur = Math.round(currencyZeroDecimalFactor *
+					AKSO.cashify.convert(paymentMethod.feeFixed.val / feeZeroDecimalFactor, { from: paymentMethod.feeFixed.cur, to: req.body.currency }));
 				
 				feePurpose.amount += feeInIntentCur;
 				totalAmount += feeInIntentCur;
