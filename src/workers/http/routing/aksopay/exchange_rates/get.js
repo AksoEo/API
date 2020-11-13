@@ -20,11 +20,7 @@ export default {
 
 		const rates = {};
 		for (const cur of AKSOCurrency.all) {
-			const curFactor = AKSOCurrency.getZeroDecimalFactor(cur);
-			rates[cur] = Math.round(
-				AKSO.cashify.convert(100, { from: req.query.base, to: cur }) *
-					curFactor
-			);
+			rates[cur] = AKSO.cashify.convert(1, { from: req.query.base, to: cur });
 		}
 
 		res.sendObj(rates);

@@ -257,7 +257,7 @@ async function init () {
 		if (msg.action === 'set') {
 			AKSO[msg.prop] = msg.value;
 		} else if (msg.action === 'set_exchange_rates') {
-			AKSO.exchangeRates = msg.data.rates;
+			AKSO.exchangeRates = msg.data;
 			AKSO.cashify = new Cashify(msg.data);
 		}
 	};
