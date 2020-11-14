@@ -68,5 +68,17 @@ export async function setFormFields (formId, form, parsedForm) {
 			});
 	}
 
+	// Create fields
+	if (parsedForm.creationFields.length) {
+		await trx('forms_fields')
+			.insert(parsedForm.creationFields.map(formEntry => {
+				return {
+					formId,
+					name: formEntry.name,
+					type: formEntry.type	
+				};
+			}));
+	}
+
 	await trx.commit();
 }

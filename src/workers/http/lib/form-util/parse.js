@@ -17,6 +17,7 @@ export async function parseForm ({
 	existingForm = null
 } = {}) {
 	const fields = [];
+	const fieldToformEntryObj = {};
 
 	let scripts = {};
 	formValues = {
@@ -86,6 +87,7 @@ export async function parseForm ({
 				throw err;
 			}
 			fields.push(formEntry.name);
+			fieldToformEntryObj[formEntry.name] = formEntry;
 
 			let oldField = null;
 			// oldName
@@ -274,14 +276,20 @@ export async function parseForm ({
 		}
 	}
 
-	const deletionFields = Object.keys(existingFields)
+	const oldFields = Object.keys(existingFields);
+	const deletionFields = oldFields
 		.filter(oldField => !fields.includes(oldField) && !(oldField in renameFields));
+
+	const creationFields = fields
+		.filter(newField => !oldFields.includes(newField))
+		.map(fieldName => fieldToformEntryObj[fieldName]);
 
 	return {
 		validateDefinition,
 		scripts,
 		renameFields,
 		deletionFields,
-		migrationFields
+		migrationFields,
+		creationFields
 	};
 }
