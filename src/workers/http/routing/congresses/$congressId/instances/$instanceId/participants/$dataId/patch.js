@@ -32,6 +32,16 @@ export default {
 				},
 				data: {
 					type: 'object'
+				},
+				sequenceId: {
+					type: 'integer',
+					format: 'int32',
+					nullable: true
+				},
+				cancelledTime: {
+					type: 'integer',
+					format: 'uint64',
+					nullable: true
 				}
 			},
 			minProperties: 1,
@@ -86,6 +96,19 @@ export default {
 		participantQuery.first(selectFields);
 		const participantData = await participantQuery;
 		if (!participantData) { return res.sendStatus(404); }
+
+		// Make sure the sequenceId isn't taken by another participant
+		const sequenceIdTaken = await AKSO.db('congresses_instances_participants')
+			.where({
+				congressInstanceId: req.params.instanceId,
+				sequenceId: req.body.sequenceId
+			})
+			.whereNot('dataId', req.params.dataId)
+			.first(1);
+		if (sequenceIdTaken) {
+			return res.status(423).type('text/plain')
+				.send('sequenceId already registered with another dataId');
+		}
 
 		const fakeReq = {
 			query: { fields: Object.keys(parSchema.fields) }
@@ -142,7 +165,9 @@ export default {
 				codeholderId: req.body.codeholderId,
 				approved: req.body.approved,
 				notes: req.body.notes,
-				price: price
+				price: price,
+				cancelledTime: req.body.cancelledTime,
+				sequenceId: req.body.sequenceId
 			});
 
 		const dataIdHex = req.params.dataId.toString('hex');
