@@ -52,6 +52,7 @@ const formEntryInputRequiredProps = [
 
 export const formSchema = {
 	type: 'array',
+	minItems: 1,
 	maxItems: 256,
 	items: {
 		oneOf: [
