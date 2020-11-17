@@ -98,16 +98,18 @@ export default {
 		if (!participantData) { return res.sendStatus(404); }
 
 		// Make sure the sequenceId isn't taken by another participant
-		const sequenceIdTaken = await AKSO.db('congresses_instances_participants')
-			.where({
-				congressInstanceId: req.params.instanceId,
-				sequenceId: req.body.sequenceId
-			})
-			.whereNot('dataId', req.params.dataId)
-			.first(1);
-		if (sequenceIdTaken) {
-			return res.status(423).type('text/plain')
-				.send('sequenceId already registered with another dataId');
+		if ('sequenceId' in req.body) {
+			const sequenceIdTaken = await AKSO.db('congresses_instances_participants')
+				.where({
+					congressInstanceId: req.params.instanceId,
+					sequenceId: req.body.sequenceId
+				})
+				.whereNot('dataId', req.params.dataId)
+				.first(1);
+			if (sequenceIdTaken) {
+				return res.status(423).type('text/plain')
+					.send('sequenceId already registered with another dataId');
+			}
 		}
 
 		const fakeReq = {
