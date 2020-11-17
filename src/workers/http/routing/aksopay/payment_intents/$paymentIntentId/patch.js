@@ -101,8 +101,8 @@ export default {
 
 		const data = {
 			codeholderId: req.body.codeholderId,
-			customer_email: req.body.customer.email,
-			customer_name: req.body.customer.name,
+			customer_email: req.body.customer ? req.body.customer.email : undefined,
+			customer_name: req.body.customer ? req.body.customer.name : undefined,
 			internalNotes: req.body.internalNotes,
 			customerNotes: req.body.customerNotes,
 			foreignId: req.body.foreignId
