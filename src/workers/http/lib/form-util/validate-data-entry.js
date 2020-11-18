@@ -160,6 +160,9 @@ export async function validateDataEntry ({
 				if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
 			} else if (formEntry.type === 'boolean_table') {
 				fieldSchema.validateFunction = function (val) {
+					// Validate function seems to be called before checking for nullable, so this is needed
+					if (val === null && !required) { return true; }
+
 					const numValues = []
 						.concat(...val)
 						.filter(x => x === true)
