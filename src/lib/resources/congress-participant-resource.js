@@ -39,7 +39,8 @@ class CongressParticipantResource extends SimpleResource {
 		obj.hasPaidMinimum = obj.amountPaid >= Math.min(obj.price, obj.price_minUpfront === null ? Math.MAX_SAFE_INTEGER : obj.price_minUpfront);
 
 		if ('isValid' in obj) {
-			if (obj.manualApproval) { obj.isValid = obj.approved; }
+			if (obj.cancelledTime) { obj.isValid = false; }
+			else if (obj.manualApproval) { obj.isValid = obj.approved; }
 			else {
 				obj.isValid = obj.approved || obj.hasPaidMinimum;
 			}
@@ -51,6 +52,7 @@ class CongressParticipantResource extends SimpleResource {
 		if (!fields.includes('amountPaid')) { delete obj.amountPaid; }
 		if (!fields.includes('hasPaidMinimum')) { delete obj.hasPaidMinimum; }
 		if (!fields.includes('price')) { delete obj.price; }
+		if (!fields.includes('cancelledTime')) { delete obj.cancelledTime; }
 	}
 }
 

@@ -35,7 +35,8 @@ export const schema = {
 		'price_minUpfront',
 		'price',
 		'hasPaidMinimum',
-		'manualApproval'
+		'manualApproval',
+		'cancelledTime'
 	]
 };
 
