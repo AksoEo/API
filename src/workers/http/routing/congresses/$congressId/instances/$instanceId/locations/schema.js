@@ -22,7 +22,7 @@ export const schema = {
 		'rating.type': 'rating_type',
 		openHours: () => AKSO.db.raw('1')
 	},
-	alwaysSelect: [ 'id', 'type' ],
+	alwaysSelect: [ 'id', 'type', 'rating.rating', 'rating.max', 'rating.type' ],
 	customFilterLogicOps: {
 		$open: ({ query, filter } = {}) => {
 			if (filter !== null && typeof filter !== 'string') {
