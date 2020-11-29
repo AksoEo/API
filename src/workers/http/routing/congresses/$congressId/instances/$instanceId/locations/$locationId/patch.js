@@ -1,4 +1,5 @@
 import latlonSchema from 'akso/workers/http/lib/latlon-schema';
+import { insertAsReplace } from 'akso/util';
 import { icons, parseOpenHours } from '../schema';
 
 export default {
@@ -161,13 +162,19 @@ export default {
 		}
 
 		if ('rating' in req.body) {
-			await AKSO.db('congresses_instances_locations_external_rating')
-				.where('congressInstanceLocationId', req.params.locationId)
-				.update({
-					rating: req.body.rating.rating.toFixed(2),
-					rating_max: req.body.rating.max,
-					rating_type: req.body.rating.type
-				});
+			if (req.body.rating === null) {
+				await AKSO.db('congresses_instances_locations_external_rating')
+					.where('congressInstanceLocationId', req.params.locationId)
+					.delete();
+			} else {
+				await insertAsReplace(AKSO.db('congresses_instances_locations_external_rating')
+					.insert({
+						congressInstanceLocationId: req.params.locationId,
+						rating: req.body.rating.rating.toFixed(2),
+						rating_max: req.body.rating.max,
+						rating_type: req.body.rating.type
+					}));
+			}
 		}
 
 		if ('openHours' in req.body) {
