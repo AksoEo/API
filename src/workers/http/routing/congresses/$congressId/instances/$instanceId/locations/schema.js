@@ -107,6 +107,12 @@ export function parseOpenHours(openHoursObj, congressDateFrom, congressDateTo) {
 		openHours = [];
 
 		for (const [date, intervals] of Object.entries(openHoursObj)) {
+			if (!Array.isArray(intervals)) {
+				const err = new Error('openHours expects an object of key:hoursArr');
+				err.statusCode = 400;
+				throw err;
+			}
+
 			if (!intervals.length) {
 				const err = new Error('Empty intervals array passed to openHours');
 				err.statusCode = 400;
