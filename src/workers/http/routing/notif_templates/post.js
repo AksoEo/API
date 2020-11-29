@@ -60,7 +60,8 @@ const schema = {
 						type: 'string',
 						minLength: 1,
 						maxLength: 50,
-						pattern: '^[^\\n]+$'
+						pattern: '^[^\\n]+$',
+						nullable: true
 					},
 					replyTo: {
 						type: 'string',
