@@ -1,4 +1,5 @@
 import { escapeId } from 'mysql2';
+import Url from 'url';
 
 import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
@@ -503,12 +504,13 @@ const QueryUtil = {
 					// Awaits if it's async, otherwise goes ahead immediately
 					return Promise.resolve(afterQuery(rawData, resolve, req))
 						.catch(e => {
-							AKSO.log.error(e);
 							reject(e);
 						});
 				});
 			}
 		} catch (e) {
+			const url = Url.parse(req.originalUrl).pathname;
+			AKSO.log.error(`An error occured at ${req.method} ${url}\n${e.stack}`);
 			return res.sendStatus(500);
 		}
 		const data = new Col(rawData, Res, ...passToCol);
