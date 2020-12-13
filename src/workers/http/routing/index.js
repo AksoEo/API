@@ -28,6 +28,7 @@ import { init as route$magazines } from './magazines';
 import { init as route$membership_categories } from './membership_categories';
 import { init as route$notif_templates } from './notif_templates';
 import { init as route$queries } from './queries';
+import { init as route$registration } from './registration';
 import { init as route$tasks } from './tasks';
 import { init as route$vote_templates } from './vote_templates';
 import { init as route$votes } from './votes';
@@ -68,6 +69,7 @@ export function init () {
 	router.use('/membership_categories', route$membership_categories());
 	router.use('/notif_templates', route$notif_templates());
 	router.use('/queries', route$queries());
+	router.use('/registration', route$registration());
 	router.use('/tasks', route$tasks());
 	router.use('/vote_templates', route$vote_templates());
 	router.use('/votes', route$votes());
