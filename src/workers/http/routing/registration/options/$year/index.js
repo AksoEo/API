@@ -9,9 +9,9 @@ import method$get from './get';
  * @return {express.Router}
  */
 export function init () {
-	const router = new express.Router();
+	const router = new express.Router({ mergeParams: true });
 
-	//bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'get', method$get);
 
 	return router;
 }
