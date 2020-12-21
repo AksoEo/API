@@ -9,6 +9,8 @@ class RegistrationOptions extends SimpleResource {
 
 		const fields = req.query.fields || schema.defaultFields;
 
+		if ('enabled' in obj) { obj.enabled = !!obj.enabled; }
+
 		this.removeUnnecessary(fields);
 	}
 }

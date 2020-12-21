@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.31, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	5.7.31-0ubuntu0.18.04.1
+-- Server version	8.0.22-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 /*!40000 DROP DATABASE IF EXISTS `akso`*/;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `akso` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `akso` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
 USE `akso`;
 
@@ -31,18 +31,18 @@ USE `akso`;
 
 DROP TABLE IF EXISTS `addressLabelTemplates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `addressLabelTemplates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `paper` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'A4',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paper` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'A4',
   `margins` json NOT NULL,
-  `cols` tinyint(3) unsigned NOT NULL,
-  `rows` tinyint(3) unsigned NOT NULL,
-  `colGap` smallint(5) unsigned NOT NULL,
-  `rowGap` smallint(5) unsigned NOT NULL,
-  `cellPadding` smallint(5) unsigned NOT NULL DEFAULT '8',
-  `fontSize` tinyint(3) unsigned NOT NULL DEFAULT '12',
+  `cols` tinyint unsigned NOT NULL,
+  `rows` tinyint unsigned NOT NULL,
+  `colGap` smallint unsigned NOT NULL,
+  `rowGap` smallint unsigned NOT NULL,
+  `cellPadding` smallint unsigned NOT NULL DEFAULT '8',
+  `fontSize` tinyint unsigned NOT NULL DEFAULT '12',
   `drawOutline` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
@@ -65,11 +65,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_groups` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
@@ -93,9 +93,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_groups_members_clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_groups_members_clients` (
-  `adminGroupId` int(10) unsigned NOT NULL,
+  `adminGroupId` int unsigned NOT NULL,
   `apiKey` binary(16) NOT NULL,
   PRIMARY KEY (`adminGroupId`,`apiKey`),
   KEY `apiKey` (`apiKey`),
@@ -120,10 +120,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_groups_members_codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_groups_members_codeholders` (
-  `adminGroupId` int(10) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned NOT NULL,
+  `adminGroupId` int unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
   PRIMARY KEY (`adminGroupId`,`codeholderId`),
   KEY `admin_groups_members_ibfk_2` (`codeholderId`),
   CONSTRAINT `admin_groups_members_codeholders_ibfk_1` FOREIGN KEY (`adminGroupId`) REFERENCES `admin_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -147,10 +147,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_clients` (
   `apiKey` binary(16) NOT NULL,
-  `permission` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `permission` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`apiKey`,`permission`),
   CONSTRAINT `admin_permissions_clients_ibfk_1` FOREIGN KEY (`apiKey`) REFERENCES `clients` (`apiKey`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -171,10 +171,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_codeholders` (
-  `codeholderId` int(10) unsigned NOT NULL,
-  `permission` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `permission` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`,`permission`),
   CONSTRAINT `admin_permissions_codeholders_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -195,10 +195,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_groups` (
-  `adminGroupId` int(10) unsigned NOT NULL,
-  `permission` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `adminGroupId` int unsigned NOT NULL,
+  `permission` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`adminGroupId`,`permission`),
   CONSTRAINT `admin_permissions_groups_ibfk_1` FOREIGN KEY (`adminGroupId`) REFERENCES `admin_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -220,7 +220,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_memberRestrictions_clients` (
   `apiKey` binary(16) NOT NULL,
   `filter` json NOT NULL,
@@ -245,9 +245,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_memberRestrictions_codeholders` (
-  `codeholderId` int(11) unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
   `filter` json NOT NULL,
   `fields` json DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
@@ -270,9 +270,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_permissions_memberRestrictions_groups` (
-  `adminGroupId` int(11) unsigned NOT NULL,
+  `adminGroupId` int unsigned NOT NULL,
   `filter` json NOT NULL,
   `fields` json DEFAULT NULL,
   PRIMARY KEY (`adminGroupId`),
@@ -296,13 +296,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `clients` (
   `apiKey` binary(16) NOT NULL,
   `apiSecret` binary(32) NOT NULL COMMENT 'SHA-256',
-  `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ownerName` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ownerEmail` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ownerName` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ownerEmail` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`apiKey`),
   KEY `name_2` (`name`),
   KEY `ownerName_2` (`ownerName`),
@@ -319,7 +319,7 @@ CREATE TABLE `clients` (
 
 LOCK TABLES `clients` WRITE;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
-INSERT INTO `clients` VALUES (_binary 'T˝˘\Ì¥f|\Õm\Â%0\ÿ',_binary 'üÜ–ÅàL}eö/\Í†\≈Z\–£øO+Ç,\—]l∞\n','random app (p: test)','Tutmonda Esperantista Junulara Organizo','mia@tejo.org');
+INSERT INTO `clients` VALUES (_binary 'T˝˘\Ì¥f|\Õm\Â%0\ÿ',_binary 'üÜ–ÅàL}eö/\Í†\≈Z\–£øO+Ç,\—]l∞\\n','random app (p: test)','Tutmonda Esperantista Junulara Organizo','mia@tejo.org');
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -329,11 +329,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholderRoles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholderRoles` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
@@ -357,13 +357,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholderRoles_codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholderRoles_codeholders` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `durationFrom` bigint(20) unsigned DEFAULT NULL,
-  `durationTo` bigint(20) unsigned DEFAULT NULL,
-  `roleId` int(10) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `durationFrom` bigint unsigned DEFAULT NULL,
+  `durationTo` bigint unsigned DEFAULT NULL,
+  `roleId` int unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `durationFrom` (`durationFrom`),
   KEY `durationTo` (`durationTo`),
@@ -390,30 +390,30 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderType` enum('human','org') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `creationTime` bigint(20) unsigned NOT NULL,
-  `oldCode` char(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `newCode` char(6) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'bcrypt',
-  `createPasswordTime` bigint(20) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderType` enum('human','org') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creationTime` bigint unsigned NOT NULL,
+  `oldCode` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `newCode` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'bcrypt',
+  `createPasswordTime` bigint unsigned DEFAULT NULL,
   `createPasswordKey` binary(16) DEFAULT NULL,
-  `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `feeCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `notes` text COLLATE utf8mb4_unicode_ci,
-  `officePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `feeCountry` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `officePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
   `deathdate` date DEFAULT NULL,
   `profilePictureHash` binary(20) DEFAULT NULL,
-  `addressPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
-  `emailPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
-  `officePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
-  `profilePicturePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
-  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `biography` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `addressPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `emailPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `officePhonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `profilePicturePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
+  `website` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `biography` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `newCode` (`newCode`) USING BTREE,
   UNIQUE KEY `email` (`email`) USING BTREE,
@@ -449,23 +449,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_address` (
-  `codeholderId` int(10) unsigned NOT NULL,
-  `country` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `city_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cityArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `streetAddress_latin` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postalCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sortingCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sortingCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `search` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `country` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `countryArea` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `countryArea_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cityArea_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `streetAddress` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `streetAddress_latin` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `postalCode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `postalCode_latin` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sortingCode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sortingCode_latin` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `search` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`),
   KEY `country` (`country`),
   FULLTEXT KEY `city_latin` (`city_latin`),
@@ -496,15 +496,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_files` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `time` bigint(20) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `addedBy` int(10) unsigned DEFAULT NULL,
-  `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mime` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `time` bigint unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `addedBy` int unsigned DEFAULT NULL,
+  `name` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mime` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   KEY `addedBy` (`addedBy`),
@@ -531,27 +531,27 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_address` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(20) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `address_country` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_countryArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_city_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_cityArea_latin` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_streetAddress_latin` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_postalCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_sortingCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_sortingCode_latin` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_search` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `address_country` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_countryArea` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_countryArea_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_city_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_cityArea` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_cityArea_latin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_streetAddress` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_streetAddress_latin` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_postalCode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_postalCode_latin` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_sortingCode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_sortingCode_latin` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_search` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`modId`),
   KEY `country` (`address_country`),
   KEY `codeholderId` (`codeholderId`),
@@ -583,14 +583,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_addressPublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_addressPublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `addressPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `addressPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_addressPublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -612,14 +612,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_biography`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_biography` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `biography` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `biography` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_biography_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -641,13 +641,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_birthdate`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_birthdate` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `birthdate` date DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
@@ -670,14 +670,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_careOf`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_careOf` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `careOf` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `careOf` (`careOf`),
@@ -700,14 +700,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_cellphone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_cellphone` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cellphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `cellphone` (`cellphone`),
@@ -730,14 +730,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_cellphonePublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_cellphonePublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `cellphonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cellphonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_cellphonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -759,13 +759,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_deathdate`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_deathdate` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `deathdate` date DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
@@ -789,14 +789,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_email`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_email` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   KEY `email` (`email`) USING BTREE,
@@ -820,14 +820,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_emailPublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_emailPublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `emailPublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `emailPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_emailPublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -849,13 +849,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_enabled`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_enabled` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
@@ -879,14 +879,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_feeCountry`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_feeCountry` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `feeCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `feeCountry` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   KEY `feeCountry` (`feeCountry`),
@@ -910,14 +910,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_firstName`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_firstName` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `firstName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `firstName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `firstName` (`firstName`),
@@ -940,14 +940,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_firstNameLegal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_firstNameLegal` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `firstNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `firstNameLegal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `firstNameLegal` (`firstNameLegal`),
@@ -970,14 +970,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_fullName`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_fullName` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `fullName` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `fullName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `fullName` (`fullName`),
@@ -1000,14 +1000,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_fullNameLocal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_fullNameLocal` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `fullNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `fullNameLocal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `fullNameLocal` (`fullNameLocal`),
@@ -1030,14 +1030,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_honorific`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_honorific` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `honorific` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `honorific` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_honorific_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1059,13 +1059,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_isDead`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_isDead` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `isDead` tinyint(1) NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
@@ -1089,14 +1089,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_landlinePhone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_landlinePhone` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `landlinePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `landlinePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `landlinePhone` (`landlinePhone`),
@@ -1119,14 +1119,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_landlinePhonePublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_landlinePhonePublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `landlinePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `landlinePhonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_landlinePhonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1148,14 +1148,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_lastName`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_lastName` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `lastName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `lastName` (`lastName`),
@@ -1178,14 +1178,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_lastNameLegal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_lastNameLegal` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `lastNameLegal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `lastNameLegal` (`lastNameLegal`),
@@ -1208,14 +1208,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_lastNamePublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_lastNamePublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `lastNamePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `lastNamePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_lastNamePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1237,14 +1237,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_nameAbbrev`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_nameAbbrev` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `nameAbbrev` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `nameAbbrev` (`nameAbbrev`),
@@ -1267,14 +1267,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_newCode`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_newCode` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `newCode` char(6) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `newCode` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `newCode` (`newCode`),
   KEY `codeholderId` (`codeholderId`),
@@ -1297,14 +1297,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_notes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_notes` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `notes` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `notes` (`notes`),
@@ -1327,14 +1327,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_officePhone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_officePhone` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `officePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `officePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `officePhone` (`officePhone`),
@@ -1357,14 +1357,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_officePhonePublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_officePhonePublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `officePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `officePhonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_officePhonePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1386,13 +1386,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_password`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_password` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_password_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1414,14 +1414,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_profession`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_profession` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `profession` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_profession_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1443,13 +1443,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_profilePictureHash`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_profilePictureHash` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `profilePictureHash` binary(20) DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
@@ -1473,14 +1473,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_profilePicturePublicity`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_profilePicturePublicity` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `profilePicturePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `profilePicturePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_profilePicturePublicity_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1502,14 +1502,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_hist_website`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_hist_website` (
-  `modId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `modTime` bigint(10) unsigned NOT NULL,
-  `modBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `modCmt` text COLLATE utf8mb4_unicode_ci,
-  `website` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `website` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `codeholders_hist_website_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1531,22 +1531,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_human`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_human` (
-  `codeholderId` int(10) unsigned NOT NULL,
-  `firstName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `firstNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `honorific` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `firstName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `firstNameLegal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lastNameLegal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `searchName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `honorific` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
-  `profession` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `landlinePhone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `lastNamePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
-  `landlinePhonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
-  `cellphonePublicity` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `profession` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `landlinePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cellphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lastNamePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
+  `landlinePhonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `cellphonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
   PRIMARY KEY (`codeholderId`),
   KEY `birthdate` (`birthdate`),
   KEY `searchName_2` (`searchName`),
@@ -1615,20 +1615,20 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `codeholders_logins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_logins` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `time` bigint(20) unsigned NOT NULL,
-  `timezone` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `time` bigint unsigned NOT NULL,
+  `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ip` varbinary(16) NOT NULL,
-  `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgent` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgentParsed` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ll` point NOT NULL,
-  `area` smallint(6) NOT NULL,
-  `country` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `region` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `city` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `area` smallint NOT NULL,
+  `country` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   SPATIAL KEY `ll` (`ll`),
@@ -1653,12 +1653,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_notifAccounts_telegram`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_notifAccounts_telegram` (
-  `codeholderId` int(10) unsigned NOT NULL,
-  `telegram_chatId` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `telegram_chatId` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telegram_deepLink` binary(16) DEFAULT NULL,
-  `telegram_deepLink_time` bigint(20) unsigned DEFAULT NULL,
+  `telegram_deepLink_time` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   UNIQUE KEY `telegram_deepLink` (`telegram_deepLink`),
   UNIQUE KEY `telegram_chatId` (`telegram_chatId`),
@@ -1683,11 +1683,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_notif_pref`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_notif_pref` (
-  `codeholderId` int(11) unsigned NOT NULL,
-  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `pref` set('email','telegram') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `category` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pref` set('email','telegram') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`,`category`),
   CONSTRAINT `codeholders_notif_pref_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1709,14 +1709,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_org`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_org` (
-  `codeholderId` int(10) unsigned NOT NULL,
-  `fullName` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fullNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `careOf` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nameAbbrev` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `searchName` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `fullName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fullNameLocal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `careOf` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nameAbbrev` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `searchName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`),
   KEY `searchName_2` (`searchName`),
   FULLTEXT KEY `careOf` (`careOf`),
@@ -1782,9 +1782,9 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `codeholders_totp`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_totp` (
-  `codeholderId` int(10) unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
   `secret` tinyblob NOT NULL,
   `iv` binary(16) NOT NULL,
   PRIMARY KEY (`codeholderId`),
@@ -1798,7 +1798,7 @@ CREATE TABLE `codeholders_totp` (
 
 LOCK TABLES `codeholders_totp` WRITE;
 /*!40000 ALTER TABLE `codeholders_totp` DISABLE KEYS */;
-INSERT INTO `codeholders_totp` VALUES (3,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#˜¢èy');
+INSERT INTO `codeholders_totp` VALUES (3,_binary '¸`¯ÖQ*f>2?á2	y®\Ã˙\‚M\÷?3L\‚è\‰\„\‹4',_binary '±\‰}F(îy∞Pæ#\˜¢èy');
 /*!40000 ALTER TABLE `codeholders_totp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1808,11 +1808,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `codeholders_totp_remember`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_totp_remember` (
   `rememberKey` binary(32) NOT NULL COMMENT 'SHA-256',
-  `codeholderId` int(10) unsigned NOT NULL,
-  `time` bigint(20) unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `time` bigint unsigned NOT NULL,
   PRIMARY KEY (`rememberKey`),
   KEY `codeholderId` (`codeholderId`),
   KEY `time` (`time`),
@@ -1835,12 +1835,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abbrev` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abbrev` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `abbrev` (`abbrev`),
@@ -1866,19 +1866,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `congressId` int(10) unsigned NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `humanId` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `congressId` int unsigned NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `humanId` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dateFrom` date NOT NULL,
   `dateTo` date NOT NULL,
-  `locationName` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `locationNameLocal` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locationName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locationNameLocal` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `locationCoords` point DEFAULT NULL,
-  `locationAddress` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tz` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locationAddress` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tz` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `congressId` (`congressId`),
   KEY `name` (`name`),
@@ -1898,7 +1898,7 @@ CREATE TABLE `congresses_instances` (
 
 LOCK TABLES `congresses_instances` WRITE;
 /*!40000 ALTER TABLE `congresses_instances` DISABLE KEYS */;
-INSERT INTO `congresses_instances` VALUES (1,1,'La 105-a UK en Montrealo, Kanado (2020)','2020','2020-08-01','2020-08-08','Montrealo, Kanado','Montr√©al',_binary '\0\0\0\0\0\0\0‘∫\rjøøF@~ÕëïdR¿','Le Centre Sheraton Montreal Hotel\r\n1201 Ren√©-L√©vesque Blvd W\r\nMontreal, QC H3B 2L7','America/Montreal'),(2,1,'La 104-a UK en Lahtio, Finnlando (2020)','2019','2019-07-20','2019-07-27','Lahtio, Finnlando','Lahti',_binary '\0\0\0\0\0\0\01Xq™}N@~9≥]°£9@','Isku Areena\r\nSvinhufvudinkatu 29\r\nFI-15110 Lahti','Europe/Helsinki'),(3,2,'La 76-a IJK en Someren, Nederlando (2020)','2020','2020-07-11','2020-07-18','Someren, Nederlando',NULL,_binary '\0\0\0\0\0\0\0∑\ÔQΩ∞I@6[y\…ˇ\ƒ@','De Hoof 18\n5712 LM Someren','Europe/Amsterdam');
+INSERT INTO `congresses_instances` VALUES (1,1,'La 105-a UK en Montrealo, Kanado (2020)','2020','2020-08-01','2020-08-08','Montrealo, Kanado','Montr√©al',_binary '\0\0\0\0\0\0\0‘∫\rjøøF@~ÕëïdR¿','Le Centre Sheraton Montreal Hotel\r\n1201 Ren√©-L√©vesque Blvd W\r\nMontreal, QC H3B 2L7','America/Montreal'),(2,1,'La 104-a UK en Lahtio, Finnlando (2020)','2019','2019-07-20','2019-07-27','Lahtio, Finnlando','Lahti',_binary '\0\0\0\0\0\0\0\1Xq™}N@~9≥]°£9@','Isku Areena\r\nSvinhufvudinkatu 29\r\nFI-15110 Lahti','Europe/Helsinki'),(3,2,'La 76-a IJK en Someren, Nederlando (2020)','2020','2020-07-11','2020-07-18','Someren, Nederlando',NULL,_binary '\0\0\0\0\0\0\0∑\ÔQΩ∞I@6[y\…ˇ\ƒ@','De Hoof 18\n5712 LM Someren','Europe/Amsterdam');
 /*!40000 ALTER TABLE `congresses_instances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1908,11 +1908,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locationTags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locationTags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `congressInstanceId` int(10) unsigned NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int unsigned NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `congressInstanceId` (`congressInstanceId`),
@@ -1937,13 +1937,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `congressInstanceId` int(10) unsigned NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int unsigned NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `congressInstanceId` (`congressInstanceId`),
   KEY `type` (`type`),
@@ -1970,14 +1970,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations_external`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations_external` (
-  `congressInstanceLocationId` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `address` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `congressInstanceLocationId` int unsigned NOT NULL AUTO_INCREMENT,
+  `address` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ll` point NOT NULL,
-  `icon` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'GENERIC',
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'GENERIC',
   PRIMARY KEY (`congressInstanceLocationId`),
-  KEY `ll` (`ll`),
+  SPATIAL KEY `ll` (`ll`),
   CONSTRAINT `congresses_instances_locations_external_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1998,12 +1998,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations_external_rating`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations_external_rating` (
-  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `congressInstanceLocationId` int unsigned NOT NULL,
   `rating` decimal(4,2) NOT NULL,
-  `rating_max` tinyint(3) unsigned NOT NULL,
-  `rating_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rating_max` tinyint unsigned NOT NULL,
+  `rating_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`congressInstanceLocationId`),
   CONSTRAINT `congresses_instances_locations_external_rating_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations_external` (`congressInstanceLocationId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2025,10 +2025,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations_internal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations_internal` (
-  `congressInstanceLocationId` int(10) unsigned NOT NULL,
-  `externalLoc` int(10) unsigned DEFAULT NULL,
+  `congressInstanceLocationId` int unsigned NOT NULL,
+  `externalLoc` int unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceLocationId`),
   KEY `externalLoc` (`externalLoc`),
   CONSTRAINT `congresses_instances_locations_internal_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2052,9 +2052,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations_openHours`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations_openHours` (
-  `congressInstanceLocationId` int(10) unsigned NOT NULL,
+  `congressInstanceLocationId` int unsigned NOT NULL,
   `date` date NOT NULL,
   `openTime` time NOT NULL,
   `closeTime` time NOT NULL,
@@ -2082,10 +2082,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_locations_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_locations_tags` (
-  `congressInstanceLocationId` int(10) unsigned NOT NULL,
-  `congressInstanceLocationTagId` int(10) unsigned NOT NULL,
+  `congressInstanceLocationId` int unsigned NOT NULL,
+  `congressInstanceLocationTagId` int unsigned NOT NULL,
   PRIMARY KEY (`congressInstanceLocationId`,`congressInstanceLocationTagId`),
   KEY `congressInstanceLocationTagId` (`congressInstanceLocationTagId`),
   CONSTRAINT `congresses_instances_locations_tags_ibfk_1` FOREIGN KEY (`congressInstanceLocationId`) REFERENCES `congresses_instances_locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2109,16 +2109,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_participants`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_participants` (
-  `congressInstanceId` int(10) unsigned NOT NULL,
+  `congressInstanceId` int unsigned NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `codeholderId` int(10) unsigned DEFAULT NULL,
+  `codeholderId` int unsigned DEFAULT NULL,
   `approved` tinyint(1) NOT NULL DEFAULT '0',
-  `notes` text COLLATE utf8mb4_unicode_ci,
-  `sequenceId` int(11) DEFAULT NULL,
-  `price` int(10) unsigned DEFAULT NULL,
-  `cancelledTime` bigint(20) unsigned DEFAULT NULL,
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `sequenceId` int DEFAULT NULL,
+  `price` int unsigned DEFAULT NULL,
+  `cancelledTime` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
   UNIQUE KEY `codeholderId` (`codeholderId`) USING BTREE,
   UNIQUE KEY `congressInstanceId` (`congressInstanceId`,`sequenceId`),
@@ -2164,11 +2164,11 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `congresses_instances_programTags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_programTags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `congressInstanceId` int(10) unsigned NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int unsigned NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `congressInstanceId` (`congressInstanceId`),
@@ -2193,16 +2193,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_programs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `congressInstanceId` int(10) unsigned NOT NULL,
-  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `owner` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `timeFrom` bigint(20) unsigned NOT NULL,
-  `timeTo` bigint(20) unsigned NOT NULL,
-  `location` int(10) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `congressInstanceId` int unsigned NOT NULL,
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owner` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `timeFrom` bigint unsigned NOT NULL,
+  `timeTo` bigint unsigned NOT NULL,
+  `location` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `congressInstanceId` (`congressInstanceId`),
   KEY `title` (`title`),
@@ -2232,10 +2232,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_programs_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_programs_tags` (
-  `congressInstanceProgramId` int(10) unsigned NOT NULL,
-  `congressInstanceProgramTagId` int(10) unsigned NOT NULL,
+  `congressInstanceProgramId` int unsigned NOT NULL,
+  `congressInstanceProgramTagId` int unsigned NOT NULL,
   PRIMARY KEY (`congressInstanceProgramId`,`congressInstanceProgramTagId`),
   KEY `congressInstanceProgramTagId` (`congressInstanceProgramTagId`),
   CONSTRAINT `congresses_instances_programs_tags_ibfk_1` FOREIGN KEY (`congressInstanceProgramTagId`) REFERENCES `congresses_instances_programTags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2259,20 +2259,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `congresses_instances_registrationForm`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_registrationForm` (
-  `congressInstanceId` int(10) unsigned NOT NULL,
+  `congressInstanceId` int unsigned NOT NULL,
   `allowUse` tinyint(1) NOT NULL DEFAULT '1',
   `allowGuests` tinyint(1) NOT NULL DEFAULT '0',
   `editable` tinyint(1) NOT NULL DEFAULT '1',
   `cancellable` tinyint(1) NOT NULL DEFAULT '1',
   `manualApproval` tinyint(1) NOT NULL DEFAULT '0',
-  `sequenceIds_startAt` int(11) DEFAULT NULL,
+  `sequenceIds_startAt` int DEFAULT NULL,
   `sequenceIds_requireValid` tinyint(1) DEFAULT NULL,
-  `price_currency` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `price_var` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `price_minUpfront` int(10) unsigned DEFAULT NULL,
-  `formId` int(10) unsigned NOT NULL,
+  `price_currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `price_var` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `price_minUpfront` int unsigned DEFAULT NULL,
+  `formId` int unsigned NOT NULL,
   `form` json NOT NULL,
   PRIMARY KEY (`congressInstanceId`),
   UNIQUE KEY `formId` (`formId`),
@@ -2312,19 +2312,19 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `countries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `countries` (
-  `code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `name_eo` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_en` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_fr` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_es` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_nl` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_pt` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_sk` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_zh` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_de` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_eo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_en` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_fr` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_es` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_nl` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_pt` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_sk` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_zh` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_de` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`),
   KEY `enabled` (`enabled`),
   FULLTEXT KEY `name` (`name_eo`)
@@ -2347,10 +2347,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `countries_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `countries_groups` (
-  `code` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`),
   FULLTEXT KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2372,10 +2372,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `countries_groups_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `countries_groups_members` (
-  `group_code` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country_code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `group_code` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country_code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`group_code`,`country_code`),
   KEY `country_code` (`country_code`),
   CONSTRAINT `countries_groups_members_ibfk_1` FOREIGN KEY (`group_code`) REFERENCES `countries_groups` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2399,9 +2399,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2422,12 +2422,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data` (
-  `formId` int(10) unsigned NOT NULL,
+  `formId` int unsigned NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `createdTime` bigint(20) unsigned NOT NULL,
-  `editedTime` bigint(20) unsigned DEFAULT NULL,
+  `createdTime` bigint unsigned NOT NULL,
+  `editedTime` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`formId`,`dataId`),
   KEY `createdTime` (`createdTime`),
   KEY `editedTime` (`editedTime`),
@@ -2452,10 +2452,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_boolean`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_boolean` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
   `value` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
@@ -2482,10 +2482,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_boolean_table`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_boolean_table` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
   `value` json DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
@@ -2511,12 +2511,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_country`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_country` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `value` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
   KEY `value` (`value`),
   KEY `formId` (`formId`,`dataId`),
@@ -2540,10 +2540,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_date`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_date` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
   `value` date DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
@@ -2570,12 +2570,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_datetime`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_datetime` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `value` bigint(20) unsigned DEFAULT NULL,
+  `value` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
   KEY `value` (`value`),
   KEY `formId` (`formId`,`dataId`),
@@ -2599,12 +2599,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_enum`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_enum` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `value` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
   KEY `value` (`value`),
   KEY `formId` (`formId`,`dataId`),
@@ -2629,12 +2629,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_money`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_money` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `value` int(10) unsigned DEFAULT NULL,
+  `value` int unsigned DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
   KEY `value` (`value`),
   KEY `formId` (`formId`,`dataId`),
@@ -2659,10 +2659,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_number`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_number` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
   `value` float DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
@@ -2689,12 +2689,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_text`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_text` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `value` varchar(8192) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` varchar(8192) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
   KEY `formId` (`formId`,`dataId`),
   FULLTEXT KEY `value` (`value`),
@@ -2719,10 +2719,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_data_fields_time`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_data_fields_time` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `dataId` binary(12) NOT NULL,
   `value` time DEFAULT NULL,
   PRIMARY KEY (`formId`,`name`,`dataId`),
@@ -2749,11 +2749,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `forms_fields`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms_fields` (
-  `formId` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `formId` int unsigned NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`formId`,`name`),
   KEY `type` (`type`),
   CONSTRAINT `forms_fields_ibfk_1` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -2776,22 +2776,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `httpLog`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `httpLog` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `time` bigint(20) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `time` bigint unsigned NOT NULL,
+  `codeholderId` int unsigned DEFAULT NULL,
   `apiKey` binary(16) DEFAULT NULL,
   `ip` varbinary(16) NOT NULL,
-  `origin` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `userAgent` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `userAgentParsed` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `method` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `path` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `origin` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgent` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userAgentParsed` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `method` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `path` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `query` json NOT NULL,
-  `resStatus` smallint(6) NOT NULL,
+  `resStatus` smallint NOT NULL,
   `resTime` decimal(9,3) NOT NULL,
-  `resLocation` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `resLocation` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   KEY `apiKey` (`apiKey`),
@@ -2824,11 +2824,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `lists`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `lists` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `filters` json NOT NULL,
   `memberFilter` json NOT NULL,
   PRIMARY KEY (`id`),
@@ -2854,13 +2854,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `magazines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `issn` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `issn` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
   KEY `name` (`name`),
@@ -2885,13 +2885,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `magazines_editions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines_editions` (
-  `id` int(10) unsigned NOT NULL,
-  `magazineId` int(10) unsigned NOT NULL,
-  `idHuman` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL,
+  `magazineId` int unsigned NOT NULL,
+  `idHuman` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date NOT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`magazineId`,`id`) USING BTREE,
   KEY `date` (`date`),
   FULLTEXT KEY `idHuman` (`idHuman`),
@@ -2916,12 +2916,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `magazines_editions_files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines_editions_files` (
-  `magazineId` int(10) unsigned NOT NULL,
-  `editionId` int(10) unsigned NOT NULL,
-  `format` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `downloads` int(10) unsigned NOT NULL DEFAULT '0',
+  `magazineId` int unsigned NOT NULL,
+  `editionId` int unsigned NOT NULL,
+  `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `downloads` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`magazineId`,`editionId`,`format`),
   KEY `downloads` (`downloads`),
   CONSTRAINT `magazines_editions_files_ibfk_1` FOREIGN KEY (`magazineId`, `editionId`) REFERENCES `magazines_editions` (`magazineId`, `id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -2943,16 +2943,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `magazines_editions_toc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines_editions_toc` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `magazineId` int(10) unsigned NOT NULL,
-  `editionId` int(10) unsigned NOT NULL,
-  `page` int(10) unsigned NOT NULL,
-  `title` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `recitationAuthor` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `text` mediumtext COLLATE utf8mb4_unicode_ci,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `magazineId` int unsigned NOT NULL,
+  `editionId` int unsigned NOT NULL,
+  `page` int unsigned NOT NULL,
+  `title` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recitationAuthor` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `highlighted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `page` (`page`),
@@ -2985,11 +2985,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `magazines_editions_toc_recitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines_editions_toc_recitations` (
-  `tocEntryId` int(10) unsigned NOT NULL,
-  `format` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `downloads` int(10) unsigned NOT NULL DEFAULT '0',
+  `tocEntryId` int unsigned NOT NULL,
+  `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `downloads` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`tocEntryId`,`format`),
   KEY `downloads` (`downloads`),
   CONSTRAINT `magazines_editions_toc_recitations_ibfk_1` FOREIGN KEY (`tocEntryId`) REFERENCES `magazines_editions_toc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3011,16 +3011,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `membershipCategories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `membershipCategories` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `nameAbbrev` varchar(6) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `nameAbbrev` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `givesMembership` tinyint(1) NOT NULL DEFAULT '1',
   `lifetime` tinyint(1) NOT NULL DEFAULT '0',
-  `availableFrom` year(4) DEFAULT NULL,
-  `availableTo` year(4) DEFAULT NULL,
+  `availableFrom` year DEFAULT NULL,
+  `availableTo` year DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `nameAbbrev` (`nameAbbrev`) USING BTREE,
@@ -3047,12 +3047,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `membershipCategories_codeholders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `membershipCategories_codeholders` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `categoryId` int(10) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned NOT NULL,
-  `year` year(4) NOT NULL COMMENT 'For lifetime validity, this is the year it started being valid',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `categoryId` int unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `year` year NOT NULL COMMENT 'For lifetime validity, this is the year it started being valid',
   PRIMARY KEY (`id`),
   UNIQUE KEY `categoryId` (`categoryId`,`codeholderId`,`year`),
   KEY `codeholderId` (`codeholderId`),
@@ -3077,21 +3077,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `notif_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `notif_templates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `base` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `intent` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `base` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intent` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `script` json DEFAULT NULL,
-  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `from` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fromName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `replyTo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `html` mediumtext COLLATE utf8mb4_unicode_ci,
-  `text` text COLLATE utf8mb4_unicode_ci,
+  `subject` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `from` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fromName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `replyTo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `html` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `modules` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `base` (`base`),
@@ -3123,12 +3123,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_addons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_addons` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `paymentOrgId` smallint(5) unsigned NOT NULL,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `paymentOrgId` smallint unsigned NOT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orgId` (`paymentOrgId`),
   FULLTEXT KEY `description` (`description`),
@@ -3153,29 +3153,29 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents` (
   `id` binary(15) NOT NULL,
-  `codeholderId` int(10) unsigned DEFAULT NULL,
-  `customer_email` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `paymentOrgId` smallint(5) unsigned DEFAULT NULL,
-  `paymentMethodId` int(10) unsigned DEFAULT NULL,
+  `codeholderId` int unsigned DEFAULT NULL,
+  `customer_email` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentOrgId` smallint unsigned DEFAULT NULL,
+  `paymentMethodId` int unsigned DEFAULT NULL,
   `paymentMethod` json NOT NULL,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `currency` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `timeCreated` bigint(20) unsigned NOT NULL,
-  `statusTime` bigint(20) unsigned NOT NULL,
-  `succeededTime` bigint(20) unsigned DEFAULT NULL,
-  `refundedTime` bigint(20) unsigned DEFAULT NULL,
-  `internalNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `customerNotes` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `foreignId` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `stripePaymentIntentId` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `stripeClientSecret` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `amountRefunded` int(10) unsigned NOT NULL DEFAULT '0',
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `timeCreated` bigint unsigned NOT NULL,
+  `statusTime` bigint unsigned NOT NULL,
+  `succeededTime` bigint unsigned DEFAULT NULL,
+  `refundedTime` bigint unsigned DEFAULT NULL,
+  `internalNotes` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `customerNotes` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foreignId` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripePaymentIntentId` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripeClientSecret` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `amountRefunded` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `stripePaymentIntentId` (`stripePaymentIntentId`),
   KEY `codeholderId` (`codeholderId`),
@@ -3217,12 +3217,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_events` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `paymentIntentId` binary(15) NOT NULL,
-  `time` bigint(20) unsigned NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `time` bigint unsigned NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3244,14 +3244,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_purposes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_purposes` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(5) unsigned NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `invalid` tinyint(1) NOT NULL DEFAULT '0',
-  `amount` bigint(10) NOT NULL,
-  `originalAmount` bigint(10) unsigned DEFAULT NULL,
+  `amount` bigint NOT NULL,
+  `originalAmount` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `type` (`type`),
   KEY `amount` (`amount`),
@@ -3276,11 +3276,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_purposes_addon`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_purposes_addon` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(5) unsigned NOT NULL,
-  `paymentAddonId` int(10) unsigned DEFAULT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `paymentAddonId` int unsigned DEFAULT NULL,
   `paymentAddon` json NOT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `paymentAddonId` (`paymentAddonId`),
@@ -3304,12 +3304,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_purposes_manual`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_purposes_manual` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(5) unsigned NOT NULL,
-  `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `title` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   CONSTRAINT `pay_intents_purposes_manual_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3330,15 +3330,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_purposes_trigger`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_purposes_trigger` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(5) unsigned NOT NULL,
-  `triggers` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `triggerAmount_amount` int(10) unsigned DEFAULT NULL,
-  `triggerAmount_currency` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `triggers` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `triggerAmount_amount` int unsigned DEFAULT NULL,
+  `triggerAmount_currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `triggers` (`triggers`),
   KEY `triggerAmount_amount` (`triggerAmount_amount`),
@@ -3362,15 +3362,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_intents_purposes_trigger_congress_registration`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_intents_purposes_trigger_congress_registration` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(6) unsigned NOT NULL,
+  `pos` smallint unsigned NOT NULL,
   `dataId` binary(12) NOT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `dataId` (`dataId`),
   CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_2` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON DELETE NO ACTION ON UPDATE CASCADE
+  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_2` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3389,23 +3389,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_methods`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_methods` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `paymentOrgId` smallint(5) unsigned NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `stripeMethods` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `internalDescription` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(5000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `currencies` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `paymentValidity` int(11) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `paymentOrgId` smallint unsigned NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stripeMethods` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `internalDescription` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `currencies` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentValidity` int unsigned DEFAULT NULL,
   `isRecommended` tinyint(1) NOT NULL DEFAULT '0',
   `feePercent` float DEFAULT NULL,
-  `feeFixed_val` smallint(5) unsigned DEFAULT NULL,
-  `feeFixed_cur` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `stripeSecretKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `stripePublishableKey` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `feeFixed_val` smallint unsigned DEFAULT NULL,
+  `feeFixed_cur` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stripePublishableKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
@@ -3433,12 +3433,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_orgs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_orgs` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
   KEY `name` (`name`) USING BTREE,
@@ -3452,7 +3452,7 @@ CREATE TABLE `pay_orgs` (
 
 LOCK TABLES `pay_orgs` WRITE;
 /*!40000 ALTER TABLE `pay_orgs` DISABLE KEYS */;
-INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA',NULL),(3,'tejo','TEJO',NULL);
+INSERT INTO `pay_orgs` VALUES (1,'tejo','IJK 2020','Internacia Junulara Kongreso 2020'),(2,'uea','UEA','Universala Esperanto-Asocio'),(3,'tejo','TEJO','Tutmonda Esperantista Junulara Organizo');
 /*!40000 ALTER TABLE `pay_orgs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3462,13 +3462,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_stripe_webhooks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_stripe_webhooks` (
-  `stripeSecretKey` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `stripeId` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `secret` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `apiVersion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `enabledEvents` varchar(3072) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stripeSecretKey` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stripeId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `apiVersion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `enabledEvents` varchar(3072) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`stripeSecretKey`),
   UNIQUE KEY `stripeId` (`stripeId`),
   KEY `apiVersion` (`apiVersion`)
@@ -3490,13 +3490,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pay_triggerHist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_triggerHist` (
   `paymentIntentId` binary(15) NOT NULL,
-  `pos` smallint(5) unsigned NOT NULL,
-  `amountTriggered` int(10) unsigned NOT NULL,
-  `currencyTriggered` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `time` bigint(20) unsigned NOT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `amountTriggered` int unsigned NOT NULL,
+  `currencyTriggered` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `time` bigint unsigned NOT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `time` (`time`),
   KEY `amountTriggered` (`amountTriggered`),
@@ -3515,17 +3515,110 @@ LOCK TABLES `pay_triggerHist` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `registration_options`
+--
+
+DROP TABLE IF EXISTS `registration_options`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_options` (
+  `year` year NOT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `paymentOrgId` smallint unsigned NOT NULL,
+  `currency` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`year`),
+  KEY `paymentOrgId` (`paymentOrgId`),
+  KEY `currency` (`currency`),
+  KEY `enabled` (`enabled`),
+  CONSTRAINT `registration_options_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_options`
+--
+
+LOCK TABLES `registration_options` WRITE;
+/*!40000 ALTER TABLE `registration_options` DISABLE KEYS */;
+INSERT INTO `registration_options` VALUES (2021,0,2,'EUR');
+/*!40000 ALTER TABLE `registration_options` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_options_offerGroups`
+--
+
+DROP TABLE IF EXISTS `registration_options_offerGroups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_options_offerGroups` (
+  `year` year NOT NULL,
+  `id` smallint unsigned NOT NULL,
+  `title` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(4000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`year`,`id`),
+  CONSTRAINT `registration_options_offerGroups_ibfk_1` FOREIGN KEY (`year`) REFERENCES `registration_options` (`year`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_options_offerGroups`
+--
+
+LOCK TABLES `registration_options_offerGroups` WRITE;
+/*!40000 ALTER TABLE `registration_options_offerGroups` DISABLE KEYS */;
+INSERT INTO `registration_options_offerGroups` VALUES (2021,0,'Membrokategorioj','Tie ƒâi eblas elekti en kiu kategorio vi volas membri.'),(2021,1,'Donacoj','Se vi havas la necesajn resursojn por donaci al la celoj de UEA kaj TEJO, ni estus aparte dankemaj.');
+/*!40000 ALTER TABLE `registration_options_offerGroups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_options_offerGroups_offers`
+--
+
+DROP TABLE IF EXISTS `registration_options_offerGroups_offers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_options_offerGroups_offers` (
+  `year` year NOT NULL,
+  `offerGroupId` smallint unsigned NOT NULL,
+  `id` tinyint unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentAddonId` int unsigned DEFAULT NULL,
+  `membershipCategoryId` int unsigned DEFAULT NULL,
+  `price_script` json DEFAULT NULL,
+  `price_var` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `price_description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`year`,`offerGroupId`,`id`),
+  KEY `paymentAddonId` (`paymentAddonId`),
+  KEY `membershipCategoryId` (`membershipCategoryId`),
+  CONSTRAINT `registration_options_offerGroups_offers_ibfk_1` FOREIGN KEY (`year`, `offerGroupId`) REFERENCES `registration_options_offerGroups` (`year`, `id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_options_offerGroups_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_options_offerGroups_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_options_offerGroups_offers`
+--
+
+LOCK TABLES `registration_options_offerGroups_offers` WRITE;
+/*!40000 ALTER TABLE `registration_options_offerGroups_offers` DISABLE KEYS */;
+INSERT INTO `registration_options_offerGroups_offers` VALUES (2021,0,0,'membership',NULL,3,'{\"price\": {\"t\": \"n\", \"v\": 4400}}','price',NULL),(2021,0,1,'membership',NULL,6,'{\"price\": {\"t\": \"n\", \"v\": 7400}}','price',NULL),(2021,0,2,'membership',NULL,4,'{\"price\": {\"t\": \"n\", \"v\": 132000}}','price',NULL),(2021,1,0,'addon',1,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `registration_options_offerGroups_offers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `savedQueries`
 --
 
 DROP TABLE IF EXISTS `savedQueries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `savedQueries` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `query` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `category` (`category`),
@@ -3544,13 +3637,13 @@ LOCK TABLES `savedQueries` WRITE;
 UNLOCK TABLES;
 
 --
--- Temporary table structure for view `view_codeholders`
+-- Temporary view structure for view `view_codeholders`
 --
 
 DROP TABLE IF EXISTS `view_codeholders`;
 /*!50001 DROP VIEW IF EXISTS `view_codeholders`*/;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+/*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `view_codeholders` AS SELECT 
  1 AS `id`,
  1 AS `codeholderType`,
@@ -3609,13 +3702,13 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
--- Temporary table structure for view `view_pay_intents_purposes`
+-- Temporary view structure for view `view_pay_intents_purposes`
 --
 
 DROP TABLE IF EXISTS `view_pay_intents_purposes`;
 /*!50001 DROP VIEW IF EXISTS `view_pay_intents_purposes`*/;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+/*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `view_pay_intents_purposes` AS SELECT 
  1 AS `paymentIntentId`,
  1 AS `pos`,
@@ -3635,13 +3728,13 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
--- Temporary table structure for view `view_pay_triggerable`
+-- Temporary view structure for view `view_pay_triggerable`
 --
 
 DROP TABLE IF EXISTS `view_pay_triggerable`;
 /*!50001 DROP VIEW IF EXISTS `view_pay_triggerable`*/;
 SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
+/*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `view_pay_triggerable` AS SELECT 
  1 AS `paymentIntentId`,
  1 AS `pos`,
@@ -3659,38 +3752,38 @@ SET character_set_client = @saved_cs_client;
 
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `votes` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `results` json DEFAULT NULL,
   `hasResults` tinyint(1) GENERATED ALWAYS AS ((`results` is not null)) STORED,
-  `tieBreakerBallot` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(10000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tieBreakerBallot` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(10000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `voterCodeholders` json NOT NULL,
   `voterCodeholdersMemberFilter` json NOT NULL,
   `viewerCodeholders` json DEFAULT NULL,
   `viewerCodeholdersMemberFilter` json DEFAULT NULL,
   `codeholdersSet` tinyint(1) NOT NULL DEFAULT '0',
-  `timeStart` bigint(20) unsigned NOT NULL,
-  `timeEnd` bigint(20) unsigned NOT NULL,
+  `timeStart` bigint unsigned NOT NULL,
+  `timeEnd` bigint unsigned NOT NULL,
   `ballotsSecret` tinyint(1) NOT NULL DEFAULT '1',
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `blankBallotsLimit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `blankBallotsLimit` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `blankBallotsLimitInclusive` tinyint(1) NOT NULL DEFAULT '1',
-  `quorum` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `quorum` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `quorumInclusive` tinyint(1) NOT NULL DEFAULT '1',
-  `majorityBallots` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `majorityBallots` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `majorityBallotsInclusive` tinyint(1) NOT NULL DEFAULT '1',
-  `majorityVoters` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `majorityVoters` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `majorityVotersInclusive` tinyint(1) NOT NULL DEFAULT '1',
   `majorityMustReachBoth` tinyint(1) NOT NULL DEFAULT '1',
-  `numChosenOptions` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `mentionThreshold` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `numChosenOptions` tinyint unsigned NOT NULL DEFAULT '1',
+  `mentionThreshold` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `mentionThresholdInclusive` tinyint(1) NOT NULL DEFAULT '1',
-  `maxOptionsPerBallot` tinyint(3) unsigned DEFAULT NULL,
-  `tieBreakerCodeholder` int(10) unsigned DEFAULT NULL,
+  `maxOptionsPerBallot` tinyint unsigned DEFAULT NULL,
+  `tieBreakerCodeholder` int unsigned DEFAULT NULL,
   `publishVoters` tinyint(1) NOT NULL DEFAULT '0',
   `publishVotersPercentage` tinyint(1) NOT NULL DEFAULT '1',
   `options` json DEFAULT NULL,
@@ -3725,11 +3818,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `votes_ballots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `votes_ballots` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `voteId` int(10) unsigned NOT NULL,
-  `ballot` varchar(1000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `voteId` int unsigned NOT NULL,
+  `ballot` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `voteId` (`voteId`),
   CONSTRAINT `votes_ballots_ibfk_1` FOREIGN KEY (`voteId`) REFERENCES `votes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3752,12 +3845,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `votes_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `votes_templates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `vote` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
@@ -3782,13 +3875,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `votes_voters`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `votes_voters` (
-  `voteId` int(10) unsigned NOT NULL,
-  `codeholderId` int(10) unsigned NOT NULL,
+  `voteId` int unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
   `mayVote` tinyint(1) NOT NULL,
-  `timeVoted` bigint(20) unsigned DEFAULT NULL,
-  `ballotId` bigint(20) unsigned DEFAULT NULL,
+  `timeVoted` bigint unsigned DEFAULT NULL,
+  `ballotId` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`voteId`,`codeholderId`),
   UNIQUE KEY `ballotId` (`ballotId`),
   KEY `time` (`timeVoted`),
@@ -3932,7 +4025,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if((`codeholders`.`isDead` and (not(`codeholders`.`deathdate`))),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3950,7 +4043,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,if((`pay_intents_purposes`.`type` = 'trigger'),if(isnull(`pay_intents`.`succeededTime`),'awaiting',if(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `pay_intents_purposes`.`pos`))),'triggered','processing')),NULL) AS `triggerStatus`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from (((((`pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `pay_intents_purposes`.`paymentIntentId`))) left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
+/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,if((`pay_intents_purposes`.`type` = 'trigger'),if((`pay_intents`.`succeededTime` is null),'awaiting',if(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `pay_intents_purposes`.`pos`))),'triggered','processing')),NULL) AS `triggerStatus`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from (((((`pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `pay_intents_purposes`.`paymentIntentId`))) left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3968,7 +4061,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_triggerable` AS select `view_pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`view_pay_intents_purposes`.`pos` AS `pos`,`view_pay_intents_purposes`.`amount` AS `amount`,`pay_intents`.`currency` AS `currency`,`view_pay_intents_purposes`.`triggers` AS `triggers`,`view_pay_intents_purposes`.`triggerAmount_amount` AS `triggerAmount_amount`,`view_pay_intents_purposes`.`triggerAmount_currency` AS `triggerAmount_currency`,coalesce(`congresses_instances_registrationForm`.`price_currency`) AS `targetCurrency` from (((`view_pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `view_pay_intents_purposes`.`paymentIntentId`))) left join `forms_data` on((`forms_data`.`dataId` = `view_pay_intents_purposes`.`trigger_congress_registration_dataId`))) left join `congresses_instances_registrationForm` on((`congresses_instances_registrationForm`.`formId` = `forms_data`.`formId`))) where ((`view_pay_intents_purposes`.`type` = 'trigger') and (`pay_intents`.`succeededTime` is not null) and (not(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`)))))) */;
+/*!50001 VIEW `view_pay_triggerable` AS select `view_pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`view_pay_intents_purposes`.`pos` AS `pos`,`view_pay_intents_purposes`.`amount` AS `amount`,`pay_intents`.`currency` AS `currency`,`view_pay_intents_purposes`.`triggers` AS `triggers`,`view_pay_intents_purposes`.`triggerAmount_amount` AS `triggerAmount_amount`,`view_pay_intents_purposes`.`triggerAmount_currency` AS `triggerAmount_currency`,coalesce(`congresses_instances_registrationForm`.`price_currency`) AS `targetCurrency` from (((`view_pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `view_pay_intents_purposes`.`paymentIntentId`))) left join `forms_data` on((`forms_data`.`dataId` = `view_pay_intents_purposes`.`trigger_congress_registration_dataId`))) left join `congresses_instances_registrationForm` on((`congresses_instances_registrationForm`.`formId` = `forms_data`.`formId`))) where ((`view_pay_intents_purposes`.`type` = 'trigger') and (`pay_intents`.`succeededTime` is not null) and exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`))) is false) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3982,4 +4075,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-15 13:58:08
+-- Dump completed on 2020-12-21 23:18:02

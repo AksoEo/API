@@ -2,6 +2,7 @@ export const schema = {
 	defaultFields: [ 'year' ],
 	fields: {
 		year: 'f',
+		enabled: 'f',
 		paymentOrgId: 'f',
 		currency: 'f',
 		offers: ''
@@ -46,11 +47,11 @@ export async function afterQuery (arr, done) {
 				offerGroupOffers.push({
 					type: offer.type,
 					id: offer.paymentAddonId || offer.membershipCategoryId,
-					price: {
+					price: offer.price_script ? {
 						script: offer.price_script,
 						var: offer.price_var,
 						description: offer.price_description
-					}
+					} : undefined
 				});
 			}
 
