@@ -15,21 +15,26 @@ class CongressInstanceLocationResource extends SimpleResource {
 			];
 		}
 
-		if (fields.includes('rating.rating')) { obj.rating = parseFloat(obj.rating, 10); }
-		if (fields.includes('rating.rating') || fields.includes('rating.max') || fields.includes('rating.type')) {
-			fields.push('rating');
-			if (obj.rating_max !== null) {
-				obj.rating = {
-					rating: obj.rating,
-					max: obj.rating_max,
-					type: obj.rating_type
-				};
-				
+		const shouldHaveRating = fields.includes('rating.rating')
+			|| fields.includes('rating.max')
+			|| fields.includes('rating.type');
+		if (obj.rating !== null) {
+			obj.rating = {
+				rating: parseFloat(obj.rating, 10),
+				max: obj.rating_max,
+				type: obj.rating_type
+			};
 
+			if (!shouldHaveRating) {
+				delete obj.rating;
+			} else {
 				if (!fields.includes('rating.rating')) { delete obj.rating.rating; }
 				if (!fields.includes('rating.max')) { delete obj.rating.max; }
 				if (!fields.includes('rating.type')) { delete obj.rating.type; }
 			}
+		}
+		if (shouldHaveRating) {
+			fields.push('rating');
 		}
 
 		if (obj.type === 'external') {
