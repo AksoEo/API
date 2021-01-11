@@ -3515,6 +3515,147 @@ LOCK TABLES `pay_triggerHist` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `registration_entries`
+--
+
+DROP TABLE IF EXISTS `registration_entries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_entries` (
+  `id` binary(15) NOT NULL,
+  `year` year DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pendingIssue_what` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pendingIssue_where` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `newCodeholderId` int unsigned DEFAULT NULL,
+  `timeSubmitted` bigint unsigned NOT NULL,
+  `timeStatus` bigint unsigned DEFAULT NULL,
+  `internalNotes` varchar(4000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `currency` char(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `year` (`year`),
+  KEY `status` (`status`),
+  KEY `newCodeholderId` (`newCodeholderId`),
+  KEY `timeSubmitted` (`timeSubmitted`),
+  KEY `timeStatus` (`timeStatus`),
+  KEY `currency` (`currency`),
+  FULLTEXT KEY `internalNotes` (`internalNotes`),
+  CONSTRAINT `registration_entries_ibfk_1` FOREIGN KEY (`newCodeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_entries`
+--
+
+LOCK TABLES `registration_entries` WRITE;
+/*!40000 ALTER TABLE `registration_entries` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registration_entries` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_entries_codeholderData_id`
+--
+
+DROP TABLE IF EXISTS `registration_entries_codeholderData_id`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_entries_codeholderData_id` (
+  `registrationEntryId` binary(15) NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  PRIMARY KEY (`registrationEntryId`),
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `registration_entries_codeholderData_id_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_codeholderData_id_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_entries_codeholderData_id`
+--
+
+LOCK TABLES `registration_entries_codeholderData_id` WRITE;
+/*!40000 ALTER TABLE `registration_entries_codeholderData_id` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registration_entries_codeholderData_id` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_entries_codeholderData_obj`
+--
+
+DROP TABLE IF EXISTS `registration_entries_codeholderData_obj`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_entries_codeholderData_obj` (
+  `registrationEntryId` binary(15) NOT NULL,
+  `address_country` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address_countryArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_sortingCode` int DEFAULT NULL,
+  `feeCountry` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `firstName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `firstNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lastNameLegal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `honorific` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `birthdate` date NOT NULL,
+  `cellphone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`registrationEntryId`),
+  KEY `address_country` (`address_country`),
+  KEY `feeCountry` (`feeCountry`),
+  KEY `email` (`email`),
+  KEY `birthdate` (`birthdate`),
+  CONSTRAINT `registration_entries_codeholderData_obj_ibfk_1` FOREIGN KEY (`address_country`) REFERENCES `countries` (`code`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_codeholderData_obj_ibfk_2` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_entries_codeholderData_obj`
+--
+
+LOCK TABLES `registration_entries_codeholderData_obj` WRITE;
+/*!40000 ALTER TABLE `registration_entries_codeholderData_obj` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registration_entries_codeholderData_obj` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_entries_offers`
+--
+
+DROP TABLE IF EXISTS `registration_entries_offers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_entries_offers` (
+  `registrationEntryId` binary(15) NOT NULL,
+  `arrayId` tinyint unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amount` int unsigned NOT NULL,
+  `paymentAddonId` int unsigned NOT NULL,
+  `membershipCategoryId` int unsigned NOT NULL,
+  PRIMARY KEY (`registrationEntryId`,`arrayId`),
+  KEY `paymentAddonId` (`paymentAddonId`),
+  KEY `membershipCategoryId` (`membershipCategoryId`),
+  CONSTRAINT `registration_entries_offers_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_intents_purposes_addon` (`paymentAddonId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_entries_offers`
+--
+
+LOCK TABLES `registration_entries_offers` WRITE;
+/*!40000 ALTER TABLE `registration_entries_offers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registration_entries_offers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `registration_options`
 --
 
@@ -4075,4 +4216,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-21 23:18:02
+-- Dump completed on 2021-01-11 21:49:02
