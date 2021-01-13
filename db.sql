@@ -3527,6 +3527,7 @@ CREATE TABLE `registration_entries` (
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `pendingIssue_what` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pendingIssue_where` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fishyIsOkay` tinyint(1) NOT NULL DEFAULT '0',
   `newCodeholderId` int unsigned DEFAULT NULL,
   `timeSubmitted` bigint unsigned NOT NULL,
   `timeStatus` bigint unsigned DEFAULT NULL,
@@ -4216,4 +4217,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-11 21:49:02
+-- Dump completed on 2021-01-13 15:19:47
