@@ -3541,7 +3541,8 @@ CREATE TABLE `registration_entries` (
   KEY `timeStatus` (`timeStatus`),
   KEY `currency` (`currency`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
-  CONSTRAINT `registration_entries_ibfk_1` FOREIGN KEY (`newCodeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_ibfk_1` FOREIGN KEY (`newCodeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_ibfk_2` FOREIGN KEY (`year`) REFERENCES `registration_options` (`year`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3551,6 +3552,7 @@ CREATE TABLE `registration_entries` (
 
 LOCK TABLES `registration_entries` WRITE;
 /*!40000 ALTER TABLE `registration_entries` DISABLE KEYS */;
+INSERT INTO `registration_entries` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â',2021,'submitted',NULL,NULL,0,20,1610553143,NULL,NULL,'EUR');
 /*!40000 ALTER TABLE `registration_entries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3621,6 +3623,7 @@ CREATE TABLE `registration_entries_codeholderData_obj` (
 
 LOCK TABLES `registration_entries_codeholderData_obj` WRITE;
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` DISABLE KEYS */;
+INSERT INTO `registration_entries_codeholderData_obj` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â','dk',NULL,'K√∏benhavn K',NULL,'Norde Ringgade 2, 1 t.v.','9000',NULL,'de','test@test',NULL,'Bertrud',NULL,NULL,'S-ro','1990-02-03',NULL);
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3636,14 +3639,14 @@ CREATE TABLE `registration_entries_offers` (
   `arrayId` tinyint unsigned NOT NULL,
   `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` int unsigned NOT NULL,
-  `paymentAddonId` int unsigned NOT NULL,
-  `membershipCategoryId` int unsigned NOT NULL,
+  `paymentAddonId` int unsigned DEFAULT NULL,
+  `membershipCategoryId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`registrationEntryId`,`arrayId`),
   KEY `paymentAddonId` (`paymentAddonId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
   CONSTRAINT `registration_entries_offers_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_intents_purposes_addon` (`paymentAddonId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3653,6 +3656,7 @@ CREATE TABLE `registration_entries_offers` (
 
 LOCK TABLES `registration_entries_offers` WRITE;
 /*!40000 ALTER TABLE `registration_entries_offers` DISABLE KEYS */;
+INSERT INTO `registration_entries_offers` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â',0,'membership',3400,NULL,6),(_binary 'ùüX¢J2\«˙FÎÉ¥\Â',1,'addon',250,1,NULL);
 /*!40000 ALTER TABLE `registration_entries_offers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4217,4 +4221,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-13 15:19:47
+-- Dump completed on 2021-01-13 17:35:54
