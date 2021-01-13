@@ -30,6 +30,8 @@ export async function afterQuery (arr, done) {
 		.whereIn('year', years)
 		.orderBy('year', 'offerGroupId', 'id');
 
+	// TODO: Does this break if order is not `year ASC`?
+
 	let offerGroupIndex = 0;
 	let offerGroupOffersIndex = 0;
 	for (const row of arr) {
