@@ -347,7 +347,8 @@ export default {
 			} catch (e) {
 				await rollbackTransaction(trx);
 				if (e instanceof AddressFormat.InvalidAddress) {
-					return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
+					return res.status(400).type('text/plain')
+						.send('Invalid address: ' + JSON.stringify(e.errors));
 				}
 				throw e;
 			}

@@ -3524,7 +3524,7 @@ DROP TABLE IF EXISTS `registration_entries`;
 CREATE TABLE `registration_entries` (
   `id` binary(15) NOT NULL,
   `year` year DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'submitted',
   `pendingIssue_what` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pendingIssue_where` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fishyIsOkay` tinyint(1) NOT NULL DEFAULT '0',
@@ -3552,7 +3552,7 @@ CREATE TABLE `registration_entries` (
 
 LOCK TABLES `registration_entries` WRITE;
 /*!40000 ALTER TABLE `registration_entries` DISABLE KEYS */;
-INSERT INTO `registration_entries` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â',2021,'submitted',NULL,NULL,0,20,1610553143,NULL,NULL,'EUR');
+INSERT INTO `registration_entries` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',2021,'submitted',NULL,NULL,0,NULL,1610834090,NULL,NULL,'DKK'),(_binary 'ìST\◊såhW?w/˘1',2021,'submitted',NULL,NULL,0,NULL,1610833819,NULL,NULL,'DKK'),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',2021,'submitted',NULL,NULL,0,NULL,1610834575,NULL,NULL,'DKK');
 /*!40000 ALTER TABLE `registration_entries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3579,6 +3579,7 @@ CREATE TABLE `registration_entries_codeholderData_id` (
 
 LOCK TABLES `registration_entries_codeholderData_id` WRITE;
 /*!40000 ALTER TABLE `registration_entries_codeholderData_id` DISABLE KEYS */;
+INSERT INTO `registration_entries_codeholderData_id` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',2),(_binary 'ìST\◊såhW?w/˘1',6);
 /*!40000 ALTER TABLE `registration_entries_codeholderData_id` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3597,7 +3598,7 @@ CREATE TABLE `registration_entries_codeholderData_obj` (
   `address_cityArea` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address_streetAddress` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address_postalCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_sortingCode` int DEFAULT NULL,
+  `address_sortingCode` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `feeCountry` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `firstName` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3623,7 +3624,7 @@ CREATE TABLE `registration_entries_codeholderData_obj` (
 
 LOCK TABLES `registration_entries_codeholderData_obj` WRITE;
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` DISABLE KEYS */;
-INSERT INTO `registration_entries_codeholderData_obj` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â','dk',NULL,'K√∏benhavn K',NULL,'Norde Ringgade 2, 1 t.v.','9000',NULL,'de','test@test',NULL,'Bertrud',NULL,NULL,'S-ro','1990-02-03',NULL);
+INSERT INTO `registration_entries_codeholderData_obj` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â','dk',NULL,'K√∏benhavn K',NULL,'Norde Ringgade 2, 1 t.v.','9000',NULL,'de','test@test',NULL,'Bertrud',NULL,NULL,'S-ro','1990-02-03',NULL),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2','FR','','PARIS','','8 Rue des √âtoiles','75008','','zw','test@test.com',NULL,'Tim',NULL,NULL,NULL,'1938-04-17',NULL);
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3656,7 +3657,7 @@ CREATE TABLE `registration_entries_offers` (
 
 LOCK TABLES `registration_entries_offers` WRITE;
 /*!40000 ALTER TABLE `registration_entries_offers` DISABLE KEYS */;
-INSERT INTO `registration_entries_offers` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â',0,'membership',3400,NULL,6),(_binary 'ùüX¢J2\«˙FÎÉ¥\Â',1,'addon',250,1,NULL);
+INSERT INTO `registration_entries_offers` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',0,'membership',28000,NULL,6),(_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',1,'addon',2500,1,NULL),(_binary 'ìST\◊såhW?w/˘1',0,'membership',28000,NULL,6),(_binary 'ìST\◊såhW?w/˘1',1,'addon',2500,1,NULL),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',0,'membership',28000,NULL,6),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',1,'addon',2500,1,NULL);
 /*!40000 ALTER TABLE `registration_entries_offers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3686,7 +3687,7 @@ CREATE TABLE `registration_options` (
 
 LOCK TABLES `registration_options` WRITE;
 /*!40000 ALTER TABLE `registration_options` DISABLE KEYS */;
-INSERT INTO `registration_options` VALUES (2021,0,2,'EUR');
+INSERT INTO `registration_options` VALUES (2021,1,2,'EUR');
 /*!40000 ALTER TABLE `registration_options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4221,4 +4222,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-13 17:35:54
+-- Dump completed on 2021-01-16 23:04:17
