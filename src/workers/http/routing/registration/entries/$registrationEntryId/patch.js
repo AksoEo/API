@@ -183,7 +183,7 @@ export default {
 
 		if (registrationEntry.status !== 'submitted') {
 			const keys = Object.keys(req.body);
-			const permittedKeys = [ 'internalNotes', 'fishyIsOkay' ];
+			const permittedKeys = [ 'internalNotes', 'fishyIsOkay', 'codeholderData' ];
 			for (const key of keys) {
 				if (!permittedKeys.includes(key)) {
 					return res.type('text/plain').status(400)
