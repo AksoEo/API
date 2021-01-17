@@ -5,6 +5,7 @@ import { bindMethod } from 'akso/workers/http/routing';
 import method$get from './get';
 import method$patch from './patch';
 import method$delete from './delete';
+import operation$cancel from './!cancel';
 
 /**
  * Sets up /registration/entries/{registrationEntryId}
@@ -16,6 +17,7 @@ export function init () {
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
 	bindMethod(router, '/', 'delete', method$delete);
+	bindMethod(router, '/!cancel', 'post', operation$cancel);
 
 	return router;
 }
