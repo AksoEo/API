@@ -42,7 +42,7 @@ const schema = {
 					properties: {
 						type: {
 							type: 'string',
-							enum: [ 'addon', 'membership' ]
+							enum: [ 'membership' ]
 						},
 						id: {
 							type: 'number',
@@ -242,26 +242,11 @@ export default {
 		}
 
 		// Validate offers
-		const addonIds = [];
 		const membershipIds = [];
 		for (const offer of req.body.offers) {
-			if (offer.type === 'addon') {
-				addonIds.push(offer.id);
-			} else if (offer.type === 'membership') {
+			if (offer.type === 'membership') {
 				membershipIds.push(offer.id);
 			}
-		}
-
-		// Make sure all addons exist
-		const addonsExisting = await AKSO.db('pay_addons')
-			.select('id')
-			.whereIn('id', addonIds)
-			.where('paymentOrgId', registrationOptions.paymentOrgId)
-			.pluck('id');
-		for (const id of addonIds) {
-			if (addonsExisting.includes(id)) { continue; }
-			return res.type('text/plain').status(400)
-				.send(`Unknown addon ${id}`);
 		}
 
 		// Make sure all membership categories exist
@@ -324,7 +309,6 @@ export default {
 					arrayId,
 					type: offer.type,
 					amount: offer.amount,
-					paymentAddonId: offer.type === 'addon' ? offer.id : undefined,
 					membershipCategoryId: offer.type === 'membership' ? offer.id : undefined
 				};
 			}));

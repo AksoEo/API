@@ -23,6 +23,15 @@ export default {
 			};
 		}
 
+		if (req.hasPermission('registration.registrations.read')) {
+			tasks.registration = {
+				pending: (await AKSO.db('registration_entries')
+					.where('status', 'pending')
+					.count({ count: 1 })
+				)[0].count
+			};
+		}
+
 		res.sendObj(tasks);
 	}
 };

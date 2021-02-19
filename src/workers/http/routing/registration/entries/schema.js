@@ -26,6 +26,8 @@ export const schema = {
 	alwaysSelect: [ 'id' ]
 };
 
+// TODO: $codeholderData
+
 export async function afterQuery (arr, done) {
 	if (!arr.length) { return done(); }
 
@@ -37,7 +39,7 @@ export async function afterQuery (arr, done) {
 			.whereIn('registrationEntryId', ids)
 			.orderBy('registrationEntryId', 'arrayId')
 			.select('registrationEntryId', 'type', 'amount',
-				AKSO.db.raw('COALESCE(`paymentAddonId`, `membershipCategoryId`) AS `id`'));
+				AKSO.db.raw('COALESCE(`membershipCategoryId`) AS `id`'));
 
 		const offersById = {};
 		for (const offer of offers) {

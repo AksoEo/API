@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.23, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.22-0ubuntu0.20.04.3
+-- Server version	8.0.23-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -430,7 +430,7 @@ CREATE TABLE `codeholders` (
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
   CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -439,7 +439,7 @@ CREATE TABLE `codeholders` (
 
 LOCK TABLES `codeholders` WRITE;
 /*!40000 ALTER TABLE `codeholders` DISABLE KEYS */;
-INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,NULL,'private','private','public','public',NULL,NULL),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','public','public',NULL,NULL),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','private','public',NULL,NULL),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',NULL,'private','private','private','public',NULL,NULL),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,NULL,'public','private','private','public',NULL,NULL),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL);
+INSERT INTO `codeholders` VALUES (2,'human',0,'test','teeest','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'mia@tejo.org',1,'us',NULL,NULL,0,NULL,NULL,'private','private','public','public',NULL,NULL),(3,'org',0,'tejo','xxtejo','$2b$12$dEvwKG4oznSwcmu9kWzws.61JyzlLTrYkR9ojbeRlmweIgHI9lCBG',NULL,NULL,'admin@akso.org',1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','public','public',NULL,NULL),(4,'org',0,NULL,'xxxuea',NULL,NULL,NULL,NULL,1,'nl',NULL,'+31104361044',0,NULL,NULL,'private','private','private','public',NULL,NULL),(5,'human',0,NULL,'zamlud',NULL,NULL,NULL,'zamenhof@akso.org',0,'pl',NULL,NULL,1,'1917-04-14',NULL,'private','private','private','public',NULL,NULL),(6,'org',0,NULL,'xxxdea',NULL,NULL,NULL,NULL,1,'dk',NULL,'+4560707969',0,NULL,NULL,'public','private','private','public',NULL,NULL),(8,'human',0,NULL,'jsmith',NULL,NULL,NULL,NULL,1,'gb',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(18,'human',0,NULL,'xiapin',NULL,NULL,NULL,NULL,1,'cn',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(20,'human',0,NULL,'musmax',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(21,'human',0,NULL,'musmbx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(22,'human',0,NULL,'musmcx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(23,'human',0,NULL,'musmdx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(24,'human',0,NULL,'musmex',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(25,'human',0,NULL,'musmfx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(26,'human',0,NULL,'musmgx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(27,'human',0,NULL,'musmhx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(28,'human',0,NULL,'musmix',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(29,'human',0,NULL,'musmjx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(30,'human',0,NULL,'musmkx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(31,'human',0,NULL,'musmlx',NULL,NULL,NULL,NULL,1,'de',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(32,'human',0,NULL,'musmxx',NULL,NULL,NULL,NULL,1,'at',NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(34,'org',1569582184,NULL,'xxtest',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(35,'human',1569582215,NULL,'pepete',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(36,'human',1569925756,NULL,'dooder','$2b$12$lKXsKxh3E3Ze3/Hv9bTonOTB3azI9z40Ws.BoKM/xRpt67M5Yxvn.',NULL,NULL,'cpsdqs@gmail.com',1,NULL,NULL,NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(37,'human',1613754179,NULL,'timmmm',NULL,NULL,NULL,'test@test.com',1,'zw','Kreita je 2021-02-19 18:02:59 UTC okaze de a≈≠tomata aliƒùo n-ro ZIRPKATHJEALBQHP2ZO6S5RH.',NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL),(39,'human',1613755461,NULL,'martim',NULL,NULL,NULL,'newtest@test.com',1,'fr','Kreita je 2021-02-19 18:24:21 UTC okaze de a≈≠tomata aliƒùo n-ro VIEJUIV5O3VZCUX6DKTQ24EF.',NULL,0,NULL,NULL,'private','private','private','public',NULL,NULL);
 /*!40000 ALTER TABLE `codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -486,7 +486,7 @@ CREATE TABLE `codeholders_address` (
 
 LOCK TABLES `codeholders_address` WRITE;
 /*!40000 ALTER TABLE `codeholders_address` DISABLE KEYS */;
-INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800'),(8,'gb','','','AYLESBURY','AYLESBURY','','','61A Stoke Rd','61A Stoke Rd','HP21 8BL','HP21 8BL','','','GB Britio AYLESBURY 61A Stoke Rd HP21 8BL'),(18,'cn','‰∫ëÂçóÁúÅ','Yunnan Sheng','‰∏¥Ê≤ßÂ∏Ç','Lincang Shi','','','‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑','‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑','677400','677400','','','CN ƒàinio ‰∫ëÂçóÁúÅ Yunnan Sheng Lincang Shi ‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑ 677400');
+INSERT INTO `codeholders_address` VALUES (2,'us','NY','New York','BROOKLYN','BROOKLYN','','','1 Union Street','1 Union Street','11231','11231','','','US Usono NY New York BROOKLYN 1 Union Street 11231'),(3,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(4,'nl','','','ROTTERDAM','ROTTERDAM','','','Nieuwe Binnenweg 176','Nieuwe Binnenweg 176','3015BJ','3015BJ','','','NL Nederlando ROTTERDAM Nieuwe Binnenweg 176 3015BJ'),(6,'dk','','','LYNGBY','LYNGBY','','','Eremitageparken 17, st. C','Eremitageparken 17, st. C','2800','2800','','','DK Danio LYNGBY Eremitageparken 17, st. C 2800'),(8,'gb','','','AYLESBURY','AYLESBURY','','','61A Stoke Rd','61A Stoke Rd','HP21 8BL','HP21 8BL','','','GB Britio AYLESBURY 61A Stoke Rd HP21 8BL'),(18,'cn','‰∫ëÂçóÁúÅ','Yunnan Sheng','‰∏¥Ê≤ßÂ∏Ç','Lincang Shi','','','‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑','‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑','677400','677400','','','CN ƒàinio ‰∫ëÂçóÁúÅ Yunnan Sheng Lincang Shi ‰∏≠ÂÖ≥Êùë‰∏úË∑Ø1Âè∑ 677400'),(39,'fr','','','PARIS','PARIS','','','8 Rue des √âtoiles','8 Rue des √âtoiles','75008','75008','','','FR Francio PARIS 8 Rue des √âtoiles 75008');
 /*!40000 ALTER TABLE `codeholders_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1567,7 +1567,7 @@ CREATE TABLE `codeholders_human` (
 
 LOCK TABLES `codeholders_human` WRITE;
 /*!40000 ALTER TABLE `codeholders_human` DISABLE KEYS */;
-INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL,'public','private','private'),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL,'public','private','private'),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL,'public','private','private'),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL,'public','private','private'),(20,NULL,'Max',NULL,'Mustermann','Max Mustermann',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(21,NULL,'Max',NULL,'Mustermann II','Max Mustermann II',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(22,NULL,'Max',NULL,'Mustermann III','Max Mustermann III','S-ro',NULL,NULL,'+4566666666',NULL,'members','public','private'),(23,NULL,'Max',NULL,'Mustermann IV','Max Mustermann IV',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(24,NULL,'Max',NULL,'Mustermann V','Max Mustermann V',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(25,NULL,'Max',NULL,'Mustermann VI','Max Mustermann VI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(26,NULL,'Max',NULL,'Mustermann VII','Max Mustermann VII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(27,NULL,'Max',NULL,'Mustermann VIII','Max Mustermann VIII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(28,NULL,'Max',NULL,'Mustermann IX','Max Mustermann IX',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(29,NULL,'Max',NULL,'Mustermann X','Max Mustermann X',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(30,NULL,'Max',NULL,'Mustermann XI','Max Mustermann XI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(31,NULL,'Max',NULL,'Mustermann XII','Max Mustermann XII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(32,NULL,'Max',NULL,'Mustermann M','Max Mustermann M',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(35,NULL,'Peter',NULL,'Peterson','Peter Peterson',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(36,NULL,'derpy',NULL,'hooves','derpy hooves',NULL,NULL,NULL,NULL,NULL,'public','private','private');
+INSERT INTO `codeholders_human` VALUES (2,NULL,'Test',NULL,'McTest','Test McTest','D-ro','1998-03-01',NULL,NULL,NULL,'public','private','private'),(5,NULL,'Ludwik',NULL,'Lejzer Zamenhof','Ludwik Lejzer Zamenhof','D-ro','1859-12-15','Okulkuracisto',NULL,NULL,'public','private','private'),(8,NULL,'John',NULL,'Smith','John Smith','S-ro',NULL,NULL,NULL,NULL,'public','private','private'),(18,NULL,'Ping',NULL,'Xia','Ping Xia','Ge-ro',NULL,NULL,NULL,NULL,'public','private','private'),(20,NULL,'Max',NULL,'Mustermann','Max Mustermann',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(21,NULL,'Max',NULL,'Mustermann II','Max Mustermann II',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(22,NULL,'Max',NULL,'Mustermann III','Max Mustermann III','S-ro',NULL,NULL,'+4566666666',NULL,'members','public','private'),(23,NULL,'Max',NULL,'Mustermann IV','Max Mustermann IV',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(24,NULL,'Max',NULL,'Mustermann V','Max Mustermann V',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(25,NULL,'Max',NULL,'Mustermann VI','Max Mustermann VI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(26,NULL,'Max',NULL,'Mustermann VII','Max Mustermann VII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(27,NULL,'Max',NULL,'Mustermann VIII','Max Mustermann VIII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(28,NULL,'Max',NULL,'Mustermann IX','Max Mustermann IX',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(29,NULL,'Max',NULL,'Mustermann X','Max Mustermann X',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(30,NULL,'Max',NULL,'Mustermann XI','Max Mustermann XI',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(31,NULL,'Max',NULL,'Mustermann XII','Max Mustermann XII',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(32,NULL,'Max',NULL,'Mustermann M','Max Mustermann M',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(35,NULL,'Peter',NULL,'Peterson','Peter Peterson',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(36,NULL,'derpy',NULL,'hooves','derpy hooves',NULL,NULL,NULL,NULL,NULL,'public','private','private'),(37,NULL,'Tim',NULL,NULL,'Tim',NULL,'1938-04-17',NULL,NULL,NULL,'public','private','private'),(39,NULL,'Tim',NULL,'Marley','Tim Marley',NULL,'1938-04-17',NULL,NULL,NULL,'public','private','private');
 /*!40000 ALTER TABLE `codeholders_human` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -3058,7 +3058,7 @@ CREATE TABLE `membershipCategories_codeholders` (
   KEY `codeholderId` (`codeholderId`),
   CONSTRAINT `membershipCategories_codeholders_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `membershipCategories_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3067,7 +3067,7 @@ CREATE TABLE `membershipCategories_codeholders` (
 
 LOCK TABLES `membershipCategories_codeholders` WRITE;
 /*!40000 ALTER TABLE `membershipCategories_codeholders` DISABLE KEYS */;
-INSERT INTO `membershipCategories_codeholders` VALUES (5,2,3,2017),(1,3,2,2014),(6,4,2,2019),(4,7,2,2015),(2,13,3,2017);
+INSERT INTO `membershipCategories_codeholders` VALUES (5,2,3,2017),(1,3,2,2014),(6,4,2,2019),(7,6,37,2021),(8,6,39,2021),(4,7,2,2015),(9,7,39,2021),(2,13,3,2017);
 /*!40000 ALTER TABLE `membershipCategories_codeholders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3226,7 +3226,7 @@ CREATE TABLE `pay_intents_events` (
   PRIMARY KEY (`id`),
   KEY `paymentIntentId` (`paymentIntentId`),
   CONSTRAINT `pay_intents_events_ibfk_1` FOREIGN KEY (`paymentIntentId`) REFERENCES `pay_intents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3384,6 +3384,33 @@ LOCK TABLES `pay_intents_purposes_trigger_congress_registration` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pay_intents_purposes_trigger_registration_entry`
+--
+
+DROP TABLE IF EXISTS `pay_intents_purposes_trigger_registration_entry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pay_intents_purposes_trigger_registration_entry` (
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint unsigned NOT NULL,
+  `registrationEntryId` binary(15) NOT NULL,
+  PRIMARY KEY (`paymentIntentId`,`pos`),
+  KEY `registrationEntryId` (`registrationEntryId`),
+  CONSTRAINT `pay_intents_purposes_trigger_registration_entry_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_purposes_trigger_registration_entry_ibfk_2` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pay_intents_purposes_trigger_registration_entry`
+--
+
+LOCK TABLES `pay_intents_purposes_trigger_registration_entry` WRITE;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger_registration_entry` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pay_intents_purposes_trigger_registration_entry` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pay_methods`
 --
 
@@ -3415,7 +3442,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3552,7 +3579,7 @@ CREATE TABLE `registration_entries` (
 
 LOCK TABLES `registration_entries` WRITE;
 /*!40000 ALTER TABLE `registration_entries` DISABLE KEYS */;
-INSERT INTO `registration_entries` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',2021,'submitted',NULL,NULL,0,NULL,1610834090,NULL,NULL,'DKK'),(_binary 'ìST\◊såhW?w/˘1',2021,'submitted',NULL,NULL,0,NULL,1610833819,NULL,NULL,'DKK'),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',2021,'submitted',NULL,NULL,0,NULL,1610834575,NULL,NULL,'DKK');
+INSERT INTO `registration_entries` VALUES (_binary '£≈õ\√\œ$\‹\'6Q\rå©y',2021,'succeeded',NULL,NULL,0,NULL,1613755679,1613755789,NULL,'DKK'),(_binary '™ö\"Ωv\ÎëR˛\Zß\rpÖ',2021,'succeeded',NULL,NULL,0,39,1613755059,1613755461,NULL,'DKK'),(_binary '\ \"\ıgI\0∞¿\Ô\÷]\Èv\'',2021,'succeeded','fishy_data','codeholderData.addressAndFeeCountries',1,NULL,1613753677,1613754179,NULL,'DKK');
 /*!40000 ALTER TABLE `registration_entries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3579,7 +3606,7 @@ CREATE TABLE `registration_entries_codeholderData_id` (
 
 LOCK TABLES `registration_entries_codeholderData_id` WRITE;
 /*!40000 ALTER TABLE `registration_entries_codeholderData_id` DISABLE KEYS */;
-INSERT INTO `registration_entries_codeholderData_id` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',2),(_binary 'ìST\◊såhW?w/˘1',6);
+INSERT INTO `registration_entries_codeholderData_id` VALUES (_binary '£≈õ\√\œ$\‹\'6Q\rå©y',39);
 /*!40000 ALTER TABLE `registration_entries_codeholderData_id` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3614,7 +3641,8 @@ CREATE TABLE `registration_entries_codeholderData_obj` (
   KEY `email` (`email`),
   KEY `birthdate` (`birthdate`),
   CONSTRAINT `registration_entries_codeholderData_obj_ibfk_1` FOREIGN KEY (`address_country`) REFERENCES `countries` (`code`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_codeholderData_obj_ibfk_2` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_codeholderData_obj_ibfk_2` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_codeholderData_obj_ibfk_3` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3624,7 +3652,7 @@ CREATE TABLE `registration_entries_codeholderData_obj` (
 
 LOCK TABLES `registration_entries_codeholderData_obj` WRITE;
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` DISABLE KEYS */;
-INSERT INTO `registration_entries_codeholderData_obj` VALUES (_binary 'ùüX¢J2\«˙FÎÉ¥\Â','dk',NULL,'K√∏benhavn K',NULL,'Norde Ringgade 2, 1 t.v.','9000',NULL,'de','test@test',NULL,'Bertrud',NULL,NULL,'S-ro','1990-02-03',NULL),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2','FR','','PARIS','','8 Rue des √âtoiles','75008','','zw','test@test.com',NULL,'Tim',NULL,NULL,NULL,'1938-04-17',NULL);
+INSERT INTO `registration_entries_codeholderData_obj` VALUES (_binary '™ö\"Ωv\ÎëR˛\Zß\rpÖ','fr','','PARIS','','8 Rue des √âtoiles','75008','','fr','newtest@test.com',NULL,'Tim',NULL,'Marley',NULL,'1938-04-17',NULL),(_binary '\ \"\ıgI\0∞¿\Ô\÷]\Èv\'','fr','','PARIS','','8 Rue des √âtoiles','75008','','fr','newtest@test.com',NULL,'Tim',NULL,'Marley',NULL,'1938-04-17',NULL);
 /*!40000 ALTER TABLE `registration_entries_codeholderData_obj` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3640,14 +3668,11 @@ CREATE TABLE `registration_entries_offers` (
   `arrayId` tinyint unsigned NOT NULL,
   `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` int unsigned NOT NULL,
-  `paymentAddonId` int unsigned DEFAULT NULL,
   `membershipCategoryId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`registrationEntryId`,`arrayId`),
-  KEY `paymentAddonId` (`paymentAddonId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
   CONSTRAINT `registration_entries_offers_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3657,8 +3682,35 @@ CREATE TABLE `registration_entries_offers` (
 
 LOCK TABLES `registration_entries_offers` WRITE;
 /*!40000 ALTER TABLE `registration_entries_offers` DISABLE KEYS */;
-INSERT INTO `registration_entries_offers` VALUES (_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',0,'membership',28000,NULL,6),(_binary 'dí\Ê∫\Ûö(\rπ™¨N]\≈\›',1,'addon',2500,1,NULL),(_binary 'ìST\◊såhW?w/˘1',0,'membership',28000,NULL,6),(_binary 'ìST\◊såhW?w/˘1',1,'addon',2500,1,NULL),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',0,'membership',28000,NULL,6),(_binary '\ﬂ\Œ\‰8•W-\‰a˘\ÿëÜ2',1,'addon',2500,1,NULL);
+INSERT INTO `registration_entries_offers` VALUES (_binary '£≈õ\√\œ$\‹\'6Q\rå©y',0,'membership',28000,7),(_binary '™ö\"Ωv\ÎëR˛\Zß\rpÖ',0,'membership',28000,6),(_binary '\ \"\ıgI\0∞¿\Ô\÷]\Èv\'',0,'membership',28000,6);
 /*!40000 ALTER TABLE `registration_entries_offers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `registration_entries_triggerHist_processed`
+--
+
+DROP TABLE IF EXISTS `registration_entries_triggerHist_processed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `registration_entries_triggerHist_processed` (
+  `registrationEntryId` binary(15) NOT NULL,
+  `paymentIntentId` binary(15) NOT NULL,
+  `pos` smallint unsigned NOT NULL,
+  PRIMARY KEY (`registrationEntryId`,`paymentIntentId`,`pos`),
+  KEY `paymentIntentId` (`paymentIntentId`,`pos`),
+  CONSTRAINT `registration_entries_triggerHist_processed_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_triggerHist_processed_ibfk_2` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `registration_entries_triggerHist_processed`
+--
+
+LOCK TABLES `registration_entries_triggerHist_processed` WRITE;
+/*!40000 ALTER TABLE `registration_entries_triggerHist_processed` DISABLE KEYS */;
+/*!40000 ALTER TABLE `registration_entries_triggerHist_processed` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3871,7 +3923,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `triggerAmount_amount`,
  1 AS `triggerAmount_currency`,
  1 AS `triggerStatus`,
- 1 AS `trigger_congress_registration_dataId`*/;
+ 1 AS `trigger_congress_registration_dataId`,
+ 1 AS `trigger_registration_entry_registrationEntryId`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -3891,6 +3944,36 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `triggerAmount_amount`,
  1 AS `triggerAmount_currency`,
  1 AS `targetCurrency`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `view_registration_entries_amountProcessed`
+--
+
+DROP TABLE IF EXISTS `view_registration_entries_amountProcessed`;
+/*!50001 DROP VIEW IF EXISTS `view_registration_entries_amountProcessed`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_registration_entries_amountProcessed` AS SELECT 
+ 1 AS `registrationEntryId`,
+ 1 AS `amountProcessed`,
+ 1 AS `currency`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `view_registration_entries_processable`
+--
+
+DROP TABLE IF EXISTS `view_registration_entries_processable`;
+/*!50001 DROP VIEW IF EXISTS `view_registration_entries_processable`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_registration_entries_processable` AS SELECT 
+ 1 AS `registrationEntryId`,
+ 1 AS `paymentIntentId`,
+ 1 AS `pos`,
+ 1 AS `amountTriggered`,
+ 1 AS `currencyTriggered`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -4190,7 +4273,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,if((`pay_intents_purposes`.`type` = 'trigger'),if((`pay_intents`.`succeededTime` is null),'awaiting',if(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `pay_intents_purposes`.`pos`))),'triggered','processing')),NULL) AS `triggerStatus`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId` from (((((`pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `pay_intents_purposes`.`paymentIntentId`))) left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) */;
+/*!50001 VIEW `view_pay_intents_purposes` AS select `pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`pay_intents_purposes`.`pos` AS `pos`,`pay_intents_purposes`.`type` AS `type`,`pay_intents_purposes`.`amount` AS `amount`,`pay_intents_purposes`.`originalAmount` AS `originalAmount`,`pay_intents_purposes`.`invalid` AS `invalid`,`pay_intents_purposes_addon`.`paymentAddonId` AS `paymentAddonId`,`pay_intents_purposes_addon`.`paymentAddon` AS `paymentAddon`,coalesce(`pay_intents_purposes_manual`.`title`,`pay_intents_purposes_trigger`.`title`) AS `title`,coalesce(`pay_intents_purposes_manual`.`description`,`pay_intents_purposes_trigger`.`description`) AS `description`,`pay_intents_purposes_trigger`.`triggers` AS `triggers`,`pay_intents_purposes_trigger`.`triggerAmount_amount` AS `triggerAmount_amount`,`pay_intents_purposes_trigger`.`triggerAmount_currency` AS `triggerAmount_currency`,if((`pay_intents_purposes`.`type` = 'trigger'),if((`pay_intents`.`succeededTime` is null),'awaiting',if(exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `pay_intents_purposes`.`pos`))),'triggered','processing')),NULL) AS `triggerStatus`,`pay_intents_purposes_trigger_congress_registration`.`dataId` AS `trigger_congress_registration_dataId`,`pay_intents_purposes_trigger_registration_entry`.`registrationEntryId` AS `trigger_registration_entry_registrationEntryId` from ((((((`pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `pay_intents_purposes`.`paymentIntentId`))) left join `pay_intents_purposes_addon` on(((`pay_intents_purposes`.`type` = 'addon') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_addon`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_addon`.`pos`)))) left join `pay_intents_purposes_manual` on(((`pay_intents_purposes`.`type` = 'manual') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_manual`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_manual`.`pos`)))) left join `pay_intents_purposes_trigger` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes`.`paymentIntentId` = `pay_intents_purposes_trigger`.`paymentIntentId`) and (`pay_intents_purposes`.`pos` = `pay_intents_purposes_trigger`.`pos`)))) left join `pay_intents_purposes_trigger_congress_registration` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_congress_registration`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_congress_registration`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'congress_registration')))) left join `pay_intents_purposes_trigger_registration_entry` on(((`pay_intents_purposes`.`type` = 'trigger') and (`pay_intents_purposes_trigger`.`paymentIntentId` = `pay_intents_purposes_trigger_registration_entry`.`paymentIntentId`) and (`pay_intents_purposes_trigger`.`pos` = `pay_intents_purposes_trigger_registration_entry`.`pos`) and (`pay_intents_purposes_trigger`.`triggers` = 'registration_entry')))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -4208,7 +4291,43 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_pay_triggerable` AS select `view_pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`view_pay_intents_purposes`.`pos` AS `pos`,`view_pay_intents_purposes`.`amount` AS `amount`,`pay_intents`.`currency` AS `currency`,`view_pay_intents_purposes`.`triggers` AS `triggers`,`view_pay_intents_purposes`.`triggerAmount_amount` AS `triggerAmount_amount`,`view_pay_intents_purposes`.`triggerAmount_currency` AS `triggerAmount_currency`,coalesce(`congresses_instances_registrationForm`.`price_currency`) AS `targetCurrency` from (((`view_pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `view_pay_intents_purposes`.`paymentIntentId`))) left join `forms_data` on((`forms_data`.`dataId` = `view_pay_intents_purposes`.`trigger_congress_registration_dataId`))) left join `congresses_instances_registrationForm` on((`congresses_instances_registrationForm`.`formId` = `forms_data`.`formId`))) where ((`view_pay_intents_purposes`.`type` = 'trigger') and (`pay_intents`.`succeededTime` is not null) and exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`))) is false) */;
+/*!50001 VIEW `view_pay_triggerable` AS select `view_pay_intents_purposes`.`paymentIntentId` AS `paymentIntentId`,`view_pay_intents_purposes`.`pos` AS `pos`,`view_pay_intents_purposes`.`amount` AS `amount`,`pay_intents`.`currency` AS `currency`,`view_pay_intents_purposes`.`triggers` AS `triggers`,`view_pay_intents_purposes`.`triggerAmount_amount` AS `triggerAmount_amount`,`view_pay_intents_purposes`.`triggerAmount_currency` AS `triggerAmount_currency`,coalesce(`congresses_instances_registrationForm`.`price_currency`,`registration_entries`.`currency`) AS `targetCurrency` from ((((`view_pay_intents_purposes` join `pay_intents` on((`pay_intents`.`id` = `view_pay_intents_purposes`.`paymentIntentId`))) left join `forms_data` on((`forms_data`.`dataId` = `view_pay_intents_purposes`.`trigger_congress_registration_dataId`))) left join `congresses_instances_registrationForm` on((`congresses_instances_registrationForm`.`formId` = `forms_data`.`formId`))) left join `registration_entries` on((`registration_entries`.`id` = `view_pay_intents_purposes`.`trigger_registration_entry_registrationEntryId`))) where ((`view_pay_intents_purposes`.`type` = 'trigger') and (`pay_intents`.`succeededTime` is not null) and exists(select 1 from `pay_triggerHist` where ((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`))) is false) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_registration_entries_amountProcessed`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_registration_entries_amountProcessed`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_registration_entries_amountProcessed` AS select `registration_entries_triggerHist_processed`.`registrationEntryId` AS `registrationEntryId`,sum(`pay_triggerHist`.`amountTriggered`) AS `amountProcessed`,`pay_triggerHist`.`currencyTriggered` AS `currency` from (`registration_entries_triggerHist_processed` join `pay_triggerHist` on(((`registration_entries_triggerHist_processed`.`paymentIntentId` = `pay_triggerHist`.`paymentIntentId`) and (`registration_entries_triggerHist_processed`.`pos` = `pay_triggerHist`.`pos`)))) group by `registration_entries_triggerHist_processed`.`registrationEntryId`,`currency` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `view_registration_entries_processable`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_registration_entries_processable`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_registration_entries_processable` AS select `pay_intents_purposes_trigger_registration_entry`.`registrationEntryId` AS `registrationEntryId`,`pay_triggerHist`.`paymentIntentId` AS `paymentIntentId`,`pay_triggerHist`.`pos` AS `pos`,`pay_triggerHist`.`amountTriggered` AS `amountTriggered`,`pay_triggerHist`.`currencyTriggered` AS `currencyTriggered` from ((`pay_triggerHist` join `view_pay_intents_purposes` on(((`view_pay_intents_purposes`.`paymentIntentId` = `pay_triggerHist`.`paymentIntentId`) and (`view_pay_intents_purposes`.`pos` = `pay_triggerHist`.`pos`)))) join `pay_intents_purposes_trigger_registration_entry` on(((`pay_intents_purposes_trigger_registration_entry`.`paymentIntentId` = `pay_triggerHist`.`paymentIntentId`) and (`pay_intents_purposes_trigger_registration_entry`.`pos` = `pay_triggerHist`.`pos`)))) where exists(select 1 from `registration_entries_triggerHist_processed` where ((`registration_entries_triggerHist_processed`.`paymentIntentId` = `pay_triggerHist`.`paymentIntentId`) and (`registration_entries_triggerHist_processed`.`pos` = `pay_triggerHist`.`pos`))) is false */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -4222,4 +4341,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-16 23:04:17
+-- Dump completed on 2021-02-19 18:31:04

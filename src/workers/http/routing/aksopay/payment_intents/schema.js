@@ -132,6 +132,8 @@ export async function afterQuery (arr, done) {
 
 				if (purpose.triggers === 'congress_registration') {
 					purposeFormatted.dataId = purpose.trigger_congress_registration_dataId;
+				} else if (purpose.triggers === 'registration_entry') {
+					purposeFormatted.registrationEntryId = purpose.trigger_registration_entry_registrationEntryId;
 				}
 			}
 
@@ -148,7 +150,10 @@ export async function afterQuery (arr, done) {
 	done();
 }
 
-export const TRIGGER_TYPES = [ 'congress_registration' ];
+export const TRIGGER_TYPES = [
+	'congress_registration',
+	'registration_entry'
+];
 
 // Generic trigger purpose
 const triggerPurposeSchemaGeneric = {
@@ -222,7 +227,14 @@ const triggerPurposeSchema = TRIGGER_TYPES.map(triggerName => {
 			maxBytes: 12
 		};
 		purpose.required.push('dataId');
+	} else if (triggerName === 'registration_entry') {
+		purpose.properties.registrationEntryId = {
+			isBinary: true,
+			minBytes: 15,
+			maxBytes: 15
+		};
 	}
+
 	return purpose;
 });
 

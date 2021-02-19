@@ -121,6 +121,7 @@ async function init () {
 		PASSWORD_BCRYPT_SALT_ROUNDS: 12,
 
 		CODEHOLDER_OWN_CHANGE_CMT: 'Memfarita ŝanĝo',
+		CODEHOLDER_CREATED_BY_REGISTRATION: (date, registrationEntryId) => `Kreita je ${date} okaze de aŭtomata aliĝo n-ro ${registrationEntryId}.`,
 
 		// https://github.com/timshadel/subdivision-list
 		SUBDIVISIONS: require('../data/subdivisions.json'),

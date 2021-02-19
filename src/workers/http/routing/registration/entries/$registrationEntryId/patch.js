@@ -3,6 +3,7 @@ import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction, insertAsReplace } from 'akso/util';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
+import { checkIssuesInPaidRegistrationEntry } from 'akso/lib/registration-entry-util';
 
 const schema = {
 	query: null,
@@ -38,7 +39,7 @@ const schema = {
 					properties: {
 						type: {
 							type: 'string',
-							enum: [ 'addon', 'membership' ]
+							enum: [ 'membership' ]
 						},
 						id: {
 							type: 'number',
@@ -193,7 +194,7 @@ export default {
 		}
 
 		// TODO: All of this verification is duplicate code from POST
-		// This should be moved to some lib eventually
+		// This should be moved to the registration entry util lib eventually
 
 		if (req.body.year) {
 			// Make sure registration is enabled for the given year
@@ -260,26 +261,11 @@ export default {
 
 		if (req.body.offers) {
 			// Validate offers
-			const addonIds = [];
 			const membershipIds = [];
 			for (const offer of req.body.offers) {
-				if (offer.type === 'addon') {
-					addonIds.push(offer.id);
-				} else if (offer.type === 'membership') {
+				if (offer.type === 'membership') {
 					membershipIds.push(offer.id);
 				}
-			}
-
-			// Make sure all addons exist
-			const addonsExisting = await AKSO.db('pay_addons')
-				.select('id')
-				.whereIn('id', addonIds)
-				.where('paymentOrgId', registrationOptions.paymentOrgId)
-				.pluck('id');
-			for (const id of addonIds) {
-				if (addonsExisting.includes(id)) { continue; }
-				return res.type('text/plain').status(400)
-					.send(`Unknown addon ${id}`);
 			}
 
 			// Make sure all membership categories exist
@@ -365,10 +351,24 @@ export default {
 						arrayId,
 						type: offer.type,
 						amount: offer.amount,
-						paymentAddonId: offer.type === 'addon' ? offer.id : undefined,
 						membershipCategoryId: offer.type === 'membership' ? offer.id : undefined
 					};
 				}));
+		}
+
+		// Update the status of the registration entry if needed
+		if (registrationEntry.status === 'pending') {
+			const issue = await checkIssuesInPaidRegistrationEntry(req.params.registrationEntryId, trx);
+			if (!issue) {
+				// Set the status to processing so the worker will rerun it
+				await trx('registration_entries')
+					.where('id', req.params.registrationEntryId)
+					.update({
+						status: 'processing',
+						pendingIssue_what: null,
+						pendingIssue_where: null
+					});
+			}
 		}
 
 		await trx.commit();

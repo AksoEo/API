@@ -158,6 +158,17 @@ export default {
 						return res.type('text/plain').status(400)
 							.send(`dataId ${purpose.dataId.toString('hex')} not found or permission missing`);
 					}
+				} else if (purpose.triggers === 'registration_entry') {
+					// Fetch registration options org
+					const registrationOptions = await AKSO.db('registration_entries')
+						.innerJoin('registration_options', 'registration_options.year', 'registration_entries.year')
+						.innerJoin('pay_orgs', 'pay_orgs.id', 'registration_options.paymentOrgId')
+						.first('org')
+						.where('registration_entries.id', purpose.registrationEntryId);
+					if (!registrationOptions || !req.hasPermission('registration.entries.update')) {
+						return res.type('text/plain').status(400)
+							.send('Unknown registrationEntryId or missing permission');
+					}
 				}
 			}
 		}
@@ -326,6 +337,8 @@ export default {
 
 				if (purpose.triggers === 'congress_registration') {
 					triggerPurposeDB.dataId = purpose.dataId;
+				} else if (purpose.triggers === 'registration_entry') {
+					triggerPurposeDB.registrationEntryId = purpose.registrationEntryId;
 				}
 
 				await trx('pay_intents_purposes_trigger_' + purpose.triggers).insert(triggerPurposeDB);
