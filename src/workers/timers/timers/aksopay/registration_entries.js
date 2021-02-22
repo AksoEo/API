@@ -12,7 +12,11 @@ export async function updateProcessingRegistrationEntry () {
 		// but turned out to have an issue and were marked pending
 		// these issues have now been resolved and it needs to be reprocessed
 
-		await handlePaidRegistrationEntry(processingRegistrationEntry.id);
+		try {
+			await handlePaidRegistrationEntry(processingRegistrationEntry.id);
+		} catch (e) {
+			AKSO.log.error(e);
+		}
 	}
 }
 updateProcessingRegistrationEntry.intervalMs = 5000; // Check every 5 seconds

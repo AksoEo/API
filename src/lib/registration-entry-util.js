@@ -50,23 +50,38 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				newCodeholderData.lastNameLegal
 			].filter(x => !!x);
 
-			const possibleUEACodes = UEACode.suggestCodes({
+			const suggestedUEACodes = UEACode.suggestCodes({
 				type: 'human',
 				firstNames: firstNames,
 				lastNames: lastNames
 			});
 
-			if (!possibleUEACodes.length) {
+			if (!suggestedUEACodes.length) {
+				throw new Error(`No suggested UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
+				// The probability of this happening is extremely small, but we should probably still have some logic in place to deal with it
+				// TODO: Do something here
+			}
+
+			const takenUEACodes = await AKSO.db('codeholders')
+				.select('newCode')
+				.whereIn('newCode', suggestedUEACodes);
+
+			const availableUEACodes = suggestedUEACodes
+				.filter(x => !takenUEACodes.includes(x));
+
+			if (!availableUEACodes.length) {
 				throw new Error(`No available UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
 				// The probability of this happening is extremely small, but we should probably still have some logic in place to deal with it
 				// TODO: Do something here
 			}
 
+			const newUEACode = availableUEACodes[0];
+
 			const now = moment();
 			const codeholderData = {
 				codeholderType: 'human',
 				creationTime: now.unix(),
-				newCode: possibleUEACodes[0],
+				newCode: newUEACode,
 				email: newCodeholderData.email,
 				feeCountry: newCodeholderData.feeCountry,
 				notes: AKSO.CODEHOLDER_CREATED_BY_REGISTRATION(
@@ -129,12 +144,17 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				.join(' ');
 
 			// Create a new codeholder
-			codeholderId = (await db('codeholders').insert(codeholderData))[0];
-			humanCodeholderData.codeholderId = codeholderId;
-			addressCodeholderData.codeholderId = codeholderId;
+			try {
+				codeholderId = (await db('codeholders').insert(codeholderData))[0];
+				humanCodeholderData.codeholderId = codeholderId;
+				addressCodeholderData.codeholderId = codeholderId;
 
-			await db('codeholders_human').insert(humanCodeholderData);
-			await db('codeholders_address').insert(addressCodeholderData);
+				await db('codeholders_human').insert(humanCodeholderData);
+				await db('codeholders_address').insert(addressCodeholderData);
+			} catch (e) {
+				AKSO.log.error(`An error occured when processing registration entry ${registrationEntryId.toString('hex')}`);
+				throw new Error(e);
+			}
 		}
 
 		const registrationEntry = await AKSO.db('registration_entries')
