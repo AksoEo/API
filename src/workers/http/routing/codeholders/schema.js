@@ -143,7 +143,7 @@ export const schema = {
 			}
 		}
 	},
-	customFilterLogicOpsFields: {
+	customFilterLogicOpsFields: { // TODO: What is this even used for, I cannot find any reference to it when searching through src
 		$membership: 'membership',
 		$roles: 'roles'
 	},
