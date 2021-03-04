@@ -7,6 +7,7 @@ import fs from 'fs-extra';
 import fetch from 'node-fetch';
 import Stripe from 'stripe';
 import { Cashify } from 'cashify';
+import promiseAny from 'promise-any';
 
 import * as AKSODb from './db';
 
@@ -150,7 +151,16 @@ async function init () {
 		if (cluster.isMaster) {
 			AKSO.log.warn('AKSO_HTTP_OUTSIDE_ADDRESS not specified, determining IP address ...');
 		}
-		const ip = await (await fetch('https://api64.ipify.org')).text();
+		let ip;
+		try {
+			ip = await promiseAny([
+				(async () => { return await (await fetch('https://api64.ipify.org')).text(); })(),
+				(async () => { return await (await fetch('https://myexternalip.com/raw')).text(); })()
+			]);
+		} catch (e) {
+			AKSO.log.error('Failed to determine ip address, throwing stack:');
+			throw e;
+		}
 		const url = new URL(`http://${ip}:${AKSO.conf.http.port}`);
 		AKSO.conf.http.outsideAddress = url.toString();
 		if (cluster.isMaster) {

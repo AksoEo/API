@@ -67,6 +67,7 @@
     "passport-totp": "0.0.2",
     "pdfkit": "^0.9.1",
     "pn": "^1.1.0",
+    "promise-any": "^0.2.0",
     "response-time": "^2.3.2",
     "rfc4648": "^1.4.0",
     "source-map-support": "^0.5.19",
