@@ -23,10 +23,49 @@ export const schema = {
 		offers: () => AKSO.db.raw('1'),
 		codeholderData: () => AKSO.db.raw('1')
 	},
-	alwaysSelect: [ 'id' ]
-};
+	alwaysSelect: [ 'id' ],
+	customFilterLogicOps: {
+		$codeholderData: ({ query, filter } = {}) => {
+			if (Number.isSafeInteger(filter)) {
+				// search by id
+				query.whereExists(function () {
+					this.select(1)
+						.from('registration_entries_codeholderData_id')
+						.whereRaw('`registration_entries_codeholderData_id`.`registrationEntryId` = `id`')
+						.where('registration_entries_codeholderData_id.codeholderId', filter);
+				});
 
-// TODO: $codeholderData
+			} else if (typeof filter === 'object' && filter !== null && !Array.isArray(filter)) {
+				// search by object
+				const allowedFields = [ 'address.country', 'feeCountry', 'email', 'birthdate' ];
+				const data = {};
+				for (const field in filter) {
+					if (!allowedFields.includes(field)) {
+						const err = new Error(`Illegal field ${field} used in $codeholderData object`);
+						err.statusCode = 400;
+						throw err;
+					}
+					switch (field) {
+					case 'address.country': data.address_country = filter['address.country']; break;
+					default: data[field] = filter[field];
+					}
+				}
+
+				query.whereExists(function () {
+					this.select(1)
+						.from('registration_entries_codeholderData_obj')
+						.whereRaw('`registration_entries_codeholderData_obj`.`registrationEntryId` = `id`')
+						.where(data);
+				});
+
+			} else {
+				const err = new Error('$codeholderData expects an integer or an object');
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+	}
+};
 
 export async function afterQuery (arr, done) {
 	if (!arr.length) { return done(); }
