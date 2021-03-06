@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/gulp compile-src",
     "preinstall": "npm install --ignore-scripts && npm rebuild && npm run build",
-    "start": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/index.js"
+    "start": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/index.js",
+    "populate-db": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/test-data/index.js $MODE"
   },
   "repository": {
     "type": "git",
