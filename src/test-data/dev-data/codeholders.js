@@ -126,30 +126,6 @@ export async function createCodeholders () {
 		);
 }
 
-export async function setUpCodeholderNotifs () {
-	await AKSO.db('codeholders_notifAccounts_telegram')
-		.insert([
-			{
-				codeholderId: (await AKSO.db('codeholders').where('newCode', 'xxtejo').first('id')).id,
-				telegram_chatId: 172252715
-			}
-		]);
-
-	await AKSO.db('codeholders_notif_pref')
-		.insert([
-			{
-				codeholderId: (await AKSO.db('codeholders').where('newCode', 'xxtejo').first('id')).id,
-				category: 'account',
-				pref: 'email,telegram'
-			},
-			{
-				codeholderId: (await AKSO.db('codeholders').where('newCode', 'xxtejo').first('id')).id,
-				category: 'admin',
-				pref: 'telegram'
-			}
-		]);
-}
-
 export async function setUpCodeholderTotp () {
 	await AKSO.db('codeholders_totp')
 		.insert([
