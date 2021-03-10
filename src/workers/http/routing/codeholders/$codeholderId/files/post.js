@@ -47,6 +47,7 @@ export default {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
+
 		// Ensure that the we can access the codeholder through the member filter
 		const codeholderQuery = AKSO.db('view_codeholders')
 			.where('id', req.params.codeholderId)

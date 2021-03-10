@@ -3,11 +3,13 @@ import { promisify } from 'util';
 const csvParse = promisify(require('csv-parse'));
 import XRegExp from 'xregexp';
 import { base64url } from 'rfc4648';
-import multer from 'multer';
-import os from 'os';
 import fs from 'pn/fs';
+import nodePath from 'pn/path';
 import bytesUtil from 'bytes';
 import msgpack from 'msgpack-lite';
+import Busboy from 'busboy';
+import tmp from 'tmp-promise';
+import streamMeter from 'stream-meter';
 
 import { ajv } from 'akso/util';
 
@@ -213,32 +215,110 @@ export function bindMethod (router, path, method, bind) {
 					});
 				}
 
+				const fieldsObj = {};
+				const fieldCount = {};
+				req.files = {};
+				for (const field of uploadFields) {
+					if (field.name in fieldsObj) {
+						const err = new Error(`Duplicate multipart field declaration for ${field.name}`);
+						err.statusCode = 500;
+						return next(err);
+					}
+					fieldsObj[field.name] = field;
+					fieldCount[field.name] = 0;
+					req.files[field.name] = [];
+				}
+
 				await new Promise((resolve, reject) => {
-					multer({
-						dest: os.tmpdir(),
-						limits: {
-							fileSize: uploadFields.reduce((a, b) => {
-								return Math.max(bytesUtil(a.maxSize) || 0, bytesUtil(b.maxSize) || 0);
-							})
+					let busboy;
+					try {
+						busboy = new Busboy({
+							headers: req.headers,
+							limits: {
+								fileSize: uploadFields.reduce((a, b) => {
+									return Math.max(bytesUtil(a.maxSize) || 0, bytesUtil(b.maxSize) || 0);
+								})
+							}
+						});
+					} catch (e) {
+						const err = new Error('Invalid multipart form');
+						err.statusCode = 400;
+						return reject(err);
+					}
+					busboy.on('file', async function (fieldname, stream, filename, encoding, mimetype) {
+						const fieldDecl = fieldsObj[fieldname];
+						if (!fieldDecl) {
+							const err = new Error(`Illegal field ${fieldname}`);
+							err.statusCode = 400;
+							stream.resume();
+							return reject(err);
 						}
-					}).fields(uploadFields)(req, res, function (err) {
-						if (err) {
-							if (err instanceof multer.MulterError) { err.statusCode = 400; }
-							reject(err);
+
+						if (fieldCount[fieldname] >= (fieldDecl.maxCount || 1)) {
+							const err = new Error(`Too many of field ${fieldname}`);
+							err.statusCode = 400;
+							stream.resume();
+							return reject(err);
 						}
-						else { resolve(); }
+						fieldCount[fieldname]++;
+
+						if (fieldDecl.mimeCheck) {
+							if (!fieldDecl.mimeCheck(mimetype)) {
+								const err = new Error(`Unsupported mimetype in field ${fieldname}`);
+								err.statusCode = 415;
+								stream.resume();
+								return reject(err);
+							}
+						}
+
+						const meter = streamMeter();
+						const tmpFile = await tmp.tmpName();
+						const writeStream = fs.createWriteStream(tmpFile);
+
+						stream.on('limit', () => {
+							const err = new Error(`Field ${fieldname} is too big`);
+							err.statusCode = 413;
+							return reject(err);
+						});
+
+						stream.on('end', () => {
+							req.files[fieldname].push({
+								fieldname,
+								originalname: filename,
+								encoding,
+								mimetype,
+								size: meter.bytes,
+								destination: nodePath.dirname(tmpFile),
+								filename: nodePath.basename(tmpFile),
+								path: tmpFile
+							});
+						});
+
+						stream.on('error', e => {
+							throw e;
+						});
+
+						stream
+							.pipe(meter)
+							.pipe(writeStream);
+
+						busboy.on('finish', () => { resolve(); });
+						busboy.on('error', e => { reject(e); });
 					});
+					req.pipe(busboy);
 				});
 
 				// Always clean up temp files
 				res.on('finish', async () => {
 					for (let fileArr of Object.values(req.files)) {
 						for (let file of fileArr) {
-							try {
-								await fs.unlink(file.path);
-							} catch (e) {
-								if (e.code !== 'ENOENT') {
-									throw e;
+							if (file && file.path) {
+								try {
+									await fs.unlink(file.path);
+								} catch (e) {
+									if (e.code !== 'ENOENT') {
+										throw e;
+									}
 								}
 							}
 						}
