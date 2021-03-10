@@ -215,7 +215,12 @@ export function bindMethod (router, path, method, bind) {
 
 				await new Promise((resolve, reject) => {
 					multer({
-						dest: os.tmpdir()
+						dest: os.tmpdir(),
+						limits: {
+							fileSize: uploadFields.reduce((a, b) => {
+								return Math.max(bytesUtil(a.maxSize) || 0, bytesUtil(b.maxSize) || 0);
+							})
+						}
 					}).fields(uploadFields)(req, res, function (err) {
 						if (err) {
 							if (err instanceof multer.MulterError) { err.statusCode = 400; }
