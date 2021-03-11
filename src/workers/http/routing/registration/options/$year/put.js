@@ -160,6 +160,7 @@ export default {
 		};
 
 		for (const offerGroup of req.body.offers) {
+			if (!offerGroup.offers) { continue; }
 			for (const offer of offerGroup.offers) {
 				if (offer.type === 'addon') {
 					// Validate the id
@@ -237,6 +238,7 @@ export default {
 		// Insert new offers
 		await trx('registration_options_offerGroups_offers')
 			.insert(req.body.offers.flatMap((offerGroup, offerGroupId) => {
+				if (!offerGroup.offers) { return []; }
 				return offerGroup.offers.map((offer, i) => {
 					const offerData = {
 						year: req.params.year,
