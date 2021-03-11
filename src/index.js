@@ -23,7 +23,7 @@ async function init () {
 				winston.format.splat(),
 				winston.format.colorize(),
 				winston.format.timestamp({
-					format: () => moment().format('YYYY-MM-DD HH:mm:ss:SSS [Z]')
+					format: () => moment.tz().format('YYYY-MM-DD HH:mm:ss:SSS [Z]')
 				}),
 				winston.format.printf(info => `[${info.timestamp}] ${info.level}: ${info.message}`)
 			),
@@ -230,6 +230,7 @@ async function init () {
 
 	// Init
 	moment.locale('eo');
+	moment.tz.setDefault('UTC');
 
 	// Warn about used values
 	if (cluster.isMaster) {
