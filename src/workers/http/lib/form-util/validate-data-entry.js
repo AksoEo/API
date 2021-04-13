@@ -67,7 +67,7 @@ export async function validateDataEntry ({
 		};
 		case 'country': return {
 			type: 'string',
-			enum: aksoCountries.concat(formEntry.add).filter(x => !formEntry.exclude.includes(x))
+			enum: aksoCountries.filter(x => !formEntry.exclude.includes(x))
 		};
 		case 'date': return {
 			type: 'string',

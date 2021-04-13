@@ -111,7 +111,7 @@ export async function parseForm ({
 			if (oldField && oldField.type !== formEntry.type) {
 				const validNewTypes = validMigrationCombos[oldField.type] || [];
 				if (!validNewTypes.includes(formEntry.type)) {
-					const err = new Error(`formEntry {formEntry.name} requests impossible migration from ${oldField.type} to ${formEntry.type}`);
+					const err = new Error(`formEntry ${formEntry.name} requests impossible migration from ${oldField.type} to ${formEntry.type}`);
 					err.statusCode = 400;
 					throw err;
 				}
@@ -198,15 +198,8 @@ export async function parseForm ({
 					}
 				}
 			} else if (formEntry.type === 'country') {
-				if (!('add' in formEntry)) { formEntry.add = []; }
 				if (!('exclude' in formEntry)) { formEntry.exclude = []; }
 				if (!('chAutofill' in formEntry)) { formEntry.chAutofill = null; }
-
-				if (formEntry.add.length !== [...new Set(formEntry.add)].length) {
-					const err = new Error('Duplicate entries in add in formEntry ' + formEntry.name);
-					err.statusCode = 400;
-					throw err;
-				}
 				
 				if (formEntry.exclude.length !== [...new Set(formEntry.exclude)].length) {
 					const err = new Error('Duplicate entries in exclude in formEntry ' + formEntry.name);
@@ -216,7 +209,6 @@ export async function parseForm ({
 
 				if (typeof formEntry.default === 'string') {
 					const validValues = aksoCountries
-						.concat(formEntry.add)
 						.filter(x => !formEntry.exclude.includes(x));
 					if (!validValues.includes(formEntry.default)) {
 						const err = new Error('Invalid default in formEntry ' + formEntry.name);

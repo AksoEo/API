@@ -337,14 +337,6 @@ export const formSchema = {
 									{ type: 'string' }
 								]
 							},
-							add: {
-								type: 'array',
-								maxItems: 100,
-								items: {
-									type: 'string',
-									pattern: '^_[a-z]{1,2}$'
-								}
-							},
 							exclude: {
 								type: 'array',
 								maxItems: 300,
