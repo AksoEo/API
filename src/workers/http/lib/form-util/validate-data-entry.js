@@ -134,48 +134,56 @@ export async function validateDataEntry ({
 
 	const getFieldSchema = formEntry => {
 		const fieldSchema = getBasicFieldSchema(formEntry);
+		if (allowInvalidData) { return fieldSchema; }
 
-		if (!allowInvalidData) {
-			const disabled = getComputedProp(formEntry, 'disabled');
-			if (disabled) { return { type: 'null' }; }
+		const disabled = getComputedProp(formEntry, 'disabled');
+		if (disabled) { return { type: 'null' }; }
 
-			const required = getComputedProp(formEntry, 'required');
-			if (!required) { fieldSchema.nullable = true; }
+		const required = getComputedProp(formEntry, 'required');
 
-			if (oldData && !formEntry.editable) {
-				fieldSchema.const = oldData[formEntry.name];
-			}
+		if (oldData && !formEntry.editable) {
+			fieldSchema.const = oldData[formEntry.name];
+		}
 
-			if (['number','money','date','datetime'].includes(formEntry.type)) {
-				if (formEntry.min !== null) { fieldSchema.minimum = formEntry.min; }
-				if (formEntry.max !== null) { fieldSchema.maximum = formEntry.max; }
-			} else if (['number','money'].includes(formEntry.type)) {
-				if (formEntry.step !== null) { fieldSchema.multipleOf = formEntry.step; }
-			} else if (formEntry.type === 'text') {
-				if (formEntry.pattern !== null) { fieldSchema.pattern = formEntry.pattern; }
-				if (formEntry.minLength !== null) { fieldSchema.minLength = formEntry.minLength; }
-				if (formEntry.maxLength !== null) { fieldSchema.maxLength = formEntry.maxLength; }
-			} else if (formEntry.type === 'time') {
-				if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
-				if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
-			} else if (formEntry.type === 'boolean_table') {
-				fieldSchema.validateFunction = function (val) {
-					// Validate function seems to be called before checking for nullable, so this is needed
-					if (val === null && !required) { return true; }
+		if (['number','money','date','datetime'].includes(formEntry.type)) {
+			if (formEntry.min !== null) { fieldSchema.minimum = formEntry.min; }
+			if (formEntry.max !== null) { fieldSchema.maximum = formEntry.max; }
+		} else if (['number','money'].includes(formEntry.type)) {
+			if (formEntry.step !== null) { fieldSchema.multipleOf = formEntry.step; }
+		} else if (formEntry.type === 'text') {
+			if (formEntry.pattern !== null) { fieldSchema.pattern = formEntry.pattern; }
+			if (formEntry.minLength !== null) { fieldSchema.minLength = formEntry.minLength; }
+			if (formEntry.maxLength !== null) { fieldSchema.maxLength = formEntry.maxLength; }
+		} else if (formEntry.type === 'time') {
+			if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
+			if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
+		} else if (formEntry.type === 'boolean') {
+			if (required) { fieldSchema.const = true; }
+		} else if (formEntry.type === 'boolean_table') {
+			fieldSchema.validateFunction = function (val) {
+				const numValues = []
+					.concat(...val)
+					.filter(x => x === true)
+					.length;
+				if (formEntry.minSelect !== null) {
+					if (numValues < formEntry.minSelect) { return false; }
+				}
+				if (formEntry.maxSelect !== null) {
+					if (numValues > formEntry.maxSelect) { return false; }
+				}
+				return true;
+			};
+		}
 
-					const numValues = []
-						.concat(...val)
-						.filter(x => x === true)
-						.length;
-					if (formEntry.minSelect !== null) {
-						if (numValues < formEntry.minSelect) { return false; }
-					}
-					if (formEntry.maxSelect !== null) {
-						if (numValues > formEntry.maxSelect) { return false; }
-					}
-					return true;
-				};
-			}
+		if (!required) {
+			return {
+				oneOf: [
+					{
+						type: 'null'
+					},
+					fieldSchema
+				]
+			};
 		}
 
 		return fieldSchema;
