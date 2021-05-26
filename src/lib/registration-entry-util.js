@@ -62,10 +62,11 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				// TODO: Do something here
 			}
 
-			const takenUEACodes = (await AKSO.db('codeholders')
-				.select('newCode')
-				.whereIn('newCode', suggestedUEACodes))
-				.map(x => x.newCode);
+			const takenUEACodes = (
+				await AKSO.db('codeholders')
+					.select('newCode')
+					.whereIn('newCode', suggestedUEACodes)
+			).map(x => x.newCode);
 
 			const availableUEACodes = suggestedUEACodes
 				.filter(x => !takenUEACodes.includes(x));
