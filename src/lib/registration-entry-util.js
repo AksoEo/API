@@ -62,15 +62,13 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				// TODO: Do something here
 			}
 
-			const takenUEACodes = await AKSO.db('codeholders')
+			const takenUEACodes = (await AKSO.db('codeholders')
 				.select('newCode')
-				.whereIn('newCode', suggestedUEACodes);
+				.whereIn('newCode', suggestedUEACodes))
+				.map(x => x.newCode);
 
 			const availableUEACodes = suggestedUEACodes
 				.filter(x => !takenUEACodes.includes(x));
-
-			console.log(takenUEACodes)
-			console.log(availableUEACodes)
 
 			if (!availableUEACodes.length) {
 				throw new Error(`No available UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
