@@ -69,6 +69,9 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 			const availableUEACodes = suggestedUEACodes
 				.filter(x => !takenUEACodes.includes(x));
 
+			console.log(takenUEACodes)
+			console.log(availableUEACodes)
+
 			if (!availableUEACodes.length) {
 				throw new Error(`No available UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
 				// The probability of this happening is extremely small, but we should probably still have some logic in place to deal with it
