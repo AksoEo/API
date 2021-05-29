@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.23, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.25, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.23-0ubuntu0.20.04.1
+-- Server version	8.0.25-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2040,13 +2040,14 @@ DROP TABLE IF EXISTS `magazines_editions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `magazines_editions` (
-  `id` int unsigned NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `magazineId` int unsigned NOT NULL,
   `idHuman` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date NOT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`magazineId`,`id`) USING BTREE,
+  PRIMARY KEY (`id`) USING BTREE,
   KEY `date` (`date`),
+  KEY `magazineId` (`magazineId`),
   FULLTEXT KEY `idHuman` (`idHuman`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `magazines_editions_ibfk_1` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3180,4 +3181,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-13 16:06:02
+-- Dump completed on 2021-05-29 13:03:56

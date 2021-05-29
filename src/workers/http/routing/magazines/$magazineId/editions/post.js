@@ -6,10 +6,6 @@ export default {
 		body: {
 			type: 'object',
 			properties: {
-				id: {
-					type: 'number',
-					format: 'uint32'
-				},
 				idHuman: {
 					type: 'string',
 					minLength: 1,
@@ -29,7 +25,6 @@ export default {
 				}
 			},
 			required: [
-				'id',
 				'date'
 			],
 			additionalProperties: false
@@ -45,30 +40,21 @@ export default {
 		const orgPerm = 'magazines.update.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		// Make sure the id isn't already taken
-		const idExists = await AKSO.db('magazines_editions')
-			.first(1)
-			.where({
-				id: req.body.id,
-				magazineId: req.params.magazineId
-			});
-		if (idExists) { return res.sendStatus(409); }
-
-		await AKSO.db('magazines_editions').insert({
+		const id = (await AKSO.db('magazines_editions').insert({
 			...req.body,
 			...{
 				magazineId: req.params.magazineId
 			}
-		});
+		}))[0];
 
 		res.set('Location', path.join(
 			AKSO.conf.http.path,
 			'magazines',
 			req.params.magazineId,
 			'editions',
-			req.body.id.toString()
+			id.toString()
 		));
-		res.set('X-Identifier', req.body.id);
+		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);
 	}
 };
