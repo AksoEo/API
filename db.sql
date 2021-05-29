@@ -2045,9 +2045,11 @@ CREATE TABLE `magazines_editions` (
   `idHuman` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date NOT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `date` (`date`),
   KEY `magazineId` (`magazineId`),
+  KEY `published` (`published`),
   FULLTEXT KEY `idHuman` (`idHuman`),
   FULLTEXT KEY `description` (`description`),
   CONSTRAINT `magazines_editions_ibfk_1` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3181,4 +3183,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-29 13:03:56
+-- Dump completed on 2021-05-29 13:39:21
