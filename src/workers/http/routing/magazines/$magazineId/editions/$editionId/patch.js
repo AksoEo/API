@@ -24,6 +24,9 @@ export default {
 					minLength: 1,
 					maxLength: 5000,
 					nullable: true
+				},
+				published: {
+					type: 'boolean'
 				}
 			},
 			minProperties: 1,

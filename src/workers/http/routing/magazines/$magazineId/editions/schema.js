@@ -11,6 +11,9 @@ export const schema = {
 		'published': 'f',
 		'hasThumbnail': ''
 	},
+	fieldAliases: {
+		hasThumbnail: () => AKSO.db.raw('1')
+	},
 	alwaysSelect: [
 		'magazineId',
 		'id'
