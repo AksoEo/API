@@ -28,7 +28,7 @@ export async function afterQuery (arr, done) {
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
 			row.magazineId,
-			row.id
+			row.id.toString()
 		);
 
 		let access = false;
