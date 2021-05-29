@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import MagazineEditionResource from 'akso/lib/resources/magazine-edition-resource';
 
-import { schema as parSchema } from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
@@ -26,7 +26,8 @@ export default {
 		await QueryUtil.handleCollection({
 			req, res, schema, query,
 			Res: MagazineEditionResource,
-			passToCol: [[ req, schema ]]
+			passToCol: [[ req, schema ]],
+			afterQuery
 		});
 	}
 };

@@ -38,4 +38,6 @@ export async function afterQuery (arr, done) {
 
 		row.hasThumbnail = access;
 	}
+
+	done();
 }
