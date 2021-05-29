@@ -33,7 +33,7 @@ export async function afterQuery (arr, done) {
 
 		let access = false;
 		try {
-			fs.access(thumbnailPath);
+			await fs.access(thumbnailPath);
 			access = true;
 		} catch (e) {
 			// noop
