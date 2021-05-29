@@ -27,7 +27,7 @@ export async function afterQuery (arr, done) {
 		const thumbnailPath = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
-			row.magazineId,
+			row.magazineId.toString(),
 			row.id.toString()
 		);
 
