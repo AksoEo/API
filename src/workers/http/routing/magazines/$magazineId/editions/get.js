@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import MagazineEditionResource from 'akso/lib/resources/magazine-edition-resource';
 
-import parSchema from './schema';
+import { schema as parSchema } from './schema';
 
 const schema = {
 	...parSchema,
@@ -23,6 +23,10 @@ export default {
 
 		const query = AKSO.db('magazines_editions')
 			.where('magazineId', req.params.magazineId);
-		await QueryUtil.handleCollection({ req, res, schema, query, Res: MagazineEditionResource });
+		await QueryUtil.handleCollection({
+			req, res, schema, query,
+			Res: MagazineEditionResource,
+			passToCol: [[ req, schema ]]
+		});
 	}
 };

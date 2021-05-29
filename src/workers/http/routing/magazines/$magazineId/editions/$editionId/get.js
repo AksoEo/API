@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import MagazineEditionResource from 'akso/lib/resources/magazine-edition-resource';
 
-import parSchema from '../schema';
+import { schema as parSchema } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -24,7 +24,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new MagazineEditionResource(row);
+		const obj = new MagazineEditionResource(row, req, schema);
 		res.sendObj(obj);
 	}
 };
