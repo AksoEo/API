@@ -8,6 +8,13 @@ class MagazineEditionToCResource extends SimpleResource {
 		super(obj);
 
 		if ('highlighted' in obj) { obj.highlighted = !!obj.highlighted; }
+		if ('availableRecitationFormats' in obj) {
+			if (obj.availableRecitationFormats === null) {
+				obj.availableRecitationFormats = [];
+			} else {
+				obj.availableRecitationFormats = obj.availableRecitationFormats.split(',');
+			}
+		}
 	}
 }
 
