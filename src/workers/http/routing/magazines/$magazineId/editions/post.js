@@ -66,7 +66,7 @@ export default {
 			'magazines',
 			req.params.magazineId,
 			'editions',
-			req.body.id
+			req.body.id.toString()
 		));
 		res.set('X-Identifier', req.body.id);
 		res.sendStatus(201);
