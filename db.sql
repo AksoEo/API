@@ -1624,6 +1624,9 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `price_minUpfront` int unsigned DEFAULT NULL,
   `formId` int unsigned NOT NULL,
   `form` json NOT NULL,
+  `identifierName` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `identifierEmail` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `identifierCountryCode` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`),
   UNIQUE KEY `formId` (`formId`),
   CONSTRAINT `congresses_instances_registrationForm_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -3185,4 +3188,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-05 18:07:12
+-- Dump completed on 2021-06-05 18:51:33
