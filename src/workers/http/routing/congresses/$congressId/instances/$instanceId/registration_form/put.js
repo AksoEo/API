@@ -187,7 +187,10 @@ export default {
 			price_currency: req.body.price ? req.body.price.currency : null,
 			price_var: req.body.price ? req.body.price.var : null,
 			price_minUpfront: req.body.price ? req.body.price.minUpfront : null,
-			formId
+			formId,
+			identifierName: req.body.identifierName,
+			identifierEmail: req.body.identifierEmail,
+			identifierCountryCode: req.body.identifierCountryCode
 		};
 		const data = {
 			...rawData,
