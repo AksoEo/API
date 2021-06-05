@@ -2431,6 +2431,7 @@ CREATE TABLE `pay_methods` (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `internalDescription` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `internal` tinyint(1) NOT NULL DEFAULT '0',
   `currencies` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentValidity` int unsigned DEFAULT NULL,
   `isRecommended` tinyint(1) NOT NULL DEFAULT '0',
@@ -2444,6 +2445,7 @@ CREATE TABLE `pay_methods` (
   KEY `type` (`type`),
   KEY `paymentValidity` (`paymentValidity`),
   KEY `isRecommended` (`isRecommended`),
+  KEY `internal` (`internal`),
   FULLTEXT KEY `internalDescription` (`internalDescription`),
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
@@ -3183,4 +3185,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-29 13:39:21
+-- Dump completed on 2021-06-05 18:07:12
