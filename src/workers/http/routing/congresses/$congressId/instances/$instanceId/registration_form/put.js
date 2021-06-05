@@ -3,7 +3,7 @@ import CongressParticipantResource from 'akso/lib/resources/congress-participant
 import { formSchema, parseForm, setFormFields, validateDataEntry} from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 import { escapeId } from 'mysql2';
-import { union, NULL, NUMBER, BOOL } from '@tejo/akso-script';
+import { BOOL } from '@tejo/akso-script';
 import { schema as parSchema } from '../participants/schema';
 
 export default {
@@ -73,10 +73,28 @@ export default {
 					],
 					additionalProperties: false
 				},
-				form: formSchema
+				form: formSchema,
+				identifierName: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 40
+				},
+				identifierEmail: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 40
+				},
+				identifierCountryCode: {
+					type: 'string',
+					nullable: true,
+					minLength: 1,
+					maxLength: 40
+				},
 			},
 			required: [
-				'form'
+				'form',
+				'identifierEmail',
+				'identifierName'
 			],
 			additionalProperties: false
 		}
@@ -115,6 +133,32 @@ export default {
 				parsedForm.validateDefinition(req.body.price.var);
 			} catch (e) {
 				const err = new Error(`The AKSO Script for the price variable ${req.body.price.var} errored: ${e.message}`);
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+
+		try {
+			parsedForm.validateDefinition(req.body.identifierName);
+		} catch (e) {
+			const err = new Error(`The AKSO Script for identifierName ${req.body.identifierName} errored: ${e.message}`);
+			err.statusCode = 400;
+			throw err;
+		}
+
+		try {
+			parsedForm.validateDefinition(req.body.identifierEmail);
+		} catch (e) {
+			const err = new Error(`The AKSO Script for identifierEmail ${req.body.identifierEmail} errored: ${e.message}`);
+			err.statusCode = 400;
+			throw err;
+		}
+
+		if (req.body.identifierCountryCode) {
+			try {
+				parsedForm.validateDefinition(req.body.identifierCountryCode);
+			} catch (e) {
+				const err = new Error(`The AKSO Script for identifierCountryCode ${req.body.identifierCountryCode} errored: ${e.message}`);
 				err.statusCode = 400;
 				throw err;
 			}

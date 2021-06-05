@@ -11,7 +11,10 @@ export default {
 		'price.currency': '',
 		'price.var': '',
 		'price.minUpfront': '',
-		form: ''
+		form: '',
+		identifierName: '',
+		identifierEmail: '',
+		identifierCountryCode: ''
 	},
 	fieldAliases: {
 		'price.currency': 'price_currency',
