@@ -10,6 +10,7 @@ export default {
 		currencies: '',
 		paymentValidity: '',
 		isRecommended: 'f',
+		internal: 'f',
 		feePercent:  '',
 		'feeFixed.val': '',
 		'feeFixed.cur': '',

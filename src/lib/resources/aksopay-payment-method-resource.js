@@ -23,6 +23,9 @@ class AKSOPayPaymentMethodResource extends SimpleResource {
 		if ('isRecommended' in obj) {
 			obj.isRecommended = !!obj.isRecommended;
 		}
+		if ('internal' in obj) {
+			obj.internal = !!obj.internal;
+		}
 		if ('feeFixed_val' in obj || 'feeFixed_obj' in obj) {
 			fields.push('feeFixed');
 			if (obj.feeFixed_val && obj.feeFixed_cur) {
