@@ -77,7 +77,6 @@ export default {
 		const formValues = {
 			'@created_time': null,
 			'@edited_time': null,
-			'@upfront_time': null, // TODO
 			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};

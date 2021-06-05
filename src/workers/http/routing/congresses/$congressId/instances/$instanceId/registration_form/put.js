@@ -101,7 +101,6 @@ export default {
 
 		// Validate the form
 		const formValues = {
-			'@upfront_time': union([ NULL, NUMBER ]),
 			'@is_member': BOOL
 		};
 		const parsedForm = await parseForm({
@@ -200,7 +199,6 @@ export default {
 				const formValues = {
 					'@created_time': participant.obj.createdTime,
 					'@edited_time': participant.obj.editedTime,
-					'@upfront_time': null, // TODO
 					'@is_member': participant.obj.codeholderId ?
 						await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false
 				};
