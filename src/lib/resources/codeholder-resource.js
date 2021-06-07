@@ -126,6 +126,10 @@ export default CodeholderResource;
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 function formatPhoneNumber (number) {
-	const numberObj = phoneUtil.parse(number);
-	return phoneUtil.format(numberObj, PhoneNumberFormat.INTERNATIONAL);
+	try {
+		const numberObj = phoneUtil.parse(number);
+		return phoneUtil.format(numberObj, PhoneNumberFormat.INTERNATIONAL);
+	} catch (e) {
+		return number;
+	}
 }
