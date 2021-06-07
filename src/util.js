@@ -194,7 +194,7 @@ ajv.addFormat('short-time', {
 	}
 });
 ajv.addFormat('tel', {
-	type: 'number',
+	type: 'string',
 	validate: /^\+[a-z0-9]{1,49}$/i
 });
 ajv.addFormat('tz', {
