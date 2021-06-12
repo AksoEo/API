@@ -165,7 +165,8 @@ export const schema = {
 						'categoryId',
 						'givesMembership',
 						'lifetime',
-						'year'
+						'year',
+						'canuto'
 					],
 					query: this,
 					filter

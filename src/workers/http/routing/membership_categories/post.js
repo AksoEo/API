@@ -9,7 +9,7 @@ export default {
 				nameAbbrev: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 6,
+					maxLength: 15,
 					pattern: '^[^\\n]+$'
 				},
 				name: {

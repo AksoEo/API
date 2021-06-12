@@ -17,6 +17,9 @@ const schema = {
 				year: {
 					type: 'number',
 					format: 'year'
+				},
+				canuto: {
+					type: 'boolean'
 				}
 			},
 			required: [ 'categoryId', 'year' ],
@@ -73,7 +76,8 @@ export default {
 		const id = (await AKSO.db('membershipCategories_codeholders').insert({
 			categoryId: req.body.categoryId,
 			codeholderId: req.params.codeholderId,
-			year: req.body.year
+			year: req.body.year,
+			canuto: req.body.canuto
 		}))[0];
 
 		res.set('Location', path.join(

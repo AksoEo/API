@@ -9,6 +9,7 @@ class CodeholderMembershipResource extends SimpleResource {
 
 		if ('givesMembership' in obj) { obj.givesMembership = !!obj.givesMembership; }
 		if ('lifetime' in obj) { obj.lifetime = !!obj.lifetime; }
+		if ('canuto' in obj) { obj.canuto = !!obj.canuto; }
 	}
 }
 

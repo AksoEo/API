@@ -10,7 +10,8 @@ export default {
 		givesMembership: 'f',
 		lifetime: 'f',
 		availableFrom: 'f',
-		availableTo: 'f'
+		availableTo: 'f',
+		canuto: 'f'
 	},
 	fieldAliases: {
 		id: 'membershipCategories_codeholders.id'
