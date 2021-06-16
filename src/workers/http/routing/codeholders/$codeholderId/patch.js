@@ -70,7 +70,19 @@ const schema = {
 					type: 'string',
 					pattern: '^[a-z]{2}$'
 				},
+				publicCountry: {
+					type: 'string',
+					pattern: '^[a-z]{2}$',
+					nullable: true
+				},
 				email: {
+					type: 'string',
+					format: 'email',
+					minLength: 3,
+					maxLength: 200,
+					nullable: true
+				},
+				publicEmail: {
 					type: 'string',
 					format: 'email',
 					minLength: 3,
@@ -201,6 +213,73 @@ const schema = {
 					type: 'string',
 					pattern: '^[^\\n]{1,12}$',
 					nullable: true
+				},
+				mainDescriptor: {
+					type: 'string',
+					pattern: '^[^\\n]{1,30}$',
+					nullable: true
+				},
+				factoids: {
+					type: 'object',
+					minProperties: 1,
+					maxProperties: 15,
+					additionalProperties: false,
+					patternProperties: {
+						'^[^\\n]{1,30}$': {
+							oneOf: [
+								'tel', 'text', 'number', 'email', 'url'
+							].map(type => {
+								let valObj;
+								switch (type) {
+								case 'tel':
+									valObj = {
+										type: 'string',
+										format: 'tel',
+										maxLength: 250
+									};
+									break;
+								case 'text':
+									valObj = {
+										type: 'string',
+										maxLength: 250
+									};
+									break;
+								case 'number':
+									valObj = {
+										type: 'number'
+									};
+									break;
+								case 'email':
+									valObj = {
+										type: 'string',
+										format: 'email',
+										maxLength: 250
+									};
+									break;
+								case 'url':
+									valObj = {
+										type: 'string',
+										format: 'safe-uri',
+										maxLength: 250
+									};
+								}
+
+
+								return {
+									type: 'object',
+									additionalProperties: false,
+									properties: {
+										val: valObj,
+										type: {
+											type: 'string',
+											const: type
+										}
+									},
+									required: [ 'val', 'type' ]
+								};
+							})
+						}
+					}
 				}
 			},
 			additionalProperties: false,
@@ -229,7 +308,9 @@ const exclusiveFields = {
 		'fullName',
 		'fullNameLocal',
 		'careOf',
-		'nameAbbrev'
+		'nameAbbrev',
+		'mainDescriptor',
+		'factoids'
 	]
 };
 exclusiveFields.all = Object.values(exclusiveFields).reduce((a, b) => a.concat(b));
@@ -329,6 +410,14 @@ export default {
 					if (!feeCountryFound) {
 						return res.status(400).type('text/plain').send('Unknown feeCountry');
 					}
+				} else if (field === 'publicCountry' && req.body.publicCountry !== null) {
+					// Make sure the country exists
+					const publicCountryFound = await AKSO.db('countries')
+						.where({ enabled: true, code: req.body.publicCountry })
+						.first(1);
+					if (!publicCountryFound) {
+						return res.status(400).type('text/plain').send('Unknown publicCountry');
+					}
 				} else if (field === 'email' && req.body.email !== null) {
 					// Make sure the email isn't taken
 					const emailTaken = await AKSO.db('codeholders')
@@ -359,6 +448,8 @@ export default {
 					} else {
 						updateData.deathdate = req.body.deathdate = null;
 					}
+				} else if (field === 'factoids' && req.body.factoids !== null) {
+					updateData.factoids = req.body.factoids = JSON.stringify(req.body.factoids);
 				}
 
 				updateData[field] = req.body[field];
@@ -422,6 +513,8 @@ export default {
 					oldAddressWithPrefixes['address_' + key] = oldAddress[key];
 				}
 				histEntry = {...histEntry, ...oldAddressWithPrefixes};
+			} else if (field === 'factoids' && oldData[field] !== null) {
+				histEntry[field] = JSON.stringify(oldData[field]);
 			} else {
 				histEntry[field] = oldData[field];
 			}

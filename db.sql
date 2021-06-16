@@ -275,8 +275,10 @@ CREATE TABLE `codeholders` (
   `createPasswordTime` bigint unsigned DEFAULT NULL,
   `createPasswordKey` binary(16) DEFAULT NULL,
   `email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `publicEmail` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `feeCountry` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `publicCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `officePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
@@ -300,10 +302,14 @@ CREATE TABLE `codeholders` (
   KEY `password` (`password`),
   KEY `creationTime` (`creationTime`),
   KEY `profilePictureHash` (`profilePictureHash`) USING BTREE,
+  KEY `publicCountry` (`publicCountry`),
+  KEY `publicEmail` (`publicEmail`),
   FULLTEXT KEY `email_2` (`email`),
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
-  CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
+  FULLTEXT KEY `publicEmail_2` (`publicEmail`),
+  CONSTRAINT `codeholders_ibfk_1` FOREIGN KEY (`feeCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `codeholders_ibfk_2` FOREIGN KEY (`publicCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -620,6 +626,26 @@ CREATE TABLE `codeholders_hist_enabled` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `codeholders_hist_factoids`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_factoids`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_hist_factoids` (
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `factoids` json DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `codeholders_hist_factoids_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `codeholders_hist_feeCountry`
 --
 
@@ -870,6 +896,27 @@ CREATE TABLE `codeholders_hist_lastNamePublicity` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `codeholders_hist_mainDescriptor`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_mainDescriptor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_hist_mainDescriptor` (
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `mainDescriptor` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `mainDescriptor` (`mainDescriptor`),
+  CONSTRAINT `codeholders_hist_mainDescriptor_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `codeholders_hist_nameAbbrev`
 --
 
@@ -1054,6 +1101,50 @@ CREATE TABLE `codeholders_hist_profilePicturePublicity` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `codeholders_hist_publicCountry`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_publicCountry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_hist_publicCountry` (
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `publicCountry` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  KEY `feeCountry` (`publicCountry`),
+  CONSTRAINT `codeholders_hist_publicCountry_ibfk_1` FOREIGN KEY (`publicCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `codeholders_hist_publicCountry_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_hist_publicEmail`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_publicEmail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_hist_publicEmail` (
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `publicEmail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  KEY `email` (`publicEmail`) USING BTREE,
+  FULLTEXT KEY `email_2` (`publicEmail`),
+  CONSTRAINT `codeholders_hist_publicEmail_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `codeholders_hist_website`
 --
 
@@ -1226,6 +1317,8 @@ CREATE TABLE `codeholders_org` (
   `careOf` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nameAbbrev` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `searchName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mainDescriptor` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `factoids` json DEFAULT NULL,
   PRIMARY KEY (`codeholderId`),
   KEY `searchName_2` (`searchName`),
   FULLTEXT KEY `careOf` (`careOf`),
@@ -1233,6 +1326,7 @@ CREATE TABLE `codeholders_org` (
   FULLTEXT KEY `fullName` (`fullName`),
   FULLTEXT KEY `fullNameLocal` (`fullNameLocal`),
   FULLTEXT KEY `nameAbbrev` (`nameAbbrev`),
+  FULLTEXT KEY `mainDescriptor` (`mainDescriptor`),
   CONSTRAINT `codeholders_org_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2739,9 +2833,11 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `newCode`,
  1 AS `password`,
  1 AS `email`,
+ 1 AS `publicEmail`,
  1 AS `emailPublicity`,
  1 AS `enabled`,
  1 AS `feeCountry`,
+ 1 AS `publicCountry`,
  1 AS `address_country`,
  1 AS `address_countryArea`,
  1 AS `address_countryArea_latin`,
@@ -2784,6 +2880,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `fullNameLocal`,
  1 AS `careOf`,
  1 AS `nameAbbrev`,
+ 1 AS `mainDescriptor`,
+ 1 AS `factoids`,
  1 AS `searchNameHuman`,
  1 AS `searchNameOrg`*/;
 SET character_set_client = @saved_cs_client;
@@ -3104,7 +3202,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`publicEmail` AS `publicEmail`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders`.`publicCountry` AS `publicCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_org`.`mainDescriptor` AS `mainDescriptor`,`codeholders_org`.`factoids` AS `factoids`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3190,4 +3288,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-12 17:38:16
+-- Dump completed on 2021-06-16 17:02:26

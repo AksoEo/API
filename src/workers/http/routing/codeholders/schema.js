@@ -45,6 +45,8 @@ export const schema = {
 		'searchName': 'fs',
 		'website': '',
 		'biography': '',
+		'publicCountry': 'f',
+		'publicEmail': 'fs',
 
 		// HumanCodeholder
 		'firstName': 'fs',
@@ -68,7 +70,9 @@ export const schema = {
 		'fullName': 'fs',
 		'fullNameLocal': 'fs',
 		'careOf': 'fs',
-		'nameAbbrev': 'fs'
+		'nameAbbrev': 'fs',
+		'mainDescriptor': 's',
+		'factoids': ''
 	},
 	fieldAliases: {
 		'address.country': 'address_country',
@@ -383,6 +387,8 @@ export const histFields = {
 	'website': 'website',
 	'biography': 'biography',
 	'profession': 'profession',
+	'publicCountry': 'publicCountry',
+	'publicEmail': 'publicEmail',
 
 	// HumanCodeholder
 	'firstName': 'firstName',
@@ -401,7 +407,9 @@ export const histFields = {
 	'fullName': 'fullName',
 	'fullNameLocal': 'fullNameLocal',
 	'careOf': 'careOf',
-	'nameAbbrev': 'nameAbbrev'
+	'nameAbbrev': 'nameAbbrev',
+	'mainDescriptor': 'mainDescriptor',
+	'factoids': 'factoids'
 };
 for (let field in histFields) {
 	if (Array.isArray(histFields[field])) { continue; }
