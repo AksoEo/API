@@ -86,11 +86,7 @@ export function createTransaction() {
  * @param {knex.Transaction} trx
  */
 export async function rollbackTransaction (trx) {
-	try {
-		await trx.rollback(new Error('Safe rollback, not an error'));
-	} catch (e) {
-		// noop
-	}
+	await trx.rollback();
 }
 
 /**
