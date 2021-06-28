@@ -1801,6 +1801,41 @@ CREATE TABLE `countries_groups_members` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `countries_lists`
+--
+
+DROP TABLE IF EXISTS `countries_lists`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `countries_lists` (
+  `name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `countries_lists_orgs`
+--
+
+DROP TABLE IF EXISTS `countries_lists_orgs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `countries_lists_orgs` (
+  `listName` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `orgCodeholderId` int unsigned NOT NULL,
+  `i` int unsigned NOT NULL,
+  PRIMARY KEY (`listName`,`country`,`orgCodeholderId`),
+  UNIQUE KEY `listName` (`i`,`listName`,`country`) USING BTREE,
+  KEY `country` (`country`),
+  KEY `orgCodeholderId` (`orgCodeholderId`),
+  CONSTRAINT `countries_lists_orgs_ibfk_1` FOREIGN KEY (`listName`) REFERENCES `countries_lists` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `countries_lists_orgs_ibfk_2` FOREIGN KEY (`country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `countries_lists_orgs_ibfk_3` FOREIGN KEY (`orgCodeholderId`) REFERENCES `codeholders_org` (`codeholderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `forms`
 --
 
@@ -3288,4 +3323,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-16 17:02:26
+-- Dump completed on 2021-06-28 17:01:42

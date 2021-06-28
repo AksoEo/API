@@ -33,6 +33,7 @@ export async function triggerTriggerablePurposes () {
 		});
 	}
 
+	if (!newTriggerHists.length) { return; }
 	await AKSO.db('pay_triggerHist')
 		.insert(newTriggerHists);
 }
