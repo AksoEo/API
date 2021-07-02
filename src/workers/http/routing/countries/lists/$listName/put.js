@@ -70,6 +70,17 @@ export default {
 				.send(`Invalid org id(s): ${invalidOrgs.join(', ')}`);
 		}
 
+		const listData = Object.entries(req.body.list).flatMap(entry => {
+			return entry[1].map((orgCodeholderId, i) => {
+				return {
+					listName: req.params.listName,
+					country: entry[0],
+					orgCodeholderId,
+					i
+				};
+			});
+		});
+
 		const trx = await createTransaction();
 
 		await trx('countries_lists')
@@ -80,18 +91,11 @@ export default {
 			.where('listName', req.params.listName)
 			.delete();
 
-		await trx('countries_lists_orgs')
-			.insert(Object.entries(req.body.list).flatMap(entry => {
-				return entry[1].map((orgCodeholderId, i) => {
-					return {
-						listName: req.params.listName,
-						country: entry[0],
-						orgCodeholderId,
-						i
-					};
-				});
-			}))
-			.onConflict('orgCodeholderId').ignore();
+		if (listData.length) {
+			await trx('countries_lists_orgs')
+				.insert(listData)
+				.onConflict('orgCodeholderId').ignore();
+		}
 
 		await trx.commit();
 
