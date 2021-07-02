@@ -31,6 +31,8 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		searchName: 'r',
 		website: 'rw',
 		biography: 'rw',
+		publicCountry: 'rw',
+		publicEmail: 'rw',
 
 		// Humans
 		firstName: 'rw',
