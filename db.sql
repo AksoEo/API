@@ -351,6 +351,31 @@ CREATE TABLE `codeholders_address` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `codeholders_changeRequests`
+--
+
+DROP TABLE IF EXISTS `codeholders_changeRequests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_changeRequests` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `time` bigint unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `data` json NOT NULL,
+  `codeholderDescription` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `internalNotes` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  PRIMARY KEY (`id`),
+  KEY `time` (`time`),
+  KEY `codeholderId` (`codeholderId`),
+  KEY `status` (`status`),
+  FULLTEXT KEY `codeholderDescription` (`codeholderDescription`),
+  FULLTEXT KEY `internalNotes` (`internalNotes`),
+  CONSTRAINT `codeholders_changeRequests_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `codeholders_files`
 --
 
@@ -3323,4 +3348,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-28 17:01:42
+-- Dump completed on 2021-07-03 12:52:01

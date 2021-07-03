@@ -7,6 +7,7 @@ import { init as route$$codeholderId } from './$codeholderId';
 import { init as route$$codeholderIds } from './$codeholderIds';
 import { init as route$self } from './self';
 import { init as route$codes_available } from './codes_available';
+import { init as route$change_requests } from './change_requests';
 
 import method$get from './get';
 import method$post from './post';
@@ -23,6 +24,8 @@ export function init () {
 
 	router.use('/self', route$self());
 	router.use('/codes_available', route$codes_available());
+	router.use('/change_requests', route$change_requests());
+	
 	router.use('/:codeholderId(\\d+)', route$$codeholderId());
 
 	const codeholderIdsRegex = /^\d+(,\d+){0,99}$/;

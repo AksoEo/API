@@ -2,12 +2,13 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import { init as router$logins } from './logins';
-import { init as router$membership } from './membership';
-import { init as router$profile_picture } from './profile_picture';
-import { init as router$votes } from './votes';
+import { init as route$logins } from './logins';
+import { init as route$membership } from './membership';
+import { init as route$profile_picture } from './profile_picture';
+import { init as route$votes } from './votes';
 
 import method$get from './get';
+import method$patch from './patch';
 
 /**
  * Sets up /codeholders/self
@@ -23,12 +24,13 @@ export function init () {
 		next();
 	});
 
-	router.use('/logins', router$logins());
-	router.use('/membership', router$membership());
-	router.use('/profile_picture', router$profile_picture());
-	router.use('/votes', router$votes());
+	router.use('/logins', route$logins());
+	router.use('/membership', route$membership());
+	router.use('/profile_picture', route$profile_picture());
+	router.use('/votes', route$votes());
 
 	bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'patch', method$patch);
 
 	return router;
 }

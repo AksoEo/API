@@ -1,5 +1,3 @@
-import { default as merge } from 'deepmerge';
-
 /**
  * An authenticated client, either using user auth or app auth
  */
@@ -159,6 +157,14 @@ export default class AuthClient {
 	get modBy () {
 		if (this.isUser()) { return 'ch:' + this.user; }
 		else { return 'app:' + this.app.toString('hex'); }
+	}
+
+	async getNewCode () {
+		if (!this.isUser()) { return null; }
+		const userData = await AKSO.db('codeholders')
+			.first('newCode')
+			.where('id', this.user);
+		return userData.newCode;
 	}
 
 	async isActiveMember () {

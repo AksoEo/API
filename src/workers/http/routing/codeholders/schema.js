@@ -1,3 +1,8 @@
+import moment from 'moment-timezone';
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
+
+import * as AKSONotif from 'akso/notif';
+import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
 
 export const schema = {
@@ -251,12 +256,12 @@ export function memberFields (defaultFields, req, res, flag, memberFields) {
 	return haveFlag;
 }
 
-export function memberFieldsManual (fields, req, flag, memberFields) {
+export function memberFieldMatches (fields, req, flags, memberFields) {
 	if (memberFields === undefined) { memberFields = req.memberFields; }
-	if (req.memberFields === null) { return true; }
+	if (req.memberFields === null) { return fields; }
 
 	const haveFlag = fields
-		.map(f => {
+		.filter(f => {
 			const flagsFull = memberFields[f];
 			const flagsSplit = memberFields[f.split('.')[0]];
 
@@ -264,11 +269,24 @@ export function memberFieldsManual (fields, req, flag, memberFields) {
 			if (flagsFull) { flagsJoined += flagsFull; }
 			if (flagsSplit) { flagsJoined += flagsSplit; }
 
-			return flagsJoined.includes(flag);
-		})
-		.reduce((a, b) => a && b);
-
+			for (const flag of flags) {
+				if (flagsJoined.includes(flag)) {
+					return true;
+				}
+			}
+			return false;
+		});
 	return haveFlag;
+}
+
+export function memberFieldsManual (fields, req, flags, memberFields) {
+	const haveFlag = memberFieldMatches(fields, req, flags, memberFields);
+	for (const field of fields) {
+		if (!haveFlag.includes(field)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 export async function afterQuery (arr, done) {
@@ -414,4 +432,500 @@ export const histFields = {
 for (let field in histFields) {
 	if (Array.isArray(histFields[field])) { continue; }
 	histFields[field] = [ histFields[field] ].filter(x => x.length);
+}
+
+export const patchSchema = {
+	type: 'object',
+	properties: {
+		// Codeholder
+		newCode: {
+			type: 'string',
+			pattern: '^[a-z]{6}$'
+		},
+		address: {
+			type: 'object',
+			properties: {
+				country: {
+					type: 'string',
+					pattern: '^[a-z]{2}$'
+				},
+				countryArea: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				city: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				cityArea: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				streetAddress: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 100,
+					nullable: true
+				},
+				postalCode: {
+					type: 'string',
+					pattern: '^[^\\n]{1,20}$',
+					nullable: true
+				},
+				sortingCode: {
+					type: 'string',
+					pattern: '^[^\\n]{1,20}$',
+					nullable: true
+				}
+			},
+			additionalProperties: false,
+			required: [ 'country' ]
+		},
+		addressPublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+		feeCountry: {
+			type: 'string',
+			pattern: '^[a-z]{2}$'
+		},
+		publicCountry: {
+			type: 'string',
+			pattern: '^[a-z]{2}$',
+			nullable: true
+		},
+		email: {
+			type: 'string',
+			format: 'email',
+			minLength: 3,
+			maxLength: 200,
+			nullable: true
+		},
+		publicEmail: {
+			type: 'string',
+			format: 'email',
+			minLength: 3,
+			maxLength: 200,
+			nullable: true
+		},
+		emailPublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+		enabled: {
+			type: 'boolean'
+		},
+		notes: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 10000,
+			nullable: true
+		},
+		officePhone: {
+			type: 'string',
+			format: 'tel',
+			nullable: true
+		},
+		officePhonePublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+		isDead: {
+			type: 'boolean'
+		},
+		deathdate: {
+			type: 'string',
+			format: 'date',
+			nullable: true
+		},
+		profilePicturePublicity: {
+			type: 'string',
+			enum: [ 'public', 'members' ]
+		},
+		website: {
+			type: 'string',
+			format: 'safe-uri',
+			maxLength: 50
+		},
+		biography: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 2000,
+			nullable: true
+		},
+
+		// HumanCodeholder
+		firstName: {
+			type: 'string',
+			pattern: '^[^\\n]{1,50}$',
+			nullable: true
+		},
+		firstNameLegal: {
+			type: 'string',
+			pattern: '^[^\\n]{1,50}$'
+		},
+		lastName: {
+			type: 'string',
+			pattern: '^[^\\n]{1,50}$',
+			nullable: true
+		},
+		lastNameLegal: {
+			type: 'string',
+			pattern: '^[^\\n]{1,50}$',
+			nullable: true
+		},
+		lastNamePublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+		honorific: {
+			type: 'string',
+			pattern: '^[^\\n]{2,15}$',
+			nullable: true
+		},
+		birthdate: {
+			type: 'string',
+			format: 'date',
+			nullable: true,
+			validateFunction: val => !(moment(val).isAfter(moment()))
+		},
+		profession: {
+			type: 'string',
+			pattern: '^[^\\n]{1,50}$',
+			nullable: true
+		},
+		landlinePhone: {
+			type: 'string',
+			format: 'tel',
+			nullable: true
+		},
+		landlinePhonePublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+		cellphone: {
+			type: 'string',
+			format: 'tel',
+			nullable: true
+		},
+		cellphonePublicity: {
+			type: 'string',
+			enum: [ 'private', 'public', 'members' ]
+		},
+
+		// OrgCodeholder
+		fullName: {
+			type: 'string',
+			pattern: '^[^\\n]{1,100}$'
+		},
+		fullNameLocal: {
+			type: 'string',
+			pattern: '^[^\\n]{1,100}$',
+			nullable: true
+		},
+		careOf: {
+			type: 'string',
+			pattern: '^[^\\n]{1,100}$',
+			nullable: true
+		},
+		nameAbbrev: {
+			type: 'string',
+			pattern: '^[^\\n]{1,12}$',
+			nullable: true
+		},
+		mainDescriptor: {
+			type: 'string',
+			pattern: '^[^\\n]{1,30}$',
+			nullable: true
+		},
+		factoids: {
+			type: 'object',
+			minProperties: 1,
+			maxProperties: 15,
+			additionalProperties: false,
+			patternProperties: {
+				'^[^\\n]{1,30}$': {
+					oneOf: [
+						'tel', 'text', 'number', 'email', 'url'
+					].map(type => {
+						let valObj;
+						switch (type) {
+						case 'tel':
+							valObj = {
+								type: 'string',
+								format: 'tel',
+								maxLength: 250
+							};
+							break;
+						case 'text':
+							valObj = {
+								type: 'string',
+								maxLength: 250
+							};
+							break;
+						case 'number':
+							valObj = {
+								type: 'number'
+							};
+							break;
+						case 'email':
+							valObj = {
+								type: 'string',
+								format: 'email',
+								maxLength: 250
+							};
+							break;
+						case 'url':
+							valObj = {
+								type: 'string',
+								format: 'safe-uri',
+								maxLength: 250
+							};
+						}
+
+
+						return {
+							type: 'object',
+							additionalProperties: false,
+							properties: {
+								val: valObj,
+								type: {
+									type: 'string',
+									const: type
+								}
+							},
+							required: [ 'val', 'type' ]
+						};
+					})
+				}
+			}
+		}
+	},
+	additionalProperties: false,
+	minProperties: 1
+};
+
+export const exclusiveFields = {
+	human: [
+		'firstName',
+		'firstNameLegal',
+		'lastName',
+		'lastNameLegal',
+		'lastNamePublicity',
+		'honorific',
+		'birthdate',
+		'profession',
+		'landlinePhone',
+		'landlinePhonePublicity',
+		'cellphone',
+		'cellphonePublicity'
+	],
+	org: [
+		'fullName',
+		'fullNameLocal',
+		'careOf',
+		'nameAbbrev',
+		'mainDescriptor',
+		'factoids'
+	]
+};
+exclusiveFields.all = Object.values(exclusiveFields).reduce((a, b) => a.concat(b));
+
+export async function validatePatchFields (req, res, codeholderBefore) {
+	const updateData = {};
+	let addressUpdateData = null;
+
+	for (const field of Object.keys(req.body)) {
+		if (field === 'address') {
+			// Make sure the country exists
+			const addressCountry = await AKSO.db('countries')
+				.where({ enabled: true, code: req.body.address.country })
+				.first('name_eo');
+			if (!addressCountry) {
+				return res.status(400).type('text/plain').send('Unknown address.country');
+			}
+
+			const addressInput = {...req.body.address};
+			addressInput.countryCode = req.body.address.country;
+			delete addressInput.country;
+			let addressNormalized;
+			try {
+				addressNormalized = await AddressFormat.normalizeAddress(addressInput);
+			} catch (e) {
+				if (e instanceof AddressFormat.InvalidAddress) {
+					return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
+				}
+				throw e;
+			}
+			const addressLatin = await AddressFormat.latinizeAddress(addressNormalized);
+
+			const addressSearch = [
+				addressLatin.countryCode,
+				addressCountry.name_eo,
+				addressNormalized.countryArea,
+				addressLatin.countryArea,
+				addressLatin.city,
+				addressLatin.cityArea,
+				addressLatin.streetAddress,
+				addressLatin.postalCode,
+				addressLatin.sortingCode
+			]
+				.filter(val => val) // remove null/undefined
+				.join(' ');
+
+			addressUpdateData = {
+				...addressNormalized,
+				...{
+					codeholderId: req.params.codeholderId,
+					search: addressSearch
+				}
+			};
+			for (let [key, val] of Object.entries(addressLatin)) {
+				addressUpdateData[key + '_latin'] = val;
+			}
+			addressUpdateData.country = req.body.address.country;
+			delete addressUpdateData.countryCode;
+			delete addressUpdateData.countryCode_latin;
+
+			// Set feeCountry to address.country if null
+			if (codeholderBefore.feeCountry === null && !req.body.feeCountry) {
+				updateData.feeCountry = req.body.feeCountry = req.body.address.country;
+			}
+		} else {
+			if (field === 'feeCountry') {
+				// Make sure the country exists
+				const feeCountryFound = await AKSO.db('countries')
+					.where({ enabled: true, code: req.body.feeCountry })
+					.first(1);
+				if (!feeCountryFound) {
+					return res.status(400).type('text/plain').send('Unknown feeCountry');
+				}
+			} else if (field === 'publicCountry' && req.body.publicCountry !== null) {
+				// Make sure the country exists
+				const publicCountryFound = await AKSO.db('countries')
+					.where({ enabled: true, code: req.body.publicCountry })
+					.first(1);
+				if (!publicCountryFound) {
+					return res.status(400).type('text/plain').send('Unknown publicCountry');
+				}
+			} else if (field === 'email' && req.body.email !== null) {
+				// Make sure the email isn't taken
+				const emailTaken = await AKSO.db('codeholders')
+					.where('email', req.body.email)
+					.first(1);
+				if (emailTaken) {
+					return res.status(400).type('text/plain').send('email taken');
+				}
+			} else if (field === 'newCode') {
+				// Make sure the newCode isn't taken
+				const newCodeTaken = await AKSO.db('codeholders')
+					.where('newCode', req.body.newCode)
+					.first(1);
+				if (newCodeTaken) {
+					return res.status(400).type('text/plain').send('newCode taken');
+				}
+			} else if (field === 'deathdate') {
+				// Make sure it's not greater than the current date
+				if (moment(req.body.deathdate).isAfter(moment(), 'day')) {
+					return res.status(400).type('text/plain').send('deathdate is in the future');
+				}
+			} else if (field === 'isDead') {
+				// Set deathdate to current date if true, null if false assuming it's not manually set
+				if (req.body.isDead) {
+					if (!req.body.deathdate && !codeholderBefore.deathdate) {
+						updateData.deathdate = req.body.deathdate = moment().format('YYYY-MM-DD');
+					}
+				} else {
+					updateData.deathdate = req.body.deathdate = null;
+				}
+			} else if (field === 'factoids' && req.body.factoids !== null) {
+				updateData.factoids = req.body.factoids = JSON.stringify(req.body.factoids);
+			}
+
+			updateData[field] = req.body[field];
+		}
+	}
+
+	return {
+		updateData,
+		addressUpdateData
+	};
+}
+
+export async function handleHistory ({
+	req, cmtType, oldData, oldAddress,
+	validationData, codeholderId, fields,
+	approverUser = null, db = AKSO.db
+} = {}) {
+	let cmt = '';
+	if (cmtType === 'modCmt') {
+		cmt = req.query.modCmt;
+	} else if (cmtType === 'modDesc') {
+		cmt = AKSO.CODEHOLDER_OWN_CHANGE_CMT;
+	} else if (cmtType === 'modDescApproved') {
+		cmt = await AKSO.CODEHOLDER_OWN_CHANGE_APPROVED_CMT(approverUser);
+	}
+
+	const histPromises = [];
+	for (let field of fields) {
+		let histEntry = {
+			codeholderId: codeholderId,
+			modTime: moment().unix(),
+			modBy: req.user.modBy,
+			modCmt: cmt
+		};
+		if (field === 'address') {
+			const oldAddressWithPrefixes = {};
+			for (let key in oldAddress) {
+				if (key === 'codeholderId') { continue; }
+				oldAddressWithPrefixes['address_' + key] = oldAddress[key];
+			}
+			histEntry = {...histEntry, ...oldAddressWithPrefixes};
+		} else if (field === 'factoids' && oldData[field] !== null) {
+			histEntry[field] = JSON.stringify(oldData[field]);
+		} else {
+			histEntry[field] = oldData[field];
+		}
+
+		const table = 'codeholders_hist_' + field;
+		const histQuery = db(table).insert(histEntry);
+		histPromises.push(histQuery);
+
+		if (field === 'email' && cmtType === 'modCmt') {
+			const view = {
+				emailFrom: oldData.email || '-nenio-',
+				emailTo: validationData.updateData.email || '-nenio-',
+				note: cmt
+			};
+			// Send to old
+			if (oldData.email !== null) {
+				const to = (await AKSOMail.getNamesAndEmails(codeholderId))[0];
+				to.email = oldData.email;
+				const personalization = {
+					to: to,
+					substitutions: {
+						name: to.name
+					}
+				};
+				histPromises.push(AKSOMail.renderSendEmail({
+					org: 'uea',
+					tmpl: 'email-changed-admin',
+					view: view,
+					personalizations: [ personalization ]
+				}));
+			}
+			// Send to new
+			histPromises.push(AKSONotif.sendNotification({
+				codeholderIds: [ codeholderId ],
+				org: 'uea',
+				notif: 'email-changed-admin',
+				category: 'account',
+				view: view
+			}));
+		}
+	}
+	await Promise.all(histPromises);
 }
