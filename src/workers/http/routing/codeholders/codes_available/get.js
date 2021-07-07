@@ -1,3 +1,5 @@
+import { bannedCodes}  from '@tejo/akso-client';
+
 export default {
 	schema: {
 		query: {
@@ -24,7 +26,16 @@ export default {
 
 		const response = {};
 		for (let code of codes) {
-			response[code] = { available: true };
+			let available = true;
+
+			for (const bannedCode of bannedCodes) {
+				if (code.includes(bannedCode)) {
+					available = false;
+					break;
+				}
+			}
+
+			response[code] = { available };
 		}
 		for (let row of availability) {
 			response[row.newCode].available = false;

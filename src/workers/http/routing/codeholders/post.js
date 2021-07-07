@@ -1,6 +1,7 @@
 import path from 'path';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import moment from 'moment-timezone';
+import { bannedCodes } from '@tejo/akso-client';
 
 import { createTransaction, rollbackTransaction } from 'akso/util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
@@ -276,6 +277,13 @@ export default {
 			.first(1);
 		if (newCodeTaken) {
 			return res.status(400).type('text/plain').send('newCode is taken');
+		}
+
+		// Check if newCode is banned
+		for (const bannedCode of bannedCodes) {
+			if (req.body.newCode.includes(bannedCode)) {
+				return res.status(400).type('text/plain').send('newCode is banned');
+			}
 		}
 
 		if (req.body.email) {

@@ -26,7 +26,7 @@
   "dependencies": {
     "@cpsdqs/google-i18n-address": "^1.0.2",
     "@sendgrid/mail": "^6.5.5",
-    "@tejo/akso-client": "^0.1.16",
+    "@tejo/akso-client": "^0.2.2",
     "@tejo/akso-script": "^0.2.2",
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",

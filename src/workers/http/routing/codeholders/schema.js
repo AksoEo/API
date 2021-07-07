@@ -1,5 +1,6 @@
 import moment from 'moment-timezone';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
+import { bannedCodes } from '@tejo/akso-client';
 
 import * as AKSONotif from 'akso/notif';
 import * as AKSOMail from 'akso/mail';
@@ -826,6 +827,13 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 					.first(1);
 				if (newCodeTaken) {
 					return res.status(400).type('text/plain').send('newCode taken');
+				}
+
+				// Make sure newCode isn't banned
+				for (const bannedCode of bannedCodes) {
+					if (req.body.newCode.includes(bannedCode)) {
+						return res.status(400).type('text/plain').send('newCode is banned');
+					}
 				}
 			} else if (field === 'deathdate') {
 				// Make sure it's not greater than the current date
