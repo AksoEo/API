@@ -50,7 +50,9 @@ export default {
 		let oldAddress = null;
 
 		const writeFields = memberFieldMatches(fields, req, 'w', req.ownMemberFields);
-		const askFields = fields.filter(field => !writeFields.includes(field));
+		const askFields = fields
+			.filter(field => !writeFields.includes(field))
+			.filter(field => codeholderBefore[field] !== req.body[field]);
 		
 		// Update any fields for which we have a w permissions
 		for (const field in validationData.updateData) {
