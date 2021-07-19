@@ -19,7 +19,8 @@ export default {
 					type: 'string',
 					enum: [
 						'approved',
-						'denied'
+						'denied',
+						'canceled'
 					]
 				}
 			},
