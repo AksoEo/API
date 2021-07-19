@@ -106,13 +106,44 @@ export default {
 				askData[field] = req.body[field];
 			}
 
-			await trx('codeholders_changeRequests')
-				.insert({
-					time: moment().unix(),
+			// Check if there's already a pending change request
+			const existingChangeRequest = await trx('codeholders_changeRequests')
+				.where({
 					codeholderId: req.user.user,
-					codeholderDescription: req.query.modDesc,
-					data: JSON.stringify(askData)
-				});
+					status: 'pending'
+				})
+				.first('id', 'data', 'codeholderDescription');
+
+			if (existingChangeRequest) {
+				let newCodeholderDescription = existingChangeRequest.codeholderDescription;
+				if (req.query.modDesc) {
+					if (newCodeholderDescription) {
+						newCodeholderDescription = req.query.modDesc + '\n\nAŭtomate kunmetita kun antaŭa ŝanĝopeto:\n' + newCodeholderDescription;
+					} else {
+						newCodeholderDescription = req.query.modDesc;
+					}
+					newCodeholderDescription = newCodeholderDescription
+						.substring(0, 500);
+				}
+
+				await trx('codeholders_changeRequests')
+					.where('id', existingChangeRequest.id)
+					.update({
+						data: JSON.stringify({
+							...existingChangeRequest.data,
+							...askData
+						}),
+						codeholderDescription: newCodeholderDescription
+					});
+			} else {
+				await trx('codeholders_changeRequests')
+					.insert({
+						time: moment().unix(),
+						codeholderId: req.user.user,
+						codeholderDescription: req.query.modDesc,
+						data: JSON.stringify(askData)
+					});
+			}
 		}
 
 		await trx.commit();
