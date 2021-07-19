@@ -49,7 +49,8 @@ export default {
 
 		let oldAddress = null;
 
-		const writeFields = memberFieldMatches(fields, req, 'w', req.ownMemberFields);
+		const writeFields = memberFieldMatches(fields, req, 'w', req.ownMemberFields)
+			.filter(field => codeholderBefore[field] !== req.body[field]);
 		const askFields = fields
 			.filter(field => !writeFields.includes(field))
 			.filter(field => codeholderBefore[field] !== req.body[field]);
@@ -94,7 +95,7 @@ export default {
 			req, cmtType: 'modDesc',
 			oldData, oldAddress, validationData,
 			codeholderId: req.user.user,
-			fields: Object.keys(req.body),
+			fields: writeFields,
 			db: trx
 		});
 
