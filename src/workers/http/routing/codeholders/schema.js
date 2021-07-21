@@ -1,10 +1,12 @@
 import moment from 'moment-timezone';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import { bannedCodes } from '@tejo/akso-client';
+import deepEqual from 'deep-equal';
 
 import * as AKSONotif from 'akso/notif';
 import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
+import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -740,7 +742,20 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 	const updateData = {};
 	let addressUpdateData = null;
 
+	const codeholderBeforeRes = new CodeholderResource(codeholderBefore, {
+		query: {
+			fields: Object.keys(req.body)
+		}
+	});
+
 	for (const field of Object.keys(req.body)) {
+		// Delete fields that are equivalent to their current value
+		const areEqual = deepEqual(req.body[field], codeholderBeforeRes.obj[field], { strict: true });
+		if (areEqual) {
+			delete req.body[field];
+			continue;
+		}
+
 		if (field === 'address') {
 			// Make sure the country exists
 			const addressCountry = await AKSO.db('countries')
