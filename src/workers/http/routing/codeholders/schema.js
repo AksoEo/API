@@ -549,6 +549,7 @@ export const patchSchema = {
 		website: {
 			type: 'string',
 			format: 'safe-uri',
+			nullable: true,
 			maxLength: 50
 		},
 		biography: {
