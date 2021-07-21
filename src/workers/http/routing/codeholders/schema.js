@@ -744,7 +744,10 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 
 	const codeholderBeforeRes = new CodeholderResource(codeholderBefore, {
 		query: {
-			fields: Object.keys(req.body)
+			fields: [
+				...Object.keys(req.body),
+				'id'
+			]
 		}
 	});
 
@@ -796,7 +799,7 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 			addressUpdateData = {
 				...addressNormalized,
 				...{
-					codeholderId: req.params.codeholderId,
+					codeholderId: codeholderBeforeRes.obj.id,
 					search: addressSearch
 				}
 			};
