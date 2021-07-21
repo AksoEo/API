@@ -27,7 +27,7 @@ export default {
 
 	run: async function run (req, res) {
 		// Member fields
-		const fields = Object.keys(req.body);
+		let fields = Object.keys(req.body);
 		if (!memberFieldsManual(fields, req, 'wa', req.ownMemberFields)) {
 			return res.status(403).type('text/plain').send('Illegal codeholder fields used, check /perms');
 		}
@@ -46,6 +46,8 @@ export default {
 		}
 
 		const validationData = await validatePatchFields(req, res, codeholderBefore);
+		// validatePatchFields may have modified req.body
+		fields = Object.keys(req.body);
 
 		let oldAddress = null;
 
