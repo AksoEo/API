@@ -84,7 +84,7 @@ export default {
 			req, cmtType: 'modCmt',
 			oldData, oldAddress, validationData,
 			codeholderId: req.params.codeholderId,
-			fields: Object.keys(req.body),
+			fields: Object.keys(validationData.body),
 			db: trx
 		});
 

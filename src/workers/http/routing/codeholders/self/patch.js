@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import deepEqual from 'deep-equal';
 
 import { createTransaction, insertAsReplace } from 'akso/util';
 
@@ -46,16 +47,15 @@ export default {
 		}
 
 		const validationData = await validatePatchFields(req, res, codeholderBefore);
-		// validatePatchFields may have modified req.body
-		fields = Object.keys(req.body);
+		fields = Object.keys(validationData.body);
 
 		let oldAddress = null;
 
 		const writeFields = memberFieldMatches(fields, req, 'w', req.ownMemberFields)
-			.filter(field => codeholderBefore[field] !== req.body[field]);
+			.filter(field => codeholderBefore[field] !== validationData.body[field]);
 		const askFields = fields
 			.filter(field => !writeFields.includes(field))
-			.filter(field => codeholderBefore[field] !== req.body[field]);
+			.filter(field => codeholderBefore[field] !== validationData.body[field]);
 		
 		// Update any fields for which we have a w permissions
 		for (const field in validationData.updateData) {
@@ -102,50 +102,66 @@ export default {
 		});
 
 		// Submit codeholder change requests
-		if (askFields.length) {
-			const askData = {};
-			for (const field of askFields) {
-				askData[field] = req.body[field];
+		const askData = {};
+		for (const field of askFields) {
+			askData[field] = validationData.body[field];
+		}
+
+		// Check if there's already a pending change request
+		const existingChangeRequest = await trx('codeholders_changeRequests')
+			.where({
+				codeholderId: req.user.user,
+				status: 'pending'
+			})
+			.first('id', 'data', 'codeholderDescription');
+
+		if (existingChangeRequest) {
+			let newCodeholderDescription = existingChangeRequest.codeholderDescription;
+			if (req.query.modDesc) {
+				if (newCodeholderDescription) {
+					newCodeholderDescription = req.query.modDesc + '\n\nAŭtomate kunmetita kun antaŭa ŝanĝopeto:\n' + newCodeholderDescription;
+				} else {
+					newCodeholderDescription = req.query.modDesc;
+				}
+				newCodeholderDescription = newCodeholderDescription
+					.substring(0, 500);
 			}
 
-			// Check if there's already a pending change request
-			const existingChangeRequest = await trx('codeholders_changeRequests')
-				.where({
-					codeholderId: req.user.user,
-					status: 'pending'
-				})
-				.first('id', 'data', 'codeholderDescription');
+			let changeData = {
+				...existingChangeRequest.data,
+				...askData
+			};
 
-			if (existingChangeRequest) {
-				let newCodeholderDescription = existingChangeRequest.codeholderDescription;
-				if (req.query.modDesc) {
-					if (newCodeholderDescription) {
-						newCodeholderDescription = req.query.modDesc + '\n\nAŭtomate kunmetita kun antaŭa ŝanĝopeto:\n' + newCodeholderDescription;
-					} else {
-						newCodeholderDescription = req.query.modDesc;
-					}
-					newCodeholderDescription = newCodeholderDescription
-						.substring(0, 500);
-				}
+			// Remove parts of changeData where a field in the original req.body (not validationData.body) matches the current value
+			for (const [field, value] of Object.entries(req.body)) {
+				const areEqual = deepEqual(value, validationData.codeholderBeforeRes.obj[field], { strict: true });
+				if (!areEqual) { continue; }
+				delete changeData[field];
+			}
 
+			if (Object.keys(changeData).length) {
 				await trx('codeholders_changeRequests')
 					.where('id', existingChangeRequest.id)
 					.update({
-						data: JSON.stringify({
-							...existingChangeRequest.data,
-							...askData
-						}),
+						data: JSON.stringify(changeData),
 						codeholderDescription: newCodeholderDescription
 					});
 			} else {
 				await trx('codeholders_changeRequests')
-					.insert({
-						time: moment().unix(),
-						codeholderId: req.user.user,
-						codeholderDescription: req.query.modDesc,
-						data: JSON.stringify(askData)
+					.where('id', existingChangeRequest.id)
+					.update({
+						status: 'canceled',
+						codeholderDescription: newCodeholderDescription
 					});
 			}
+		} else if (askFields.length) {
+			await trx('codeholders_changeRequests')
+				.insert({
+					time: moment().unix(),
+					codeholderId: req.user.user,
+					codeholderDescription: req.query.modDesc,
+					data: JSON.stringify(askData)
+				});
 		}
 
 		await trx.commit();

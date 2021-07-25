@@ -751,25 +751,27 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 		}
 	});
 
-	for (const field of Object.keys(req.body)) {
+	const body = { ...req.body };
+
+	for (const field of Object.keys(body)) {
 		// Delete fields that are equivalent to their current value
-		const areEqual = deepEqual(req.body[field], codeholderBeforeRes.obj[field], { strict: true });
+		const areEqual = deepEqual(body[field], codeholderBeforeRes.obj[field], { strict: true });
 		if (areEqual) {
-			delete req.body[field];
+			delete body[field];
 			continue;
 		}
 
 		if (field === 'address') {
 			// Make sure the country exists
 			const addressCountry = await AKSO.db('countries')
-				.where({ enabled: true, code: req.body.address.country })
+				.where({ enabled: true, code: body.address.country })
 				.first('name_eo');
 			if (!addressCountry) {
 				return res.status(400).type('text/plain').send('Unknown address.country');
 			}
 
-			const addressInput = {...req.body.address};
-			addressInput.countryCode = req.body.address.country;
+			const addressInput = {...body.address};
+			addressInput.countryCode = body.address.country;
 			delete addressInput.country;
 			let addressNormalized;
 			try {
@@ -806,35 +808,35 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 			for (let [key, val] of Object.entries(addressLatin)) {
 				addressUpdateData[key + '_latin'] = val;
 			}
-			addressUpdateData.country = req.body.address.country;
+			addressUpdateData.country = body.address.country;
 			delete addressUpdateData.countryCode;
 			delete addressUpdateData.countryCode_latin;
 
 			// Set feeCountry to address.country if null
-			if (codeholderBefore.feeCountry === null && !req.body.feeCountry) {
-				updateData.feeCountry = req.body.feeCountry = req.body.address.country;
+			if (codeholderBefore.feeCountry === null && !body.feeCountry) {
+				updateData.feeCountry = body.feeCountry = body.address.country;
 			}
 		} else {
 			if (field === 'feeCountry') {
 				// Make sure the country exists
 				const feeCountryFound = await AKSO.db('countries')
-					.where({ enabled: true, code: req.body.feeCountry })
+					.where({ enabled: true, code: body.feeCountry })
 					.first(1);
 				if (!feeCountryFound) {
 					return res.status(400).type('text/plain').send('Unknown feeCountry');
 				}
-			} else if (field === 'publicCountry' && req.body.publicCountry !== null) {
+			} else if (field === 'publicCountry' && body.publicCountry !== null) {
 				// Make sure the country exists
 				const publicCountryFound = await AKSO.db('countries')
-					.where({ enabled: true, code: req.body.publicCountry })
+					.where({ enabled: true, code: body.publicCountry })
 					.first(1);
 				if (!publicCountryFound) {
 					return res.status(400).type('text/plain').send('Unknown publicCountry');
 				}
-			} else if (field === 'email' && req.body.email !== null) {
+			} else if (field === 'email' && body.email !== null) {
 				// Make sure the email isn't taken
 				const emailTaken = await AKSO.db('codeholders')
-					.where('email', req.body.email)
+					.where('email', body.email)
 					.first(1);
 				if (emailTaken) {
 					return res.status(400).type('text/plain').send('email taken');
@@ -842,7 +844,7 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 			} else if (field === 'newCode') {
 				// Make sure the newCode isn't taken
 				const newCodeTaken = await AKSO.db('codeholders')
-					.where('newCode', req.body.newCode)
+					.where('newCode', body.newCode)
 					.first(1);
 				if (newCodeTaken) {
 					return res.status(400).type('text/plain').send('newCode taken');
@@ -850,35 +852,37 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 
 				// Make sure newCode isn't banned
 				for (const bannedCode of bannedCodes) {
-					if (req.body.newCode.includes(bannedCode)) {
+					if (body.newCode.includes(bannedCode)) {
 						return res.status(400).type('text/plain').send('newCode is banned');
 					}
 				}
 			} else if (field === 'deathdate') {
 				// Make sure it's not greater than the current date
-				if (moment(req.body.deathdate).isAfter(moment(), 'day')) {
+				if (moment(body.deathdate).isAfter(moment(), 'day')) {
 					return res.status(400).type('text/plain').send('deathdate is in the future');
 				}
 			} else if (field === 'isDead') {
 				// Set deathdate to current date if true, null if false assuming it's not manually set
-				if (req.body.isDead) {
-					if (!req.body.deathdate && !codeholderBefore.deathdate) {
-						updateData.deathdate = req.body.deathdate = moment().format('YYYY-MM-DD');
+				if (body.isDead) {
+					if (!body.deathdate && !codeholderBefore.deathdate) {
+						updateData.deathdate = body.deathdate = moment().format('YYYY-MM-DD');
 					}
 				} else {
-					updateData.deathdate = req.body.deathdate = null;
+					updateData.deathdate = body.deathdate = null;
 				}
-			} else if (field === 'factoids' && req.body.factoids !== null) {
-				updateData.factoids = req.body.factoids = JSON.stringify(req.body.factoids);
+			} else if (field === 'factoids' && body.factoids !== null) {
+				updateData.factoids = body.factoids = JSON.stringify(body.factoids);
 			}
 
-			updateData[field] = req.body[field];
+			updateData[field] = body[field];
 		}
 	}
 
 	return {
 		updateData,
-		addressUpdateData
+		addressUpdateData,
+		codeholderBeforeRes,
+		body
 	};
 }
 
