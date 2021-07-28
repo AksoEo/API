@@ -1,4 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
+import CodeholderRoleResource from 'akso/lib/resources/codeholder-role-resource';
 
 import parSchema from './schema';
 
@@ -16,6 +17,9 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('codeholderRoles');
-		await QueryUtil.handleCollection({ req, res, schema, query });
+		await QueryUtil.handleCollection({
+			req, res, schema, query,
+			Res: CodeholderRoleResource
+		});
 	}
 };

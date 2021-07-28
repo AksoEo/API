@@ -3,6 +3,7 @@ export default {
 	fields: {
 		'id': 'f',
 		'name': 'fs',
-		'description': 's'
+		'description': 's',
+		'public': 'f'
 	}
 };

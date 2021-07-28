@@ -1,5 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
-import SimpleResource from 'akso/lib/resources/simple-resource';
+import CodeholderRoleResource from 'akso/lib/resources/codeholder-role-resource';
 
 import parSchema from '../schema';
 
@@ -22,7 +22,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new SimpleResource(row);
+		const obj = new CodeholderRoleResource(row);
 		res.sendObj(obj);
 	}
 };

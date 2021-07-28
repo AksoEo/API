@@ -228,8 +228,10 @@ CREATE TABLE `codeholderRoles` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
+  KEY `public` (`public`),
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -248,13 +250,20 @@ CREATE TABLE `codeholderRoles_codeholders` (
   `durationTo` bigint unsigned DEFAULT NULL,
   `roleId` int unsigned NOT NULL,
   `codeholderId` int unsigned NOT NULL,
+  `dataCountry` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dataOrg` int unsigned DEFAULT NULL,
+  `dataString` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `durationFrom` (`durationFrom`),
   KEY `durationTo` (`durationTo`),
   KEY `roleId` (`roleId`),
   KEY `codeholderId` (`codeholderId`),
+  KEY `dataCountry` (`dataCountry`),
+  KEY `dataOrg` (`dataOrg`),
   CONSTRAINT `codeholderRoles_codeholders_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `codeholderRoles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `codeholderRoles_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `codeholderRoles_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `codeholderRoles_codeholders_ibfk_3` FOREIGN KEY (`dataCountry`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `codeholderRoles_codeholders_ibfk_4` FOREIGN KEY (`dataOrg`) REFERENCES `codeholders_org` (`codeholderId`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3348,4 +3357,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-03 12:52:01
+-- Dump completed on 2021-07-28 19:12:43

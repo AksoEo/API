@@ -7,7 +7,10 @@ export default {
 		'isActive': 'f',
 		'role.id': 'f',
 		'role.name': 'fs',
-		'role.description': 'fs'
+		'role.description': 'fs',
+		'dataCountry': 'f',
+		'dataOrg': 'f',
+		'dataString': ''
 	},
 	fieldAliases: {
 		'id': 'codeholderRoles_codeholders.id',

@@ -17,6 +17,9 @@ export default {
 					minLength: 1,
 					maxLength: 2000,
 					nullable: true
+				},
+				public: {
+					type: 'boolean'
 				}
 			},
 			required: [ 'name' ],
