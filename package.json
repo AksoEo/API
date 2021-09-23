@@ -8,7 +8,8 @@
     "build": "./node_modules/.bin/gulp compile-src",
     "preinstall": "npm install --ignore-scripts && npm rebuild && npm run build",
     "start": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/index.js",
-    "populate-db": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/test-data/index.js $MODE"
+    "populate-db": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/test-data/index.js $MODE",
+    "populate-geo-db": "cross-env NODE_ICU_DATA=node_modules/full-icu node dist/test-data/geo-db.js $GEODB_PATH"
   },
   "repository": {
     "type": "git",
@@ -31,11 +32,11 @@
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
     "ajv-merge-patch": "^4.1.0",
-    "bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "busboy": "^0.3.1",
     "bytes": "^3.1.0",
-    "canvas": "^2.6.1",
+    "canvas": "^2.8.0",
     "cashify": "^2.4.4",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^2.0.0-rc.1",
@@ -73,6 +74,7 @@
     "response-time": "^2.3.2",
     "rfc4648": "^1.4.0",
     "source-map-support": "^0.5.19",
+    "sqlite3": "^5.0.2",
     "stream-meter": "^1.0.4",
     "stripe": "^8.118.0",
     "telegraf": "^3.38.0",
