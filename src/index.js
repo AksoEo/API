@@ -35,6 +35,7 @@ async function init () {
 		}),
 
 		db: null,
+		geodb: null,
 
 		exchangeRates: null,
 		cashify: null,
@@ -64,7 +65,8 @@ async function init () {
 				host: process.env.AKSO_MYSQL_HOST,
 				user: process.env.AKSO_MYSQL_USER,
 				password: process.env.AKSO_MYSQL_PASSWORD,
-				database: process.env.AKSO_MYSQL_DATABASE
+				database: process.env.AKSO_MYSQL_DATABASE,
+				geodbDatabase: process.env.AKSO_MYSQL_GEODB_DATABASE
 			},
 			sendgrid: {
 				apiKey: process.env.AKSO_SENDGRID_API_KEY

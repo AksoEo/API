@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.25, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.25-0ubuntu0.20.04.1
+-- Server version	8.0.26-0ubuntu0.20.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -381,6 +381,124 @@ CREATE TABLE `codeholders_changeRequests` (
   FULLTEXT KEY `codeholderDescription` (`codeholderDescription`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   CONSTRAINT `codeholders_changeRequests_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_delegations`
+--
+
+DROP TABLE IF EXISTS `codeholders_delegations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_delegations` (
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `approvedBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `approvedTime` bigint unsigned NOT NULL,
+  `tos_docDataProtectionUEA` tinyint(1) NOT NULL,
+  `tos_docDataProtectionUEA_time` bigint unsigned NOT NULL,
+  `tos_docDelegatesUEA` tinyint(1) NOT NULL,
+  `tos_docDelegatesUEA_time` bigint unsigned NOT NULL,
+  `tos_docDelegatesDataProtectionUEA` tinyint(1) NOT NULL,
+  `tos_docDelegatesDataProtectionUEA_time` bigint unsigned NOT NULL,
+  `tos_paperAnnualBook` tinyint(1) NOT NULL,
+  `tos_paperAnnualBook_time` bigint unsigned NOT NULL,
+  PRIMARY KEY (`codeholderId`,`org`),
+  KEY `tos_docDataProtectionUEA_time` (`tos_docDataProtectionUEA_time`),
+  KEY `tos_docDataProtectionUEA` (`tos_docDataProtectionUEA`),
+  KEY `tos_docDelegatesUEA` (`tos_docDelegatesUEA`),
+  KEY `tos_docDelegatesUEA_time` (`tos_docDelegatesUEA_time`),
+  KEY `tos_docDelegatesDataProtectionUEA` (`tos_docDelegatesDataProtectionUEA`),
+  KEY `tos_paperAnnualBook` (`tos_paperAnnualBook`),
+  KEY `tos_docDelegatesDataProtectionUEA_time` (`tos_docDelegatesDataProtectionUEA_time`),
+  KEY `tos_paperAnnualBook_time` (`tos_paperAnnualBook_time`),
+  KEY `org` (`org`),
+  KEY `approvedBy` (`approvedBy`),
+  KEY `approvedTime` (`approvedTime`),
+  CONSTRAINT `codeholders_delegations_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_delegations_cities`
+--
+
+DROP TABLE IF EXISTS `codeholders_delegations_cities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_delegations_cities` (
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`codeholderId`,`org`,`city`),
+  KEY `org` (`org`),
+  KEY `city` (`city`),
+  CONSTRAINT `codeholders_delegations_cities_ibfk_1` FOREIGN KEY (`codeholderId`, `org`) REFERENCES `codeholders_delegations` (`codeholderId`, `org`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_delegations_countries`
+--
+
+DROP TABLE IF EXISTS `codeholders_delegations_countries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_delegations_countries` (
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `level` tinyint NOT NULL,
+  PRIMARY KEY (`codeholderId`,`org`,`country`),
+  KEY `level` (`level`),
+  KEY `org` (`org`),
+  KEY `country` (`country`),
+  CONSTRAINT `codeholders_delegations_countries_ibfk_1` FOREIGN KEY (`codeholderId`, `org`) REFERENCES `codeholders_delegations` (`codeholderId`, `org`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `codeholders_delegations_countries_ibfk_2` FOREIGN KEY (`country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_delegations_hosting`
+--
+
+DROP TABLE IF EXISTS `codeholders_delegations_hosting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_delegations_hosting` (
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `maxDays` tinyint unsigned DEFAULT NULL,
+  `maxPersons` tinyint unsigned DEFAULT NULL,
+  `description` varchar(400) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `psProfileURL` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`codeholderId`,`org`),
+  KEY `maxDays` (`maxDays`),
+  KEY `maxPersons` (`maxPersons`),
+  KEY `psProfileURL` (`psProfileURL`),
+  KEY `org` (`org`),
+  FULLTEXT KEY `description` (`description`),
+  CONSTRAINT `codeholders_delegations_hosting_ibfk_1` FOREIGN KEY (`codeholderId`, `org`) REFERENCES `codeholders_delegations` (`codeholderId`, `org`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `codeholders_delegations_subjects`
+--
+
+DROP TABLE IF EXISTS `codeholders_delegations_subjects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_delegations_subjects` (
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subjectId` int unsigned NOT NULL,
+  PRIMARY KEY (`codeholderId`,`org`,`subjectId`),
+  KEY `subjectId` (`subjectId`),
+  KEY `org` (`org`),
+  CONSTRAINT `codeholders_delegations_subjects_ibfk_1` FOREIGN KEY (`codeholderId`, `org`) REFERENCES `codeholders_delegations` (`codeholderId`, `org`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `codeholders_delegations_subjects_ibfk_2` FOREIGN KEY (`subjectId`) REFERENCES `delegations_subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1866,6 +1984,60 @@ CREATE TABLE `countries_lists_orgs` (
   CONSTRAINT `countries_lists_orgs_ibfk_1` FOREIGN KEY (`listName`) REFERENCES `countries_lists` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `countries_lists_orgs_ibfk_2` FOREIGN KEY (`country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `countries_lists_orgs_ibfk_3` FOREIGN KEY (`orgCodeholderId`) REFERENCES `codeholders_org` (`codeholderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `delegations_applications`
+--
+
+DROP TABLE IF EXISTS `delegations_applications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `delegations_applications` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cities` json NOT NULL,
+  `subjects` json NOT NULL,
+  `hosting` tinyint(1) NOT NULL,
+  `tos_docDataProtectionUEA` tinyint(1) NOT NULL,
+  `tos_docDelegatesUEA` tinyint(1) NOT NULL,
+  `tos_docDelegatesDataProtectionUEA` tinyint(1) NOT NULL,
+  `tos_paperAnnualBook` tinyint(1) NOT NULL,
+  `applicantNotes` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `internalNotes` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `time` bigint unsigned NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `statusTime` bigint unsigned DEFAULT NULL,
+  `statusBy` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  KEY `time` (`time`),
+  KEY `status` (`status`),
+  KEY `codeholderId` (`codeholderId`),
+  KEY `statusBy` (`statusBy`),
+  KEY `statusTime` (`statusTime`),
+  FULLTEXT KEY `internalNotes` (`internalNotes`),
+  CONSTRAINT `delegations_applications_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `delegations_subjects`
+--
+
+DROP TABLE IF EXISTS `delegations_subjects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `delegations_subjects` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  FULLTEXT KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3357,4 +3529,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-28 19:12:43
+-- Dump completed on 2021-09-20  9:32:17

@@ -2,7 +2,6 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import { init as route$codeholder_options } from './codeholder_options';
 import { init as route$result } from './result';
 import { init as route$stats } from './stats';
 
@@ -17,7 +16,6 @@ import method$patch from './patch';
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
-	router.use('/codeholder_options', route$codeholder_options());
 	router.use('/result', route$result());
 	router.use('/stats', route$stats());
 
