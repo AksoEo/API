@@ -157,8 +157,6 @@ export function bindMethod (router, path, method, bind) {
 		 * [fields]:        	An object of fields allowed in a collection. The key is the field name and the value is a string containing flags:
 		 * 						f = filterable
 		 * 						s = searchable
-		 * [fieldSearchGroups]:	An array of fields searchable only together, e.g.
- 		 * 						[ 'firstName,lastName' ]
  		 * [customSearch]:      An object of colName:function for custom search mappings. The function takes one argument, `match` which is a function taking one argument, the columns to match against, which will generate the `MATCH (...) AGAINST (...)` statement. The function must return a knex raw statement
  		 * [fieldAliases]:		An object of alias:colName used for mapping REST aliases to their actual db col name
 		 * [defaultFields]: 	The default fields to be selected when query.fields is undefined
@@ -551,12 +549,6 @@ export function bindMethod (router, path, method, bind) {
 								if (req.query.search.cols.length === 1) {
 									if (schema.fields[req.query.search.cols[0]].indexOf('s') === -1) {
 										const err = new Error(`The field ${req.query.search.cols[0]} cannot be used in ?search as it's not searchable`);
-										err.statusCode = 400;
-										return next(err);
-									}
-								} else {
-									if (!(schema.fieldSearchGroups && schema.fieldSearchGroups.indexOf(req.query.search.cols.join(',')) > -1)) {
-										const err = new Error(`The fields ${req.query.search.cols.join(',')} cannot be used in ?search as they're not a searchable combination`);
 										err.statusCode = 400;
 										return next(err);
 									}

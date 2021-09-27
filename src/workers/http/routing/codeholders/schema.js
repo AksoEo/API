@@ -123,7 +123,6 @@ export const schema = {
 					)
 			)`)
 	},
-	fieldSearchGroups: [],
 	customSearch: {
 		searchName: match => AKSO.db.raw(
 			`IF(codeholderType = "human",
