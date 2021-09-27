@@ -12,5 +12,11 @@ export default {
 	},
 	fieldAliases: {
 		id: 'cities.id'
+	},
+	alwaysWhere: query => {
+		query.whereRaw('??.countries.enabled', AKSO.conf.mysql.database);
+	},
+	customSearch: {
+		searchLabel: match => match('cities_labels.label')
 	}
 };

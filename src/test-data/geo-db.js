@@ -54,9 +54,7 @@ async function init () {
 		table.string('nativeLabel').nullable().index('nativeLabel_index', 'FULLTEXT');
 		table.string('eoLabel').nullable().index('eoLabel_index', 'FULLTEXT');
 		table.string('subdivision_nativeLabel').nullable().index('subdivision_nativeLabel_index', 'FULLTEXT');
-		table.string('subdivision_eoLabel').nullable().index('subdivision_eoLabel_index', 'FULLTEXT');
-		
-		table.foreign('country').references('??.countries', process.env.AKSO_MYSQL_DATABASE);
+		table.string('subdivision_eoLabel').nullable().index('subdivision_eoLabel_index', 'FULLTEXT')
 	});
 
 	await mysql.schema.createTable('cities_ll', function (table) {
@@ -75,12 +73,6 @@ async function init () {
 		table.foreign('id').references('cities.id').onUpdate('CASCADE').onDelete('CASCADE');
 	});
 
-	console.log('Obtaining countries');
-	const countries = (
-		await mysql('??.countries', process.env.AKSO_MYSQL_DATABASE)
-			.select('code')
-	).map(x => x.code);
-
 	console.log('Connecting to geo-db');
 	const sqlite = knex({
 		client: 'sqlite3',
@@ -95,7 +87,6 @@ async function init () {
 		query:
 			sqlite('cities')
 				.select('id', 'country', 'population', 'native_label', 'eo_label', '2nd_native_label', '2nd_eo_label')
-				.whereIn('country', countries)
 				.orderBy('id'),
 		
 		fn: async function (rows) {

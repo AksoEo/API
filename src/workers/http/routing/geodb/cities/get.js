@@ -18,6 +18,10 @@ export default {
 	run: async function run (req, res) {
 		const query = AKSO.geodb('cities')
 			.innerJoin('cities_labels', 'cities_labels.id', 'cities.id')
+			.joinRaw('INNER JOIN ??.countries ON ??.countries.code = cities.country', [
+				AKSO.conf.mysql.database,
+				AKSO.conf.mysql.database
+			])
 			.groupBy('cities.id');
 
 		await QueryUtil.handleCollection({

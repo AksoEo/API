@@ -210,13 +210,13 @@ const filterCompOps = {
 };
 
 const QueryUtil = {
-	getAlias: function getAlias (fieldAliases, field, includeAs = true) {
+	getAlias: function getAlias (fieldAliases, field, includeAs = true, db = AKSO.db) {
 		if (!fieldAliases) { return field; }
 		const alias = fieldAliases[field];
 		if (!alias) { return field; }
 		if (typeof alias === 'function') {
 			let newField = alias();
-			if (includeAs) { newField = AKSO.db.raw(`(${newField}) as ${escapeId(field, true)}`); }
+			if (includeAs) { newField = db.raw(`(${newField}) AS ${escapeId(field, true)}`); }
 			return newField;
 		}
 		return alias;
@@ -357,7 +357,7 @@ const QueryUtil = {
 		// Get the actual db col names
 		const selectFields = [...new Set(fields
 			.concat(schema.alwaysSelect || []))]
-			.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
+			.map(f => QueryUtil.getAlias(schema.fieldAliases, f, true, db));
 
 		if (req.query.search) {
 			if (fieldWhitelist && !req.query.search.cols.every(f => fieldWhitelist.includes(f))) {
@@ -379,11 +379,11 @@ const QueryUtil = {
 					);
 				};
 				const searchStmt = customSearchFn(matchFn);
-				selectFields.push(db.raw(searchStmt + ' as `_relevance`'));
+				selectFields.push(db.raw(searchStmt + ' AS `_relevance`'));
 				query.whereRaw(searchStmt);
 
 			} else {
-				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
+				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f, true, db));
 				selectFields.push(db.raw(
 					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 					AGAINST (? IN BOOLEAN MODE) as ??`,
@@ -396,6 +396,18 @@ const QueryUtil = {
 
 					[ ...searchCols, req.query.search.query ]
 				);
+			}
+			let hasGroupBy = false;
+			for (const statement of query._statements) {
+				if (!('grouping' in statement)) { continue; }
+				if (statement.grouping !== 'group') { continue; }
+				hasGroupBy = true;
+				break;
+			}
+			if (hasGroupBy) {
+				// The group by will break if _relevance is missing in cases where
+				// the MATCH is made on a joined table
+				query.groupBy('_relevance');
 			}
 		}
 
@@ -445,22 +457,32 @@ const QueryUtil = {
 
 		const metadata = {};
 		const metaSubQuery = query.clone()
-			.clearSelect()
+			.clear('select')
 			.select(1)
-			.clearOrder()
+			.clear('order')
 			.clear('limit')
 			.clear('offset');
 
+		// If we added a GROUP by _relevance earlier, we need to remove it now
+		for (const [i, statement] of metaSubQuery._statements.entries()) {
+			if (!('grouping' in statement)) { continue; }
+			if (statement.grouping !== 'group') { continue; }
+			if (statement.type !== 'groupByBasic') { continue; }
+			if (!statement.value.includes('_relevance')) { continue; }
+			metaSubQuery._statements.splice(i, 1);
+			break;
+		}
+
 		metadata.totalItems = db.raw(`
 			SELECT COUNT(1) AS \`count\`
-			FROM (${metaSubQuery.toString()}) a
+			FROM (${metaSubQuery.toString()}) _count_table
 		`);
 
 		metaSubQuery.clearWhere();
 		if (schema.alwaysWhere) { schema.alwaysWhere(metaSubQuery, req); }
 		metadata.totalItemNoFilter = db.raw(`
 			SELECT COUNT(1) AS \`count\`
-			FROM (${metaSubQuery.toString()}) a
+			FROM (${metaSubQuery.toString()}) _count_table
 		`);
 
 		return metadata;
@@ -472,8 +494,8 @@ const QueryUtil = {
 	 * @param {Object}           metadata Metadata obtained from #simpleCollection
 	 */
 	async collectionMetadata (res, metadata) {
-		res.set('X-Total-Items', (await metadata.totalItems).count);
-		res.set('X-Total-Items-No-Filter', (await metadata.totalItemNoFilter).count);
+		res.set('X-Total-Items', (await metadata.totalItems)[0][0].count);
+		res.set('X-Total-Items-No-Filter', (await metadata.totalItemNoFilter)[0][0].count);
 	},
 
 	/**
