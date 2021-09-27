@@ -11,7 +11,8 @@ export default {
 		'subdivision_eoLabel': 's'
 	},
 	fieldAliases: {
-		id: 'cities.id'
+		id: 'cities.id',
+		ll: 'cities_ll.ll'
 	},
 	alwaysWhere: query => {
 		query.whereRaw('??.countries.enabled', AKSO.conf.mysql.database);

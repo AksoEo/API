@@ -10,6 +10,10 @@ class GeoDBCityResource extends SimpleResource {
 		if ('id' in obj) {
 			obj.id = 'Q' + obj.id;
 		}
+
+		if (obj.ll) {
+			obj.ll = [ obj.ll.x, obj.ll.y ];
+		}
 	}
 }
 

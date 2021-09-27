@@ -22,6 +22,7 @@ export default {
 				AKSO.conf.mysql.database,
 				AKSO.conf.mysql.database
 			])
+			.leftJoin('cities_ll', 'cities_ll.id', 'cities.id')
 			.groupBy('cities.id');
 
 		await QueryUtil.handleCollection({
