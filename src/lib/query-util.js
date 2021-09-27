@@ -346,11 +346,12 @@ const QueryUtil = {
 	 * @param  {Object}            schema           The endpoint's schema
 	 * @param  {knex.QueryBuilder} query            The query to build upon
 	 * @param  {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
+	 * @param  {knex}              [db]             The db to operate on, defaults to AKSO.db
 	 * @return {Object} An object containing metadata on the collection:
 	 *     {knex.QueryBuilder} `totalItems`        The total amount of items in the collection without `?limit` and `?offset`
 	 *     {knex.QueryBuilder} `totalItemNoFilter` The total amount of items in the collection without `?limit`, `?offset`, `?search` and `?filter`
 	 */
-	simpleCollection: function queryUtilSimpleCollection (req, schema, query, fieldWhitelist) {
+	simpleCollection: function queryUtilSimpleCollection (req, schema, query, fieldWhitelist, db = AKSO.db) {
 		// ?fields, ?search
 		const fields = req.query.fields || schema.defaultFields;
 		// Get the actual db col names
@@ -370,7 +371,7 @@ const QueryUtil = {
 				const customSearchFn = schema.customSearch[allCols];
 				const matchFn = cols => {
 					const colsArr = Array.isArray(cols) ? cols : [cols];
-					return AKSO.db.raw(
+					return db.raw(
 						`MATCH (${'??,'.repeat(colsArr.length).slice(0,-1)})
 						AGAINST (? IN BOOLEAN MODE)`,
 
@@ -378,12 +379,12 @@ const QueryUtil = {
 					);
 				};
 				const searchStmt = customSearchFn(matchFn);
-				selectFields.push(AKSO.db.raw(searchStmt + ' as `_relevance`'));
+				selectFields.push(db.raw(searchStmt + ' as `_relevance`'));
 				query.whereRaw(searchStmt);
 
 			} else {
 				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f));
-				selectFields.push(AKSO.db.raw(
+				selectFields.push(db.raw(
 					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 					AGAINST (? IN BOOLEAN MODE) as ??`,
 
@@ -401,6 +402,7 @@ const QueryUtil = {
 		query.select(selectFields);
 
 		if (schema.alwaysWhere) { schema.alwaysWhere(query, req); }
+
 		// ?filter
 		if (req.query.filter) {
 			QueryUtil.filter({
@@ -442,21 +444,24 @@ const QueryUtil = {
 		}
 
 		const metadata = {};
-		const metaQuery = query.clone();
-
-		metaQuery
+		const metaSubQuery = query.clone()
 			.clearSelect()
-			.first(AKSO.db.raw('count(1) as `count`'))
-
+			.select(1)
 			.clearOrder()
-			.limit(Number.MAX_SAFE_INTEGER)
-			.offset(0);
+			.clear('limit')
+			.clear('offset');
 
-		metadata.totalItems = metaQuery.clone();
+		metadata.totalItems = db.raw(`
+			SELECT COUNT(1) AS \`count\`
+			FROM (${metaSubQuery.toString()}) a
+		`);
 
-		metaQuery.clearWhere();
-		if (schema.alwaysWhere) { schema.alwaysWhere(metaQuery, req); }
-		metadata.totalItemNoFilter = metaQuery.clone();
+		metaSubQuery.clearWhere();
+		if (schema.alwaysWhere) { schema.alwaysWhere(metaSubQuery, req); }
+		metadata.totalItemNoFilter = db.raw(`
+			SELECT COUNT(1) AS \`count\`
+			FROM (${metaSubQuery.toString()}) a
+		`);
 
 		return metadata;
 	},
@@ -482,6 +487,8 @@ const QueryUtil = {
 	 * @param {Object}            [passToCol]      Variables to pass to the collection's constructor
 	 * @param {Array}             [fieldWhitelist] The permitted fields for per client whitelisting
 	 * @param {Function}          [afterQuery]     A function to run after the query has been performed, before it's passed to the collection. Receives two arguments, the returned array and a callback to run when all modifications are done.
+	 * @param {knex}              [db]             The db to operate on, defaults to AKSO.db
+	 * @param {boolean}           [doMetaData]     Whether to add meta data information to the response. Defaults to true.
 	 */
 	async handleCollection ({
 		req,
@@ -492,11 +499,15 @@ const QueryUtil = {
 		Col = SimpleCollection,
 		passToCol = [],
 		fieldWhitelist,
-		afterQuery
+		afterQuery,
+		db = AKSO.db,
+		doMetaData = true
 	} = {}) {
-		await QueryUtil.collectionMetadata(res,
-			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist)
-		);
+		const simpleCollectionRes = QueryUtil.simpleCollection(req, schema, query, fieldWhitelist, db);
+
+		if (doMetaData) {
+			await QueryUtil.collectionMetadata(res, simpleCollectionRes);
+		}
 		const rawData = await query;
 		try {
 			if (afterQuery) {

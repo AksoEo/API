@@ -53,6 +53,10 @@ async function init () {
 		table.integer('population').unsigned().nullable().index();
 		table.string('nativeLabel').nullable().index('nativeLabel_index', 'FULLTEXT');
 		table.string('eoLabel').nullable().index('eoLabel_index', 'FULLTEXT');
+		table.string('subdivision_nativeLabel').nullable().index('subdivision_nativeLabel_index', 'FULLTEXT');
+		table.string('subdivision_eoLabel').nullable().index('subdivision_eoLabel_index', 'FULLTEXT');
+		
+		table.foreign('country').references('??.countries', process.env.AKSO_MYSQL_DATABASE);
 	});
 
 	await mysql.schema.createTable('cities_ll', function (table) {
@@ -71,6 +75,12 @@ async function init () {
 		table.foreign('id').references('cities.id').onUpdate('CASCADE').onDelete('CASCADE');
 	});
 
+	console.log('Obtaining countries');
+	const countries = (
+		await mysql('??.countries', process.env.AKSO_MYSQL_DATABASE)
+			.select('code')
+	).map(x => x.code);
+
 	console.log('Connecting to geo-db');
 	const sqlite = knex({
 		client: 'sqlite3',
@@ -84,7 +94,8 @@ async function init () {
 	await iterateTable({
 		query:
 			sqlite('cities')
-				.select('id', 'country', 'population', 'native_label', 'eo_label')
+				.select('id', 'country', 'population', 'native_label', 'eo_label', '2nd_native_label', '2nd_eo_label')
+				.whereIn('country', countries)
 				.orderBy('id'),
 		
 		fn: async function (rows) {
@@ -103,12 +114,28 @@ async function init () {
 					console.warn(`Warn! ${row.id} has a truncated eo label`);
 				}
 
+				if (row['2nd_native_label'] && typeof row['2nd_native_label'] !== 'string') {
+					console.warn(`Warn! ${row.id} has a non-string subdivision native label`);
+				}
+				if (row['2nd_native_label'] && row['2nd_native_label'].toString().length > 255) {
+					console.warn(`Warn! ${row.id} has a truncated subdivision native label`);
+				}
+
+				if (row['2nd_eo_label'] && typeof row['2nd_eo_label'] !== 'string') {
+					console.warn(`Warn! ${row.id} has a non-string subdivision eo label`);
+				}
+				if (row['2nd_eo_label'] && row['2nd_eo_label'].toString().length > 255) {
+					console.warn(`Warn! ${row.id} has a truncated subdivision eo label`);
+				}
+
 				return {
 					id: row.id.substring(1),
 					country: row.country,
 					population: row.population,
 					nativeLabel: row.native_label ? row.native_label.toString().substring(0, 255) : null,
-					eoLabel: row.eo_label ? row.eo_label.toString().substring(0, 255) : null
+					eoLabel: row.eo_label ? row.eo_label.toString().substring(0, 255) : null,
+					subdivision_nativeLabel: row['2nd_native_label'] ? row['2nd_native_label'].toString().substring(0, 255) : null,
+					subdivision_eoLabel: row['2nd_eo_label'] ? row['2nd_eo_label'].toString().substring(0, 255) : null
 				};
 			}));
 		}
