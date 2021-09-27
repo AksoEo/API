@@ -5,7 +5,7 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const voteData = AKSO.db('votes_voters')
+		const voteData = await AKSO.db('votes_voters')
 			.innerJoin('votes', 'voteId', 'id')
 			.first('results')
 			.where({
