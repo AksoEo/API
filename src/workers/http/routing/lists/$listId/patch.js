@@ -37,6 +37,7 @@ export default {
 					}
 				}
 			},
+			additionalProperties: false,
 			minProperties: 1
 		},
 		requirePerms: [
