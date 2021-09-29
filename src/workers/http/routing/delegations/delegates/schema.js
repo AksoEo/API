@@ -26,6 +26,18 @@ export default {
 		'hosting.psProfileURL': () => AKSO.db.raw('1'),
 		tos: () => AKSO.db.raw('1')
 	},
+	customFilterCompOps: {
+		$hasAny: {
+			subjects: (query, arr) => {
+				query.whereExists(function () {
+					this.select(1).from('codeholders_delegations_subjects')
+						.whereRaw('codeholders_delegations_subjects.codeholderId = codeholders_delegations.codeholderId')
+						.whereRaw('codeholders_delegations_subjects.org = codeholders_delegations.org')
+						.whereIn('codeholders_delegations_subjects.subjectId', arr);
+				});
+			}
+		}
+	},
 	alwaysSelect: [
 		...parSchema.alwaysSelect
 	],
