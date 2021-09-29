@@ -156,7 +156,7 @@ DROP TABLE IF EXISTS `admin_permissions_memberRestrictions_clients`;
 CREATE TABLE `admin_permissions_memberRestrictions_clients` (
   `apiKey` binary(16) NOT NULL,
   `filter` json NOT NULL,
-  `fields` json NOT NULL,
+  `fields` json DEFAULT NULL,
   PRIMARY KEY (`apiKey`),
   CONSTRAINT `admin_permissions_memberRestrictions_clients_ibfk_1` FOREIGN KEY (`apiKey`) REFERENCES `clients` (`apiKey`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3529,4 +3529,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-29 10:09:22
+-- Dump completed on 2021-09-29 12:32:09
