@@ -430,7 +430,7 @@ DROP TABLE IF EXISTS `codeholders_delegations_cities`;
 CREATE TABLE `codeholders_delegations_cities` (
   `codeholderId` int unsigned NOT NULL,
   `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `city` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `city` bigint unsigned NOT NULL,
   PRIMARY KEY (`codeholderId`,`org`,`city`),
   KEY `org` (`org`),
   KEY `city` (`city`),
@@ -3529,4 +3529,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-20  9:32:17
+-- Dump completed on 2021-09-29 10:09:22

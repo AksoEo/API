@@ -4,6 +4,22 @@ import AjvMergePatch from 'ajv-merge-patch';
 import AjvKeywords from 'ajv-keywords';
 import moment from 'moment-timezone';
 
+export function arrToObjByKey (arr, key, pick) {
+	const obj = {};
+	for (const row of arr) {
+		if (!(row[key] in obj)) {
+			obj[row[key]] = [];
+		}
+		if (pick) {
+			obj[row[key]].push(row[pick]);
+		} else {
+			obj[row[key]].push(row);
+			delete row[key];
+		}
+	}
+	return obj;
+}
+
 /**
  * Traverses through an object recursively and calls a replacement function
  * @param  {Object}   obj               The object to iterate over
