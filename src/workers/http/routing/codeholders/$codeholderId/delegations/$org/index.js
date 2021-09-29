@@ -2,20 +2,18 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import { init as route$$org } from './$org';
-
 import method$get from './get';
+import method$put from './put';
 
 /**
- * Sets up /codeholders/{codeholderId}/delegations
+ * Sets up /codeholders/{codeholderId}/delegations/{org}
  * @return {express.Router}
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 
-	router.use('/:org', route$$org());
-
 	bindMethod(router, '/', 'get', method$get);
+	bindMethod(router, '/', 'put', method$put);
 
 	return router;
 }
