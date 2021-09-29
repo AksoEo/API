@@ -9,7 +9,7 @@ import parSchema from '../schema';
 const schema = {
 	...parSchema,
 	...{
-		query: 'resource',
+		query: null,
 		body: {
 			type: 'object',
 			properties: {

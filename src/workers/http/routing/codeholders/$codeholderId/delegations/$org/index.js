@@ -4,6 +4,7 @@ import { bindMethod } from 'akso/workers/http/routing';
 
 import method$get from './get';
 import method$put from './put';
+import method$delete from './delete';
 
 /**
  * Sets up /codeholders/{codeholderId}/delegations/{org}
@@ -14,6 +15,7 @@ export function init () {
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'put', method$put);
+	bindMethod(router, '/', 'delete', method$delete);
 
 	return router;
 }
