@@ -13,7 +13,6 @@ export default {
 		tos: ''
 	},
 	fieldAliases: {
-		org: 'codeholders_delegations.org',
 		cities: () => AKSO.db.raw('1'),
 		countries: () => AKSO.db.raw('1'),
 		subjects: () => AKSO.db.raw('1'),
@@ -21,7 +20,7 @@ export default {
 		tos: () => AKSO.db.raw('1')
 	},
 	alwaysSelect: [
-		'codeholders_delegations.codeholderId',
+		'codeholderId',
 		'org',
 		'tos_docDataProtectionUEA',
 		'tos_docDataProtectionUEA_time',

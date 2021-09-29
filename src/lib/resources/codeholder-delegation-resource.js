@@ -24,7 +24,37 @@ class CodeholderDelegationResource extends SimpleResource {
 			};
 		}
 
-		this.removeUnnecessary(req.query.fields || schema.defaultFields);
+		const fields = [ ...(req.query.fields || schema.defaultFields) ];
+		
+		// For /delegations/delegates only
+		const hostingFields = [
+			'hosting.maxDays',
+			'hosting.maxPersons',
+			'hosting.description',
+			'hosting.psProfileURL'
+		];
+		let hasHostingField = false;
+		for (const field of hostingFields) {
+			if (fields.includes(field)) {
+				hasHostingField = true;
+				break;
+			}
+		}
+		if (hasHostingField) {
+			fields.push('hosting');
+			for (const field of hostingFields) {
+				const index = fields.indexOf(field);
+				if (index === -1) {
+					if (obj.hosting) {
+						delete obj.hosting[field.split('.')[1]];
+					}
+				} else {
+					fields.splice(index, 1);
+				}
+			}
+		}
+
+		this.removeUnnecessary(fields);
 	}
 }
 
