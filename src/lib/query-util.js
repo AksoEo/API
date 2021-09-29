@@ -543,7 +543,7 @@ const QueryUtil = {
 			}
 		} catch (e) {
 			const url = Url.parse(req.originalUrl).pathname;
-			AKSO.log.error(`An error occured at ${req.method} ${url}\n${e.stack}`);
+			AKSO.log.error(`An error occured in the afterQuery at ${req.method} ${url}\n${e.stack}`);
 			return res.sendStatus(500);
 		}
 		const data = new Col(rawData, Res, ...passToCol);
