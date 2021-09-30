@@ -25,6 +25,10 @@ export default {
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
 		const query = AKSO.db('codeholders_delegations')
+			.leftJoin('codeholders_delegations_hosting', {
+				'codeholders_delegations_hosting.codeholderId': 'codeholders_delegations.codeholderId',
+				'codeholders_delegations_hosting.org': 'codeholders_delegations.org'
+			})
 			.where('codeholders_delegations.codeholderId', req.params.codeholderId);
 
 		await QueryUtil.handleCollection({

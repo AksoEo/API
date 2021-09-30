@@ -18,7 +18,11 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('codeholders_delegations')
-			.where('org', 'uea') // Currently only UEA
+			.leftJoin('codeholders_delegations_hosting', {
+				'codeholders_delegations_hosting.codeholderId': 'codeholders_delegations.codeholderId',
+				'codeholders_delegations_hosting.org': 'codeholders_delegations.org'
+			})
+			.where('codeholders_delegations.org', 'uea') // Currently only UEA
 			.whereExists(function () {
 				this.from('view_codeholders')
 					.select(1)

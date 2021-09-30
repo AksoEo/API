@@ -9,19 +9,26 @@ export default {
 		cities: '',
 		countries: '',
 		subjects: '',
-		hosting: '',
+		'hosting.maxDays': '',
+		'hosting.maxPersons': '',
+		'hosting.description': '',
+		'hosting.psProfileURL': '',
 		tos: ''
 	},
 	fieldAliases: {
+		org: 'codeholders_delegations.org',
 		cities: () => AKSO.db.raw('1'),
 		countries: () => AKSO.db.raw('1'),
 		subjects: () => AKSO.db.raw('1'),
-		hosting: () => AKSO.db.raw('1'),
+		'hosting.maxDays': 'codeholders_delegations_hosting.maxDays',
+		'hosting.maxPersons': 'codeholders_delegations_hosting.maxPersons',
+		'hosting.description': 'codeholders_delegations_hosting.description',
+		'hosting.psProfileURL': 'codeholders_delegations_hosting.psProfileURL',
 		tos: () => AKSO.db.raw('1')
 	},
 	alwaysSelect: [
-		'codeholderId',
-		'org',
+		'codeholders_delegations.codeholderId',
+		'codeholders_delegations.org',
 		'tos_docDataProtectionUEA',
 		'tos_docDataProtectionUEA_time',
 		'tos_docDelegatesUEA',
@@ -46,10 +53,6 @@ export default {
 				.select('codeholderId', 'country', 'level')
 				.where('org', org)
 				.whereIn('codeholderId', codeholderIds),
-			hosting: AKSO.db('codeholders_delegations_hosting')
-				.select('codeholderId', 'maxDays', 'maxPersons', 'description', 'psProfileURL')
-				.where('org', org)
-				.whereIn('codeholderId', codeholderIds),
 			subjects: AKSO.db('codeholders_delegations_subjects')
 				.select('codeholderId', 'subjectId')
 				.where('org', org)
@@ -58,14 +61,12 @@ export default {
 		data = {
 			cities: arrToObjByKey(data.cities, 'codeholderId', 'city'),
 			countries: arrToObjByKey(data.countries, 'codeholderId'),
-			hosting: arrToObjByKey(data.hosting, 'codeholderId'),
 			subjects: arrToObjByKey(data.subjects, 'codeholderId', 'subjectId')
 		};
 
 		for (const row of arr) {
 			row.cities = data.cities[row.codeholderId] || [];
 			row.countries = data.countries[row.codeholderId] || [];
-			row.hosting = data.hosting[row.codeholderId] ? data.hosting[row.codeholderId][0] : null;
 			row.subjects = data.subjects[row.codeholderId] || [];
 		}
 

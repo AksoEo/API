@@ -7,6 +7,7 @@ import * as AKSONotif from 'akso/notif';
 import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
+import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -154,7 +155,7 @@ export const schema = {
 			}
 		}
 	},
-	customFilterLogicOpsFields: { // TODO: What is this even used for, I cannot find any reference to it when searching through src
+	customFilterLogicOpsFields: {
 		$membership: 'membership',
 		$roles: 'roles'
 	},
@@ -216,6 +217,33 @@ export const schema = {
 							)
 						`)
 					},
+					query: this,
+					filter
+				});
+			});
+		},
+		$delegations: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('delegations expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1).from('codeholders_delegations')
+					.leftJoin('codeholders_delegations_hosting', {
+						'codeholders_delegations_hosting.codeholderId': 'codeholders_delegations.codeholderId',
+						'codeholders_delegations_hosting.org': 'codeholders_delegations.org'
+					})
+					.whereRaw('codeholders_delegations.codeholderId = view_codeholders.id');
+
+				const fields = Object.keys(delegationsSchema.fields);
+				fields.splice(fields.indexOf('codeholderId'), 1);
+
+				QueryUtil.filter({
+					fields,
+					fieldAliases: delegationsSchema.fieldAliases,
+					customCompOps: delegationsSchema.customFilterCompOps,
+					customLogicOps: delegationsSchema.customFilterLogicOps,
 					query: this,
 					filter
 				});
