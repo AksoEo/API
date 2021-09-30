@@ -8,7 +8,8 @@ export default {
 		'eoLabel': 's',
 		'll': '',
 		'subdivision_nativeLabel': 's',
-		'subdivision_eoLabel': 's'
+		'subdivision_eoLabel': 's',
+		'subdivision_iso': 'f'
 	},
 	fieldAliases: {
 		id: 'cities.id',
