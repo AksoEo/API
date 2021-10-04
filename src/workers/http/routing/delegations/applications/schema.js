@@ -18,7 +18,7 @@ export default {
 		'tos.docDataProtectionUEA': '',
 		'tos.docDelegatesUEA': '',
 		'tos.docDelegatesDataProtectionUEA': '',
-		'tos.paperAnnualBook': 'f'
+		'tos.paperAnnualBook': ''
 	},
 	fieldAliases: {
 		id: 'delegations_applications.id',
