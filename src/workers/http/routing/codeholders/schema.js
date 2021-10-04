@@ -8,6 +8,7 @@ import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
+import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/applications/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -224,7 +225,7 @@ export const schema = {
 		},
 		$delegations: ({ query, filter } = {}) => {
 			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
-				const err = new Error('delegations expects an object');
+				const err = new Error('$delegations expects an object');
 				err.statusCode = 400;
 				throw err;
 			}
@@ -244,6 +245,30 @@ export const schema = {
 					fieldAliases: delegationsSchema.fieldAliases,
 					customCompOps: delegationsSchema.customFilterCompOps,
 					customLogicOps: delegationsSchema.customFilterLogicOps,
+					query: this,
+					filter
+				});
+			});
+		},
+		$delegationApplications: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('$delegationApplications expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1).from('delegations_applications')
+					.leftJoin('delegations_applications_cities', 'delegations_applications.id', 'delegations_applications_cities.id')
+					.whereRaw('delegations_applications.codeholderId = view_codeholders.id');
+
+				const fields = Object.keys(delegationApplicationsSchema.fields);
+				fields.splice(fields.indexOf('codeholderId'), 1);
+
+				QueryUtil.filter({
+					fields,
+					fieldAliases: delegationApplicationsSchema.fieldAliases,
+					customCompOps: delegationApplicationsSchema.customFilterCompOps,
+					customLogicOps: delegationApplicationsSchema.customFilterLogicOps,
 					query: this,
 					filter
 				});
@@ -271,7 +296,9 @@ export function memberFilter (schema, query, req) {
 			.filter(x => schema.fields[x].includes('f')),
 		query,
 		filter: req.memberFilter,
-		fieldAliases: schema.fieldAliases
+		fieldAliases: schema.fieldAliases,
+		customCompOps: schema.customFilterCompOps,
+		customLogicOps: schema.customFilterLogicOps
 	});
 }
 

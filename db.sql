@@ -1998,9 +1998,8 @@ CREATE TABLE `delegations_applications` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `codeholderId` int unsigned NOT NULL,
   `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cities` json NOT NULL,
   `subjects` json NOT NULL,
-  `hosting` tinyint(1) NOT NULL,
+  `hosting` json DEFAULT NULL,
   `tos_docDataProtectionUEA` tinyint(1) NOT NULL,
   `tos_docDelegatesUEA` tinyint(1) NOT NULL,
   `tos_docDelegatesDataProtectionUEA` tinyint(1) NOT NULL,
@@ -2008,7 +2007,7 @@ CREATE TABLE `delegations_applications` (
   `applicantNotes` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `internalNotes` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `time` bigint unsigned NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `statusTime` bigint unsigned DEFAULT NULL,
   `statusBy` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -2020,6 +2019,21 @@ CREATE TABLE `delegations_applications` (
   KEY `statusTime` (`statusTime`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   CONSTRAINT `delegations_applications_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `delegations_applications_cities`
+--
+
+DROP TABLE IF EXISTS `delegations_applications_cities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `delegations_applications_cities` (
+  `id` int unsigned NOT NULL,
+  `city` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`,`city`),
+  CONSTRAINT `delegations_applications_cities_ibfk_1` FOREIGN KEY (`id`) REFERENCES `delegations_applications` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3529,4 +3543,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-29 12:32:09
+-- Dump completed on 2021-10-04 15:06:02

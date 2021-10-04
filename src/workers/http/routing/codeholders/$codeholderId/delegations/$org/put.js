@@ -76,7 +76,7 @@ const schema = {
 						},
 						psProfileURL: {
 							type: 'string',
-							format: 'uri',
+							format: 'safe-uri',
 							nullable: true,
 							maxLength: 50,
 							pattern: '^https://www\\.pasportaservo\\.org/ejo/\\d+/?$'
@@ -176,6 +176,49 @@ export default {
 			if (!countriesExist.includes(country)) {
 				return res.status(400).type('text/plain')
 					.send(`country ${country} does not exist or is not enabled`);
+			}
+		}
+
+		// Obtain the current country delegations
+		const countryDelegations = await AKSO.db('codeholders_delegations_countries')
+			.select('country', 'level')
+			.where({
+				codeholderId: req.params.codeholderId,
+				org: req.params.org
+			});
+		const countryDelegationsIndexObj = {};
+		// Make sure no country delegations are being removed where not allowed
+		for (const countryDelegation of countryDelegations) {
+			countryDelegationsIndexObj[countryDelegation.country] = countryDelegation;
+
+			const perm = `codeholders.delegations.update_country_delegates.${req.params.org}.${countryDelegation.country}`;
+			if (!req.hasPermission(perm)) {
+				// We may not modify this entry, so make sure it's still there
+				let found = false;
+				for (const countryObj of req.body.countries) {
+					if (countryObj.country === countryDelegation.country && countryObj.level === countryDelegation.level) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					return res.status(400).type('text/plain')
+						.send(`Permission ${perm} missing, thus the country delegation for ${countryDelegation.country}:${countryDelegation.level} may not be removed`);
+				}
+			}
+		}
+		// Make sure none are being added where not allowed
+		for (const countryObj of req.body.countries) {
+			// Was it already there?
+			if (
+				countryObj.country in countryDelegationsIndexObj
+				&& countryDelegationsIndexObj[countryObj.country].level === countryObj.level
+			) { continue; }
+			// It is new, may we have add it?
+			const perm = `codeholders.delegations.update_country_delegates.${req.params.org}.${countryObj.country}`;
+			if (!req.hasPermission(perm)) {
+				return res.status(400).type('text/plain')
+					.send(`Permission ${perm} missing, thus a new country delegation for ${countryObj.country} may not be added`);
 			}
 		}
 

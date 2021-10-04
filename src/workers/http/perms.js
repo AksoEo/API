@@ -1,6 +1,8 @@
+import moment from 'moment-timezone';
+
 export default async function init (req, res, next) { // eslint-disable-line no-unused-vars
 	// Set default hard-coded business logic
-	req.memberFields = {};
+	req.memberFields = { id: 'r' };
 	req.memberFilter = {};
 	req.permissions = [
 		'membership_categories.read',
@@ -67,7 +69,162 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		);
 	}
 
-	// Override permissions for all authenticated clients
+	// Grant contextual perms
+	if (req.user && req.user.isUser()) {
+		// Grant limited codeholders access if the user is a country delegate
+		const countryDelegations = await AKSO.db('codeholders_delegations')
+			.innerJoin('codeholders_delegations_countries', {
+				'codeholders_delegations_countries.codeholderId': 'codeholders_delegations.codeholderId',
+				'codeholders_delegations_countries.org': 'codeholders_delegations.org'
+			})
+			.select('country', 'level', 'codeholders_delegations.org')
+			.where('codeholders_delegations.codeholderId', req.user.user);
+		
+		if (countryDelegations.length) {
+			const delegations = {};
+			for (const delegation of countryDelegations) {
+				if (!(delegation.org in delegations)) {
+					delegations[delegation.org] = {
+						org: delegation.org,
+						countriesMain: [],
+						countriesVice: []
+					};
+				}
+
+				if (delegation.level === 0) {
+					delegations[delegation.org].countriesMain.push(delegation.country);
+				} else {
+					delegations[delegation.org].countriesVice.push(delegation.country);
+				}
+			}
+
+			let delegationsFilter = Object.entries(delegations).map(([org, obj]) => {
+				let filter = {
+					org,
+					$or: []
+				};
+				if (obj.countriesMain.length) {
+					filter.$or.push({
+						cityCountries: { $hasAny: obj.countriesMain }
+					}, {
+						$countries: {
+							country: { $in: obj.countriesMain }
+						}
+					});
+				}
+				if (obj.countriesVice.length) {
+					filter.$or.push({
+						cityCountries: { $hasAny: obj.countriesVice },
+						$not: {
+							$countries: {
+								country: { $in: obj.countriesVice }
+							}
+						}
+					});
+				}
+				if (filter.$or.length === 1) {
+					filter = {
+						...filter,
+						...filter.$or[0]
+					};
+					delete filter.$or;
+				}
+
+				return filter;
+			});
+			if (delegationsFilter.length > 1) {
+				delegationsFilter = { $or: delegationsFilter };
+			} else {
+				delegationsFilter = delegationsFilter[0];
+			}
+
+			let delegationApplicationsFilter = Object.entries(delegations).map(([org, obj]) => {
+				let filter = {
+					org,
+					cityCountries: {
+						$hasAny: obj.countriesMain.concat(obj.countriesVice)
+					},
+					$or: [
+						{ status: 'pending' },
+						{
+							statusTime: {
+								// Only access for one week after last update
+								$gte: moment().unix() - 604800
+							}
+						}
+					]
+				};
+
+				return filter;
+			});
+			if (delegationApplicationsFilter.length > 1) {
+				delegationApplicationsFilter = { $or: delegationApplicationsFilter };
+			} else {
+				delegationApplicationsFilter = delegationApplicationsFilter[0];
+			}
+
+			req.memberFilter = {
+				$or: [
+					{
+						$delegations: delegationsFilter
+					}, {
+						$delegationApplications: delegationApplicationsFilter
+					}
+				]
+			};
+
+			for (const [org, obj] of Object.entries(delegations)) {
+				req.permissions.push(...[
+					'admin',
+					'codeholders.read',
+					'geodb.read',
+
+					'codeholders.delegations.read.' + org,
+					'codeholders.delegations.update.' + org,
+					'codeholders.delegations.delete.' + org,
+
+					'delegations.applications.read.' + org,
+					'delegations.applications.update.' + org,
+
+					'delegations.subjects.create.' + org,
+					'delegations.subjects.read.' + org,
+					'delegations.subjects.update.' + org,
+					'delegations.subjects.delete.' + org,
+				]);
+
+				// Only main country delegates may modify country delegates
+				for (const country of obj.countriesMain) {
+					req.permissions.push(`codeholders.delegations.update_country_delegates.${org}.${country}`);
+				}
+			}
+
+			req.memberFields = {
+				...req.memberFields,
+				newCode: 'r',
+				codeholderType: 'r',
+				'address.country': 'r',
+				email: 'r',
+				profilePicture: 'r',
+				membership: 'r',
+				biography: 'r',
+				website: 'r',
+				firstName: 'r',
+				lastName: 'r',
+				firstNameLegal: 'r',
+				lastNameLegal: 'r',
+				honorific: 'r',
+				birthdate: 'r',
+				age: 'r',
+				agePrimo: 'r',
+				profession: 'r',
+				fullName: 'r',
+				fullNameLocal: 'r',
+				nameAbbrev: 'r',
+			};
+		}
+	}
+
+	// Concat permissions for all authenticated users
 	let clientPerms;
 	if (req.user) {
 		clientPerms = await req.user.getPerms();
@@ -87,6 +244,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 				path[bit] = true;
 			} else {
 				if (!(bit in path)) { path[bit] = {}; }
+				if (path[bit] === true) { path[bit] = {}; }
 				path = path[bit];
 			}
 		}
@@ -104,18 +262,43 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		return true;
 	};
 
-	// Override member restrictions for all authenticated clients
+	// Merge member restrictions for all authenticated users
 	if (req.user) {
 		if (clientPerms.memberFields === null) {
 			req.memberFields = null;
 		} else {
-			req.memberFields = {
-				...clientPerms.memberFields,
-				...{ id: 'r' }
-			};
+			for (const [field, flags] of Object.entries(clientPerms.memberFields)) {
+				if (!(field in req.memberFields)) {
+					req.memberFields[field] = flags;
+				} else {
+					for (const flag of flags) {
+						if (req.memberFields[field].includes(flag)) {
+							continue;
+						}
+						req.memberFields[field] += flag;
+					}
+				}
+			}
 		}
 		
-		req.memberFilter = clientPerms.memberFilter;
+		if (Object.keys(clientPerms.memberFilter).length) {
+			if (!Object.keys(req.memberFilter).length) {
+				req.memberFilter = clientPerms.memberFilter;
+			} else if (req.memberFilter.$and) {
+				let clientPermsAnd = [clientPerms.memberFilter];
+				if (clientPerms.memberFields[0].$and) {
+					clientPermsAnd = clientPerms.memberFields[0].$and;
+				}
+				req.memberFilter.$and.push(...clientPermsAnd);
+			} else {
+				req.memberFilter = {
+					$and: [
+						clientPerms.memberFilter,
+						req.memberFilter
+					]
+				};
+			}
+		}
 	}
 
 	next();

@@ -10,6 +10,7 @@ export default {
 		approvedBy: 'f',
 		approvedTime: 'f',
 		cities: '',
+		cityCountries: '',
 		countries: '',
 		subjects: '',
 		'hosting.maxDays': 'f',
@@ -22,6 +23,7 @@ export default {
 		codeholderId: 'codeholders_delegations.codeholderId',
 		org: 'codeholders_delegations.org',
 		cities: () => AKSO.db.raw('1'),
+		cityCountries: () => AKSO.db.raw('1'),
 		countries: () => AKSO.db.raw('1'),
 		subjects: () => AKSO.db.raw('1'),
 		'hosting.maxDays': 'codeholders_delegations_hosting.maxDays',
@@ -62,6 +64,17 @@ export default {
 						.whereRaw('codeholders_delegations_cities.codeholderId = codeholders_delegations.codeholderId')
 						.whereRaw('codeholders_delegations_cities.org = codeholders_delegations.org')
 						.whereIn('codeholders_delegations_cities.city', cities);
+				});
+			},
+			cityCountries: (query, arr) => {
+				query.whereExists(function () {
+					this.select(1).from('codeholders_delegations_cities')
+						.whereRaw('codeholders_delegations_cities.codeholderId = codeholders_delegations.codeholderId')
+						.whereRaw('codeholders_delegations_cities.org = codeholders_delegations.org')
+						.joinRaw('INNER JOIN ??.cities geo ON geo.id = codeholders_delegations_cities.city', [
+							AKSO.conf.mysql.geodbDatabase
+						])
+						.whereIn('geo.country', arr);
 				});
 			}
 		}

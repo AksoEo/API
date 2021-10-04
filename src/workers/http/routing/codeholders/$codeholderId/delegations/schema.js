@@ -7,6 +7,7 @@ export default {
 		approvedBy: '',
 		approvedTime: '',
 		cities: '',
+		cityCountries: '',
 		countries: '',
 		subjects: '',
 		'hosting.maxDays': '',
@@ -24,7 +25,8 @@ export default {
 		'hosting.maxPersons': 'codeholders_delegations_hosting.maxPersons',
 		'hosting.description': 'codeholders_delegations_hosting.description',
 		'hosting.psProfileURL': 'codeholders_delegations_hosting.psProfileURL',
-		tos: () => AKSO.db.raw('1')
+		tos: () => AKSO.db.raw('1'),
+		cityCountries: () => AKSO.db.raw('1')
 	},
 	alwaysSelect: [
 		'codeholders_delegations.codeholderId',
@@ -64,10 +66,21 @@ export default {
 			subjects: arrToObjByKey(data.subjects, 'codeholderId', 'subjectId')
 		};
 
+		const cities = [...new Set([].concat(...Object.values(data.cities)))];
+		let cityCountries = [];
+		if (cities.length) {
+			cityCountries = await AKSO.geodb('cities')
+				.select('id', 'country')
+				.whereIn('id', cities);
+		}
+
 		for (const row of arr) {
 			row.cities = data.cities[row.codeholderId] || [];
 			row.countries = data.countries[row.codeholderId] || [];
 			row.subjects = data.subjects[row.codeholderId] || [];
+			row.cityCountries = cityCountries
+				.filter(x => row.cities.includes(x.id))
+				.map(x => x.country);
 		}
 
 		done();
