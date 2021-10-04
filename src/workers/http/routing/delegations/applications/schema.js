@@ -15,13 +15,19 @@ export default {
 		countries: '',
 		subjects: '',
 		hosting: '',
-		tos: ''
+		'tos.docDataProtectionUEA': '',
+		'tos.docDelegatesUEA': '',
+		'tos.docDelegatesDataProtectionUEA': '',
+		'tos.paperAnnualBook': 'f'
 	},
 	fieldAliases: {
 		id: 'delegations_applications.id',
-		tos: () => AKSO.db.raw('1'),
 		cities: () => AKSO.db.raw('JSON_ARRAYAGG(delegations_applications_cities.city)'),
-		cityCountries: () => AKSO.db.raw('1')
+		cityCountries: () => AKSO.db.raw('1'),
+		'tos.docDataProtectionUEA': 'tos_docDataProtectionUEA',
+		'tos.docDelegatesUEA': 'tos_docDelegatesUEA',
+		'tos.docDelegatesDataProtectionUEA': 'tos_docDelegatesDataProtectionUEA',
+		'tos.paperAnnualBook': 'tos_paperAnnualBook'
 	},
 	customFilterCompOps: {
 		$hasAny: {
@@ -38,10 +44,6 @@ export default {
 		}
 	},
 	alwaysSelect: [
-		'tos_docDataProtectionUEA',
-		'tos_docDelegatesUEA',
-		'tos_docDelegatesDataProtectionUEA',
-		'tos_paperAnnualBook',
 		'cities'
 	],
 	afterQuery: async function afterQuery (arr, done) {

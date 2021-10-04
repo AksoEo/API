@@ -6,26 +6,30 @@ import SimpleResource from './simple-resource';
 class CodeholderDelegationResource extends SimpleResource {
 	constructor (obj, req, schema) {
 		super(obj);
+		const fields = [ ...(req.query.fields || schema.defaultFields) ];
 
 		if (obj.cities) {
 			obj.cities = obj.cities.map(x => `Q${x}`);
 		}
 
-		if (obj.tos) {
-			obj.tos = {
-				docDataProtectionUEA: !!obj.tos_docDataProtectionUEA,
-				docDataProtectionUEATime: obj.tos_docDataProtectionUEA_time,
-				docDelegatesUEA: !!obj.tos_docDelegatesUEA,
-				docDelegatesUEATime: obj.tos_docDelegatesUEA_time,
-				docDelegatesDataProtectionUEA: !!obj.tos_docDelegatesDataProtectionUEA,
-				docDelegatesDataProtectionUEATime: obj.tos_docDelegatesDataProtectionUEA_time,
-				paperAnnualBook: !!obj.tos_paperAnnualBook,
-				paperAnnualBookTime: obj.tos_paperAnnualBook_time
-			};
+		obj.tos = {
+			docDataProtectionUEA: fields.includes('tos.docDataProtectionUEA') ? !!obj.tos_docDataProtectionUEA : undefined,
+			docDataProtectionUEATime: fields.includes('tos.docDataProtectionUEATime') ? obj.tos_docDataProtectionUEA_time : undefined,
+			docDelegatesUEA: fields.includes('tos.docDelegatesUEA') ? !!obj.tos_docDelegatesUEA : undefined,
+			docDelegatesUEATime: fields.includes('tos.docDelegatesUEATime') ? obj.tos_docDelegatesUEA_time : undefined,
+			docDelegatesDataProtectionUEA: fields.includes('tos.docDelegatesDataProtectionUEA') ? !!obj.tos_docDelegatesDataProtectionUEA : undefined,
+			docDelegatesDataProtectionUEATime: fields.includes('tos.docDelegatesDataProtectionUEATime') ? obj.tos_docDelegatesDataProtectionUEA_time : undefined,
+			paperAnnualBook: fields.includes('tos.paperAnnualBook') ? !!obj.tos_paperAnnualBook : undefined,
+			paperAnnualBookTime: fields.includes('tos.paperAnnualBookTime') ? obj.tos_paperAnnualBook_time : undefined
+		};
+		const tosIsEmpty = !Object.values(obj.tos)
+			.filter(x => x)
+			.length;
+		if (tosIsEmpty) {
+			delete obj.tos;
 		}
+		fields.push('tos');
 
-		const fields = [ ...(req.query.fields || schema.defaultFields) ];
-		
 		const hostingFields = [
 			'maxDays',
 			'maxPersons',

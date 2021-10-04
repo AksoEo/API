@@ -14,7 +14,14 @@ export default {
 		'hosting.maxPersons': '',
 		'hosting.description': '',
 		'hosting.psProfileURL': '',
-		tos: ''
+		'tos.docDataProtectionUEA': '',
+		'tos.docDataProtectionUEATime': '',
+		'tos.docDelegatesUEA': '',
+		'tos.docDelegatesUEATime': '',
+		'tos.docDelegatesDataProtectionUEA': '',
+		'tos.docDelegatesDataProtectionUEATime': '',
+		'tos.paperAnnualBook': '',
+		'tos.paperAnnualBookTime': ''
 	},
 	fieldAliases: {
 		org: 'codeholders_delegations.org',
@@ -25,20 +32,19 @@ export default {
 		'hosting.maxPersons': 'codeholders_delegations_hosting.maxPersons',
 		'hosting.description': 'codeholders_delegations_hosting.description',
 		'hosting.psProfileURL': 'codeholders_delegations_hosting.psProfileURL',
-		tos: () => AKSO.db.raw('1'),
-		cityCountries: () => AKSO.db.raw('1')
+		cityCountries: () => AKSO.db.raw('1'),
+		'tos.docDataProtectionUEA': 'tos_docDataProtectionUEA',
+		'tos.docDataProtectionUEATime': 'tos_docDataProtectionUEA_time',
+		'tos.docDelegatesUEA': 'tos_docDelegatesUEA',
+		'tos.docDelegatesUEATime': 'tos_docDelegatesUEA_time',
+		'tos.docDelegatesDataProtectionUEA': 'tos_docDelegatesDataProtectionUEA',
+		'tos.docDelegatesDataProtectionUEATime': 'tos_docDelegatesDataProtectionUEA_time',
+		'tos.paperAnnualBook': 'tos_paperAnnualBook',
+		'tos.paperAnnualBookTime': 'tos_paperAnnualBook_time'
 	},
 	alwaysSelect: [
 		'codeholders_delegations.codeholderId',
-		'codeholders_delegations.org',
-		'tos_docDataProtectionUEA',
-		'tos_docDataProtectionUEA_time',
-		'tos_docDelegatesUEA',
-		'tos_docDelegatesUEA_time',
-		'tos_docDelegatesDataProtectionUEA',
-		'tos_docDelegatesDataProtectionUEA_time',
-		'tos_paperAnnualBook',
-		'tos_paperAnnualBook_time'
+		'codeholders_delegations.org'
 	],
 	afterQuery: async function afterQuery (arr, done) {
 		if (!arr.length) { return done(); }

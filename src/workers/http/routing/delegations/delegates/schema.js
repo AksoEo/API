@@ -17,7 +17,14 @@ export default {
 		'hosting.maxPersons': 'f',
 		'hosting.description': 's',
 		'hosting.psProfileURL': '',
-		tos: ''
+		'tos.docDataProtectionUEA': '',
+		'tos.docDataProtectionUEATime': 'f',
+		'tos.docDelegatesUEA': '',
+		'tos.docDelegatesUEATime': 'f',
+		'tos.docDelegatesDataProtectionUEA': '',
+		'tos.docDelegatesDataProtectionUEATime': 'f',
+		'tos.paperAnnualBook': 'f',
+		'tos.paperAnnualBookTime': 'f'
 	},
 	fieldAliases: {
 		codeholderId: 'codeholders_delegations.codeholderId',
@@ -30,7 +37,14 @@ export default {
 		'hosting.maxPersons': 'codeholders_delegations_hosting.maxPersons',
 		'hosting.description': 'codeholders_delegations_hosting.description',
 		'hosting.psProfileURL': 'codeholders_delegations_hosting.psProfileURL',
-		tos: () => AKSO.db.raw('1')
+		'tos.docDataProtectionUEA': 'tos_docDataProtectionUEA',
+		'tos.docDataProtectionUEATime': 'tos_docDataProtectionUEA_time',
+		'tos.docDelegatesUEA': 'tos_docDelegatesUEA',
+		'tos.docDelegatesUEATime': 'tos_docDelegatesUEA_time',
+		'tos.docDelegatesDataProtectionUEA': 'tos_docDelegatesDataProtectionUEA',
+		'tos.docDelegatesDataProtectionUEATime': 'tos_docDelegatesDataProtectionUEA_time',
+		'tos.paperAnnualBook': 'tos_paperAnnualBook',
+		'tos.paperAnnualBookTime': 'tos_paperAnnualBook_time'
 	},
 	customFilterCompOps: {
 		$hasAny: {
