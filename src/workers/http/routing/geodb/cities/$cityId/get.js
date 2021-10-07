@@ -18,7 +18,7 @@ export default {
 	run: async function run (req, res) {
 		const query = AKSO.geodb('cities')
 			.leftJoin('cities_ll', 'cities_ll.id', 'cities.id')
-			.where('id', req.params.cityId);
+			.where('cities.id', req.params.cityId);
 		QueryUtil.simpleResource(req, schema, query);
 
 		const row = await query;
