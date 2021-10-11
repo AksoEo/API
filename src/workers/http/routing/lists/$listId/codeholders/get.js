@@ -4,7 +4,8 @@ const schema = {
 	...parSchema,
 	...{
 		query: 'collection',
-		body: null
+		body: null,
+		requirePerms: 'lists.read'
 	}
 };
 
