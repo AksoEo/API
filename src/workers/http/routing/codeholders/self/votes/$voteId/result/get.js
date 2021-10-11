@@ -5,9 +5,9 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const voteData = await AKSO.db('votes_voters')
-			.innerJoin('votes', 'voteId', 'id')
+		const voteData = await AKSO.db('votes')
 			.first('results')
+			.innerJoin('votes_voters', 'votes_voters.voteId', 'votes.id')
 			.where({
 				codeholderId: req.user.user,
 				voteId: req.params.voteId,
@@ -15,7 +15,6 @@ export default {
 			});
 
 		if (!voteData) { return res.sendStatus(404); }
-
 		res.sendObj(voteData.results);
 	}
 };

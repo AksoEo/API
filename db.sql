@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.26-0ubuntu0.20.04.2
+-- Server version	8.0.26-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -3257,6 +3257,7 @@ CREATE TABLE `votes` (
   `tieBreakerCodeholder` int unsigned DEFAULT NULL,
   `publishVoters` tinyint(1) NOT NULL DEFAULT '0',
   `publishVotersPercentage` tinyint(1) NOT NULL DEFAULT '1',
+  `publishResults` tinyint(1) NOT NULL DEFAULT '0',
   `options` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
@@ -3543,4 +3544,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-04 15:06:02
+-- Dump completed on 2021-10-11  8:59:19

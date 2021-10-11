@@ -42,6 +42,7 @@ export const schema = {
 		'tieBreakerCodeholder': '',
 		'publishVoters': '',
 		'publishVotersPercentage': '',
+		'publishResults': '',
 		'options': ''
 	},
 	fieldAliases: {
@@ -255,6 +256,9 @@ const getSchema = type => {
 				type: 'boolean'
 			},
 			publishVotersPercentage: {
+				type: 'boolean'
+			},
+			publishResults: {
 				type: 'boolean'
 			},
 			options: {
