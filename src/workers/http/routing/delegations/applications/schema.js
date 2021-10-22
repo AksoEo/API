@@ -12,7 +12,6 @@ export default {
 		applicantNotes: '',
 		cities: '',
 		cityCountries: '',
-		countries: '',
 		subjects: '',
 		hosting: '',
 		'tos.docDataProtectionUEA': '',
