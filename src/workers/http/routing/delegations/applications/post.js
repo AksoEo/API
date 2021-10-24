@@ -2,6 +2,8 @@ import moment from 'moment-timezone';
 import fetch from 'node-fetch';
 import path from 'path';
 
+import { createTransaction } from 'akso/util';
+
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import parSchema from './schema';
@@ -192,11 +194,12 @@ export default {
 			}
 		}
 
-		const id = (await AKSO.db('delegations_applications')
+		const trx = await createTransaction();
+
+		const id = (await trx('delegations_applications')
 			.insert({
 				codeholderId: req.body.codeholderId,
 				org: req.body.org,
-				cities: JSON.stringify(req.body.cities.map(x => parseInt(x.substring(1), 10))),
 				subjects: JSON.stringify(req.body.subjects),
 				hosting: req.body.hosting ? JSON.stringify(req.body.hosting) : null,
 				applicantNotes: req.body.applicantNotes,
@@ -207,6 +210,13 @@ export default {
 				tos_docDataProtectionUEA: req.body.tos.docDataProtectionUEA,
 				tos_docDelegatesDataProtectionUEA: req.body.tos.docDelegatesDataProtectionUEA
 			}))[0];
+
+		await trx('delegations_applications_cities')
+			.insert(req.body.cities.map(x => {
+				return { id, city: parseInt(x.substring(1), 10) };
+			}));
+
+		await trx.commit();
 
 		res.set('Location', path.join(AKSO.conf.http.path, 'delegations/applications/', id.toString()));
 		res.set('X-Identifier', id.toString());
