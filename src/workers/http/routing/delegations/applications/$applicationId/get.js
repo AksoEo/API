@@ -21,7 +21,7 @@ export default {
 			.leftJoin('delegations_applications_cities', 'delegations_applications.id', 'delegations_applications_cities.id')
 			.where({
 				org: 'uea',
-				id: req.params.applicationId
+				'delegations_applications.id': req.params.applicationId
 			}) // Currently only UEA
 			.whereExists(function () {
 				this.from('view_codeholders')
