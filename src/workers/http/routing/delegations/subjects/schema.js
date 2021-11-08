@@ -4,6 +4,13 @@ export default {
 		id: 'f',
 		org: 'f',
 		name: 's',
-		description: ''
+		description: '',
+		useCount: 'f'
+	},
+	fieldAliases: {
+		useCount: () => AKSO.db.raw(
+			'SELECT COUNT(1) FROM codeholders_delegations_subjects cs' +
+			' WHERE cs.subjectId = delegations_subjects.id'
+		)
 	}
 };
