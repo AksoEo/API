@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import parSchema from '../schema';
@@ -56,9 +58,16 @@ export default {
 			return res.sendStatus(404);
 		}
 
+		const updateData = {...req.body};
+		if ('status' in req.body) {
+			updateData.statusTime = moment().unix();
+			updateData.statusBy = req.user.modBy;
+		}
+
 		await AKSO.db('delegations_applications')
 			.where('id', req.params.applicationId)
-			.update(req.body);
+			.update(updateData);
+
 		res.sendStatus(204);
 	}
 };
