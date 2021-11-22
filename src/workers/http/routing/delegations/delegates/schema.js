@@ -114,6 +114,14 @@ export default {
 					filter
 				});
 			});
+		},
+		$hasHosting: ({ query, filter } = {}) => {
+			if (typeof filter !== 'boolean') {
+				const err = new Error('$hasHosting expects a boolean');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereRaw(`codeholders_delegations_hosting.codeholderId IS${filter ? ' NOT ' : ' '}NULL`);
 		}
 	},
 	alwaysSelect: [
