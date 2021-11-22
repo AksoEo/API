@@ -3063,15 +3063,18 @@ CREATE TABLE `registration_options_offerGroups_offers` (
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentAddonId` int unsigned DEFAULT NULL,
   `membershipCategoryId` int unsigned DEFAULT NULL,
+  `magazineId` int unsigned DEFAULT NULL,
   `price_script` json DEFAULT NULL,
   `price_var` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`year`,`offerGroupId`,`id`),
   KEY `paymentAddonId` (`paymentAddonId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
+  KEY `magazineId` (`magazineId`),
   CONSTRAINT `registration_options_offerGroups_offers_ibfk_1` FOREIGN KEY (`year`, `offerGroupId`) REFERENCES `registration_options_offerGroups` (`year`, `id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `registration_options_offerGroups_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_options_offerGroups_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_options_offerGroups_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_options_offerGroups_offers_ibfk_4` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3567,4 +3570,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-22 12:07:59
+-- Dump completed on 2021-11-22 12:46:30
