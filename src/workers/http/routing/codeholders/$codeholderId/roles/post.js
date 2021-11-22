@@ -38,7 +38,7 @@ const schema = {
 					type: 'string',
 					minLength: 1,
 					maxLength: 50,
-					pattern: '^[^\\n]+$s',
+					pattern: '^[^\\n]+$',
 					nullable: true
 				}
 			},
