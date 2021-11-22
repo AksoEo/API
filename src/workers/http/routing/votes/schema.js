@@ -4,7 +4,7 @@ import { default as merge } from 'deepmerge';
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
-import { schema as codeholderSchema } from '../codeholders/schema';
+import { schema as codeholderSchema, memberFilter } from '../codeholders/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -130,10 +130,11 @@ export async function manualDataValidation (req, res, vote = undefined) {
 	}
 
 	if ('tieBreakerCodeholder' in req.body) {
-		const exists = await AKSO.db('codeholders')
+		const existsQuery = AKSO.db('codeholders')
 			.first(1)
-			.where(req.memberFilter)
 			.where('id', req.body.tieBreakerCodeholder);
+		memberFilter(codeholderSchema, existsQuery, req);
+		const exists = await existsQuery;
 		if (!exists) {
 			return res.status(400).type('text/plain').send('Unknown tieBreakerCodeholder');
 		}
