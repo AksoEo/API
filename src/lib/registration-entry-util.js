@@ -1,6 +1,7 @@
 import { UEACode } from '@tejo/akso-client';
 import moment from 'moment-timezone';
 import { base32 } from 'rfc4648';
+import crypto from 'pn/crypto';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction } from 'akso/util';
@@ -169,6 +170,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 			.select('type', 'membershipCategoryId');
 
 		const membershipInsert = [];
+		const magazineInsert = [];
 		for (const offer of offers) {
 			if (offer.type === 'membership') {
 				membershipInsert.push({
@@ -176,11 +178,23 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 					categoryId: offer.membershipCategoryId,
 					codeholderId
 				});
+			} else if (offer.type === 'magazine') {
+				magazineInsert.push({
+					id: await crypto.randomBytes(15),
+					magazineId: offer.magazineId,
+					year: registrationEntry.year,
+					codeholderId,
+					createdTime: moment().unix(),
+				});
 			}
 		}
 		if (membershipInsert.length) {
 			await db('membershipCategories_codeholders')
 				.insert(membershipInsert);
+		}
+		if (magazineInsert.length) {
+			await db('magazines_subscriptions')
+				.insert(magazineInsert);
 		}
 
 		// Update the registration entry status to succeeded
@@ -240,7 +254,6 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 
 		const membershipOffers = offers
 			.filter(x => x.membershipCategoryId !== undefined);
-
 		if (membershipOffers.length) {
 			// Check if the codeholder already has any of the membership offers
 			const duplicateMembership = await db('membershipCategories_codeholders')
@@ -254,7 +267,7 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 			if (duplicateMembership) {
 				// Find the arrayId of the duplicate offer
 				let arrayId;
-				for (const membershipOffer of membershipOffers) {
+				for (const membershipOffer of offers) {
 					arrayId = membershipOffer.arrayId;
 					if (membershipOffer.membershipCategoryId === duplicateMembership.categoryId) {
 						break;
@@ -270,6 +283,39 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 				return updateData;
 			}
 		}
+
+		const magazineOffers = offers
+			.filter(x => x.magazineId !== undefined);
+		if (magazineOffers.length) {
+			// Check if the codeholder already has any of the magazine offers
+			const duplicateMagazineSubscription = await db('magazines_subscriptions')
+				.where({
+					codeholderId: existingCodeholderData.codeholderId,
+					year: registrationEntry.year
+				})
+				.whereIn('magazineId', magazineOffers.map(x => x.magazineId))
+				.first('magazineId');
+
+			if (duplicateMagazineSubscription) {
+				// Find the arrayId of the duplicate offer
+				let arrayId;
+				for (const magazineSubscriptionOffer of offers) {
+					arrayId = magazineSubscriptionOffer.arrayId;
+					if (magazineSubscriptionOffer.magazineId === duplicateMagazineSubscription.magazineId) {
+						break;
+					}
+				}
+
+				const updateData = {
+					status: 'pending',
+					pendingIssue_what: 'duplicate_offer',
+					pendingIssue_where: `offer[${arrayId}]`
+				};
+				await updateRegistrationEntry(updateData);
+				return updateData;
+			}
+		}
+
 	} else {
 		// Check for codeholder data issues
 		const issueEmail = await db('view_codeholders')

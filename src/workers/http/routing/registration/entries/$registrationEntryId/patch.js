@@ -1,9 +1,11 @@
-import moment from 'moment-timezone';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction, insertAsReplace } from 'akso/util';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { checkIssuesInPaidRegistrationEntry } from 'akso/lib/registration-entry-util';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
+
+import { offersSchema, codeholderDataSchema } from './schema';
 
 const schema = {
 	query: null,
@@ -30,139 +32,8 @@ const schema = {
 				type: 'string',
 				enum: AKSOCurrency.all
 			},
-			offers: {
-				type: 'array',
-				minItems: 1,
-				maxItems: 127,
-				items: {
-					type: 'object',
-					properties: {
-						type: {
-							type: 'string',
-							enum: [ 'membership' ]
-						},
-						id: {
-							type: 'number',
-							format: 'uint32'
-						},
-						amount: {
-							type: 'number',
-							format: 'uint32'
-						}
-					},
-					required: [
-						'type', 'id', 'amount'
-					],
-					additionalProperties: false
-				}
-			},
-			codeholderData: {
-				oneOf: [
-					{
-						type: 'number',
-						format: 'uint32'
-					},
-					{
-						type: 'object',
-						properties: {
-							address: {
-								type: 'object',
-								properties: {
-									country: {
-										type: 'string',
-										pattern: '^[a-z]{2}$'
-									},
-									countryArea: {
-										type: 'string',
-										pattern: '^[^\\n]{1,50}$',
-										nullable: true
-									},
-									city: {
-										type: 'string',
-										pattern: '^[^\\n]{1,50}$',
-										nullable: true
-									},
-									cityArea: {
-										type: 'string',
-										pattern: '^[^\\n]{1,50}$',
-										nullable: true
-									},
-									streetAddress: {
-										type: 'string',
-										minLength: 1,
-										maxLength: 100,
-										nullable: true
-									},
-									postalCode: {
-										type: 'string',
-										pattern: '^[^\\n]{1,20}$',
-										nullable: true
-									},
-									sortingCode: {
-										type: 'string',
-										pattern: '^[^\\n]{1,20}$',
-										nullable: true
-									}
-								},
-								required: [ 'country' ],
-								additionalProperties: false
-							},
-							feeCountry: {
-								type: 'string',
-								pattern: '^[a-z]{2}$'
-							},
-							email: {
-								type: 'string',
-								format: 'email',
-								minLength: 3,
-								maxLength: 200
-							},
-							firstName: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$',
-								nullable: true
-							},
-							firstNameLegal: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$'
-							},
-							lastName: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$',
-								nullable: true
-							},
-							lastNameLegal: {
-								type: 'string',
-								pattern: '^[^\\n]{1,50}$',
-								nullable: true
-							},
-							honorific: {
-								type: 'string',
-								pattern: '^[^\\n]{2,15}$',
-								nullable: true
-							},
-							birthdate: {
-								type: 'string',
-								format: 'date',
-								validateFunction: val => !(moment(val).isAfter(moment()))
-							},
-							cellphone: {
-								type: 'string',
-								format: 'tel',
-								nullable: true
-							}
-						},
-						required: [
-							'address',
-							'feeCountry',
-							'email',
-							'firstNameLegal',
-							'birthdate'
-						],
-						additionalProperties: false
-					}
-				]
-			}
+			offers: offersSchema,
+			codeholderData: codeholderDataSchema,
 		},
 		minProperties: 1,
 		additionalProperties: false
@@ -215,15 +86,15 @@ export default {
 			// Validate the codeholder data
 			if (typeof req.body.codeholderData === 'number') {
 				// Ensure the codeholder is human and enabled and does in fact exist
-				// TODO: Ensure the codeholder is visible given the user's member restrictions
-				const codeholderExists = await AKSO.db('view_codeholders')
+				const codeholderExistsQuery = AKSO.db('view_codeholders')
 					.where({
 						enabled: true,
 						id: req.body.codeholderData,
 						codeholderType: 'human'
 					})
 					.first(1);
-				if (!codeholderExists) {
+				memberFilter(codeholderSchema, codeholderExistsQuery, req);
+				if (!await codeholderExistsQuery) {
 					return res.type('text/plain').status(400)
 						.send(`Could not find an enabled, human codeholder with id ${req.body.codeholderData}`);
 				}
@@ -260,7 +131,7 @@ export default {
 		}
 
 		if (req.body.offers) {
-			// Validate offers
+			// Make sure all membership categories exist
 			const membershipIds = [];
 			for (const offer of req.body.offers) {
 				if (offer.type === 'membership') {
@@ -268,7 +139,6 @@ export default {
 				}
 			}
 
-			// Make sure all membership categories exist
 			const membershipsExisting = await AKSO.db('membershipCategories')
 				.select('id')
 				.whereIn('id', membershipIds)
@@ -278,8 +148,27 @@ export default {
 				return res.type('text/plain').status(400)
 					.send(`Unknown membership category ${id}`);
 			}
+
+			// Make sure all magazines exist
+			const magazineIds = [];
+			for (const offer of req.body.offers) {
+				if (offer.type === 'magazine') {
+					membershipIds.push(offer.id);
+				}
+			}
+
+			const magazinesExisting = await AKSO.db('magazines')
+				.select('id')
+				.whereIn('id', magazineIds)
+				.pluck('id');
+			for (const id of magazineIds) {
+				if (magazinesExisting.includes(id)) { continue; }
+				return res.type('text/plain').status(400)
+					.send(`Unknown magazine ${id}`);
+			}
 		}
 
+		// Start updating
 		const trx = await createTransaction();
 
 		const data = {
@@ -351,7 +240,8 @@ export default {
 						arrayId,
 						type: offer.type,
 						amount: offer.amount,
-						membershipCategoryId: offer.type === 'membership' ? offer.id : undefined
+						membershipCategoryId: offer.type === 'membership' ? offer.id : undefined,
+						magazineId: offer.type === 'magazine' ? offer.id : undefined,
 					};
 				}));
 		}

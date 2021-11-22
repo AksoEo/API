@@ -25,7 +25,7 @@ export async function afterQuery (arr, done) {
 
 	const offers = await AKSO.db('registration_options_offerGroups_offers')
 		.select('year', 'offerGroupId', 'type', 'paymentAddonId',
-			'membershipCategoryId', 'price_script', 'price_var',
+			'membershipCategoryId', 'magazineId', 'price_script', 'price_var',
 			'price_description')
 		.whereIn('year', years)
 		.orderBy('year', 'offerGroupId', 'id');
@@ -48,7 +48,7 @@ export async function afterQuery (arr, done) {
 
 				offerGroupOffers.push({
 					type: offer.type,
-					id: offer.paymentAddonId || offer.membershipCategoryId,
+					id: offer.paymentAddonId || offer.membershipCategoryId || offer.magazineId,
 					price: offer.price_script ? {
 						script: offer.price_script,
 						var: offer.price_var,

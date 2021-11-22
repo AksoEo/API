@@ -67,6 +67,168 @@ export const schema = {
 	}
 };
 
+export const codeholderDataSchema = {
+	oneOf: [
+		{
+			type: 'number',
+			format: 'uint32'
+		},
+		{
+			type: 'object',
+			properties: {
+				address: {
+					type: 'object',
+					properties: {
+						country: {
+							type: 'string',
+							pattern: '^[a-z]{2}$'
+						},
+						countryArea: {
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
+						},
+						city: {
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
+						},
+						cityArea: {
+							type: 'string',
+							pattern: '^[^\\n]{1,50}$',
+							nullable: true
+						},
+						streetAddress: {
+							type: 'string',
+							minLength: 1,
+							maxLength: 100,
+							nullable: true
+						},
+						postalCode: {
+							type: 'string',
+							pattern: '^[^\\n]{1,20}$',
+							nullable: true
+						},
+						sortingCode: {
+							type: 'string',
+							pattern: '^[^\\n]{1,20}$',
+							nullable: true
+						}
+					},
+					required: [ 'country' ],
+					additionalProperties: false
+				},
+				feeCountry: {
+					type: 'string',
+					pattern: '^[a-z]{2}$'
+				},
+				email: {
+					type: 'string',
+					format: 'email',
+					minLength: 3,
+					maxLength: 200
+				},
+				firstName: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				firstNameLegal: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$'
+				},
+				lastName: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				lastNameLegal: {
+					type: 'string',
+					pattern: '^[^\\n]{1,50}$',
+					nullable: true
+				},
+				honorific: {
+					type: 'string',
+					pattern: '^[^\\n]{2,15}$',
+					nullable: true
+				},
+				birthdate: {
+					type: 'string',
+					format: 'date',
+					validateFunction: val => !(moment(val).isAfter(moment()))
+				},
+				cellphone: {
+					type: 'string',
+					format: 'tel',
+					nullable: true
+				}
+			},
+			required: [
+				'address',
+				'feeCountry',
+				'email',
+				'firstNameLegal',
+				'birthdate'
+			],
+			additionalProperties: false
+		}
+	]
+};
+
+export const offersSchema = {
+	type: 'array',
+	minItems: 1,
+	maxItems: 127,
+	items: {
+		oneOf: [
+			{
+				properties: {
+					type: {
+						type: 'string',
+						enum: [ 'membership' ]
+					},
+					id: {
+						type: 'number',
+						format: 'uint32'
+					},
+					amount: {
+						type: 'number',
+						format: 'uint32'
+					}
+				},
+				required: [
+					'type', 'id', 'amount'
+				],
+			},
+			{
+				properties: {
+					type: {
+						type: 'string',
+						enum: [ 'magazine' ]
+					},
+					id: {
+						type: 'number',
+						format: 'uint32'
+					},
+					amount: {
+						type: 'number',
+						format: 'uint32'
+					}
+				},
+				required: [
+					'type', 'id', 'amount'
+				],
+			}
+		].map(x => {
+			return {
+				type: 'object',
+				additionalProperties: false,
+				...x
+			};
+		})
+	}
+};
+
 export async function afterQuery (arr, done) {
 	if (!arr.length) { return done(); }
 

@@ -41,7 +41,7 @@ export async function updateTriggeredRegistrationEntry () {
 				AKSO.log.error(`Registration entry trigger timer: Currency mismatch for ${processableRegistrationEntry.registrationEntryId.toString('hex')}`);
 				continue;
 				// TODO: This situation should definitely not be allowed to happen;
-				// however, I am not sure if it even can
+				// I am not sure if it even can, though
 			}
 			totalAlreadyProcessed = amountsAlreadyProcessed[0].amountProcessed;
 		}

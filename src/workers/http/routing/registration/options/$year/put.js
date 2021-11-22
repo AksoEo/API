@@ -5,6 +5,32 @@ import { createTransaction } from 'akso/util';
 
 import { schema as parSchema } from '../schema';
 
+const priceObjSchema = {
+	type: 'object',
+	nullable: true,
+	properties: {
+		script: {
+			type: 'object'
+		},
+		var: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 40
+		},
+		description: {
+			type: 'string',
+			minLength: 1,
+			maxLength: 500,
+			nullable: true
+		}
+	},
+	required: [
+		'script',
+		'var'
+	],
+	additionalProperties: false
+};
+
 const schema = {
 	...parSchema,
 	...{
@@ -79,31 +105,27 @@ const schema = {
 													type: 'number',
 													format: 'uint32'
 												},
-												price: {
-													type: 'object',
-													nullable: true,
-													properties: {
-														script: {
-															type: 'object'
-														},
-														var: {
-															type: 'string',
-															minLength: 1,
-															maxLength: 40
-														},
-														description: {
-															type: 'string',
-															minLength: 1,
-															maxLength: 500,
-															nullable: true
-														}
-													},
-													required: [
-														'script',
-														'var'
-													],
-													additionalProperties: false
-												}
+												price: priceObjSchema
+											},
+											required: [
+												'type',
+												'id'
+											],
+											additionalProperties: false
+										},
+										// magazine
+										{
+											type: 'object',
+											properties: {
+												type: {
+													type: 'string',
+													const: 'magazine'
+												},
+												id: {
+													type: 'number',
+													format: 'uint32'
+												},
+												price: priceObjSchema
 											},
 											required: [
 												'type',
@@ -183,15 +205,24 @@ export default {
 						return res.type('text/plain').status(400)
 							.send(`Unknown membership category ${offer.id}`);
 					}
+				} else if (offer.type === 'magazine') {
+					// Validate the id
+					const magazineExists = await AKSO.db('magazines')
+						.where('id', offer.id)
+						.first(1);
+					if (!magazineExists) {
+						return res.type('text/plain').status(400)
+							.send(`Unknown magazine ${offer.id}`);
+					}
+				}
 
-					if (offer.price) {
-						// Validate the price script
-						const analysis = analyze(offer.price.script, offer.price.var, priceFormVars);
-						if (!analysis.valid) {
-							const err = new Error(JSON.stringify(analysis));
-							err.statusCode = 400;
-							throw err;
-						}
+				if (offer.price) {
+					// Validate the price script
+					const analysis = analyze(offer.price.script, offer.price.var, priceFormVars);
+					if (!analysis.valid) {
+						const err = new Error(JSON.stringify(analysis));
+						err.statusCode = 400;
+						throw err;
 					}
 				}
 			}
@@ -251,6 +282,8 @@ export default {
 						offerData.paymentAddonId = offer.id;
 					} else if (offer.type === 'membership') {
 						offerData.membershipCategoryId = offer.id;
+					} else if (offer.type === 'magazine') {
+						offerData.magazineId = offer.id;
 					}
 
 					if (offer.price) {
