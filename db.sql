@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.26, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.27, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.26-0ubuntu0.20.04.3
+-- Server version	8.0.27-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2476,6 +2476,29 @@ CREATE TABLE `magazines_editions_toc_recitations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `magazines_subscriptions`
+--
+
+DROP TABLE IF EXISTS `magazines_subscriptions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `magazines_subscriptions` (
+  `id` binary(15) NOT NULL,
+  `magazineId` int unsigned NOT NULL,
+  `year` year DEFAULT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `createdTime` bigint unsigned NOT NULL,
+  `internalNotes` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `magazineId` (`magazineId`,`year`,`codeholderId`),
+  KEY `createdTime` (`createdTime`),
+  KEY `year` (`year`),
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `internalNotes` (`internalNotes`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `membershipCategories`
 --
 
@@ -3544,4 +3567,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-11  8:59:19
+-- Dump completed on 2021-11-22 12:07:59
