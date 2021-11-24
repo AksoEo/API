@@ -240,7 +240,7 @@ export async function afterQuery (arr, done) {
 			.whereIn('registrationEntryId', ids)
 			.orderBy('registrationEntryId', 'arrayId')
 			.select('registrationEntryId', 'type', 'amount',
-				AKSO.db.raw('COALESCE(`membershipCategoryId`) AS `id`'));
+				AKSO.db.raw('COALESCE(`membershipCategoryId`, `magazineId`) AS `id`'));
 
 		const offersById = {};
 		for (const offer of offers) {

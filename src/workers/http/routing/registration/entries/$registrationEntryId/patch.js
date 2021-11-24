@@ -5,7 +5,7 @@ import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { checkIssuesInPaidRegistrationEntry } from 'akso/lib/registration-entry-util';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
-import { offersSchema, codeholderDataSchema } from './schema';
+import { offersSchema, codeholderDataSchema } from '../schema';
 
 const schema = {
 	query: null,

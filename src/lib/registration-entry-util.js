@@ -167,7 +167,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 		// Give the offers
 		const offers = await AKSO.db('registration_entries_offers')
 			.where('registrationEntryId', registrationEntryId)
-			.select('type', 'membershipCategoryId');
+			.select('type', 'membershipCategoryId', 'magazineId');
 
 		const membershipInsert = [];
 		const magazineInsert = [];
