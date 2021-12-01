@@ -2033,7 +2033,7 @@ CREATE TABLE `delegations_applications_cities` (
   `id` int unsigned NOT NULL,
   `city` bigint unsigned NOT NULL,
   PRIMARY KEY (`id`,`city`),
-  CONSTRAINT `delegations_applications_cities_ibfk_1` FOREIGN KEY (`id`) REFERENCES `delegations_applications` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `delegations_applications_cities_ibfk_1` FOREIGN KEY (`id`) REFERENCES `delegations_applications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3572,4 +3572,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-24  9:39:38
+-- Dump completed on 2021-12-01  9:03:41
