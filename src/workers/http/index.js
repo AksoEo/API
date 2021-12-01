@@ -286,42 +286,43 @@ function setupMiddleware (req, res,  next) {
 	};
 
 	res.on('finish', async () => {
-		// Log the request
-		const rawUserAgent = req.headers['user-agent'] || null;
-		const userAgent = rawUserAgent ? useragent.lookup(rawUserAgent) : null;
-
-		const logData = {
-			time: moment().unix(),
-			codeholderId: req.user ? req.user.user || null : null,
-			apiKey: req.user ? req.user.app || null : null,
-			ip: Buffer.from(ipaddr.parse(req.ip).toByteArray()),
-			origin: req.get('origin') || req.get('host') || null,
-			userAgent: rawUserAgent,
-			userAgentParsed: userAgent ? userAgent.toString() : null,
-			method: req.method,
-			path: Url.parse(req.originalUrl).pathname,
-			query: JSON.stringify(req.originalQuery) || '{}',
-			resStatus: res.statusCode,
-			resTime: res.get('x-response-time').slice(0, -2),
-			resLocation: res.get('location') || null
-		};
-
-		// max length
-		if (logData.origin) { logData.origin = logData.origin.substring(0, 300); }
-		if (typeof logData.userAgent === 'string') {
-			logData.userAgent = logData.userAgent.substring(0, 500);
-		}
-		if (typeof logData.userAgentParsed === 'string') {
-			logData.userAgentParsed = logData.userAgentParsed.substring(0, 500);
-		}
-		logData.path = logData.path.substring(0, 300);
-		if (parseInt(logData.resTime, 10) >= 10**6) {
-			logData.resTime = '999999.999';
-		}
-
-		if (logData.method === 'OPTIONS') { return; }
-
 		try {
+			if (req.method === 'OPTIONS') { return; }
+
+			// Log the request
+			const rawUserAgent = req.headers['user-agent'] || null;
+			const userAgent = rawUserAgent ? useragent.lookup(rawUserAgent) : null;
+
+			const logData = {
+				time: moment().unix(),
+				codeholderId: req.user ? req.user.user || null : null,
+				apiKey: req.user ? req.user.app || null : null,
+				ip: Buffer.from(ipaddr.parse(req.ip).toByteArray()),
+				origin: req.get('origin') || req.get('host') || null,
+				userAgent: rawUserAgent,
+				userAgentParsed: userAgent ? userAgent.toString() : null,
+				method: req.method,
+				path: Url.parse(req.originalUrl).pathname,
+				query: JSON.stringify(req.originalQuery) || '{}',
+				resStatus: res.statusCode,
+				resTime: res.get('x-response-time').slice(0, -2),
+				resLocation: res.get('location') || null
+			};
+
+			// max length
+			if (logData.origin) { logData.origin = logData.origin.substring(0, 300); }
+			if (typeof logData.userAgent === 'string') {
+				logData.userAgent = logData.userAgent.substring(0, 500);
+			}
+			if (typeof logData.userAgentParsed === 'string') {
+				logData.userAgentParsed = logData.userAgentParsed.substring(0, 500);
+			}
+			logData.path = logData.path.substring(0, 300);
+			if (parseInt(logData.resTime, 10) >= 10**6) {
+				logData.resTime = '999999.999';
+			}
+
+
 			await AKSO.db('httpLog').insert(logData);
 		} catch (e) {
 			AKSO.log.error('An error occured while logging to httpLog');
