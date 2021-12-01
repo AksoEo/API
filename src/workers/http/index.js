@@ -308,8 +308,10 @@ function setupMiddleware (req, res,  next) {
 
 		// max length
 		if (logData.origin) { logData.origin = logData.origin.substring(0, 300); }
-		if (logData.userAgent) {
+		if (typeof logData.userAgent === 'string') {
 			logData.userAgent = logData.userAgent.substring(0, 500);
+		}
+		if (typeof logData.userAgentParsed === 'string') {
 			logData.userAgentParsed = logData.userAgentParsed.substring(0, 500);
 		}
 		logData.path = logData.path.substring(0, 300);
