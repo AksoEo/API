@@ -321,7 +321,12 @@ function setupMiddleware (req, res,  next) {
 
 		if (logData.method === 'OPTIONS') { return; }
 
-		await AKSO.db('httpLog').insert(logData);
+		try {
+			await AKSO.db('httpLog').insert(logData);
+		} catch (e) {
+			AKSO.log.error('An error occured while logging to httpLog');
+			AKSO.log.error(e);
+		}
 	});
 
 	next();
