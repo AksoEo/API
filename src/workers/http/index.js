@@ -297,7 +297,7 @@ function setupMiddleware (req, res,  next) {
 			ip: Buffer.from(ipaddr.parse(req.ip).toByteArray()),
 			origin: req.get('origin') || req.get('host') || null,
 			userAgent: rawUserAgent,
-			userAgentParsed: userAgent.toString(),
+			userAgentParsed: userAgent ? userAgent.toString() : null,
 			method: req.method,
 			path: Url.parse(req.originalUrl).pathname,
 			query: JSON.stringify(req.originalQuery) || '{}',
