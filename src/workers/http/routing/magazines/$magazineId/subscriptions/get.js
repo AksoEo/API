@@ -26,6 +26,7 @@ export default {
 		}
 
 		const query = AKSO.db('magazines_subscriptions')
+			.where('magazineId', req.params.magazineId)
 			.whereExists(function () {
 				this.select(1)
 					.from('magazines')

@@ -27,7 +27,10 @@ export default {
 		}
 
 		const query = AKSO.db('magazines_subscriptions')
-			.where('id', req.params.subscriptionId)
+			.where({
+				'magazines_subscriptions.id': req.params.subscriptionId,
+				'magazines_subscriptions.magazineId': req.params.magazineId
+			})
 			.whereExists(function () {
 				this.select(1)
 					.from('magazines')
