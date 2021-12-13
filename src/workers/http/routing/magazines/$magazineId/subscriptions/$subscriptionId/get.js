@@ -1,6 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
-import SimpleResource from 'akso/lib/resources/simple-resource';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import MagazineSubscriptionResource from 'akso/lib/resources/magazine-subscription-resource';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -46,7 +46,7 @@ export default {
 		QueryUtil.simpleResource(req, schema, query);
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new SimpleResource(row);
+		const obj = new MagazineSubscriptionResource(row);
 		res.sendObj(obj);
 	}
 };

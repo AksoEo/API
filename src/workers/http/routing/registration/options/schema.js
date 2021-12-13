@@ -26,7 +26,7 @@ export async function afterQuery (arr, done) {
 	const offers = await AKSO.db('registration_options_offerGroups_offers')
 		.select('year', 'offerGroupId', 'type', 'paymentAddonId',
 			'membershipCategoryId', 'magazineId', 'price_script', 'price_var',
-			'price_description')
+			'price_description', 'paperVersion')
 		.whereIn('year', years)
 		.orderBy('year', 'offerGroupId', 'id');
 
@@ -53,7 +53,8 @@ export async function afterQuery (arr, done) {
 						script: offer.price_script,
 						var: offer.price_var,
 						description: offer.price_description
-					} : undefined
+					} : undefined,
+					paperVersion: offer.type === 'magazine' ? !!offer.paperVersion : undefined,
 				});
 			}
 

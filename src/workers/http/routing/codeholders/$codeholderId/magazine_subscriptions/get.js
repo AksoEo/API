@@ -1,5 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import MagazineSubscriptionResource from 'akso/lib/resources/magazine-subscription-resource';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 import parSchema from './schema';
@@ -42,7 +43,8 @@ export default {
 			});
 
 		await QueryUtil.handleCollection({
-			req, res, schema, query
+			req, res, schema, query,
+			Res: MagazineSubscriptionResource
 		});
 	}
 };

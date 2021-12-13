@@ -1,5 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import MagazineSubscriptionResource from 'akso/lib/resources/magazine-subscription-resource';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -39,6 +40,9 @@ export default {
 					.whereRaw('view_codeholders.id = magazines_subscriptions.codeholderId');
 				memberFilter(codeholderSchema, this, req);
 			});
-		await QueryUtil.handleCollection({ req, res, schema, query });
+		await QueryUtil.handleCollection({
+			req, res, schema, query,
+			Res: MagazineSubscriptionResource
+		});
 	}
 };

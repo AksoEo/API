@@ -213,6 +213,9 @@ export const offersSchema = {
 					amount: {
 						type: 'number',
 						format: 'uint32'
+					},
+					paperVersion: {
+						type: 'boolean'
 					}
 				},
 				required: [
@@ -239,7 +242,7 @@ export async function afterQuery (arr, done) {
 		const offers = await AKSO.db('registration_entries_offers')
 			.whereIn('registrationEntryId', ids)
 			.orderBy('registrationEntryId', 'arrayId')
-			.select('registrationEntryId', 'type', 'amount',
+			.select('registrationEntryId', 'type', 'amount', 'paperVersion',
 				AKSO.db.raw('COALESCE(`membershipCategoryId`, `magazineId`) AS `id`'));
 
 		const offersById = {};
@@ -252,7 +255,8 @@ export async function afterQuery (arr, done) {
 			offersById[hex].push({
 				type: offer.type,
 				amount: offer.amount,
-				id: offer.id
+				id: offer.id,
+				paperVersion: offer.type === 'magazine' ? !!offer.paperVersion : undefined,
 			});
 		}
 

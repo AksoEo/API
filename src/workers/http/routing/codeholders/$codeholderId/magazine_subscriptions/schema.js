@@ -5,6 +5,7 @@ export default {
 		'year': 'f',
 		'magazineId': 'f',
 		'createdTime': 'f',
-		'internalNotes': 's'
+		'internalNotes': 's',
+		'paperVersion': 'f'
 	}
 };

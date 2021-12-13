@@ -2488,12 +2488,14 @@ CREATE TABLE `magazines_subscriptions` (
   `year` year DEFAULT NULL,
   `codeholderId` int unsigned NOT NULL,
   `createdTime` bigint unsigned NOT NULL,
+  `paperVersion` tinyint(1) NOT NULL DEFAULT '0',
   `internalNotes` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `magazineId` (`magazineId`,`year`,`codeholderId`),
   KEY `createdTime` (`createdTime`),
   KEY `year` (`year`),
   KEY `codeholderId` (`codeholderId`),
+  KEY `paperVersion` (`paperVersion`),
   FULLTEXT KEY `internalNotes` (`internalNotes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2988,9 +2990,11 @@ CREATE TABLE `registration_entries_offers` (
   `amount` int unsigned NOT NULL,
   `membershipCategoryId` int unsigned DEFAULT NULL,
   `magazineId` int unsigned DEFAULT NULL,
+  `paperVersion` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`registrationEntryId`,`arrayId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
   KEY `magazineId` (`magazineId`),
+  KEY `paperVersion` (`paperVersion`),
   CONSTRAINT `registration_entries_offers_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3069,10 +3073,12 @@ CREATE TABLE `registration_options_offerGroups_offers` (
   `price_script` json DEFAULT NULL,
   `price_var` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paperVersion` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`year`,`offerGroupId`,`id`),
   KEY `paymentAddonId` (`paymentAddonId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
   KEY `magazineId` (`magazineId`),
+  KEY `paperVersion` (`paperVersion`),
   CONSTRAINT `registration_options_offerGroups_offers_ibfk_1` FOREIGN KEY (`year`, `offerGroupId`) REFERENCES `registration_options_offerGroups` (`year`, `id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `registration_options_offerGroups_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `registration_options_offerGroups_offers_ibfk_3` FOREIGN KEY (`paymentAddonId`) REFERENCES `pay_addons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -3572,4 +3578,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-01  9:03:41
+-- Dump completed on 2021-12-13  8:23:43
