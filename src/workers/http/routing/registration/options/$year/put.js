@@ -105,10 +105,7 @@ const schema = {
 													type: 'number',
 													format: 'uint32'
 												},
-												price: priceObjSchema,
-												paperVersion: {
-													type: 'boolean'
-												}
+												price: priceObjSchema
 											},
 											required: [
 												'type',
@@ -128,7 +125,10 @@ const schema = {
 													type: 'number',
 													format: 'uint32'
 												},
-												price: priceObjSchema
+												price: priceObjSchema,
+												paperVersion: {
+													type: 'boolean'
+												}
 											},
 											required: [
 												'type',
@@ -285,9 +285,9 @@ export default {
 						offerData.paymentAddonId = offer.id;
 					} else if (offer.type === 'membership') {
 						offerData.membershipCategoryId = offer.id;
-						offerData.paperVersion = offer.paperVersion;
 					} else if (offer.type === 'magazine') {
 						offerData.magazineId = offer.id;
+						offerData.paperVersion = offer.paperVersion;
 					}
 
 					if (offer.price) {
