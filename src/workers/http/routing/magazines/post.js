@@ -1,6 +1,7 @@
 import path from 'path';
 
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import { subscribersSchema, setDefaultsSubscribers, verifySubscribers } from './schema';
 
 export default {
 	schema: {
@@ -28,7 +29,8 @@ export default {
 					type: 'string',
 					pattern: '^\\d{8}$',
 					nullable: true
-				}
+				},
+				subscribers: subscribersSchema
 			},
 			required: [
 				'org',
@@ -42,7 +44,19 @@ export default {
 		const orgPerm = 'magazines.create.' + req.body.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const id = (await AKSO.db('magazines').insert(req.body))[0];
+		const data = { ...req.body };
+		if ('subscribers' in data) {
+			setDefaultsSubscribers(data.subscribers);
+			verifySubscribers(data.subscribers);
+		} else {
+			data.subscribers = {
+				access: false,
+				paper: false,
+			};
+		}
+		data.subscribers = JSON.stringify(data.subscribers);
+
+		const id = (await AKSO.db('magazines').insert(data))[0];
 
 		res.set('Location', path.join(AKSO.conf.http.path, 'magazines', id.toString()));
 		res.set('X-Identifier', id.toString());

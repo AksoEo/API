@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import SimpleResource from 'akso/lib/resources/simple-resource';
 
-import parSchema from '../schema';
+import { schema as parSchema } from '../schema';
 
 const schema = {
 	...parSchema,

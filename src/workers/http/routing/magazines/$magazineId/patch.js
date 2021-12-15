@@ -1,3 +1,5 @@
+import { subscribersSchema, setDefaultsSubscribers, verifySubscribers } from '../schema';
+
 export default {
 	schema: {
 		query: null,
@@ -20,7 +22,8 @@ export default {
 					type: 'string',
 					pattern: '^\\d{8}$',
 					nullable: true
-				}
+				},
+				subscribers: subscribersSchema
 			},
 			minProperties: 1,
 			additionalProperties: false
@@ -36,9 +39,16 @@ export default {
 		const orgPerm = 'magazines.update.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
+		const data = { ...req.body };
+		if ('subscribers' in data) {
+			setDefaultsSubscribers(data.subscribers);
+			verifySubscribers(data.subscribers);
+		}
+		data.subscribers = JSON.stringify(data.subscribers);
+
 		await AKSO.db('magazines')
 			.where('id', req.params.magazineId)
-			.update(req.body);
+			.update(data);
 
 		res.sendStatus(204);
 	}
