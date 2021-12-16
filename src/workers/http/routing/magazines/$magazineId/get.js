@@ -1,5 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
-import SimpleResource from 'akso/lib/resources/simple-resource';
+import MagazineResource from 'akso/lib/resources/magazine-resource';
 
 import { schema as parSchema } from '../schema';
 
@@ -21,7 +21,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new SimpleResource(row);
+		const obj = new MagazineResource(row, req, parSchema);
 		res.sendObj(obj);
 	}
 };

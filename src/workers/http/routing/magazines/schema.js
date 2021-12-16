@@ -11,7 +11,15 @@ export const schema = {
 		'description': 's',
 		'issn': '',
 		'subscribers': '',
-	}
+		'subscriberFiltersCompiled': ''
+	},
+	fieldAliases: {
+		subscriberFiltersCompiled: () => AKSO.db.raw('1')
+	},
+	alwaysSelect: [
+		'id',
+		'subscribers'
+	]
 };
 
 const subscribersSubSchema = {
@@ -34,7 +42,8 @@ const subscribersSubSchema = {
 				},
 				membersIncludeLastYear: {
 					type: 'string',
-					pattern: '^(\\d\\d?y)?(\\d\\d?m)?(\\d\\d?d)?$',
+					pattern: '^P(\\d\\d?Y)?(\\d\\d?M)?(\\d\\d?D)?$',
+					minLength: 2,
 					nullable: true,
 				},
 				filter: {
@@ -42,7 +51,8 @@ const subscribersSubSchema = {
 				},
 				freelyAvailableAfter: {
 					type: 'string',
-					pattern: '^(\\d\\d?y)?(\\d\\d?m)?(\\d\\d?d)?$',
+					pattern: '^P(\\d\\d?Y)?(\\d\\d?M)?(\\d\\d?D)?$',
+					minLength: 2,
 					nullable: true,
 				}
 			},

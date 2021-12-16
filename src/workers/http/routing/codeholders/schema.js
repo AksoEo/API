@@ -9,6 +9,7 @@ import QueryUtil from 'akso/lib/query-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
 import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/applications/schema';
+import magazineSubscriptionsSchema from './$codeholderId/magazine_subscriptions/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -237,7 +238,8 @@ export const schema = {
 					})
 					.whereRaw('codeholders_delegations.codeholderId = view_codeholders.id');
 
-				const fields = Object.keys(delegationsSchema.fields);
+				const fields = Object.keys(delegationsSchema.fields)
+					.filter(x => delegationsSchema.fields[x].includes('f'));
 				fields.splice(fields.indexOf('codeholderId'), 1);
 
 				QueryUtil.filter({
@@ -261,7 +263,8 @@ export const schema = {
 					.leftJoin('delegations_applications_cities', 'delegations_applications.id', 'delegations_applications_cities.id')
 					.whereRaw('delegations_applications.codeholderId = view_codeholders.id');
 
-				const fields = Object.keys(delegationApplicationsSchema.fields);
+				const fields = Object.keys(delegationApplicationsSchema.fields)
+					.filter(x => delegationApplicationsSchema.fields[x].includes('f'));
 				fields.splice(fields.indexOf('codeholderId'), 1);
 
 				QueryUtil.filter({
@@ -269,6 +272,29 @@ export const schema = {
 					fieldAliases: delegationApplicationsSchema.fieldAliases,
 					customCompOps: delegationApplicationsSchema.customFilterCompOps,
 					customLogicOps: delegationApplicationsSchema.customFilterLogicOps,
+					query: this,
+					filter
+				});
+			});
+		},
+		$magazineSubscriptions: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('$magazineSubscriptions expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1).from('magazines_subscriptions')
+					.whereRaw('magazines_subscriptions.codeholderId = view_codeholders.id');
+
+				const fields = Object.keys(magazineSubscriptionsSchema.fields)
+					.filter(x => magazineSubscriptionsSchema.fields[x].includes('f'));
+
+				QueryUtil.filter({
+					fields,
+					fieldAliases: magazineSubscriptionsSchema.fieldAliases,
+					customCompOps: magazineSubscriptionsSchema.customFilterCompOps,
+					customLogicOps: magazineSubscriptionsSchema.customFilterLogicOps,
 					query: this,
 					filter
 				});
