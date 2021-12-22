@@ -47,7 +47,8 @@ const subscribersSubSchema = {
 					nullable: true,
 				},
 				filter: {
-					type: 'object'
+					type: 'object',
+					nullable: true
 				},
 				freelyAvailableAfter: {
 					type: 'string',

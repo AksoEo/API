@@ -13,7 +13,7 @@ class MagazineEditionResource extends SimpleResource {
 
 		if ('date' in obj) { obj.date = moment(obj.date).format('Y-MM-DD'); }
 
-		if (obj.subscriberFiltersCompiled) {
+		if (fields.includes('subscriberFiltersCompiled') && obj.subscribers !== null) {
 			const theYear = moment().year();
 
 			obj.subscriberFiltersCompiled = {};

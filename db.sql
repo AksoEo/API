@@ -2478,6 +2478,42 @@ CREATE TABLE `magazines_editions_toc_recitations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `magazines_paperAccessSnapshots`
+--
+
+DROP TABLE IF EXISTS `magazines_paperAccessSnapshots`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `magazines_paperAccessSnapshots` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `magazineId` int unsigned NOT NULL,
+  `editionId` int unsigned NOT NULL,
+  `time` bigint unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `magazineId` (`magazineId`,`editionId`),
+  CONSTRAINT `magazines_paperAccessSnapshots_ibfk_1` FOREIGN KEY (`magazineId`, `editionId`) REFERENCES `magazines_editions` (`magazineId`, `id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `magazines_paperAccessSnapshots_codeholders`
+--
+
+DROP TABLE IF EXISTS `magazines_paperAccessSnapshots_codeholders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `magazines_paperAccessSnapshots_codeholders` (
+  `snapshotId` bigint unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  PRIMARY KEY (`snapshotId`,`codeholderId`),
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `magazines_paperAccessSnapshots_codeholders_ibfk_1` FOREIGN KEY (`snapshotId`) REFERENCES `magazines_paperAccessSnapshots` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `magazines_paperAccessSnapshots_codeholders_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `magazines_subscriptions`
 --
 
@@ -3580,4 +3616,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-22 10:49:51
+-- Dump completed on 2021-12-22 13:19:36

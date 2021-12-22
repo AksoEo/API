@@ -9,7 +9,9 @@ class MagazineResource extends SimpleResource {
 	constructor (obj, req, schema) {
 		super(obj);
 
-		if (obj.subscriberFiltersCompiled) {
+		const fields = req.query.fields || schema.defaultFields;
+		
+		if (fields.includes('subscriberFiltersCompiled')) {
 			const theYear = moment().year();
 
 			obj.subscriberFiltersCompiled = {};
@@ -85,7 +87,6 @@ class MagazineResource extends SimpleResource {
 			}
 		}
 
-		const fields = req.query.fields || schema.defaultFields;
 		this.removeUnnecessary(fields);
 	}
 }
