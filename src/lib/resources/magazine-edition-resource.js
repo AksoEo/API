@@ -81,6 +81,7 @@ class MagazineEditionResource extends SimpleResource {
 					filter = filterArr[0];
 				} else {
 					filter = {
+						isDead: false,
 						$or: filterArr
 					};
 				}
