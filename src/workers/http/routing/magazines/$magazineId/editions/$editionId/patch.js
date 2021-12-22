@@ -1,3 +1,5 @@
+import { subscribersSchema, setDefaultsSubscribers, verifySubscribers } from '../../../schema';
+
 export default {
 	schema: {
 		query: null,
@@ -27,7 +29,8 @@ export default {
 				},
 				published: {
 					type: 'boolean'
-				}
+				},
+				subscribers: subscribersSchema
 			},
 			minProperties: 1,
 			additionalProperties: false
@@ -63,12 +66,19 @@ export default {
 			if (idExists) { return res.sendStatus(409); }
 		}
 
+		const data = { ...req.body };
+		if ('subscribers' in data) {
+			setDefaultsSubscribers(data.subscribers);
+			verifySubscribers(data.subscribers);
+		}
+		data.subscribers = JSON.stringify(data.subscribers);
+
 		await AKSO.db('magazines_editions')
 			.where({
 				id: req.params.editionId,
 				magazineId: req.params.magazineId
 			})
-			.update(req.body);
+			.update(data);
 
 		res.sendStatus(204);
 	}

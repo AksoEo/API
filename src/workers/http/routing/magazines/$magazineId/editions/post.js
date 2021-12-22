@@ -1,5 +1,7 @@
 import path from 'path';
 
+import { subscribersSchema, setDefaultsSubscribers, verifySubscribers } from '../../schema';
+
 export default {
 	schema: {
 		query: null,
@@ -25,7 +27,8 @@ export default {
 				},
 				published: {
 					type: 'boolean'
-				}
+				},
+				subscribers: subscribersSchema
 			},
 			required: [
 				'date'
@@ -43,12 +46,24 @@ export default {
 		const orgPerm = 'magazines.update.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const id = (await AKSO.db('magazines_editions').insert({
+		const data = {
 			...req.body,
 			...{
 				magazineId: req.params.magazineId
 			}
-		}))[0];
+		};
+		if ('subscribers' in data) {
+			setDefaultsSubscribers(data.subscribers);
+			verifySubscribers(data.subscribers);
+		} else {
+			data.subscribers = {
+				access: false,
+				paper: false,
+			};
+		}
+		data.subscribers = JSON.stringify(data.subscribers);
+
+		const id = (await AKSO.db('magazines_editions').insert(data))[0];
 
 		res.set('Location', path.join(
 			AKSO.conf.http.path,

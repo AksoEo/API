@@ -9,14 +9,18 @@ export const schema = {
 		'date': 'f',
 		'description': 's',
 		'published': 'f',
-		'hasThumbnail': ''
+		'hasThumbnail': '',
+		'subscribers': '',
+		'subscriberFiltersCompiled': '',
 	},
 	fieldAliases: {
-		hasThumbnail: () => AKSO.db.raw('1')
+		hasThumbnail: () => AKSO.db.raw('1'),
+		subscriberFiltersCompiled: () => AKSO.db.raw('1'),
 	},
 	alwaysSelect: [
 		'magazineId',
-		'id'
+		'id',
+		'subscribers',
 	]
 };
 
