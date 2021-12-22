@@ -14,7 +14,7 @@ export default {
 			.where('id', req.params.magazineId);
 		if (!magazine) { return res.sendStatus(404); }
 		
-		const orgPerm = 'magazines.update.' + magazine.org;
+		const orgPerm = 'magazines.delete.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
 		const deleted = await AKSO.db('magazines_editions')

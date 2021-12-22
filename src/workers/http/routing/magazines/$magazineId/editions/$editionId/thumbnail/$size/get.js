@@ -8,6 +8,14 @@ export default {
 	},
 
 	run: async function run (req, res) {
+		const magazine = await AKSO.db('magazines')
+			.first('org')
+			.where('id', req.params.magazineId);
+		if (!magazine) { return res.sendStatus(404); }
+		
+		const orgPerm = 'magazines.read.' + magazine.org;
+		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
+		
 		const picDir = path.join(
 			AKSO.conf.dataDir,
 			'magazine_edition_thumbnails',
