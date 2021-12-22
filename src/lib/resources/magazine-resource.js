@@ -32,7 +32,8 @@ class MagazineResource extends SimpleResource {
 							magazineId: obj.id,
 							year: includeLastYear
 								? { $in: [ theYear - 1, theYear ] }
-								: theYear
+								: theYear,
+							paperVersion: key === 'paper' ? true : undefined,
 						}
 					}
 				];
