@@ -2376,6 +2376,7 @@ CREATE TABLE `magazines` (
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `issn` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subscribers` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
   KEY `name` (`name`),
@@ -2398,6 +2399,7 @@ CREATE TABLE `magazines_editions` (
   `date` date NOT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `published` tinyint(1) NOT NULL DEFAULT '0',
+  `subscribers` json DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `date` (`date`),
   KEY `magazineId` (`magazineId`),
@@ -3578,4 +3580,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-13  8:23:43
+-- Dump completed on 2021-12-22 10:49:51
