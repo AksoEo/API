@@ -28,7 +28,10 @@ export default {
 				published: {
 					type: 'boolean'
 				},
-				subscribers: subscribersSchema
+				subscribers: {
+					...subscribersSchema,
+					nullable: true
+				}
 			},
 			required: [
 				'date'
@@ -56,10 +59,7 @@ export default {
 			setDefaultsSubscribers(data.subscribers);
 			verifySubscribers(data.subscribers);
 		} else {
-			data.subscribers = {
-				access: false,
-				paper: false,
-			};
+			data.subscribers = null;
 		}
 		data.subscribers = JSON.stringify(data.subscribers);
 

@@ -30,7 +30,10 @@ export default {
 				published: {
 					type: 'boolean'
 				},
-				subscribers: subscribersSchema
+				subscribers: {
+					...subscribersSchema,
+					nullable: true
+				}
 			},
 			minProperties: 1,
 			additionalProperties: false

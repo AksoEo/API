@@ -87,6 +87,7 @@ function assertValidCodeholderFilter (filter) {
 
 export function setDefaultsSubscribers (subscribers) {
 	if (typeof subscribers !== 'object') { return; }
+	if (subscribers === null) { return; }
 	if (!('access' in subscribers)) { subscribers.access = false; }
 	if (!('paper' in subscribers)) { subscribers.paper = false; }
 
@@ -103,6 +104,7 @@ export function setDefaultsSubscribers (subscribers) {
 }
 
 export function verifySubscribers (subscribers) {
+	if (subscribers === null) { return; }
 	for (const [key, settings] of Object.entries(subscribers)) {
 		if (typeof settings !== 'object') { continue; }
 
