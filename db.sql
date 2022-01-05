@@ -1435,7 +1435,7 @@ CREATE TABLE `codeholders_notifAccounts_telegram` (
   UNIQUE KEY `telegram_deepLink` (`telegram_deepLink`),
   UNIQUE KEY `telegram_chatId` (`telegram_chatId`),
   KEY `telegram_deepLink_time` (`telegram_deepLink_time`),
-  CONSTRAINT `codeholders_notifAccounts_telegram_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`)
+  CONSTRAINT `codeholders_notifAccounts_telegram_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3616,4 +3616,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-22 13:19:36
+-- Dump completed on 2022-01-05 14:36:13
