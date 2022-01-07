@@ -63,30 +63,43 @@ async function processLabelOrder (data) {
 		query: data.query,
 		body: data.body
 	};
+	const query = AKSO.db('view_codeholders')
+		.select([
+			'newCode',
+			'address_country',
+			'address_countryArea',
+			'address_city',
+			'address_cityArea',
+			'address_streetAddress',
+			'address_postalCode',
+			'address_sortingCode',
+			'honorific',
+			'firstNameLegal',
+			'lastNameLegal',
+			'fullName',
+			'fullNameLocal',
+			'careOf'
+		])
+		.whereNotNull('address_country');
+	memberFilter(schema, query, req); // safe for snapshot as only req.memberFilter is used
 
-	const query = AKSO.db('view_codeholders');
-	QueryUtil.simpleCollection(req, schema, query);
-	memberFilter(schema, query, req);
-	query.whereNotNull('address_country');
-	query.select([
-		'newCode',
-		'address_country',
-		'address_countryArea',
-		'address_city',
-		'address_cityArea',
-		'address_streetAddress',
-		'address_postalCode',
-		'address_sortingCode',
-		'honorific',
-		'firstNameLegal',
-		'lastNameLegal',
-		'fullName',
-		'fullNameLocal',
-		'careOf'
-	]);
+	if ('snapshot' in data.body) {
+		query.innerJoin('magazines_paperAccessSnapshots_codeholders', 'magazines_paperAccessSnapshots_codeholders.codeholderId', 'view_codeholders.id')
+			.where('snapshotId', data.body.snapshot);
+
+		if ('snapshotCompare' in data.body) {
+			query.whereNotExists(function () {
+				this.select(1)
+					.from(AKSO.db.raw('magazines_paperAccessSnapshots_codeholders c'))
+					.where('c.snapshotId', data.body.snapshotCompare)
+					.whereRaw('`c`.`codeholderId` = view_codeholders.id');
+			});
+		}
+	} else {
+		QueryUtil.simpleCollection(req, schema, query);
+	}
 
 	const labelsPerPage = req.body.cols * req.body.rows;
-
 	query.limit(labelsPerPage);
 
 	// Obtain the country names
@@ -128,7 +141,7 @@ async function processLabelOrder (data) {
 	let offset = 0;
 	getCodeholders:
 	do {
-		query.offset(offset); // TODO: If new codeholders appear this might cause issues, maybe offset by id instead?
+		query.offset(offset); // TODO: New codeholders could appear in the interrim. Thus we need something like this: https://dba.stackexchange.com/questions/46459/putting-a-select-statement-in-a-transaction
 		codeholders = await query;
 		if (!codeholders.length) { break; }
 		offset += codeholders.length;
@@ -221,6 +234,7 @@ async function processLabelOrder (data) {
 	await docReady;
 
 	const fileBuffer = await fs.readFile(tmpFile.path);
+	await fs.unlink(tmpFile.path);
 	const emailConf = {
 		attachments: [{
 			filename: 'Adresetikdoj.pdf',

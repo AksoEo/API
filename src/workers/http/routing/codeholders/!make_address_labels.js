@@ -5,6 +5,7 @@ import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
 import QueryUtil from 'akso/lib/query-util';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 import { schema as parSchema, memberFieldsManual } from './schema';
 
@@ -15,6 +16,14 @@ const schema = {
 		body: {
 			type: 'object',
 			properties: {
+				snapshot: {
+					type: 'integer',
+					format: 'uint64',
+				},
+				snapshotCompare: {
+					type: 'integer',
+					format: 'uint64',
+				},
 				email: {
 					type: 'string',
 					format: 'email'
@@ -123,6 +132,12 @@ export default {
 		if ('fields' in req.query) {
 			return res.status(400).type('text/plain').send('?fields is not allowed');
 		}
+		if ('snapshot' in req.body && Object.keys(req.query).length) {
+			return res.status(400).type('text/plain').send('The query line must be empty when snapshot is used');
+		}
+		if ('snapshotCompare' in req.body && !('snapshot' in req.body)) {
+			return res.status(400).type('text/plain').send('snapshotCompare may not be used without snapshot');
+		}
 
 		if (!req.body.email && (!req.user || !req.user.isUser())) {
 			return res.status(400).type('text/plain').send('email may only be left out when using user auth');
@@ -146,11 +161,47 @@ export default {
 		if (req.memberFields) { fieldWhitelist = Object.keys(req.memberFields); }
 
 		const query = AKSO.db('view_codeholders');
-		// This throwns an error if the query is in any way invalid
-		QueryUtil.simpleCollection(req, schema, query, fieldWhitelist);
-		query.toSQL();
 
-		const order = {
+		if ('snapshot' in req.body) {
+			// Check perms
+			const magazineOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+				.filter(org => req.hasPermission('magazines.snapshots.read.' + org));
+
+			// Ensure the snapshot exists
+			const snapshotExists = await AKSO.db('magazines_paperAccessSnapshots')
+				.first('magazineId', 'editionId')
+				.innerJoin('magazines', 'magazines.id', 'magazines_paperAccessSnapshots.magazineId')
+				.where('magazines_paperAccessSnapshots.id', req.body.snapshot)
+				.whereIn('magazines.org', magazineOrgs);
+
+			if (!snapshotExists) {
+				return res.status(400).type('text/plain').send('Unknown snapshot referenced');
+			}
+
+			if ('snapshotCompare' in req.body) {
+				// Ensure the comparison snapshot exists
+				const snapshotCompareExists = await AKSO.db('magazines_paperAccessSnapshots')
+					.first('magazines.id')
+					.innerJoin('magazines', 'magazines.id', 'magazines_paperAccessSnapshots.magazineId')
+					.where({
+						'magazines_paperAccessSnapshots.id': req.body.snapshotCompare,
+						'magazines.id': snapshotExists.magazineId,
+						'magazines_paperAccessSnapshots.editionId': snapshotExists.editionId,
+					})
+					.whereIn('magazines.org', magazineOrgs);
+
+				if (!snapshotCompareExists) {
+					return res.status(400).type('text/plain').send('Unknown snapshotCompare referenced');
+				}
+			}
+		} else {
+			// Apply the filter
+			QueryUtil.simpleCollection(req, schema, query, fieldWhitelist);
+			// This throwns an error if the query is in any way invalid
+			query.toSQL();
+		}
+
+		const labelInfo = {
 			memberFilter: req.memberFilter,
 			body: req.body,
 			query: req.query,
@@ -159,7 +210,7 @@ export default {
 
 		const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
 		const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
-		await fs.writeFile(tmpName, msgpack.encode(order, { codec: AKSO.msgpack }));
+		await fs.writeFile(tmpName, msgpack.encode(labelInfo, { codec: AKSO.msgpack }));
 		const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'label-' + moment().unix() });
 		await fs.move(tmpName, newName);
 
