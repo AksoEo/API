@@ -2344,6 +2344,25 @@ CREATE TABLE `httpLog` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `intermediaries`
+--
+
+DROP TABLE IF EXISTS `intermediaries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `intermediaries` (
+  `countryCode` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `paymentDescription` varchar(5000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`countryCode`),
+  KEY `codeholderId` (`codeholderId`),
+  FULLTEXT KEY `paymentDescription` (`paymentDescription`),
+  CONSTRAINT `intermediaries_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `intermediaries_ibfk_2` FOREIGN KEY (`countryCode`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `lists`
 --
 
@@ -3649,4 +3668,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-26 12:11:43
+-- Dump completed on 2022-01-28  9:56:02

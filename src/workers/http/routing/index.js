@@ -27,6 +27,7 @@ import { init as route$country_groups } from './country_groups';
 import { init as route$delegations } from './delegations';
 import { init as route$geodb } from './geodb';
 import { init as route$http_log } from './http_log';
+import { init as route$intermediaries } from './intermediaries';
 import { init as route$lists } from './lists';
 import { init as route$magazines } from './magazines';
 import { init as route$membership_categories } from './membership_categories';
@@ -71,6 +72,7 @@ export function init () {
 	router.use('/delegations', route$delegations());
 	router.use('/geodb', route$geodb());
 	router.use('/http_log', route$http_log());
+	router.use('/intermediaries', route$intermediaries());
 	router.use('/lists', route$lists());
 	router.use('/magazines', route$magazines());
 	router.use('/membership_categories', route$membership_categories());
