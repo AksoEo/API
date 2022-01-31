@@ -11,7 +11,7 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*');
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.cancel.' + paymentIntent.org)) { return res.sendStatus(403); }
 
 		if (![
 			'pending', 'submitted', 'disputed'

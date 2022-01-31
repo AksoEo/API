@@ -24,7 +24,7 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*', { totalAmount: schema.fieldAliases.totalAmount() });
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.mark_refunded.' + paymentIntent.org)) { return res.sendStatus(403); }
 
 		if (![
 			'pending', 'submitted', 'canceled', 'succeeded', 'refunded', 'disputed'

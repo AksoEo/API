@@ -9,7 +9,7 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*');
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.mark_succeeded.' + paymentIntent.org)) { return res.sendStatus(403); }
 
 		if (paymentIntent.paymentMethod.type !== 'manual' || paymentIntent.status !== 'submitted') {
 			return res.sendStatus(409);
