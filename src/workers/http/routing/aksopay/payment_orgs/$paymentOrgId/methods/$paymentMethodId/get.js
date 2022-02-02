@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 
-import parSchema from '../schema';
+import { schema as parSchema } from '../schema';
 
 const schema = {
 	...parSchema,

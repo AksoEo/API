@@ -117,11 +117,21 @@ export function bindMethod (router, path, method, bind) {
 
 	if (typeof bind.schema !== 'function') {
 		if (bind.schema && bind.schema.body) {
-			validateBody = ajv.compile(bind.schema.body);
+			try {
+				validateBody = ajv.compile(bind.schema.body);
+			} catch (e) {
+				const err = new Error(`Invalid body json schema in ${method} ${path}: ${e}`);
+				throw err;
+			}
 		}
 
 		if (bind.schema && bind.schema.query && typeof bind.schema.query === 'object' && !Array.isArray(bind.schema.query)) {
-			validateQuery = ajv.compile(bind.schema.query);
+			try {
+				validateQuery = ajv.compile(bind.schema.query);
+			} catch (e) {
+				const err = new Error(`Invalid query json schema in ${method} ${path}: ${e}`);
+				throw err;
+			}
 		}
 	}
 
@@ -187,11 +197,21 @@ export function bindMethod (router, path, method, bind) {
 
 				// When the schema is dynamically generated we also need to dynamically build the ajv validator
 				if (schema && schema.body) {
-					validateBody = ajv.compile(schema.body);
+					try {
+						validateBody = ajv.compile(schema.body);
+					} catch (e) {
+						const err = new Error(`Invalid body json schema in ${method} ${path}: ${e}`);
+						throw err;
+					}
 				}
 
 				if (schema && schema.query && typeof schema.query === 'object' && !Array.isArray(schema.query)) {
-					validateQuery = ajv.compile(schema.query);
+					try {
+						validateQuery = ajv.compile(schema.query);
+					} catch (e) {
+						const err = new Error(`Invalid query json schema in ${method} ${path}: ${e}`);
+						throw err;
+					}
 				}
 			}
 

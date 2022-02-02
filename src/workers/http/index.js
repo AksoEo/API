@@ -20,7 +20,7 @@ import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
 
 export function init () {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		(async () => {
 			const app = express();
 
@@ -247,7 +247,7 @@ export function init () {
 			app.listen(AKSO.conf.http.port, () => {
 				resolve();
 			});
-		})();
+		})().catch(reject);
 	});
 }
 

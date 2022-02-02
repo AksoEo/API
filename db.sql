@@ -2909,6 +2909,7 @@ CREATE TABLE `pay_methods` (
   `feeFixed_cur` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePublishableKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prices` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
@@ -3668,4 +3669,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-28  9:56:02
+-- Dump completed on 2022-02-02  9:54:03

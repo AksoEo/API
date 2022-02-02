@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars';
 import Ajv from 'ajv';
 import AjvMergePatch from 'ajv-merge-patch';
-import AjvKeywords from 'ajv-keywords';
+import AjvFormats from 'ajv-formats';
 import moment from 'moment-timezone';
 
 export function arrToObjByKey (arr, key, pick) {
@@ -133,18 +133,16 @@ export function escapeHTML(s) {
 }
 
 const ajv = new Ajv({
-	format: 'full',
 	useDefaults: true,
-	strictKeywords: true,
-	nullable: true
+	strictTypes: true,
+	discriminator: true,
+	logger: AKSO.log,
 });
+AjvFormats(ajv);
 AjvMergePatch(ajv);
-AjvKeywords(ajv, [
-	'formatMinimum',
-	'formatMaximum'
-]);
 
-ajv.addKeyword('isBinary', {
+ajv.addKeyword({
+	keyword: 'isBinary',
 	modifying: true,
 	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
 		if (!schema) { return true; }
@@ -160,19 +158,22 @@ ajv.addKeyword('isBinary', {
 		return false;
 	}
 });
-ajv.addKeyword('minBytes', {
+ajv.addKeyword({
+	keyword: 'minBytes',
 	validate: function (schema, data) {
 		const buf = Buffer.from(data);
 		return buf.length >= schema;
 	}
 });
-ajv.addKeyword('maxBytes', {
+ajv.addKeyword({
+	keyword: 'maxBytes',
 	validate: function (schema, data) {
 		const buf = Buffer.from(data);
 		return buf.length <= schema;
 	}
 });
-ajv.addKeyword('validateFunction', {
+ajv.addKeyword({
+	keyword: 'validateFunction',
 	validate: function (schema, data) {
 		return !!schema(data);
 	}
@@ -182,6 +183,14 @@ ajv.addFormat('year', {
 	type: 'number',
 	validate: function (val) {
 		return val >= 1901 && val <= 2155; // https://dev.mysql.com/doc/refman/5.7/en/year.html
+	}
+});
+ajv.addFormat('string-year', {
+	type: 'string',
+	validate: function (val) {
+		if (!/^\d{4}$/.test(val)) { return false; }
+		val = parseInt(val, 10);
+		return val >= 1901 && val <= 2155;
 	}
 });
 ajv.addFormat('short-time', {

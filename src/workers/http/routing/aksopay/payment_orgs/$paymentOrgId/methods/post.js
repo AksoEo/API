@@ -1,5 +1,7 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 
+import { pricesSchema, validatePrices } from './schema';
+
 import path from 'path';
 import Stripe from 'stripe';
 import { default as deepmerge } from 'deepmerge';
@@ -68,7 +70,9 @@ export default {
 	schema: {
 		query: null,
 		body: {
-			oneOf: [ 'manual', 'stripe' ].map(type => {
+			oneOf: [
+				'manual', 'stripe', 'intermediary'
+			].map(type => {
 				const props = deepmerge({}, allTypesProps);
 				props.type.const = type;
 
@@ -101,13 +105,16 @@ export default {
 						maxLength: 256
 					};
 					required.push('stripePublishableKey');
+				} else if (type === 'intermediary') {
+					props.prices = pricesSchema;
+					required.push('prices');
 				}
 
 				return {
 					type: 'object',
 					properties: props,
-					required: required,
-					additionalProperties: false
+					required,
+					additionalProperties: false,
 				};
 			})
 		}
@@ -127,16 +134,6 @@ export default {
 			paymentOrgId: req.params.paymentOrgId,
 			...req.body
 		};
-		if ('stripeMethods' in data) {
-			data.stripeMethods = data.stripeMethods.join(',');
-		}
-		data.currencies = data.currencies.join(',');
-
-		delete data.feeFixed;
-		if (req.body.feeFixed) {
-			data.feeFixed_val = req.body.feeFixed.val;
-			data.feeFixed_cur = req.body.feeFixed.cur;
-		}
 
 		if (data.type === 'stripe') {
 			// Verify Stripe keys
@@ -182,6 +179,21 @@ export default {
 						enabledEvents: AKSO.STRIPE_WEBHOOK_EVENTS.join(',')
 					});
 			}
+		} else if (data.type === 'intermediary') {
+			await validatePrices(data.prices);
+		}
+
+		if ('stripeMethods' in data) {
+			data.stripeMethods = data.stripeMethods.join(',');
+		}
+		if ('prices' in data) {
+			data.prices = JSON.stringify(data.prices);
+		}
+		data.currencies = data.currencies.join(',');
+		if (data.feeFixed) {
+			data.feeFixed_val = data.feeFixed.val;
+			data.feeFixed_cur = data.feeFixed.cur;
+			delete data.feeFixed;
 		}
 
 		const id = (await AKSO.db('pay_methods').insert(data))[0];
