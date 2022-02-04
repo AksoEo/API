@@ -105,6 +105,23 @@ export function wrap (fn, onErr) {
 	};
 }
 
+// Matches certain MySQL InnoDB boolean mode queries according to the API spec
+const querySearchWord = '[\\p{L}\\p{N}]';
+const querySearchToken = `((\\s*${querySearchWord}{3,}\\s*) | (\\s*${querySearchWord}{2,}\\*\\s*))`;
+const querySearchSubRegex =
+	`(
+		( "${querySearchToken}(\\s+${querySearchToken})*" ) |
+		( ${querySearchToken} )
+	)`;
+const querySearchRegex = XRegExp(
+	`^
+	( [+-]? ${querySearchSubRegex} )
+	( \\s+ [+-]? ${querySearchSubRegex} )*
+	$`,
+
+	'x'
+);
+
 /**
  * Binds a method to a router with built-in schema validation
  * @param  {express.Router} router The router to bind the endpoint to
@@ -134,32 +151,6 @@ export function bindMethod (router, path, method, bind) {
 			}
 		}
 	}
-
-	// Matches certain MySQL InnoDB boolean mode queries according to the API spec
-	const querySearchWord = '[\\p{L}\\p{N}]';
-	const querySearchRegex = XRegExp(
-		`^
-		( [+-]?
-			(
-				  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
-					 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
-
-				| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
-			)
-		)
-
-		( \\s+ [+-]?
-			(
-				  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
-					 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
-
-				| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
-			)
-		)*
-		$`,
-
-		'x'
-	);
 
 	router[method](path, async function validate (req, res, next) {
 		/**
