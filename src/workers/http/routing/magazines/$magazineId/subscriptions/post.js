@@ -42,10 +42,23 @@ export default {
 			.first('org');
 		if (!magazine) { return res.sendStatus(404); }
 
+		// Check perms
 		const orgPerm = 'magazines.subscriptions.create.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) {
 			return res.type('text/plain').status(403)
 				.send('Missing perm magazines.subscriptions.create.<org>');
+		}
+
+		// Make sure year, codeholderId does not already exist
+		const alreadyExists = await AKSO.db('magazines_subscriptions')
+			.first(1)
+			.where({
+				magazineId: req.params.magazineId,
+				year: req.body.year,
+				codeholderId: req.body.codeholderId,
+			});
+		if (alreadyExists) {
+			return res.sendStatus(409);
 		}
 
 		const id = await crypto.randomBytes(15);
