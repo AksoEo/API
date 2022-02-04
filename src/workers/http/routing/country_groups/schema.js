@@ -8,7 +8,18 @@ export const schema = {
 	fieldAliases: {
 		'countries': () => AKSO.db.raw('1')
 	},
-	alwaysSelect: [ 'code' ]
+	alwaysSelect: [ 'code' ],
+	customFilterCompOps: {
+		$hasAny: {
+			countries: (query, arr) => {
+				query.whereExists(function () {
+					this.select(1).from('countries_groups_members')
+						.whereRaw('countries_groups_members.group_code = countries_groups.code')
+						.whereIn('countries_groups_members.country_code', arr);
+				});
+			},
+		}
+	},
 };
 
 export async function afterQuery (arr, done, req) {
