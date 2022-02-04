@@ -47,7 +47,7 @@ const allTypesProps = {
 		type: 'number',
 		nullable: true,
 		exclusiveMinimum: 0,
-		exclusiveMaximum: 1
+		exclusiveMaximum: 1,
 	},
 	feeFixed: {
 		type: 'object',
@@ -62,6 +62,7 @@ const allTypesProps = {
 			}
 		},
 		required: [ 'val', 'cur' ],
+		nullable: true,
 		additionalProperties: false
 	}
 };

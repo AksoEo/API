@@ -62,6 +62,7 @@ export default {
 						}
 					},
 					required: [ 'val', 'cur' ],
+					nullable: true,
 					additionalProperties: false
 				},
 				stripeMethods: {
