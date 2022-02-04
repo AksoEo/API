@@ -22,6 +22,18 @@ export async function sendNotification ({
 	tgAttach = undefined,
 	view = {}
 } = {}) {
+	if (!codeholderIds.length) { return; }
+
+	// Ensure any dead people are moved from recipients
+	const deadCodeholders = await AKSO.db('view_codeholders')
+		.select('id')
+		.where('isDead', true)
+		.whereIn('id', codeholderIds);
+	for (const deadCodeholderId of deadCodeholders) {
+		codeholderIds.splice(codeholderIds.indexOf(deadCodeholderId), 1);
+	}
+	if (!codeholderIds.length) { return; }
+
 	const msgPrefs = new Map();
 	for (let id of codeholderIds) {
 		msgPrefs.set(parseInt(id, 10), [ 'email' ]); // Default to sending by email
