@@ -30,8 +30,8 @@ export default {
 
 		// Update the db
 		const oldData = await AKSO.db('codeholders')
-			.where('id', req.params.codeholderId)
-			.first('profilePictureHash');
+			.first('profilePictureHash')
+			.where('id', req.user.user);
 
 		await AKSO.db('codeholders')
 			.where('id', req.user.user)
