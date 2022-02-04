@@ -13,79 +13,83 @@ class MagazineEditionResource extends SimpleResource {
 
 		if ('date' in obj) { obj.date = moment(obj.date).format('Y-MM-DD'); }
 
-		if (fields.includes('subscriberFiltersCompiled') && obj.subscribers !== null) {
-			const theYear = moment().year();
+		if (fields.includes('subscriberFiltersCompiled')) {
+			if (obj.subscribers === null) {
+				obj.subscriberFiltersCompiled = null;
+			} else {
+				const theYear = moment().year();
 
-			obj.subscriberFiltersCompiled = {};
-			for (const [key, val] of Object.entries(obj.subscribers)) {
-				obj.subscriberFiltersCompiled[key] = val;
-				if (typeof val !== 'object') { continue; }
+				obj.subscriberFiltersCompiled = {};
+				for (const [key, val] of Object.entries(obj.subscribers)) {
+					obj.subscriberFiltersCompiled[key] = val;
+					if (typeof val !== 'object') { continue; }
 
-				let includeLastYear = false;
-				if (val.membersIncludeLastYear) {
-					// If the duration has not yet been exceeded, modify the below schema
-					const dur = moment.duration(val.membersIncludeLastYear);
-					const prevYear = moment().subtract(dur).year();
-					includeLastYear = prevYear < theYear;
-				}
+					let includeLastYear = false;
+					if (val.membersIncludeLastYear) {
+						// If the duration has not yet been exceeded, modify the below schema
+						const dur = moment.duration(val.membersIncludeLastYear);
+						const prevYear = moment().subtract(dur).year();
+						includeLastYear = prevYear < theYear;
+					}
 
-				let filterArr = [
-					// Subscribers
-					{
-						$magazineSubscriptions: {
-							magazineId: obj.magazineId,
-							year: includeLastYear
-								? { $in: [ theYear - 1, theYear ] }
-								: theYear,
-							paperVersion: key === 'paper' ? true : undefined,
+					let filterArr = [
+						// Subscribers
+						{
+							$magazineSubscriptions: {
+								magazineId: obj.magazineId,
+								year: includeLastYear
+									? { $in: [ theYear - 1, theYear ] }
+									: theYear,
+								paperVersion: key === 'paper' ? true : undefined,
+							}
+						}
+					];
+
+					if (val.members) { // true or object
+						const memberFilter = {
+							$membership: {
+								givesMembership: true,
+								$or: [
+									{
+										year: includeLastYear
+											? { $in: [ theYear - 1, theYear ] }
+											: theYear
+									},
+									{
+										lifetime: true,
+										year: { $lte: theYear }
+									}
+								]
+							}
+						};
+
+						if (typeof val.members === 'object') {
+							filterArr.push({
+								$and: [
+									memberFilter,
+									val.members
+								]
+							});
+						} else {
+							filterArr.push(memberFilter);
 						}
 					}
-				];
 
-				if (val.members) { // true or object
-					const memberFilter = {
-						$membership: {
-							givesMembership: true,
-							$or: [
-								{
-									year: includeLastYear
-										? { $in: [ theYear - 1, theYear ] }
-										: theYear
-								},
-								{
-									lifetime: true,
-									year: { $lte: theYear }
-								}
-							]
-						}
-					};
+					if (val.filter) {
+						filterArr.push(val.filter);
+					}
 
-					if (typeof val.members === 'object') {
-						filterArr.push({
-							$and: [
-								memberFilter,
-								val.members
-							]
-						});
+					let filter;
+					if (filterArr.length === 1) {
+						filter = filterArr[0];
 					} else {
-						filterArr.push(memberFilter);
+						filter = {
+							isDead: false,
+							$or: filterArr
+						};
 					}
+					obj.subscriberFiltersCompiled[key] = filter;
 				}
-
-				if (val.filter) {
-					filterArr.push(val.filter);
-				}
-
-				let filter;
-				if (filterArr.length === 1) {
-					filter = filterArr[0];
-				} else {
-					filter = {
-						isDead: false,
-						$or: filterArr
-					};
-				}
-				obj.subscriberFiltersCompiled[key] = filter;
 			}
 		}
 
