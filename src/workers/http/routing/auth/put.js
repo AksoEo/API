@@ -21,7 +21,7 @@ export default {
 							format: 'email'
 						},
 						{
-							pattern: '^[a-z]{4}([a-z]{2})?$'
+							pattern: '^[a-z]{4}([a-z\\-][a-z])?$'
 						}
 					]
 				},

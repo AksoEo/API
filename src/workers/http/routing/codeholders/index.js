@@ -35,7 +35,7 @@ export function init () {
 	});
 	router.use('/:codeholderIds', route$$codeholderIds());
 
-	const loginRegex = /^([^@]+@[^@]+|[a-z]{4}([a-z]{2})?)$/;
+	const loginRegex = /^([^@]+@[^@]+|[a-z]{4}([a-z\\-][a-z])?)$/;
 	router.param('login', (req, res, next, val) => {
 		if (loginRegex.test(val)) { next(); }
 		else { next('route'); }
