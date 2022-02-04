@@ -1,7 +1,6 @@
 import { analyze, union, NULL, NUMBER, BOOL, STRING, array as ascArray } from '@tejo/akso-script';
 
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
-import { createTransaction } from 'akso/util';
 
 import { schema as parSchema } from '../schema';
 
@@ -235,7 +234,7 @@ export default {
 		const alreadyExists = await AKSO.db('registration_options')
 			.where('year', req.params.year)
 			.first(1);
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		const registrationOptions = {
 			year: req.params.year,

@@ -4,7 +4,6 @@ import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
-import { createTransaction } from 'akso/util';
 
 import path from 'path';
 import crypto from 'pn/crypto';
@@ -288,7 +287,7 @@ export default {
 			stripeSecretKey: paymentMethodRaw.stripeSecretKey
 		};
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		await trx('pay_intents').insert(data);
 

@@ -1,5 +1,3 @@
-import { createTransaction } from 'akso/util';
-
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
@@ -31,8 +29,7 @@ export default {
 			return { codeholderId: req.params.codeholderId, permission: perm };
 		});
 
-		const trx = await createTransaction();
-
+		const trx = await req.createTransaction();
 		await trx('admin_permissions_codeholders')
 			.where('codeholderId', req.params.codeholderId)
 			.delete();
@@ -41,7 +38,6 @@ export default {
 			await trx('admin_permissions_codeholders')
 				.insert(data);
 		}
-
 		await trx.commit();
 
 		res.sendStatus(204);

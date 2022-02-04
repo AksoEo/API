@@ -93,8 +93,8 @@ export function renderTemplate (tmpl, view = {}, noEscape = false) {
  * Creates a knex transaction for use with async await
  * @return {knex.Transaction}
  */
-export function createTransaction() {
-	return new Promise((resolve, reject) => AKSO.db.transaction(resolve).catch(reject));
+export function createTransaction(db = AKSO.db) {
+	return new Promise((resolve, reject) => db.transaction(resolve).catch(reject));
 }
 
 /**

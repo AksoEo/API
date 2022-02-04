@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import deepEqual from 'deep-equal';
 
-import { createTransaction, insertAsReplace } from 'akso/util';
+import { insertAsReplace } from 'akso/util';
 
 import { schema as parSchema, memberFieldsManual, memberFieldMatches, patchSchema, exclusiveFields, validatePatchFields, handleHistory } from '../schema';
 
@@ -69,7 +69,7 @@ export default {
 		
 		let oldDataFields = Object.keys(validationData.updateData);
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 		// TODO: Why is this not using view_codeholders?
 		const oldData = await trx('codeholders')
 			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')

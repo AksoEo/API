@@ -1,5 +1,3 @@
-import { createTransaction } from 'akso/util';
-
 export default {
 	schema: {
 		query: null,
@@ -30,7 +28,7 @@ export default {
 			return { apiKey: req.params.apiKey, permission: perm };
 		});
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		await trx('admin_permissions_clients')
 			.where('apiKey', req.params.apiKey)

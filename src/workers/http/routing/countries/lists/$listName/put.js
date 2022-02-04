@@ -1,4 +1,3 @@
-import { createTransaction } from 'akso/util';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
@@ -81,7 +80,7 @@ export default {
 			});
 		});
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		await trx('countries_lists')
 			.insert({ name: req.params.listName })

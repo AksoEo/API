@@ -1,7 +1,6 @@
 import path from 'path';
 import moment from 'moment-timezone';
 
-import { createTransaction } from 'akso/util';
 import QueryUtil from 'akso/lib/query-util';
 import MagazineResource from 'akso/lib/resources/magazine-resource';
 import MagazineEditionResource from 'akso/lib/resources/magazine-edition-resource';
@@ -55,7 +54,7 @@ export default {
 			}
 		};
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		// Create the snapshot
 		const id = (await trx('magazines_paperAccessSnapshots').insert(data))[0];

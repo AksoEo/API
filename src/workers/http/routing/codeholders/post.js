@@ -3,7 +3,7 @@ import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import moment from 'moment-timezone';
 import { bannedCodes } from '@tejo/akso-client';
 
-import { createTransaction, rollbackTransaction } from 'akso/util';
+import { rollbackTransaction } from 'akso/util';
 import { schema as parSchema, memberFilter, memberFieldsManual } from './schema';
 
 const codeholderRequiredProps = [ 'newCode', 'codeholderType' ];
@@ -300,7 +300,7 @@ export default {
 		const findNewCodeholderQuery = AKSO.db('view_codeholders');
 		memberFilter(schema, findNewCodeholderQuery, req);
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 		const id = (await trx('codeholders')
 			.insert({
 				codeholderType: req.body.codeholderType,
@@ -407,6 +407,7 @@ export default {
 		}
 
 		await trx.commit();
+
 		res.set('Location', path.join(AKSO.conf.http.path, 'codeholders', id.toString()));
 		res.set('X-Identifier', id.toString());
 		res.sendStatus(201);

@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import fetch from 'node-fetch';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
-import { insertAsReplace, createTransaction } from 'akso/util';
+import { insertAsReplace } from 'akso/util';
 
 import parSchema from '../schema';
 
@@ -266,7 +266,7 @@ export default {
 			org: req.params.org
 		};
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		await insertAsReplace(
 			trx('codeholders_delegations')

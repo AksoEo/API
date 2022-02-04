@@ -5,7 +5,6 @@ import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import { base32 } from 'rfc4648';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
-import { createTransaction } from 'akso/util';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 
 import { offersSchema, codeholderDataSchema } from './schema';
@@ -150,7 +149,7 @@ export default {
 		}
 
 		// Start inserting
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		const registrationEntryId = await crypto.randomBytes(15);
 		const data = {

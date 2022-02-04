@@ -14,7 +14,7 @@ import ipaddr from 'ipaddr.js';
 import rateLimit from 'express-rate-limit';
 import useragent from 'useragent';
 
-import { replaceObject } from 'akso/util';
+import { replaceObject, createTransaction, rollbackTransaction } from 'akso/util';
 
 import { init as AKSORouting } from './routing';
 import AKSOHttpAuthentication from './http-authentication';
@@ -216,8 +216,14 @@ export function init () {
 				if (res.headersSent) { return; }
 				res.sendStatus(404);
 			});
-			app.use(function handleError500 (err, req, res, next) { // eslint-disable-line no-unused-vars
+			app.use(async function handleError500 (err, req, res, next) { // eslint-disable-line no-unused-vars
 				const status = err.status || err.statusCode || 500;
+
+				// Kill any incompleted transactions to ensure we release table locks
+				for (const trx of req.transactions) {
+					if (trx.isCompleted()) { continue; }
+					await rollbackTransaction(trx);
+				}
 
 				if (status >= 500) {
 					const url = Url.parse(req.originalUrl).pathname;
@@ -285,6 +291,22 @@ function setupMiddleware (req, res,  next) {
 		});
 	};
 
+	// Creates a transaction that can automatically roll back when the request is completed if it has not been committed
+	req.transactions = [];
+	req.createTransaction = async function createReqTransaction (rollbackOnResFinish = true, db = AKSO.db) {
+		const trx = await createTransaction(db);
+		req.transactions.push(trx); // if a 5xx occurs, this array is iterated over to roll back all locks
+		// This should only ever be false when the transaction is expected to finish after res.send
+		if (rollbackOnResFinish) {
+			res.on('finish', async () => {
+				if (trx.isCompleted()) { return; }
+				await rollbackTransaction(trx);
+			});
+		}
+		return trx;
+	};
+
+	// Log to http log
 	res.on('finish', async () => {
 		try {
 			if (req.method === 'OPTIONS') { return; }

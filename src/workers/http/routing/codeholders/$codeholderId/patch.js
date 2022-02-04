@@ -1,4 +1,4 @@
-import { createTransaction, rollbackTransaction, insertAsReplace } from 'akso/util';
+import { rollbackTransaction, insertAsReplace } from 'akso/util';
 import { modQuerySchema } from 'akso/workers/http/lib/codeholder-util';
 
 import { schema as parSchema, memberFilter, memberFieldsManual, patchSchema, exclusiveFields, validatePatchFields, handleHistory } from '../schema';
@@ -47,7 +47,7 @@ export default {
 		let oldData = null;
 		let oldAddress = null;
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 		// TODO: Why is this not using view_codeholders?
 		oldData = await trx('codeholders')
 			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')

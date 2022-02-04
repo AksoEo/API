@@ -1,4 +1,3 @@
-import { createTransaction } from 'akso/util';
 import AuthClient from 'akso/workers/http/lib/auth-client';
 
 import { handleHistory } from 'akso/workers/http/routing/codeholders/schema';
@@ -41,7 +40,7 @@ export default {
 				.send('The status of this change request is not pending and the status may thus not be changed');
 		}
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		await trx('codeholders_changeRequests')
 			.where('id', req.params.changeRequestId)

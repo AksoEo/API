@@ -1,6 +1,6 @@
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
-import { createTransaction, insertAsReplace } from 'akso/util';
+import { insertAsReplace } from 'akso/util';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import { checkIssuesInPaidRegistrationEntry } from 'akso/lib/registration-entry-util';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
@@ -169,7 +169,7 @@ export default {
 		}
 
 		// Start updating
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		const data = {
 			year: req.body.year,

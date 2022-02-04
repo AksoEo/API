@@ -2,8 +2,6 @@ import moment from 'moment-timezone';
 import fetch from 'node-fetch';
 import path from 'path';
 
-import { createTransaction } from 'akso/util';
-
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import parSchema from './schema';
@@ -194,7 +192,7 @@ export default {
 			}
 		}
 
-		const trx = await createTransaction();
+		const trx = await req.createTransaction();
 
 		const id = (await trx('delegations_applications')
 			.insert({
