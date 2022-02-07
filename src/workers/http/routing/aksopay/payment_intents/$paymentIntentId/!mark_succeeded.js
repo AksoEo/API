@@ -11,7 +11,7 @@ export default {
 		if (!paymentIntent) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_intents.mark_succeeded.' + paymentIntent.org)) { return res.sendStatus(403); }
 
-		if (paymentIntent.paymentMethod.type !== 'manual' || paymentIntent.status !== 'submitted') {
+		if (!['manual', 'intermediary'].includes(paymentIntent.paymentMethod.type) || paymentIntent.status !== 'submitted') {
 			return res.sendStatus(409);
 		}
 
