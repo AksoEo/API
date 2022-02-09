@@ -2,7 +2,7 @@ import { purposeSchema } from './schema';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
-import paymentMethodSchema from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
+import { schema as paymentMethodSchema } from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import path from 'path';
@@ -78,7 +78,26 @@ export default {
 					minItems: 1,
 					maxItems: 1024,
 					items: purposeSchema
-				}
+				},
+				intermediaryCountryCode: {
+					type: 'string',
+					pattern: '^[a-z]{2}$',
+				},
+				intermediaryIdentifier: {
+					type: 'object',
+					properties: {
+						year: {
+							type: 'number',
+							format: 'year',
+						},
+						number: {
+							type: 'integer',
+							format: 'uint16',
+						},
+					},
+					required: [ 'year', 'number' ],
+					additionalProperties: false,
+				},
 			},
 			required: [
 				'customer',
@@ -93,8 +112,11 @@ export default {
 
 	run: async function run (req, res) {
 		// Check perms
-		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+		const fullPermOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
 			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
+		const intermediaryOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+			.filter(org => req.hasPermission('pay.payment_intents.intermediary.' + org));
+		const orgs = fullPermOrgs.concat(intermediaryOrgs);
 		if (!orgs.length) { return res.sendStatus(403); }
 
 		// Get the PaymentMethod
@@ -107,10 +129,67 @@ export default {
 			.whereIn('org', orgs)
 			.first('pay_methods.*', 'org');
 		if (!paymentMethodRaw) {
-			return res.type('text/plain').status(400).send('PaymentMethod not found');
+			return res.type('text/plain').status(400)
+				.send('PaymentMethod not found');
 		}
+
 		const paymentMethod = new AKSOPayPaymentMethodResource({...paymentMethodRaw}, {
 			query: { fields: Object.keys(paymentMethodSchema.fields) }}).obj;
+
+		// Intermediary perms checks
+		if (paymentMethod.type !== 'intermediary') {
+			if (!fullPermOrgs.includes(paymentMethodRaw.org)) {
+				return res.type('text/plain').status(400)
+					.send('PaymentMethod not found');
+			}
+		} else {
+			const perm = `pay.payment_intents.intermediary.${paymentMethodRaw.org}.${req.body.intermediaryCountryCode}`;
+			if (!req.hasPermission(perm)) {
+				return res.type('text/plain').status(400)
+					.send('PaymentMethod not found');
+			}
+		}
+
+		// Intermediary only fields
+		if (paymentMethod.type === 'intermediary') {
+			if (!req.body.intermediaryCountryCode) {
+				return res.type('text/plain').status(400)
+					.send('Intermediary payment intents must have the property intermediaryCountryCode');
+			}
+			const countryExists = await AKSO.db('countries')
+				.first(1)
+				.where({
+					enabled: true,
+					code: req.body.intermediaryCountryCode,
+				});
+			if (!countryExists) {
+				return res.type('text/plain').status(400)
+					.send('Invalid or disabled intermediaryCountryCode');
+			}
+
+			if (!req.body.intermediaryIdentifier) {
+				return res.type('text/plain').status(400)
+					.send('Intermediary payment intents must have the property intermediaryIdentifier');
+			}
+			const identifierTaken = await AKSO.db('pay_intents')
+				.first(1)
+				.where({
+					org: paymentMethodRaw.org,
+					intermediaryCountryCode: req.body.intermediaryCountryCode,
+					intermediaryIdentifier_year: req.body.intermediaryIdentifier.year,
+					intermediaryIdentifier_number: req.body.intermediaryIdentifier.number,
+				});
+			if (identifierTaken) {
+				return res.type('text/plain').status(400)
+					.send('intermediaryIdentifier is taken');
+			}
+		} else {
+			if ('intermediaryCountryCode' in req.body ||
+				'intermediaryIdentifier' in req.body) {
+				return res.type('text/plain').status(400)
+					.send('Intermediary only fields used with a non-intermediary payment method');
+			}
+		}
 
 		// Make sure the codeholder exists
 		if (req.body.codeholderId !== null) {
@@ -278,13 +357,17 @@ export default {
 			currency: req.body.currency,
 			status: 'pending',
 			timeCreated: currentTime,
+			createdBy: req.user.modBy,
 			statusTime: currentTime,
 			internalNotes: req.body.internalNotes,
 			customerNotes: req.body.customerNotes,
 			foreignId: req.body.foreignId,
 			stripePaymentIntentId: stripePaymentIntentId,
 			stripeClientSecret: stripeClientSecret,
-			stripeSecretKey: paymentMethodRaw.stripeSecretKey
+			stripeSecretKey: paymentMethodRaw.stripeSecretKey,
+			intermediaryCountryCode: req.body.intermediaryCountryCode,
+			intermediaryIdentifier_year: req.body.intermediaryIdentifier.year,
+			intermediaryIdentifier_number: req.body.intermediaryIdentifier.number,
 		};
 
 		const trx = await req.createTransaction();

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.27, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.28, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.27-0ubuntu0.20.04.1
+-- Server version	8.0.28-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2713,6 +2713,7 @@ CREATE TABLE `pay_intents` (
   `currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint unsigned NOT NULL,
+  `createdBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `statusTime` bigint unsigned NOT NULL,
   `succeededTime` bigint unsigned DEFAULT NULL,
   `refundedTime` bigint unsigned DEFAULT NULL,
@@ -2723,6 +2724,9 @@ CREATE TABLE `pay_intents` (
   `stripeClientSecret` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amountRefunded` int unsigned NOT NULL DEFAULT '0',
+  `intermediaryCountryCode` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intermediaryIdentifier_year` year DEFAULT NULL,
+  `intermediaryIdentifier_number` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `stripePaymentIntentId` (`stripePaymentIntentId`),
   KEY `codeholderId` (`codeholderId`),
@@ -2739,13 +2743,18 @@ CREATE TABLE `pay_intents` (
   KEY `paymentOrgId` (`paymentOrgId`),
   KEY `succeededTime` (`succeededTime`),
   KEY `refundedTime` (`refundedTime`),
+  KEY `createdBy` (`createdBy`),
+  KEY `intermediaryCountryCode` (`intermediaryCountryCode`),
+  KEY `intermediaryIdentifier_year` (`intermediaryIdentifier_year`),
+  KEY `intermediaryIdentifier_number` (`intermediaryIdentifier_number`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   FULLTEXT KEY `customerNotes` (`customerNotes`),
   FULLTEXT KEY `customer_email_2` (`customer_email`),
   FULLTEXT KEY `customer_name_2` (`customer_name`),
   CONSTRAINT `pay_intents_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `pay_intents_ibfk_2` FOREIGN KEY (`paymentMethodId`) REFERENCES `pay_methods` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `pay_intents_ibfk_3` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `pay_intents_ibfk_3` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `pay_intents_ibfk_4` FOREIGN KEY (`intermediaryCountryCode`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3669,4 +3678,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-02  9:54:03
+-- Dump completed on 2022-02-09 11:26:48

@@ -16,17 +16,20 @@ export default {
 
 	run: async function run (req, res) {
 		// Obtain org
-		const orgData = await AKSO.db('pay_intents')
+		const paymentIntent = await AKSO.db('pay_intents')
 			.where('id', req.params.paymentIntentId)
-			.first('org');
-		if (!orgData) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.read.' + orgData.org)) {
-			return res.sendStatus(403);
+			.first('*');
+		if (!paymentIntent) { return res.sendStatus(404); }
+		if (!req.hasPermission('pay.payment_intents.read.' + paymentIntent.org)) {
+			if (paymentIntent.paymentMethod.type !== 'intermediary' ||
+			!req.hasPermission(`pay.payment_intents.intermediary.${paymentIntent.org}.${paymentIntent.intermediaryCountryCode}`)) {
+				return res.sendStatus(403);
+			}
 		}
 
 		const mayAccessSensitiveData = [];
-		if (req.hasPermission('pay.payment_intents.sensitive_data.' + orgData.org)) {
-			mayAccessSensitiveData.push(orgData.org);
+		if (req.hasPermission('pay.payment_intents.sensitive_data.' + paymentIntent.org)) {
+			mayAccessSensitiveData.push(paymentIntent.org);
 		}
 
 		const query = AKSO.db('pay_intents')

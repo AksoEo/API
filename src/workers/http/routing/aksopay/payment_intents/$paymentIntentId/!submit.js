@@ -9,7 +9,12 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*');
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.submit.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.submit.' + paymentIntent.org)) {
+			if (paymentIntent.paymentMethod.type !== 'intermediary' ||
+				!req.hasPermission(`pay.payment_intents.intermediary.${paymentIntent.org}.${paymentIntent.intermediaryCountryCode}`)) {
+				return res.sendStatus(403);
+			}
+		}
 
 		if (!['manual', 'intermediary'].includes(paymentIntent.paymentMethod.type) || paymentIntent.status !== 'pending') {
 			return res.sendStatus(409);

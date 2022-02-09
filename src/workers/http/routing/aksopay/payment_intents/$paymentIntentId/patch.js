@@ -62,7 +62,12 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*');
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.update.' + paymentIntent.org)) {
+			if (paymentIntent.paymentMethod.type !== 'intermediary' ||
+			!req.hasPermission(`pay.payment_intents.intermediary.${paymentIntent.org}.${paymentIntent.intermediaryCountryCode}`)) {
+				return res.sendStatus(403);
+			}
+		}
 
 		// Make sure the codeholder exists
 		if ('codeholderId' in req.body && req.body.codeholderId !== null) {

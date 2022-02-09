@@ -17,15 +17,33 @@ export default {
 
 	run: async function run (req, res) {
 		// Check perms
-		const orgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+		const fullPermOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
 			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
+		const intermediaryOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+			.filter(org => req.hasPermission('pay.payment_intents.intermediary.' + org));
+		const orgs = fullPermOrgs.concat(intermediaryOrgs);
 		if (!orgs.length) { return res.sendStatus(403); }
 
 		const mayAccessSensitiveData = AKSOOrganization.allLower.filter(x => x !== 'akso')
 			.filter(org => req.hasPermission('pay.payment_intents.sensitive_data.' + org));
 
+		const allCountries = await AKSO.db('countries')
+			.select('code')
+			.where('enabled', true)
+			.pluck('code');
+
 		const query = AKSO.db('pay_intents')
-			.whereIn('org', orgs);
+			.whereIn('org', fullPermOrgs)
+			.where(function () {
+				for (const org of intermediaryOrgs) {
+					const countries = allCountries
+						.filter(code => req.hasPermission(`pay.payment_intents.intermediary.${org}.${code}`));
+					this.orWhere(function () {
+						this.where('org', org)
+							.whereIn('intermediaryCountryCode', countries);
+					});
+				}
+			});
 		await QueryUtil.handleCollection({
 			req, res, schema, query,
 			Res: AKSOPayPaymentIntentResource,

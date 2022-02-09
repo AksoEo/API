@@ -18,6 +18,7 @@ export const schema = {
 		status: 'f',
 		events: '',
 		timeCreated: 'f',
+		createdBy: 'f',
 		statusTime: 'f',
 		succeededTime: 'f',
 		refundedTime: 'f',
@@ -28,7 +29,10 @@ export const schema = {
 		stripeClientSecret: '',
 		purposes: '',
 		totalAmount: 'f',
-		amountRefunded: 'f'
+		amountRefunded: 'f',
+		intermediaryCountryCode: 'f',
+		'intermediaryIdentifier.year': 'f',
+		'intermediaryIdentifier.number': 'f',
 	},
 	fieldAliases: {
 		'customer.email': 'customer_email',

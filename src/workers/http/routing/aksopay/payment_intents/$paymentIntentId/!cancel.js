@@ -11,7 +11,12 @@ export default {
 			.where('id', req.params.paymentIntentId)
 			.first('*');
 		if (!paymentIntent) { return res.sendStatus(404); }
-		if (!req.hasPermission('pay.payment_intents.cancel.' + paymentIntent.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('pay.payment_intents.cancel.' + paymentIntent.org)) {
+			if (paymentIntent.paymentMethod.type !== 'intermediary' ||
+				!req.hasPermission(`pay.payment_intents.intermediary.${paymentIntent.org}.${paymentIntent.intermediaryCountryCode}`)) {
+				return res.sendStatus(403);
+			}
+		}
 
 		if (![
 			'pending', 'submitted', 'disputed'
