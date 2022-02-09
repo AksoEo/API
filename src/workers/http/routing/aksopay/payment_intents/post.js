@@ -166,6 +166,11 @@ export default {
 				return res.type('text/plain').status(400)
 					.send('Invalid or disabled intermediaryCountryCode');
 			}
+			const perm = `pay.payment_intents.intermediary.${paymentMethod.org}.${req.body.intermediaryCountryCode}`;
+			if (!req.hasPermission(perm)) {
+				return res.type('text/plain').status(403)
+					.send(`Missing permission ${perm}`);
+			}
 
 			if (!req.body.intermediaryIdentifier) {
 				return res.type('text/plain').status(400)
