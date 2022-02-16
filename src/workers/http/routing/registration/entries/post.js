@@ -53,7 +53,6 @@ const schema = {
 		additionalProperties: false
 	},
 	requirePerms: [
-		'registration.entries.create',
 		'codeholders.read',
 	]
 };
@@ -62,6 +61,22 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
+		// Check perms
+		let access = true;
+		if (!req.hasPermission('registration.entries.create')) {
+			const allCountries = await AKSO.db('countries')
+				.select('code')
+				.where('enabled', true)
+				.pluck('code');
+
+			access = allCountries
+				.filter(x => req.hasPermission('registration.entries.intermediary.' + x));
+
+			if (!access.length) {
+				return res.sendStatus(403);
+			}
+		}
+
 		// Make sure registration is enabled for the given year
 		const registrationOptions = await AKSO.db('registration_options')
 			.first('paymentOrgId')
@@ -169,6 +184,14 @@ export default {
 				return res.type('text/plain').status(400)
 					.send(`Unknown intermediary country ${req.body.intermediary}`);
 			}
+			if (access !== true && !access.includes(req.body.intermediary)) {
+				return res.type('text/plain').status(400)
+					.send(`Illegal country ${req.body.intermediary} used in field intermediary`);
+			}
+		}
+		if (access !== true && !req.body.intermediary) {
+			return res.type('text/plain').status(400)
+				.send('intermediary cannot be null when the perm registration.entries.create is not granted');
 		}
 
 		// Start inserting

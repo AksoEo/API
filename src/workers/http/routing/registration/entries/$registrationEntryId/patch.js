@@ -45,7 +45,6 @@ const schema = {
 		additionalProperties: false
 	},
 	requirePerms: [
-		'registration.entries.update',
 		'codeholders.read',
 	],
 };
@@ -57,9 +56,25 @@ export default {
 		// Make sure the registration entry exists
 		const registrationEntry = await AKSO.db('registration_entries')
 			.where('id', req.params.registrationEntryId)
-			.first('status');
+			.first('status', 'intermediary');
 		if (!registrationEntry) {
 			return res.sendStatus(404);
+		}
+
+		// Check perms
+		let access = true;
+		if (!req.hasPermission('registration.entries.update')) {
+			const allCountries = await AKSO.db('countries')
+				.select('code')
+				.where('enabled', true)
+				.pluck('code');
+
+			access = allCountries
+				.filter(x => req.hasPermission('registration.entries.intermediary.' + x));
+
+			if (!access.includes(registrationEntry.intermediary)) {
+				return res.sendStatus(403);
+			}
 		}
 
 		if (registrationEntry.status !== 'submitted') {
@@ -189,6 +204,14 @@ export default {
 				return res.type('text/plain').status(400)
 					.send(`Unknown intermediary country ${req.body.intermediary}`);
 			}
+			if (access !== true && !access.includes(req.body.intermediary)) {
+				return res.type('text/plain').status(400)
+					.send(`Illegal country ${req.body.intermediary} used in field intermediary`);
+			}
+		}
+		if (access !== true && !req.body.intermediary) {
+			return res.type('text/plain').status(400)
+				.send('intermediary cannot be null when the perm registration.entries.create is not granted');
 		}
 
 		// Start updating

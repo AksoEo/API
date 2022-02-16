@@ -9,7 +9,6 @@ const schema = {
 		query: 'resource',
 		body: null,
 		requirePerms: [
-			'registration.entries.read',
 			'codeholders.read',
 		],
 	}
@@ -22,6 +21,25 @@ export default {
 		const query = AKSO.db('registration_entries')
 			.where('id', req.params.registrationEntryId);
 		QueryUtil.simpleResource(req, schema, query);
+
+		// Check perms
+		let access = true;
+		if (!req.hasPermission('registration.entries.read')) {
+			const allCountries = await AKSO.db('countries')
+				.select('code')
+				.where('enabled', true)
+				.pluck('code');
+
+			access = allCountries
+				.filter(x => req.hasPermission('registration.entries.intermediary.' + x));
+
+			if (!access.length) {
+				return res.sendStatus(403);
+			}
+		}
+		if (Array.isArray(access)) {
+			query.whereIn('intermediary', access);
+		}
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
