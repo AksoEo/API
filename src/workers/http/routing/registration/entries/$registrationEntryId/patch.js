@@ -19,6 +19,12 @@ const schema = {
 					return val >= (new Date()).getFullYear();
 				}
 			},
+			intermediary: {
+				type: 'string',
+				minLength: 2,
+				maxLength: 2,
+				nullable: true,
+			},
 			fishyIsOkay: {
 				type: 'boolean'
 			},
@@ -171,6 +177,20 @@ export default {
 			}
 		}
 
+		// Make sure the intermediary country code is valid
+		if (req.body.intermediary) {
+			const countryExists = await AKSO.db('countries')
+				.first(1)
+				.where({
+					code: req.body.intermediary,
+					enabled: true,
+				});
+			if (!countryExists) {
+				return res.type('text/plain').status(400)
+					.send(`Unknown intermediary country ${req.body.intermediary}`);
+			}
+		}
+
 		// Start updating
 		const trx = await req.createTransaction();
 
@@ -178,7 +198,8 @@ export default {
 			year: req.body.year,
 			fishyIsOkay: req.body.fishyIsOkay,
 			internalNotes: req.body.internalNotes,
-			currency: req.body.currency
+			currency: req.body.currency,
+			intermediary: req.body.intermediary,
 		};
 		const dataValueCount = Object.values(data)
 			.filter(val => val !== undefined)

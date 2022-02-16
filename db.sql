@@ -3001,6 +3001,7 @@ DROP TABLE IF EXISTS `registration_entries`;
 CREATE TABLE `registration_entries` (
   `id` binary(15) NOT NULL,
   `year` year DEFAULT NULL,
+  `intermediary` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'submitted',
   `pendingIssue_what` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pendingIssue_where` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3017,9 +3018,11 @@ CREATE TABLE `registration_entries` (
   KEY `timeSubmitted` (`timeSubmitted`),
   KEY `timeStatus` (`timeStatus`),
   KEY `currency` (`currency`),
+  KEY `intermediary` (`intermediary`),
   FULLTEXT KEY `internalNotes` (`internalNotes`),
   CONSTRAINT `registration_entries_ibfk_1` FOREIGN KEY (`newCodeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_ibfk_2` FOREIGN KEY (`year`) REFERENCES `registration_options` (`year`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_ibfk_2` FOREIGN KEY (`year`) REFERENCES `registration_options` (`year`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_ibfk_3` FOREIGN KEY (`intermediary`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3678,4 +3681,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-09 11:26:48
+-- Dump completed on 2022-02-16  9:54:16

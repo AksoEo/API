@@ -5,6 +5,7 @@ export const schema = {
 	fields: {
 		id: 'f',
 		year: 'f',
+		intermediary: 'f',
 		status: 'f',
 		'pendingIssue.what': '',
 		'pendingIssue.where': '',
