@@ -1,6 +1,9 @@
 export default {
 	schema: {
-		requirePerms: 'registration.entries.delete'
+		requirePerms: [
+			'registration.entries.delete',
+			'codeholders.read',
+		],
 	},
 
 	run: async function run (req, res) {

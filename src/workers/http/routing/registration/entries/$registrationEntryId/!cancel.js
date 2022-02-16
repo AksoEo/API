@@ -2,7 +2,10 @@ import moment from 'moment-timezone';
 
 export default {
 	schema: {
-		requirePerms: 'registration.entries.update'
+		requirePerms: [
+			'registration.entries.update',
+			'codeholders.read',
+		],
 	},
 
 	run: async function run (req, res) {

@@ -38,7 +38,10 @@ const schema = {
 		minProperties: 1,
 		additionalProperties: false
 	},
-	requirePerms: 'registration.entries.update'
+	requirePerms: [
+		'registration.entries.update',
+		'codeholders.read',
+	],
 };
 
 export default {

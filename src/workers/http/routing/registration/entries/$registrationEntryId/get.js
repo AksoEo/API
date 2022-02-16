@@ -8,7 +8,10 @@ const schema = {
 	...{
 		query: 'resource',
 		body: null,
-		requirePerms: 'registration.entries.read'
+		requirePerms: [
+			'registration.entries.read',
+			'codeholders.read',
+		],
 	}
 };
 

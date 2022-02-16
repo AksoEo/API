@@ -46,7 +46,10 @@ const schema = {
 		],
 		additionalProperties: false
 	},
-	requirePerms: 'registration.entries.create'
+	requirePerms: [
+		'registration.entries.create',
+		'codeholders.read',
+	]
 };
 
 export default {
