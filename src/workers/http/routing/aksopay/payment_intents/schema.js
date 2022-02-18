@@ -35,6 +35,8 @@ export const schema = {
 		'intermediaryIdentifier.number': 'f',
 	},
 	fieldAliases: {
+		'intermediaryIdentifier.year': 'intermediaryIdentifier_year',
+		'intermediaryIdentifier.number': 'intermediaryIdentifier_number',
 		'customer.email': 'customer_email',
 		'customer.name': 'customer_name',
 		purposes: () => AKSO.db.raw('1'),

@@ -234,7 +234,8 @@ export function init () {
 							`${err.originalStack}\n\n${err.stack}`
 						);
 					} else {
-						AKSO.log.error(`An error occured at ${req.method} ${url}\n${err.stack}`);
+						const error = err.stack ? err.stack : err;
+						AKSO.log.error(`An error occured at ${req.method} ${url}\n${error}`);
 					}
 				}
 

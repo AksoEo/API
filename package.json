@@ -69,6 +69,7 @@
     "passport-local": "^1.0.0",
     "passport-totp": "0.0.2",
     "pdfkit": "^0.9.1",
+    "pdfmake": "^0.2.4",
     "pn": "^1.1.0",
     "promise-any": "^0.2.0",
     "response-time": "^2.3.2",

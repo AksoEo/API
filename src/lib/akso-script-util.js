@@ -1,4 +1,4 @@
-import { evaluate as nativeEvaluate, stdlibExt } from '@tejo/akso-script';
+import { evaluate as nativeEvaluate, stdlibExt, stdlib } from '@tejo/akso-script';
 import '@tejo/akso-script/phone_fmt';
 
 let countriesList = null;
@@ -32,4 +32,8 @@ export async function evaluate (...args) {
 
 export function evaluateSync (...args) {
 	return nativeEvaluate(...args);
+}
+
+export function formatCurrency (amt, currency) {
+	return stdlib.currency_fmt.apply(null, [ currency || '?', amt ]);
 }

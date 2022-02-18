@@ -12,6 +12,7 @@ import moment from 'moment-timezone';
 export async function updateStatuses (ids, status, time = moment().unix(), updateData = {}) {
 	if (!updateData.status) {
 		updateData.status = status;
+		updateData.statusTime = time;
 	}
 
 	if (status === 'succeeded') {
