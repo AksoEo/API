@@ -74,7 +74,9 @@ export default {
 		// SUMMARY
 		const incomeEntries = [];
 		const expenseEntries = [];
+		let totalAmount = 0;
 		for (const purpose of paymentIntent.purposes) {
+			totalAmount += purpose.amount;
 			if (purpose.type === 'manual') {
 				if (purpose.amount >= 0) {
 					incomeEntries.push(purpose);
@@ -83,25 +85,97 @@ export default {
 				}
 			}
 		}
+		const otherIncomeSum = incomeEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
+		const otherExpensesSum = expenseEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const summaryTableBody = [
 			// TODO: Registration entries
+			// TODO: Addons
 			[{
-				layout: 'noBorders',
 				table: {
+					widths: [ '*', '*' ],
+					headerRows: 1,
 					body: [
-						[ 'Aliaj enspezoj (sen depreno):' ],
-						[{
-							text: [
-								'SUMO de la ',
-								{ text: 'EN', bold: true },
-								'SPEZOJ: ',
-								formatCurrency(incomeEntries.reduce((a, b) => a.amount + b.amount, { amount: 0 }), paymentIntent.currency),
-							],
-							alignment: 'right',
-						}],
-					]
+						[ { text: 'Aliaj enspezoj (sen depreno):', bold: true, colSpan: 2 }, null ],
+						...incomeEntries.map(purpose => {
+							return [
+								{
+									text: purpose.title,
+								},
+								{
+									text: formatCurrency(purpose.amount, paymentIntent.currency),
+									alignment: 'right',
+								},
+							];
+						}),
+					],
+				},
+				layout: {
+					defaultBorder: false,
+				},
+				colSpan: 2,
+			}, null],
+			[{
+				text: [
+					'SUME aliaj ',
+					{ text: 'EN', bold: true },
+					'SPEZOJ: ',
+					{
+						text: formatCurrency(otherIncomeSum, paymentIntent.currency),
+						decoration: 'underline',
+					},
+				],
+				alignment: 'right',
+				colSpan: 2,
+			}, null],
+			[{
+				table: {
+					widths: [ '*', '*' ],
+					headerRows: 1,
+					body: [
+						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro:', bold: true, colSpan: 2 }, null ],
+						...expenseEntries.map(purpose => {
+							return [
+								{
+									text: purpose.title,
+								},
+								{
+									text: formatCurrency(purpose.amount, paymentIntent.currency),
+									alignment: 'right',
+								},
+							];
+						}),
+					],
+				},
+				layout: {
+					defaultBorder: false,
+				},
+				colSpan: 2,
+			}, null],
+			[{
+				text: [
+					'SUMO de la ',
+					{ text: 'EL', bold: true },
+					'SPEZOJ: ',
+					{
+						text: formatCurrency(otherExpensesSum, paymentIntent.currency),
+						decoration: 'underline',
+					},
+				],
+				alignment: 'right',
+				colSpan: 2,
+			}, null],
+			[
+				{
+					text: 'NETA SUMO de la Spezfolio: ',
+					bold: true,
+				},
+				{
+					text: formatCurrency(totalAmount, paymentIntent.currency),
+					decoration: 'underline',
+					decorationStyle: 'double',
+					alignment: 'right',
 				}
-			}],
+			],
 		];
 
 		const docDefinition = {
@@ -179,7 +253,7 @@ export default {
 					layout: 'noBorders',
 					table: {
 						body: summaryTableBody,
-						widths: [ '*' ],
+						widths: [ '*', 'auto' ],
 					},
 				},
 			],
