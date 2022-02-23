@@ -239,6 +239,7 @@ const triggerPurposeSchema = TRIGGER_TYPES.map(triggerName => {
 			minBytes: 15,
 			maxBytes: 15
 		};
+		purpose.required.push('registrationEntryId');
 	}
 
 	return purpose;
