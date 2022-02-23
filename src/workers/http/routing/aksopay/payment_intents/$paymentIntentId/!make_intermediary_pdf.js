@@ -4,7 +4,13 @@ import moment from 'moment-timezone';
 
 import AKSOPayPaymentIntentResource from 'akso/lib/resources/aksopay-payment-intent-resource';
 import { schema, afterQuery } from '../schema';
-import { formatCurrency } from 'akso/lib/akso-script-util';
+import { formatCurrency as _formatCurrency } from 'akso/lib/akso-script-util';
+
+function formatCurrency (...args) {
+	return _formatCurrency(...args)
+		// Replace characters unsupported by Arial
+		.replace(/\u202F/g, ' '); // NARROW NO-BREAK SPACE
+}
 
 const printer = new PdfPrinter({
 	Arial: {
@@ -74,6 +80,7 @@ export default {
 		// SUMMARY
 		const incomeEntries = [];
 		const expenseEntries = [];
+		const donationEntries = [];
 		let totalAmount = 0;
 		for (const purpose of paymentIntent.purposes) {
 			totalAmount += purpose.amount;
@@ -83,8 +90,84 @@ export default {
 				} else {
 					expenseEntries.push(purpose);
 				}
+			} else if (purpose.type === 'addon') {
+				donationEntries.push(purpose);
 			}
 		}
+
+		let expenseRows = expenseEntries.map(purpose => {
+			return [
+				{
+					text: purpose.title,
+					margin: [ 15, 0, 0, 0 ],
+				},
+				{
+					text: formatCurrency(purpose.amount, paymentIntent.currency),
+					alignment: 'right',
+				},
+			];
+		});
+		if (!expenseRows.length) {
+			expenseRows = [
+				[
+					{
+						text: 'Neniuj elspezoj',
+						italics: true,
+						colSpan: 2,
+					},
+					null
+				]
+			];
+		}
+
+		let incomeRows = incomeEntries.map(purpose => {
+			return [
+				{
+					text: purpose.title,
+					margin: [ 15, 0, 0, 0 ],
+				},
+				{
+					text: formatCurrency(purpose.amount, paymentIntent.currency),
+					alignment: 'right',
+				},
+			];
+		});
+		if (!incomeRows.length) {
+			incomeRows = [
+				[
+					{
+						text: 'Neniuj aliaj enspezoj',
+						italics: true,
+						colSpan: 2,
+					},
+					null
+				]
+			];
+		}
+
+		let donationRows = donationEntries.map(purpose => {
+			return [
+				{
+					text: purpose.paymentAddon.name,
+					margin: [ 15, 0, 0, 0 ],
+				},
+				{
+					text: formatCurrency(purpose.amount, paymentIntent.currency),
+					alignment: 'right',
+				}
+			];
+		});
+
+		const tableLayout = {
+			defaultBorder: false,
+			paddingLeft: () => {
+				return 0;
+			},
+			paddingRight: () => {
+				return 0;
+			},
+		};
+
 		const otherIncomeSum = incomeEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const otherExpensesSum = expenseEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const summaryTableBody = [
@@ -95,23 +178,23 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Aliaj enspezoj (sen depreno):', bold: true, colSpan: 2 }, null ],
-						...incomeEntries.map(purpose => {
-							return [
-								{
-									text: purpose.title,
-								},
-								{
-									text: formatCurrency(purpose.amount, paymentIntent.currency),
-									alignment: 'right',
-								},
-							];
-						}),
+						[ { text: 'Donacoj (sen depreno):', bold: true, colSpan: 2 }, null ],
+						...donationRows,
 					],
 				},
-				layout: {
-					defaultBorder: false,
+				layout: tableLayout,
+				colSpan: 2,
+			}, null],
+			[{
+				table: {
+					widths: [ '*', '*' ],
+					headerRows: 1,
+					body: [
+						[ { text: 'Aliaj enspezoj (sen depreno):', bold: true, colSpan: 2 }, null ],
+						...incomeRows,
+					],
 				},
+				layout: tableLayout,
 				colSpan: 2,
 			}, null],
 			[{
@@ -133,22 +216,10 @@ export default {
 					headerRows: 1,
 					body: [
 						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro:', bold: true, colSpan: 2 }, null ],
-						...expenseEntries.map(purpose => {
-							return [
-								{
-									text: purpose.title,
-								},
-								{
-									text: formatCurrency(purpose.amount, paymentIntent.currency),
-									alignment: 'right',
-								},
-							];
-						}),
+						...expenseRows,
 					],
 				},
-				layout: {
-					defaultBorder: false,
-				},
+				layout: tableLayout,
 				colSpan: 2,
 			}, null],
 			[{
@@ -244,9 +315,9 @@ export default {
 					margin: [ 0, 0, 0, 20 ],
 				},
 				{
-					text: `Printita de ${user} je ${moment().format(timeFormat)}.\n` +
-						`Submetita de ${sendUser} je ${moment(submissionTime * 1000).format(timeFormat)}.\n` +
-						`Aprobita je ${moment(paymentIntent.succeededTime * 1000).format(timeFormat)}.`,
+					text: `Submetita de ${sendUser} je ${moment(submissionTime * 1000).format(timeFormat)}.\n` +
+						`Aprobita je ${moment(paymentIntent.succeededTime * 1000).format(timeFormat)}.\n` +
+						`Printita de ${user} je ${moment().format(timeFormat)}.`,
 					italics: true,
 				},
 				{
