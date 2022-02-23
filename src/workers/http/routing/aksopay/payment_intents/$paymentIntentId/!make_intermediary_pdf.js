@@ -160,14 +160,21 @@ export default {
 
 		const tableLayout = {
 			defaultBorder: false,
-			paddingLeft: () => {
+			paddingLeft: i => {
+				if (i === 0) { return 8; }
 				return 0;
 			},
-			paddingRight: () => {
+			paddingRight: i => {
+				if (i === 0) { return 8; }
 				return 0;
 			},
+			fillColor: i => {
+				if (i === 0) { return '#777'; }
+				return (i % 2 === 0) ? '#ccc' : null;
+			}
 		};
 
+		const donationSum = donationEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const otherIncomeSum = incomeEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const otherExpensesSum = expenseEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const summaryTableBody = [
@@ -178,7 +185,7 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Donacoj (sen depreno):', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Donacoj (sen depreno)', bold: true, colSpan: 2 }, null ],
 						...donationRows,
 					],
 				},
@@ -186,11 +193,23 @@ export default {
 				colSpan: 2,
 			}, null],
 			[{
+				text: [
+					'SUMO de la DONACOJ: ',
+					{
+						text: formatCurrency(donationSum, paymentIntent.currency),
+						decoration: 'underline',
+					},
+				],
+				alignment: 'right',
+				colSpan: 2,
+				margin: [ 0, 0, 0, 24 ],
+			}, null],
+			[{
 				table: {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Aliaj enspezoj (sen depreno):', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Aliaj enspezoj (sen depreno)', bold: true, colSpan: 2 }, null ],
 						...incomeRows,
 					],
 				},
@@ -199,7 +218,7 @@ export default {
 			}, null],
 			[{
 				text: [
-					'SUME aliaj ',
+					'SUMO de la ALIAJ ',
 					{ text: 'EN', bold: true },
 					'SPEZOJ: ',
 					{
@@ -209,13 +228,14 @@ export default {
 				],
 				alignment: 'right',
 				colSpan: 2,
+				margin: [ 0, 0, 0, 24 ],
 			}, null],
 			[{
 				table: {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro:', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro', bold: true, colSpan: 2 }, null ],
 						...expenseRows,
 					],
 				},
@@ -234,17 +254,22 @@ export default {
 				],
 				alignment: 'right',
 				colSpan: 2,
+				margin: [ 0, 0, 0, 24 ],
 			}, null],
 			[
 				{
-					text: 'NETA SUMO de la Spezfolio: ',
+					text: 'NETA SUMO de la Spezfolio',
 					bold: true,
+					fillColor: '#777',
+					margin: [ 12, 0, 0, 0 ],
 				},
 				{
 					text: formatCurrency(totalAmount, paymentIntent.currency),
 					decoration: 'underline',
 					decorationStyle: 'double',
 					alignment: 'right',
+					fillColor: '#777',
+					margin: [ 0, 0, 12, 0 ],
 				}
 			],
 		];
@@ -326,6 +351,7 @@ export default {
 						body: summaryTableBody,
 						widths: [ '*', 'auto' ],
 					},
+					margin: [ 0, 12, 0, 0 ],
 				},
 			],
 		};
