@@ -144,11 +144,11 @@ AjvMergePatch(ajv);
 ajv.addKeyword({
 	keyword: 'isBinary',
 	modifying: true,
-	validate: function (schema, data, parentSchema, dataPath, parentData, propertyName) {
+	validate: function (schema, data, parentSchema, dataPath) {
 		if (!schema) { return true; }
 
 		if (typeof data === 'string') {
-			parentData[propertyName] = Buffer.from(data, 'base64');
+			dataPath.parentData[dataPath.parentDataProperty] = Buffer.from(data, 'base64');
 			return true;
 
 		} else if (data instanceof Buffer) {
