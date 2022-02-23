@@ -34,7 +34,7 @@ export default {
 
 		const query = AKSO.db('pay_intents')
 			.whereIn('org', fullPermOrgs)
-			.where(function () {
+			.orWhere(function () {
 				for (const org of intermediaryOrgs) {
 					const countries = allCountries
 						.filter(code => req.hasPermission(`pay.payment_intents.intermediary.${org}.${code}`));
