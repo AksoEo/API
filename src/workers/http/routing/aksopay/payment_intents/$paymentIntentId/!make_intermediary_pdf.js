@@ -4,7 +4,11 @@ import moment from 'moment-timezone';
 
 import AKSOPayPaymentIntentResource from 'akso/lib/resources/aksopay-payment-intent-resource';
 import { schema, afterQuery } from '../schema';
+import RegistrationEntryResource from 'akso/lib/resources/registration-entry-resource';
+import { schema as registrationEntrySchema, afterQuery as registrationEntryAfterQuery } from 'akso/workers/http/routing/registration/entries/schema';
 import { formatCurrency as _formatCurrency } from 'akso/lib/akso-script-util';
+import { arrToObjByKey } from 'akso/util';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 
 function formatCurrency (...args) {
 	return _formatCurrency(...args)
@@ -17,6 +21,9 @@ const printer = new PdfPrinter({
 		normal: path.join(AKSO.dir, 'data/fonts/Arial.ttf'),
 		bold: path.join(AKSO.dir, 'data/fonts/Arial-Bold.ttf'),
 		italics: path.join(AKSO.dir, 'data/fonts/Arial-Italic.ttf'),
+	},
+	Courier: {
+		normal: 'Courier'
 	},
 });
 
@@ -78,24 +85,29 @@ export default {
 			})).time;
 		
 		// SUMMARY
-		const incomeEntries = [];
-		const expenseEntries = [];
-		const donationEntries = [];
+		const incomePurposes = [];
+		const expensePurposes = [];
+		const donationPurposes = [];
+		const registrationPurposes = [];
 		let totalAmount = 0;
 		for (const purpose of paymentIntent.purposes) {
 			totalAmount += purpose.amount;
 			if (purpose.type === 'manual') {
 				if (purpose.amount >= 0) {
-					incomeEntries.push(purpose);
+					incomePurposes.push(purpose);
 				} else {
-					expenseEntries.push(purpose);
+					expensePurposes.push(purpose);
 				}
 			} else if (purpose.type === 'addon') {
-				donationEntries.push(purpose);
+				donationPurposes.push(purpose);
+			} else if (purpose.type === 'trigger') {
+				if (purpose.triggers === 'registration_entry') {
+					registrationPurposes.push(purpose);
+				}
 			}
 		}
 
-		let expenseRows = expenseEntries.map(purpose => {
+		let expenseRows = expensePurposes.map(purpose => {
 			return [
 				{
 					text: purpose.title,
@@ -120,7 +132,7 @@ export default {
 			];
 		}
 
-		let incomeRows = incomeEntries.map(purpose => {
+		let incomeRows = incomePurposes.map(purpose => {
 			return [
 				{
 					text: purpose.title,
@@ -145,7 +157,7 @@ export default {
 			];
 		}
 
-		let donationRows = donationEntries.map(purpose => {
+		let donationRows = donationPurposes.map(purpose => {
 			return [
 				{
 					text: purpose.paymentAddon.name,
@@ -157,6 +169,111 @@ export default {
 				}
 			];
 		});
+		if (!donationRows.length) {
+			donationRows = [
+				[
+					{
+						text: 'Neniuj donacoj',
+						italics: true,
+						colSpan: 2,
+					},
+					null
+				]
+			];
+		}
+
+		const registrationEntriesRaw = await AKSO.db('registration_entries')
+			.select('*', {
+				offers: 1,
+				codeholderData: 1,
+			})
+			.whereIn('id', registrationPurposes.map(x => x.registrationEntryId));
+		await new Promise(resolve => registrationEntryAfterQuery(registrationEntriesRaw, resolve));
+		const registrationEntries = arrToObjByKey(
+			registrationEntriesRaw
+				.map(x => new RegistrationEntryResource(x, {
+					query: { fields: Object.keys(registrationEntrySchema.fields) },
+				}).obj),
+			obj => obj.id.toString('hex'),
+		);
+		const codeholderIds = Object.values(registrationEntries).flatMap(entries => {
+			return entries.flatMap(entry => {
+				const ids = [];
+				if (typeof entry.codeholderData === 'number') {
+					ids.push(entry.codeholderData);
+				}
+				if (entry.newCodeholderId) {
+					ids.push(entry.newCodeholderId);
+				}
+				return ids;
+			});
+		});
+		const existingCodeholderData = arrToObjByKey(
+			await AKSO.db('view_codeholders')
+				.select(
+					'id',
+					'codeholderType',
+					'firstName',
+					'firstNameLegal',
+					'lastName',
+					'lastNameLegal',
+					'fullName',
+					'honorific',
+					'newCode',
+				)
+				.whereIn('id', codeholderIds),
+			'id'
+		);
+		let registrationRows = registrationPurposes.map(purpose => {
+			const registrationEntry = registrationEntries[purpose.registrationEntryId.toString('hex')][0];
+			let codeholder;
+			if (typeof registrationEntry.codeholderData === 'number') {
+				codeholder = existingCodeholderData[registrationEntry.codeholderData];
+			} else {
+				if (registrationEntry.newCodeholderId) {
+					codeholder = existingCodeholderData[registrationEntry.newCodeholderId];
+				} else {
+					codeholder == {
+						...registrationEntry.codeholderData,
+						newCode: '//////'
+					};
+				}
+			}
+			codeholder = codeholder[0];
+			const name = formatCodeholderName(codeholder);
+
+			return [
+				{
+					text: [
+						{
+							text: ` ${codeholder.newCode} `,
+							font: 'Courier',
+							color: '#31a64f',
+							background: '#fff',
+						},
+						'  ',
+						name,
+					],
+					margin: [ 15, 0, 0, 0 ],
+				},
+				{
+					text: formatCurrency(purpose.amount, paymentIntent.currency),
+					alignment: 'right',
+				}
+			];
+		});
+		if (!registrationRows.length) {
+			registrationRows = [
+				[
+					{
+						text: 'Neniuj aliĝoj',
+						italics: true,
+						colSpan: 2,
+					},
+					null
+				]
+			];
+		}
 
 		const tableLayout = {
 			defaultBorder: false,
@@ -170,16 +287,39 @@ export default {
 			},
 			fillColor: i => {
 				if (i === 0) { return '#777'; }
-				return (i % 2 === 0) ? '#ccc' : null;
+				return (i % 2 === 0) ? '#ccc' : '#eee';
 			}
 		};
 
-		const donationSum = donationEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
-		const otherIncomeSum = incomeEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
-		const otherExpensesSum = expenseEntries.map(x => x.amount).reduce((a, b) => a + b, 0);
+		const registrationSum = registrationPurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
+		const donationSum = donationPurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
+		const otherIncomeSum = incomePurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
+		const otherExpensesSum = expensePurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const summaryTableBody = [
-			// TODO: Registration entries
-			// TODO: Addons
+			[{
+				table: {
+					widths: [ '*', '*' ],
+					headerRows: 1,
+					body: [
+						[ { text: 'Aliĝoj', bold: true, colSpan: 2 }, null ],
+						...registrationRows,
+					],
+				},
+				layout: tableLayout,
+				colSpan: 2,
+			}, null],
+			[{
+				text: [
+					'SUMO de la ALIĜOJ: ',
+					{
+						text: formatCurrency(registrationSum, paymentIntent.currency),
+						decoration: 'underline',
+					},
+				],
+				alignment: 'right',
+				colSpan: 2,
+				margin: [ 0, 0, 0, 24 ],
+			}, null],
 			[{
 				table: {
 					widths: [ '*', '*' ],
@@ -290,6 +430,12 @@ export default {
 					bold: true,
 					alignment: 'center',
 				},
+				h2: {
+					fontSize: 18,
+					bold: true,
+					alignment: 'center',
+					margin: [ 10, 15, 10, 5 ],
+				},
 			},
 
 			footer: function(currentPage, pageCount, pageSize) {
@@ -344,6 +490,10 @@ export default {
 						`Aprobita je ${moment(paymentIntent.succeededTime * 1000).format(timeFormat)}.\n` +
 						`Printita de ${user} je ${moment().format(timeFormat)}.`,
 					italics: true,
+				},
+				{
+					text: 'Resumo',
+					style: 'h2',
 				},
 				{
 					layout: 'noBorders',

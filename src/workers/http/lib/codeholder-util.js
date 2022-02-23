@@ -95,7 +95,9 @@ export function formatCodeholderName ({
 	if (codeholderType === 'human') {
 		if (honorific) { name += honorific + ' '; }
 		name = firstName || firstNameLegal;
-		name += ' ' + (lastName || lastNameLegal);
+		if (lastName || lastNameLegal) {
+			name += ' ' + (lastName || lastNameLegal);
+		}
 
 	} else if (codeholderType === 'org') {
 		name = fullName;

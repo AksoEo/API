@@ -16,7 +16,7 @@ export const schema = {
 		internalNotes: 's',
 		currency: 'f',
 		offers: '',
-		codeholderData: ''
+		codeholderData: '',
 	},
 	fieldAliases: {
 		'pendingIssue.what': 'pendingIssue_what',

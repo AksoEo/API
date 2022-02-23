@@ -4,18 +4,29 @@ import AjvMergePatch from 'ajv-merge-patch';
 import AjvFormats from 'ajv-formats';
 import moment from 'moment-timezone';
 
-export function arrToObjByKey (arr, key, pick) {
+export function arrToObjByKey (arr, _key, pick = null) {
 	const obj = {};
 	for (const row of arr) {
-		if (!(row[key] in obj)) {
-			obj[row[key]] = [];
-		}
-		if (pick) {
-			obj[row[key]].push(row[pick]);
+		let key;
+		if (typeof _key === 'function') {
+			key = _key(row);
 		} else {
-			obj[row[key]].push(row);
-			delete row[key];
+			key = row[_key];
 		}
+		if (!(key in obj)) {
+			obj[key] = [];
+		}
+		let val;
+		if (pick) {
+			if (typeof pick === 'function') {
+				val = pick(row);
+			} else {
+				val = row[pick];
+			}
+		} else {
+			val = row;
+		}
+		obj[key].push(val);
 	}
 	return obj;
 }
