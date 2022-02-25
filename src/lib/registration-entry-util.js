@@ -185,6 +185,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 					year: registrationEntry.year,
 					codeholderId,
 					createdTime: moment().unix(),
+					paperVersion: registrationEntry.paperVersion,
 				});
 			}
 		}

@@ -244,7 +244,9 @@ export default {
 			codeholder = codeholder[0];
 			const name = formatCodeholderName(codeholder);
 
-			const netAmount = 0; // TODO
+			console.log(registrationEntry);
+			let netAmount = 0;
+
 			registrationNetAmount += netAmount;
 
 			return [

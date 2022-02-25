@@ -247,7 +247,7 @@ export default {
 					amount: offer.amount,
 					membershipCategoryId: offer.type === 'membership' ? offer.id : undefined,
 					magazineId: offer.type === 'magazine' ? offer.id : undefined,
-					paperVersion: offer.type === 'magazine' ? offer.paperVersion : undefined,
+					paperVersion: offer.type === 'magazine' ? (offer.paperVersion || false) : undefined,
 				};
 			}));
 
