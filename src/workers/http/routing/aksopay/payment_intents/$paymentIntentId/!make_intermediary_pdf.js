@@ -301,7 +301,7 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Aliĝoj', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Aliĝoj', bold: true, colSpan: 2, color: '#fff' }, null ],
 						...registrationRows,
 					],
 				},
@@ -325,7 +325,7 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Donacoj (sen depreno)', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Donacoj (sen depreno)', bold: true, colSpan: 2, color: '#fff' }, null ],
 						...donationRows,
 					],
 				},
@@ -349,7 +349,7 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Aliaj enspezoj (sen depreno)', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Aliaj enspezoj (sen depreno)', bold: true, colSpan: 2, color: '#fff' }, null ],
 						...incomeRows,
 					],
 				},
@@ -375,7 +375,7 @@ export default {
 					widths: [ '*', '*' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro', bold: true, colSpan: 2 }, null ],
+						[ { text: 'Elspezoj aprobitaj de la Ĝenerala Direktoro', bold: true, colSpan: 2, color: '#fff' }, null ],
 						...expenseRows,
 					],
 				},
@@ -402,6 +402,7 @@ export default {
 					bold: true,
 					fillColor: '#777',
 					margin: [ 12, 0, 0, 0 ],
+					color: '#fff',
 				},
 				{
 					text: formatCurrency(totalAmount, paymentIntent.currency),
@@ -410,6 +411,7 @@ export default {
 					alignment: 'right',
 					fillColor: '#777',
 					margin: [ 0, 0, 12, 0 ],
+					color: '#fff',
 				}
 			],
 		];
