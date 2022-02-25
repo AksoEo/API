@@ -127,6 +127,7 @@ export default {
 						text: 'Neniuj elspezoj',
 						italics: true,
 						colSpan: 2,
+						margin: [ 15, 0, 0, 0 ],
 					},
 					null
 				]
@@ -152,6 +153,7 @@ export default {
 						text: 'Neniuj aliaj enspezoj',
 						italics: true,
 						colSpan: 2,
+						margin: [ 15, 0, 0, 0 ],
 					},
 					null
 				]
@@ -197,18 +199,27 @@ export default {
 				}).obj),
 			obj => obj.id.toString('hex'),
 		);
-		const codeholderIds = Object.values(registrationEntries).flatMap(entries => {
-			return entries.flatMap(entry => {
-				const ids = [];
+		let codeholderIds = [];
+		let magazineIds = [];
+		let membershipCategoryIds = [];
+		for (const entries of Object.values(registrationEntries)) {
+			for (const entry of entries) {
 				if (typeof entry.codeholderData === 'number') {
-					ids.push(entry.codeholderData);
+					codeholderIds.push(entry.codeholderData);
 				}
 				if (entry.newCodeholderId) {
-					ids.push(entry.newCodeholderId);
+					codeholderIds.push(entry.newCodeholderId);
 				}
-				return ids;
-			});
-		});
+
+				for (const offer of entry.offers) {
+					if (offer.type === 'membership') {
+						membershipCategoryIds.push(offer.id);
+					} else if (offer.type === 'magazine') {
+						magazineIds.push(offer.id);
+					}
+				}
+			}
+		}
 		const existingCodeholderData = arrToObjByKey(
 			await AKSO.db('view_codeholders')
 				.select(
@@ -225,6 +236,19 @@ export default {
 				.whereIn('id', codeholderIds),
 			'id'
 		);
+		const magazineData = arrToObjByKey(
+			await AKSO.db('magazines')
+				.select('id', 'name')
+				.whereIn('id', magazineIds),
+			'id'
+		);
+		const membershipCategoryData = arrToObjByKey(
+			await AKSO.db('membershipCategories')
+				.select('id', 'nameAbbrev')
+				.whereIn('id', membershipCategoryIds),
+			'id'
+		);
+
 		let registrationNetAmount = 0;
 		let registrationRows = registrationPurposes.map(purpose => {
 			const registrationEntry = registrationEntries[purpose.registrationEntryId.toString('hex')][0];
@@ -244,22 +268,82 @@ export default {
 			codeholder = codeholder[0];
 			const name = formatCodeholderName(codeholder);
 
-			console.log(registrationEntry);
-			let netAmount = 0;
+			let netAmount = registrationEntry.offers
+				.map(offer => {
+					const year = paymentIntent.paymentMethod.prices[paymentIntent.intermediaryIdentifier.year];
+					let commission = 0;
+					const offerType = offer.type === 'membership' ?
+						'membershipCategories' :
+						'magazines';
+					if (year) {
+						for (const priceObj of year.registrationEntries[offerType]) {
+							if (priceObj.id !== offer.id) { continue; }
+							if (offer.type === 'membership') { commission = priceObj.commission; }
+							else if (offer.type === 'magazine') {
+								const accessType = offer.paperVersion ?
+									'paper' : 'access';
+								commission = priceObj.prices[accessType];
+								if (commission === null) { commission = 0; }
+								else {
+									commission = commission.commission;
+								}
+							}
+							break;
+						}
+					}
+					offer._commission = commission;
+					offer._netAmount = ((100 - commission) / 100) * offer.amount;
+					return offer._netAmount;
+				})
+				.reduce((a, b) => a + b, 0);
 
 			registrationNetAmount += netAmount;
 
 			return [
 				{
-					text: [
+					stack: [
 						{
-							text: ` ${codeholder.newCode} `,
-							font: 'Courier',
-							color: '#31a64f',
-							background: '#fff',
+							text: [
+								{
+									text: ` ${codeholder.newCode} `,
+									font: 'Courier',
+									color: '#31a64f',
+									background: '#fff',
+								},
+								'  ',
+								name,
+							],
 						},
-						'  ',
-						name,
+						{
+							layout: 'noBorders',
+							table: {
+								body: registrationEntry.offers.map(offer => {
+									let offerTitle;
+									if (offer.type === 'membership') {
+										offerTitle = `${membershipCategoryData[offer.id][0].nameAbbrev}`;
+									} else if (offer.type === 'magazine') {
+										offerTitle = `${offer.paperVersion ? 'Papera' : 'Reta'} revuo ${magazineData[offer.id][0].name}`;
+									}
+
+									return [
+										{
+											text: offer._commission + '%',
+											alignment: 'right',
+										},
+										offerTitle,
+										{
+											text: '(' + formatCurrency(offer.amount, paymentIntent.currency) + ')',
+											alignment: 'right',
+										},
+										{
+											text: formatCurrency(offer._netAmount, paymentIntent.currency),
+											alignment: 'right',
+										},
+									];
+								}),
+								widths: [ 'auto', 80, 'auto', 'auto' ],
+							},
+						}
 					],
 					margin: [ 15, 0, 0, 0 ],
 				},
@@ -280,6 +364,7 @@ export default {
 						text: 'Neniuj aliĝoj',
 						italics: true,
 						colSpan: 3,
+						margin: [ 15, 0, 0, 0 ],
 					},
 					null,
 					null,
@@ -441,6 +526,22 @@ export default {
 				},
 				{
 					text: '(' + formatCurrency(totalGrossAmount, paymentIntent.currency) + ')',
+					alignment: 'right',
+					fillColor: '#777',
+					margin: [ 0, 0, 12, 0 ],
+					color: '#fff',
+				}
+			],
+			[
+				{
+					text: 'SUMA DEPRENO de la Spezfolio',
+					bold: true,
+					fillColor: '#777',
+					margin: [ 12, 0, 0, 0 ],
+					color: '#fff',
+				},
+				{
+					text: '-(' + formatCurrency(totalGrossAmount - totalNetAmount, paymentIntent.currency) + ')',
 					alignment: 'right',
 					fillColor: '#777',
 					margin: [ 0, 0, 12, 0 ],
