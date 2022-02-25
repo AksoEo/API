@@ -21,6 +21,7 @@ const printer = new PdfPrinter({
 		normal: path.join(AKSO.dir, 'data/fonts/Arial.ttf'),
 		bold: path.join(AKSO.dir, 'data/fonts/Arial-Bold.ttf'),
 		italics: path.join(AKSO.dir, 'data/fonts/Arial-Italic.ttf'),
+		bolditalics: path.join(AKSO.dir, 'data/fonts/Arial-Bold-Italic.ttf'),
 	},
 	Courier: {
 		normal: 'Courier'
@@ -89,9 +90,9 @@ export default {
 		const expensePurposes = [];
 		const donationPurposes = [];
 		const registrationPurposes = [];
-		let totalAmount = 0;
+		let totalGrossAmount = 0;
 		for (const purpose of paymentIntent.purposes) {
-			totalAmount += purpose.amount;
+			totalGrossAmount += purpose.amount;
 			if (purpose.type === 'manual') {
 				if (purpose.amount >= 0) {
 					incomePurposes.push(purpose);
@@ -224,6 +225,7 @@ export default {
 				.whereIn('id', codeholderIds),
 			'id'
 		);
+		let registrationNetAmount = 0;
 		let registrationRows = registrationPurposes.map(purpose => {
 			const registrationEntry = registrationEntries[purpose.registrationEntryId.toString('hex')][0];
 			let codeholder;
@@ -242,6 +244,9 @@ export default {
 			codeholder = codeholder[0];
 			const name = formatCodeholderName(codeholder);
 
+			const netAmount = 0; // TODO
+			registrationNetAmount += netAmount;
+
 			return [
 				{
 					text: [
@@ -257,9 +262,13 @@ export default {
 					margin: [ 15, 0, 0, 0 ],
 				},
 				{
-					text: formatCurrency(purpose.amount, paymentIntent.currency),
+					text: '(' + formatCurrency(purpose.amount, paymentIntent.currency) + ')',
 					alignment: 'right',
-				}
+				},
+				{
+					text: formatCurrency(netAmount, paymentIntent.currency),
+					alignment: 'right',
+				},
 			];
 		});
 		if (!registrationRows.length) {
@@ -268,9 +277,10 @@ export default {
 					{
 						text: 'Neniuj aliĝoj',
 						italics: true,
-						colSpan: 2,
+						colSpan: 3,
 					},
-					null
+					null,
+					null,
 				]
 			];
 		}
@@ -279,7 +289,7 @@ export default {
 			defaultBorder: false,
 			paddingLeft: i => {
 				if (i === 0) { return 8; }
-				return 0;
+				return 4;
 			},
 			paddingRight: i => {
 				if (i === 0) { return 8; }
@@ -295,31 +305,50 @@ export default {
 		const donationSum = donationPurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const otherIncomeSum = incomePurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
 		const otherExpensesSum = expensePurposes.map(x => x.amount).reduce((a, b) => a + b, 0);
+		let totalNetAmount = registrationNetAmount
+			+ donationSum
+			+ otherIncomeSum
+			+ otherExpensesSum;
+
 		const summaryTableBody = [
 			[{
 				table: {
-					widths: [ '*', '*' ],
+					widths: [ '*', 'auto', 'auto' ],
 					headerRows: 1,
 					body: [
-						[ { text: 'Aliĝoj', bold: true, colSpan: 2, color: '#fff' }, null ],
+						[{
+							text: 'Aliĝoj',
+							bold: true, colSpan: 3, color: '#fff'
+						}, null, null],
 						...registrationRows,
 					],
 				},
 				layout: tableLayout,
 				colSpan: 2,
 			}, null],
-			[{
-				text: [
-					'SUMO de la ALIĜOJ: ',
-					{
-						text: formatCurrency(registrationSum, paymentIntent.currency),
-						decoration: 'underline',
-					},
-				],
-				alignment: 'right',
-				colSpan: 2,
-				margin: [ 0, 0, 0, 24 ],
-			}, null],
+			[
+				{
+					text: 'MALNETA SUMO de la ALIĜOJ:',
+					italics: true,
+					alignment: 'right',
+				},
+				{
+					text: '(' + formatCurrency(registrationSum, paymentIntent.currency) + ')',
+					alignment: 'right',
+				},
+			],
+			[
+				{
+					text: 'NETA SUMO de la ALIĜOJ:',
+					alignment: 'right',
+					margin: [ 0, 0, 0, 24 ],
+				},
+				{
+					text: formatCurrency(registrationNetAmount, paymentIntent.currency),
+					decoration: 'underline',
+					alignment: 'right',
+				},
+			],
 			[{
 				table: {
 					widths: [ '*', '*' ],
@@ -332,18 +361,18 @@ export default {
 				layout: tableLayout,
 				colSpan: 2,
 			}, null],
-			[{
-				text: [
-					'SUMO de la DONACOJ: ',
-					{
-						text: formatCurrency(donationSum, paymentIntent.currency),
-						decoration: 'underline',
-					},
-				],
-				alignment: 'right',
-				colSpan: 2,
-				margin: [ 0, 0, 0, 24 ],
-			}, null],
+			[
+				{
+					text: 'SUMO de la DONACOJ:',
+					alignment: 'right',
+					margin: [ 0, 0, 0, 24 ],
+				},
+				{
+					text: formatCurrency(donationSum, paymentIntent.currency),
+					decoration: 'underline',
+					alignment: 'right',
+				},
+			],
 			[{
 				table: {
 					widths: [ '*', '*' ],
@@ -356,20 +385,22 @@ export default {
 				layout: tableLayout,
 				colSpan: 2,
 			}, null],
-			[{
-				text: [
-					'SUMO de la ALIAJ ',
-					{ text: 'EN', bold: true },
-					'SPEZOJ: ',
-					{
-						text: formatCurrency(otherIncomeSum, paymentIntent.currency),
-						decoration: 'underline',
-					},
-				],
-				alignment: 'right',
-				colSpan: 2,
-				margin: [ 0, 0, 0, 24 ],
-			}, null],
+			[
+				{
+					text: [
+						'SUMO de la ALIAJ ',
+						{ text: 'EN', bold: true },
+						'SPEZOJ: ',
+					],
+					alignment: 'right',
+					margin: [ 0, 0, 0, 24 ],
+				},
+				{
+					text: formatCurrency(otherIncomeSum, paymentIntent.currency),
+					decoration: 'underline',
+					alignment: 'right',
+				},
+			],
 			[{
 				table: {
 					widths: [ '*', '*' ],
@@ -382,20 +413,38 @@ export default {
 				layout: tableLayout,
 				colSpan: 2,
 			}, null],
-			[{
-				text: [
-					'SUMO de la ',
-					{ text: 'EL', bold: true },
-					'SPEZOJ: ',
-					{
-						text: formatCurrency(otherExpensesSum, paymentIntent.currency),
-						decoration: 'underline',
-					},
-				],
-				alignment: 'right',
-				colSpan: 2,
-				margin: [ 0, 0, 0, 24 ],
-			}, null],
+			[
+				{
+					text: [
+						'SUMO de la ',
+						{ text: 'EL', bold: true },
+						'SPEZOJ: ',
+					],
+					alignment: 'right',
+					margin: [ 0, 0, 0, 24 ],
+				},
+				{
+					text: formatCurrency(otherExpensesSum, paymentIntent.currency),
+					decoration: 'underline',
+					alignment: 'right',
+				},
+			],
+			[
+				{
+					text: 'MALNETA SUMO de la Spezfolio',
+					bold: true,
+					fillColor: '#777',
+					margin: [ 12, 0, 0, 0 ],
+					color: '#fff',
+				},
+				{
+					text: '(' + formatCurrency(totalGrossAmount, paymentIntent.currency) + ')',
+					alignment: 'right',
+					fillColor: '#777',
+					margin: [ 0, 0, 12, 0 ],
+					color: '#fff',
+				}
+			],
 			[
 				{
 					text: 'NETA SUMO de la Spezfolio',
@@ -405,7 +454,7 @@ export default {
 					color: '#fff',
 				},
 				{
-					text: formatCurrency(totalAmount, paymentIntent.currency),
+					text: formatCurrency(totalNetAmount, paymentIntent.currency),
 					decoration: 'underline',
 					decorationStyle: 'double',
 					alignment: 'right',
