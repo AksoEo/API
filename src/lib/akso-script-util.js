@@ -34,6 +34,10 @@ export function evaluateSync (...args) {
 	return nativeEvaluate(...args);
 }
 
-export function formatCurrency (amt, currency) {
-	return stdlib.currency_fmt.apply(null, [ currency || '?', amt ]);
+export function formatCurrency (amt, currency, currencyName = true) {
+	let str = stdlib.currency_fmt.apply(null, [ currency || '?', amt ]);
+	if (!currencyName) {
+		str = str.substring(0, str.length - 4);
+	}
+	return str;
 }

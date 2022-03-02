@@ -1,6 +1,7 @@
 import PdfPrinter from 'pdfmake';
 import path from 'path';
 import moment from 'moment-timezone';
+import { default as deepmerge } from 'deepmerge';
 
 import AKSOPayPaymentIntentResource from 'akso/lib/resources/aksopay-payment-intent-resource';
 import { schema, afterQuery } from '../schema';
@@ -25,6 +26,9 @@ const printer = new PdfPrinter({
 	},
 	Courier: {
 		normal: 'Courier'
+	},
+	STIXTwoMath: {
+		normal: path.join(AKSO.dir, 'data/fonts/STIXTwoMath.ttf'),
 	},
 });
 
@@ -376,11 +380,11 @@ export default {
 			defaultBorder: false,
 			paddingLeft: i => {
 				if (i === 0) { return 8; }
-				return 4;
+				return 2;
 			},
 			paddingRight: i => {
 				if (i === 0) { return 8; }
-				return 0;
+				return 2;
 			},
 			fillColor: i => {
 				if (i === 0) { return '#777'; }
@@ -568,6 +572,182 @@ export default {
 			],
 		];
 
+		const registrationEntryOverviewData = {};
+		for (const purpose of registrationPurposes) {
+			const registrationEntry = registrationEntries[purpose.registrationEntryId.toString('hex')][0];
+			for (const offer of registrationEntry.offers) {
+				if (!(offer._commission in registrationEntryOverviewData)) {
+					registrationEntryOverviewData[offer._commission] = {
+						magazines: {},
+						membershipCategories: {},
+					};
+				}
+				const commissionObj = registrationEntryOverviewData[offer._commission];
+				
+				let offerIdObj = {};
+				if (offer.type === 'magazine') {
+					if (!(offer.id in commissionObj.magazines)) {
+						commissionObj.magazines[offer.id] = {};
+					}
+					offerIdObj = commissionObj.magazines[offer.id];
+				} else if (offer.type === 'membership') {
+					if (!(offer.id in commissionObj.membershipCategories)) {
+						commissionObj.membershipCategories[offer.id] = {};
+					}
+					offerIdObj = commissionObj.membershipCategories[offer.id];
+				}
+
+				if (!(offer.amount in offerIdObj)) {
+					offerIdObj[offer.amount] = [];
+				}
+				offerIdObj[offer.amount].push(offer);
+			}
+		}
+
+		const registrationEntryOverview = Object.entries(registrationEntryOverviewData)
+			.flatMap(([commission, offers]) => {
+				const offersOrdered = [
+					...Object.entries(offers.membershipCategories)
+						.sort((a, b) => {
+							const nameA = membershipCategoryData[a[0]].nameAbbrev;
+							const nameB = membershipCategoryData[b[0]].nameAbbrev;
+							return nameA.localeCompare(nameB, 'eo');
+						})
+						.flatMap(x => Object.entries(x[1]))
+						.sort((a, b) => {
+							return parseInt(a[0], 10) - parseInt(b[0], 10);
+						})
+						.map(x => x[1])
+						.map(x => {
+							return {
+								obj: x[0],
+								count: x.length,
+							};
+						}),
+
+					...Object.entries(offers.magazines)
+						.sort((a, b) => {
+							const nameA = magazineData[a[0]].name;
+							const nameB = magazineData[b[0]].name;
+							return nameA.localeCompare(nameB, 'eo');
+						})
+						.flatMap(x => Object.entries(x[1]))
+						.sort((a, b) => {
+							return parseInt(a[0], 10) - parseInt(b[0], 10);
+						})
+						.map(x => x[1])
+						.map(x => {
+							return {
+								obj: x[0],
+								count: x.length,
+							};
+						})
+				];
+
+				const commissionRows = offersOrdered.map((offersObj, i) => {
+					const cols = [];
+					if (i === 0) {
+						cols.push({
+							text: commission + '%',
+							rowSpan: offersOrdered.length,
+							alignment: 'right',
+							margin: [
+								0,
+								offersOrdered.length === 1 ?
+									2
+									: offersOrdered.length * 11 - 4.5,
+								0,
+								0
+							],
+						});
+						if (offersOrdered.length === 1) {
+							cols.push({
+								text: '{',
+								font: 'STIXTwoMath',
+								fontSize: 20,
+								margin: [ 0, 1.5, 0, 0 ],
+							});
+						} else {
+							const lineHeight = offersOrdered.length < 3 ?
+								0 : (offersOrdered.length - 2) * 12;
+							const canvas = [{
+								type: 'line',
+								x1: 2.75, y1: 0,
+								x2: 2.75, y2: lineHeight,
+								lineWidth: 1,
+							}];
+							cols.push({
+								stack: [
+									{
+										text: '⎧',
+										margin: [ 0, 2.5, 0, 0 ],
+									},
+									{
+										canvas: deepmerge([], canvas),
+										margin: [ 0, -3, 0, 11 ],
+									},
+									'⎨',
+									{
+										canvas: deepmerge([], canvas),
+										margin: [ 0, -3, 0, 3 ],
+									},
+									'⎩',
+								],
+								font: 'STIXTwoMath',
+								fontSize: 10,
+								rowSpan: offersOrdered.length,
+								margin: [ 0, 6, 14.5, -3 ],
+							});
+						} 
+					} else {
+						cols.push(null, null);
+					}
+
+					let offerName;
+					if (offersObj.obj.type === 'magazine') {
+						offerName = `${offersObj.obj.paperVersion ? 'Papera' : 'Reta'} revuo ${magazineData[offersObj.obj.id][0].name}`;
+					} else if (offersObj.obj.type === 'membership') {
+						offerName = membershipCategoryData[offersObj.obj.id][0].nameAbbrev;
+					}
+
+					const margin = [ 0, 2, 2, 0 ];
+					cols.push(
+						{
+							text: offerName,
+							margin,
+						},
+						{
+							text: formatCurrency(offersObj.obj.amount, paymentIntent.currency, false),
+							margin,
+							alignment: 'right',
+						},
+						{
+							text: offersObj.count,
+							margin,
+							alignment: 'right',
+						},
+						{
+							text: formatCurrency(offersObj.obj.amount * offersObj.count, paymentIntent.currency, false),
+							margin,
+							alignment: 'right',
+						},
+						{
+							text: formatCurrency((offersObj.obj.amount * offersObj.count) - offersObj.obj._netAmount, paymentIntent.currency, false),
+							margin,
+							alignment: 'right',
+						},
+						{
+							text: formatCurrency(offersObj.obj._netAmount, paymentIntent.currency),
+							margin,
+							alignment: 'right',
+						},
+					);
+					return cols;
+				});
+
+				return commissionRows;
+			});
+
 		const docDefinition = {
 			info: {
 				title,
@@ -656,6 +836,32 @@ export default {
 						widths: [ '*', 'auto' ],
 					},
 					margin: [ 0, 12, 0, 0 ],
+				},
+				{
+					text: 'Superrigardo de membrokategorioj',
+					style: 'h2',
+					pageBreak: 'before',
+				},
+				{
+					table: {
+						widths: [ '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto' ],
+						headerRows: 1,
+						heights: 20,
+						body: [
+							[
+								{ text: 'Depreno %', bold: true, color: '#fff', colSpan: 2, alignment: 'right' },
+								null,
+								{ text: 'Speco', bold: true, color: '#fff' },
+								{ text: 'Kotizo', bold: true, color: '#fff' },
+								{ text: 'Kvanto', bold: true, color: '#fff' },
+								{ text: 'Malneta sumo', bold: true, color: '#fff' },
+								{ text: 'Depreno', bold: true, color: '#fff' },
+								{ text: 'Neta sumo', bold: true, color: '#fff' },
+							],
+							...registrationEntryOverview
+						],
+					},
+					layout: tableLayout,
 				},
 			],
 		};
