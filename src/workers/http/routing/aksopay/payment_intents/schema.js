@@ -118,6 +118,7 @@ export async function afterQuery (arr, done) {
 			if (purpose.type === 'addon') {
 				purposeFormatted.paymentAddonId = purpose.paymentAddonId;
 				purposeFormatted.paymentAddon = purpose.paymentAddon;
+				purposeFormatted.description = purpose.description;
 			} else if (purpose.type === 'manual') {
 				purposeFormatted.title = purpose.title;
 				purposeFormatted.description = purpose.description;
@@ -267,7 +268,13 @@ export const purposeSchema = {
 				amount: {
 					type: 'integer',
 					format: 'uint32'
-				}
+				},
+				description: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 255,
+					nullable: true,
+				},
 			},
 			required: [
 				'type',

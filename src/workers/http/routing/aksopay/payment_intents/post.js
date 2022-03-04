@@ -398,6 +398,7 @@ export default {
 			if (purpose.type === 'addon') {
 				purposeDB.paymentAddonId = purpose.paymentAddonId;
 				purposeDB.paymentAddon = JSON.stringify(purpose.paymentAddon);
+				purposeDB.description = purpose.description;
 
 			} else if (purpose.type === 'manual') {
 				purposeDB.title = purpose.title;

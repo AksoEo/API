@@ -2811,6 +2811,7 @@ CREATE TABLE `pay_intents_purposes_addon` (
   `pos` smallint unsigned NOT NULL,
   `paymentAddonId` int unsigned DEFAULT NULL,
   `paymentAddon` json NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `paymentAddonId` (`paymentAddonId`),
   CONSTRAINT `pay_intents_purposes_addon_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -3681,4 +3682,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-16  9:54:16
+-- Dump completed on 2022-03-04  9:11:18
