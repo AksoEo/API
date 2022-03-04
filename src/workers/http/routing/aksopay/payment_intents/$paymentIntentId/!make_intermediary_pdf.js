@@ -167,7 +167,13 @@ export default {
 		let donationRows = donationPurposes.map(purpose => {
 			return [
 				{
-					text: purpose.paymentAddon.name,
+					text: [
+						purpose.paymentAddon.name,
+						{
+							text: purpose.description ? '\n' + purpose.description : '',
+							italics: true
+						}
+					],
 					margin: [ 15, 0, 0, 0 ],
 				},
 				{
@@ -672,8 +678,8 @@ export default {
 								0 : (offersOrdered.length - 2) * 12;
 							const canvas = [{
 								type: 'line',
-								x1: 2.75, y1: 0,
-								x2: 2.75, y2: lineHeight,
+								x1: 2.8, y1: 0,
+								x2: 2.8, y2: lineHeight,
 								lineWidth: 1,
 							}];
 							cols.push({
