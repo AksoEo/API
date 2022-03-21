@@ -2353,7 +2353,7 @@ DROP TABLE IF EXISTS `intermediaries`;
 CREATE TABLE `intermediaries` (
   `countryCode` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `codeholderId` int unsigned NOT NULL,
-  `paymentDescription` varchar(5000) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `paymentDescription` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`countryCode`),
   KEY `codeholderId` (`codeholderId`),
   FULLTEXT KEY `paymentDescription` (`paymentDescription`),
@@ -3682,4 +3682,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-04  9:21:39
+-- Dump completed on 2022-03-21 13:24:40
