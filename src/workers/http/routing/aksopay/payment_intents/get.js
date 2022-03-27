@@ -33,16 +33,18 @@ export default {
 			.pluck('code');
 
 		const query = AKSO.db('pay_intents')
-			.whereIn('org', fullPermOrgs)
-			.orWhere(function () {
-				for (const org of intermediaryOrgs) {
-					const countries = allCountries
-						.filter(code => req.hasPermission(`pay.payment_intents.intermediary.${org}.${code}`));
-					this.orWhere(function () {
-						this.where('org', org)
-							.whereIn('intermediaryCountryCode', countries);
+			.where(function () {
+				this.whereIn('org', fullPermOrgs)
+					.orWhere(function () {
+						for (const org of intermediaryOrgs) {
+							const countries = allCountries
+								.filter(code => req.hasPermission(`pay.payment_intents.intermediary.${org}.${code}`));
+							this.orWhere(function () {
+								this.where('org', org)
+									.whereIn('intermediaryCountryCode', countries);
+							});
+						}
 					});
-				}
 			});
 		await QueryUtil.handleCollection({
 			req, res, schema, query,
