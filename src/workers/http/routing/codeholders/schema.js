@@ -730,6 +730,7 @@ export const patchSchema = {
 			minProperties: 1,
 			maxProperties: 15,
 			additionalProperties: false,
+			nullable: true,
 			patternProperties: {
 				'^[^\\n]{1,30}$': {
 					oneOf: [
