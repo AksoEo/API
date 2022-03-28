@@ -12,14 +12,28 @@ export default {
 			tasks.aksopay = {
 				submitted: (await AKSO.db('pay_intents')
 					.whereIn('org', aksopayPaymentIntentOrgs)
-					.where('status', 'submitted')
+					.where({
+						status: 'submitted',
+						intermediaryCountryCode: null,
+					})
 					.count({ count: 1 })
 				)[0].count,
 				disputed: (await AKSO.db('pay_intents')
 					.whereIn('org', aksopayPaymentIntentOrgs)
-					.where('status', 'disputed')
+					.where({
+						status: 'disputed',
+						intermediaryCountryCode: null,
+					})
 					.count({ count: 1 })
-				)[0].count
+				)[0].count,
+				intermediary: (await AKSO.db('pay_intents')
+					.whereIn('org', aksopayPaymentIntentOrgs)
+					.where({
+						status: 'submitted',
+					})
+					.whereNotNull('intermediaryCountryCode')
+					.count({ count: 1 })
+				)[0].count,
 			};
 		}
 
