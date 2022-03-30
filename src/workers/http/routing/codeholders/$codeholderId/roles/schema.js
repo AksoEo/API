@@ -8,6 +8,7 @@ export default {
 		'role.id': 'f',
 		'role.name': 'fs',
 		'role.description': 'fs',
+		'role.public': 'f',
 		'dataCountry': 'f',
 		'dataOrg': 'f',
 		'dataString': ''
@@ -27,6 +28,7 @@ export default {
 		`),
 		'role.id': 'roleId',
 		'role.name': 'codeholderRoles.name',
-		'role.description': 'codeholderRoles.description'
+		'role.description': 'codeholderRoles.description',
+		'role.public': 'codeholderRoles.public',
 	}
 };
