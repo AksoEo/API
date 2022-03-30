@@ -11,8 +11,15 @@ export default {
 		if (!paymentIntent) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_intents.mark_succeeded.' + paymentIntent.org)) { return res.sendStatus(403); }
 
-		if (!['manual', 'intermediary'].includes(paymentIntent.paymentMethod.type) || paymentIntent.status !== 'submitted') {
+		if (!['manual', 'intermediary'].includes(paymentIntent.paymentMethod.type)) {
 			return res.sendStatus(409);
+		}
+		if (!['pending', 'disputed'].includes(paymentIntent.status)) {
+			return res.sendStatus(409);
+		}
+
+		if (paymentIntent.status !== 'submitted') {
+			await intentUtil.updateStatus(paymentIntent.id, 'submitted');
 		}
 
 		await intentUtil.updateStatus(paymentIntent.id, 'succeeded');
