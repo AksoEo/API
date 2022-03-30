@@ -117,7 +117,7 @@ export async function validateDataEntry ({
 		...data
 	};
 	const getFormValue = key => {
-		return formValues[key.normalize('NFC')] || null;
+		return formValues[key.normalize('NFC')];
 	};
 	const getComputedProp = (formEntry, prop) => {
 		const propVal = formEntry[prop];

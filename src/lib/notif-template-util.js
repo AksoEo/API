@@ -26,8 +26,8 @@ export async function renderTemplate (template, intentData) {
 			return intentData[key.substring(1)];
 		} else {
 			try {
-				return evaluateSync(template.script, key, intentData);
-			} catch { return undefined; } // this should never happen
+				return evaluateSync(template.script, key, formKey => intentData[formKey]);
+			} catch (e) { return undefined; } // this should never happen
 		}
 	};
 
