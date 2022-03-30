@@ -27,11 +27,26 @@ export async function doAscMagic() {
 
 export async function evaluate (...args) {
 	await doAscMagic();
-	return nativeEvaluate(...args);
+	return evaluateSync(...args);
 }
 
-export function evaluateSync (...args) {
-	return nativeEvaluate(...args);
+export function evaluateSync (definitions, id, getFormValue, options) {
+	let opCount = 0;
+	if (!options) {
+		options = {
+			shouldHalt: () => opCount++ > 4096,
+		};
+	}
+	try {
+		return nativeEvaluate(definitions, id, getFormValue, options);
+	} catch (e) {
+		if (e.message === 'Terminated by shouldHalt') {
+			const err = new Error('asc was terminated due to shouldHalt');
+			err.statusCode = 400;
+			throw err;
+		}
+		throw e;
+	}
 }
 
 export function formatCurrency (amt, currency, currencyName = true) {
