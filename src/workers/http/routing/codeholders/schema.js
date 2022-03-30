@@ -722,7 +722,7 @@ export const patchSchema = {
 		},
 		mainDescriptor: {
 			type: 'string',
-			pattern: '^[^\\n]{1,30}$',
+			pattern: '^[^\\n]{1,80}$',
 			nullable: true
 		},
 		factoids: {
