@@ -39,14 +39,15 @@ export default {
 		const codeholder = await AKSO.db('codeholders')
 			.where(whereStmt)
 			.whereNotNull('password')
-			.where(function () {
-				this
-					.where('createPasswordTime', '<', moment().unix() - AKSO.CREATE_PASSWORD_FREQ)
-					.orWhere('createPasswordTime', null);
-			})
-			.first('id', 'newCode');
-
+			.first('id', 'newCode', 'createPasswordTime');
 		if (!codeholder) { return; }
+
+		if (!req.hasPermission('admin')) {
+			if (codeholder.createPasswordTime !== null &&
+				codeholder.createPasswordTime + AKSO.CREATE_PASSWORD_FREQ > moment().unix()) {
+				return;
+			}
+		}
 
 		// Update createPasswordTime and createPasswordKey
 		const createPasswordKey = await crypto.randomBytes(16);
