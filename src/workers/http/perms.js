@@ -254,7 +254,8 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 	req.hasPermission = function hasPermission (perm) {
 		let path = req.permsTree;
 		const bits = perm.split('.');
-		for (let bit of bits) {
+		for (const bit of bits) {
+			if (path === true) { return false; }
 			if ('*' in path) { return true; }
 			if (!(bit in path)) { return false; }
 			path = path[bit];
