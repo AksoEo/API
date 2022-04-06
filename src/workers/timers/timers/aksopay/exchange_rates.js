@@ -21,9 +21,14 @@ export async function updateExchangeRatesIfNeeded () {
 
 	let rates;
 	if (needUpdateFile) {
-		const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${AKSO.conf.openExchangeRatesAppID}`);
-		rates = await res.json();
-		await fs.writeJSON(exchangeRatesPath, rates);
+		try {
+			const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${AKSO.conf.openExchangeRatesAppID}`);
+			rates = await res.json();
+			await fs.writeJSON(exchangeRatesPath, rates);
+		} catch (e) {
+			AKSO.log.error('Failed to update exchange rates');
+			AKSO.log.error(e);
+		}
 	}
 
 	// TODO: Only read the file if stat says outdated
