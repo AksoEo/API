@@ -1,5 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
 import CodeholderChangeRequestResource from 'akso/lib/resources/codeholder-change-request-resource';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 import parSchema from '../schema';
 
@@ -8,7 +9,10 @@ const schema = {
 	...{
 		query: 'resource',
 		body: null,
-		requirePerms: 'codeholders.change_requests.read'
+		requirePerms: [
+			'codeholders.read',
+			'codeholders.change_requests.read',
+		],
 	}
 };
 
@@ -17,7 +21,13 @@ export default {
 
 	run: async function run (req, res) {
 		const query = AKSO.db('codeholders_changeRequests')
-			.where('id', req.params.changeRequestId);
+			.where('id', req.params.changeRequestId)
+			.whereExists(function () {
+				this.select(1)
+					.from('view_codeholders')
+					.whereRaw('view_codeholders.id = codeholders_changeRequests.codeholderId');
+				memberFilter(codeholderSchema, this, req);
+			});
 		QueryUtil.simpleResource(req, schema, query);
 
 		const row = await query;

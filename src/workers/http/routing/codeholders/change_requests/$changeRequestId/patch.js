@@ -1,6 +1,7 @@
 import AuthClient from 'akso/workers/http/lib/auth-client';
 
 import { handleHistory } from 'akso/workers/http/routing/codeholders/schema';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {
@@ -26,14 +27,28 @@ export default {
 			minProperties: 1,
 			additionalProperties: false
 		},
-		requirePerms: 'codeholders.change_requests.update'
+		requirePerms: [
+			'codeholders.read',
+			'codeholders.change_requests.update',
+		],
 	},
 
 	run: async function run (req, res) {
 		const currentRequest = await AKSO.db('codeholders_changeRequests')
 			.first('status', 'codeholderId', 'data')
 			.where('id', req.params.changeRequestId);
-		if (!currentRequest) { res.sendStatus(404); }
+		if (!currentRequest) { return res.sendStatus(404); }
+
+		// Ensure the codeholder can be seen through the member filter
+		const canSeeCodeholder = await AKSO.db('view_codeholders')
+			.first(1)
+			.where('id', currentRequest.codeholderId)
+			.where(function () {
+				memberFilter(codeholderSchema, this, req);
+			});
+		if (!canSeeCodeholder) {
+			return res.sendStatus(404);
+		}
 
 		if ('status' in req.body && currentRequest.status !== 'pending') {
 			res.type('text/plain').status(400)
