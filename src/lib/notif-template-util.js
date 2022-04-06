@@ -92,7 +92,9 @@ async function renderInheritTemplate (templateData, viewFn) {
 const ifRegex = /\{\{#if\s+(.+?)}}(.+?)(?:\{\{#else}}(.+?))?\{\{\/if}}/gs;
 const identifierRegex = /\{\{([^#/].*?)}}/gs;
 
-const inheritTextMd = new MarkdownIt('zero');
+const inheritTextMd = new MarkdownIt('zero', {
+	breaks: true,
+});
 inheritTextMd.enable([
 	'newline',
 	
