@@ -1,4 +1,5 @@
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {},
@@ -37,13 +38,30 @@ export default {
 			};
 		}
 
-		if (req.hasPermission('registration.registrations.read')) {
-			tasks.registration = {
-				pending: (await AKSO.db('registration_entries')
-					.where('status', 'pending')
-					.count({ count: 1 })
-				)[0].count
-			};
+		if (req.hasPermission('codeholders.read')) {
+			if (req.hasPermission('registration.registrations.read')) {
+				tasks.registration = {
+					pending: (await AKSO.db('registration_entries')
+						.where('status', 'pending')
+						.count({ count: 1 })
+					)[0].count
+				};
+			}
+
+			if (req.hasPermission('codeholders.change_requests.read')) {
+				tasks.codeholderChangeRequests = {
+					pending: (await AKSO.db('codeholders_changeRequests')
+						.where('status', 'pending')
+						.count({ count: 1 })
+						.whereExists(function () {
+							this.select(1)
+								.from('view_codeholders')
+								.whereRaw('view_codeholders.id = codeholders_changeRequests.id');
+							memberFilter(codeholderSchema, this, req);
+						})
+					)[0].count
+				};
+			}
 		}
 
 		res.sendObj(tasks);
