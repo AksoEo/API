@@ -56,11 +56,32 @@ export default {
 						.whereExists(function () {
 							this.select(1)
 								.from('view_codeholders')
-								.whereRaw('view_codeholders.id = codeholders_changeRequests.id');
+								.whereRaw('view_codeholders.id = codeholders_changeRequests.codeholderId');
 							memberFilter(codeholderSchema, this, req);
 						})
 					)[0].count
 				};
+			}
+
+			tasks.delegates = {};
+
+			const delegationApplicationOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+				.filter(org => req.hasPermission('delegations.applications.read.' + org));
+			if (delegationApplicationOrgs.length) {
+				tasks.delegates.pendingApplications = (await AKSO.db('delegations_applications')
+					.where('status', 'pending')
+					.count({ count: 1 })
+					.whereExists(function () {
+						this.select(1)
+							.from('view_codeholders')
+							.whereRaw('view_codeholders.id = delegations_applications.codeholderId');
+						memberFilter(codeholderSchema, this, req);
+					})
+				)[0].count;
+			}
+			
+			if (!Object.keys(tasks.delegates).length) {
+				delete tasks.delegates;
 			}
 		}
 
