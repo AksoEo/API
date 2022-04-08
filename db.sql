@@ -2704,8 +2704,8 @@ DROP TABLE IF EXISTS `pay_intents`;
 CREATE TABLE `pay_intents` (
   `id` binary(15) NOT NULL,
   `codeholderId` int unsigned DEFAULT NULL,
-  `customer_email` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_email` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `paymentOrgId` smallint unsigned DEFAULT NULL,
   `paymentMethodId` int unsigned DEFAULT NULL,
   `paymentMethod` json NOT NULL,
@@ -3682,4 +3682,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-30  9:57:07
+-- Dump completed on 2022-04-08 10:29:26

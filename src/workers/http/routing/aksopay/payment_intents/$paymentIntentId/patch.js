@@ -15,6 +15,7 @@ export default {
 				},
 				customer: {
 					type: 'object',
+					nullable: true,
 					properties: {
 						email: {
 							type: 'string',
@@ -106,8 +107,12 @@ export default {
 
 		const data = {
 			codeholderId: req.body.codeholderId,
-			customer_email: req.body.customer ? req.body.customer.email : undefined,
-			customer_name: req.body.customer ? req.body.customer.name : undefined,
+			customer_email: 'customer' in req.body ? (
+				req.body.customer === null ? null : req.body.customer.email
+			) : undefined,
+			customer_name: 'customer' in req.body ? (
+				req.body.customer === null ? null : req.body.customer.name
+			) : undefined,
 			internalNotes: req.body.internalNotes,
 			customerNotes: req.body.customerNotes,
 			foreignId: req.body.foreignId

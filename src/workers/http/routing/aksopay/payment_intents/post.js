@@ -25,6 +25,7 @@ export default {
 				},
 				customer: {
 					type: 'object',
+					nullable: true,
 					properties: {
 						email: {
 							type: 'string',
@@ -212,6 +213,12 @@ export default {
 			return res.type('text/plain').status(400).send('Currency not supported by PaymentMethod');
 		}
 
+		// Make sure customer is null only when allowed
+		if (paymentMethod.type === 'stripe' && req.body.customer === null) {
+			return res.type('text/plain').status(400)
+				.send('customer may not be null when using stripe');
+		}
+
 		// Validate purposes
 		let totalAmount = 0;
 		for (const purpose of req.body.purposes) {
@@ -353,8 +360,8 @@ export default {
 		const data = {
 			id: id,
 			codeholderId: req.body.codeholderId,
-			customer_email: req.body.customer.email,
-			customer_name: req.body.customer.name,
+			customer_email: req.body.customer ? req.body.customer.email : null,
+			customer_name: req.body.customer ? req.body.customer.name : null,
 			paymentOrgId: req.body.paymentOrgId,
 			paymentMethodId: req.body.paymentMethodId,
 			paymentMethod: JSON.stringify(paymentMethod),
