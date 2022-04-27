@@ -101,6 +101,9 @@ export async function renderSendEmail ({
 		innerMsgData: fs.readFile(path.join(tmplDir, 'notif.json'), 'utf8')
 	});
 
+	// Render subject
+	const subject = renderTemplate(msg.subject, view, false);
+
 	// Render inner
 	const msg = deepmerge.all([
 		JSON.parse(templs.outerMsgData),
@@ -110,14 +113,14 @@ export async function renderSendEmail ({
 		},
 		msgData
 	]);
-	view.subject = msg.subject;
+	view.subject = subject;
 	view.domain = AKSOOrganization.getDomain(org);
 	const innerHtml = renderTemplate(templs.innerHtml, view);
 	const innerText = renderTemplate(templs.innerText, view, false);
 
 	// Render outer
 	const outerView = {
-		subject: msg.subject,
+		subject,
 		unsubscribe: false // TODO: unsubscribe link
 	};
 	msg.html = renderTemplate(templs.outerHtml, {...outerView, ...{ content: innerHtml } });

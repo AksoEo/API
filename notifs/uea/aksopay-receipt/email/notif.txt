@@ -1,0 +1,20 @@
+Estimata{{#if intent.customer_name}} {{intent.customer_name}}{{/if}},
+
+Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
+
+Via {#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en ĉiuj komunikoj kun ni pri via {#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per info@uea.org aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe https://uea.org/kontakti.
+
+
+{{#each intent.purposes}}
+{{~#if this.title}}{{this.title}}{{/if}}
+{{#id this.invalid}}(nuligita){{else}}{{~^}}{{/if}}
+{{#if this.description}}{{this.description}}{{else}}{{~^}}{{/if}}
+{{currency_fmt this.amount intent.currency}}
+{{~#if this.originalAmount}}(antaŭe {{currency_fmt this.originalAmount intent.currency}}){{/if}}
+{{/each}}
+
+SUME {{currency_fmt totalAmount intent.currency}}
+
+
+Salutas
+Universala Esperanto-Asocio

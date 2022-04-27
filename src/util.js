@@ -4,6 +4,8 @@ import AjvMergePatch from 'ajv-merge-patch';
 import AjvFormats from 'ajv-formats';
 import moment from 'moment-timezone';
 
+import { formatCurrency } from 'akso/lib/akso-script-util';
+
 export function arrToObjByKey (arr, _key, pick = null) {
 	const obj = {};
 	for (const row of arr) {
@@ -87,6 +89,9 @@ Handlebars.registerHelper('breaklines', text => {
 Handlebars.registerHelper('if_eq', function(a, b, opts) {
 	if(a == b) { return opts.fn(this); }
 	else { return opts.inverse(this); }
+});
+Handlebars.registerHelper('currency_fmt', function (amt, currency, currencyName = true) {
+	return formatCurrency(amt, currency, currencyName);
 });
 
 /**

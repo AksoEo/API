@@ -1,6 +1,10 @@
 import { createTransaction } from 'akso/util';
+import { renderSendEmail } from 'akso/mail';
+
+import { afterQuery } from 'akso/workers/http/routing/aksopay/payment_intents/schema';
 
 import moment from 'moment-timezone';
+import { base32 } from 'rfc4648';
 
 /**
  * Updates the statuses of the PaymentIntents with the given IDs
@@ -43,4 +47,54 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 
 export function updateStatus (id, ...args) {
 	return updateStatuses([id], ...args);
+}
+
+export async function sendReceiptEmail (id, email = undefined) {
+	// Try to find the intent
+	const intent = await AKSO.db('pay_intents')
+		.first(
+			'customer_email', 'customer_name', 'paymentMethod', 'currency',
+			'org', 'succeededTime', 'intermediaryCountryCode', {
+				purposes: 1,
+			})
+		.where({
+			id,
+			status: 'succeeded'
+		});
+	if (!intent) {
+		throw new Error('unknown intent');
+	}
+	if (!email) {
+		email = intent.customer_email;
+	}
+	if (!email) {
+		throw new Error('no customer email, cannot send receipt');
+	}
+
+	// Obtain purposes etc.
+	await afterQuery([intent]);
+
+	const isDonation = intent.purposes
+		.filter(purpose => {
+			if (purpose.type === 'trigger') { return true; }
+			return false;
+		})
+		.length === 0;
+
+	await renderSendEmail({
+		org: intent.org,
+		tmpl: 'aksopay-receipt',
+		personalizations: { to: [{
+			email,
+			name: intent.customer_name,
+		}]},
+		view: {
+			intent,
+			isDonation,
+			idEncoded: base32.stringify(intent.id),
+			totalAmount: intent.purposes
+				.map(p => p.amount)
+				.reduce((a, b) => a + b),
+		},
+	});
 }
