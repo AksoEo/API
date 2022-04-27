@@ -42,6 +42,14 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 			}))
 	]);
 
+	for (const id of ids) {
+		try {
+			await sendReceiptEmail(id);
+		} catch (e) {
+			if (!e.isAKSO) { throw e; }
+		}
+	}
+
 	await trx.commit();
 }
 
@@ -62,13 +70,17 @@ export async function sendReceiptEmail (id, email = undefined) {
 			status: 'succeeded'
 		});
 	if (!intent) {
-		throw new Error('unknown intent');
+		const err = new Error('unknown intent');
+		err.isAKSO = true;
+		throw err;
 	}
 	if (!email) {
 		email = intent.customer_email;
 	}
 	if (!email) {
-		throw new Error('no customer email, cannot send receipt');
+		const err = new Error('no customer email, cannot send receipt');
+		err.isAKSO = true;
+		throw err;
 	}
 
 	// Obtain purposes etc.
