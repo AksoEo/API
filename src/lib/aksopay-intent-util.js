@@ -42,15 +42,18 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 			}))
 	]);
 
-	for (const id of ids) {
-		try {
-			await sendReceiptEmail(id);
-		} catch (e) {
-			if (!e.isAKSO) { throw e; }
+	await trx.commit();
+
+	if (status === 'succeeded') {
+		for (const id of ids) {
+			try {
+				await sendReceiptEmail(id);
+			} catch (e) {
+				//if (!e.isAKSO) { throw e; }
+				throw e;
+			}
 		}
 	}
-
-	await trx.commit();
 }
 
 export function updateStatus (id, ...args) {
@@ -61,7 +64,7 @@ export async function sendReceiptEmail (id, email = undefined) {
 	// Try to find the intent
 	const intent = await AKSO.db('pay_intents')
 		.first(
-			'customer_email', 'customer_name', 'paymentMethod', 'currency',
+			'id', 'customer_email', 'customer_name', 'paymentMethod', 'currency',
 			'org', 'succeededTime', 'intermediaryCountryCode', {
 				purposes: 1,
 			})
@@ -84,7 +87,7 @@ export async function sendReceiptEmail (id, email = undefined) {
 	}
 
 	// Obtain purposes etc.
-	await afterQuery([intent]);
+	await new Promise(resolve => afterQuery([intent], resolve));
 
 	const isDonation = intent.purposes
 		.filter(purpose => {
@@ -96,10 +99,12 @@ export async function sendReceiptEmail (id, email = undefined) {
 	await renderSendEmail({
 		org: intent.org,
 		tmpl: 'aksopay-receipt',
-		personalizations: { to: [{
-			email,
-			name: intent.customer_name,
-		}]},
+		personalizations: [{
+			to: {
+				email,
+				name: intent.customer_name,
+			},
+		}],
 		view: {
 			intent,
 			isDonation,

@@ -2,15 +2,23 @@ Estimata{{#if intent.customer_name}} {{intent.customer_name}}{{/if}},
 
 Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
 
-Via {#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en ĉiuj komunikoj kun ni pri via {#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per info@uea.org aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe https://uea.org/kontakti.
+Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en ĉiuj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per info@uea.org aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe https://uea.org/kontakti.
+
+{{~#if_eq intent.paymentMethod.type stripe}}
+
+Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.{{/if_eq}}
 
 
 {{#each intent.purposes}}
 {{~#if this.title}}{{this.title}}{{/if}}
-{{#id this.invalid}}(nuligita){{else}}{{~^}}{{/if}}
-{{#if this.description}}{{this.description}}{{else}}{{~^}}{{/if}}
-{{currency_fmt this.amount intent.currency}}
-{{~#if this.originalAmount}}(antaŭe {{currency_fmt this.originalAmount intent.currency}}){{/if}}
+{{~#if_eq this.type "addon"}}Donaco al {{this.paymentAddon.name}}{{/if_eq}}
+{{~#if this.invalid}}
+(nuligita){{/if}}
+{{~#if this.description}}
+: {{this.description}}{{/if}}
+{{currency_fmt this.amount @root.intent.currency}}
+{{~#if this.originalAmount}} (rabatite de {{currency_fmt this.originalAmount @root.intent.currency}}){{/if}}
+---
 {{/each}}
 
 SUME {{currency_fmt totalAmount intent.currency}}
