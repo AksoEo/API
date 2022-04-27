@@ -378,8 +378,8 @@ export default {
 			stripeClientSecret: stripeClientSecret,
 			stripeSecretKey: paymentMethodRaw.stripeSecretKey,
 			intermediaryCountryCode: req.body.intermediaryCountryCode,
-			intermediaryIdentifier_year: req.body.intermediaryIdentifier.year,
-			intermediaryIdentifier_number: req.body.intermediaryIdentifier.number,
+			intermediaryIdentifier_year: req.body.intermediaryIdentifier ? req.body.intermediaryIdentifier.year : null,
+			intermediaryIdentifier_number: req.body.intermediaryIdentifier ? req.body.intermediaryIdentifier.number : null,
 		};
 
 		const trx = await req.createTransaction();
