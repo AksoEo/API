@@ -5,8 +5,9 @@ import { bindMethod } from 'akso/workers/http/routing';
 import method$get from './get';
 import method$patch from './patch';
 
+import endpoint$intermediary_pdf from './intermediary_pdf';
+
 import operation$cancel from './!cancel';
-import operation$make_intermediary_pdf from './!make_intermediary_pdf';
 import operation$mark_disputed from './!mark_disputed';
 import operation$mark_refunded from './!mark_refunded';
 import operation$mark_succeeded from './!mark_succeeded';
@@ -23,8 +24,9 @@ export function init () {
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
 
+	bindMethod(router, '/intermediary_pdf', 'get', endpoint$intermediary_pdf);
+
 	bindMethod(router, '/!cancel', 'post', operation$cancel);
-	bindMethod(router, '/!make_intermediary_pdf', 'post', operation$make_intermediary_pdf);
 	bindMethod(router, '/!mark_disputed', 'post', operation$mark_disputed);
 	bindMethod(router, '/!mark_refunded', 'post', operation$mark_refunded);
 	bindMethod(router, '/!mark_succeeded', 'post', operation$mark_succeeded);
