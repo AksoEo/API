@@ -86,6 +86,15 @@ Handlebars.registerHelper('breaklines', text => {
 		.replace(/(\r\n|\n|\r)/gm, '<br>');
 	return new Handlebars.SafeString(text);
 });
+Handlebars.registerHelper('and', function(a, b) {
+	return a && b;
+});
+Handlebars.registerHelper('or', function(a, b) {
+	return a || b;
+});
+Handlebars.registerHelper('mod', function(a, b) {
+	return a % b;
+});
 Handlebars.registerHelper('if_eq', function(a, b, opts) {
 	if(a == b) { return opts.fn(this); }
 	else { return opts.inverse(this); }

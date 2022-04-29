@@ -145,9 +145,7 @@ export async function sendReceiptEmail (id, email = undefined) {
 					const magazine = magazines[offer.id][0];
 					return `${offer.paperVersion ? 'Papera' : 'Reta'} revuo ${magazine.name}`;
 				}
-			})
-			.map(str => ': ' + str)
-			.join('\n');
+			});
 	}
 
 	await renderSendEmail({

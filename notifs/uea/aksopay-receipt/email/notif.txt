@@ -14,7 +14,9 @@ Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
 {{~#if_eq this.type "trigger"}}
 {{~#if_eq this.triggers "registration_entry"}}
 
-{{lookup @root.registrationEntryInfo this._registrationEntryIdHex}}{{/if_eq}}{{/if_eq}}
+{{#each (lookup @root.registrationEntryInfo this._registrationEntryIdHex)}}
+: {{this}}
+{{/each}}{{/if_eq}}{{/if_eq}}
 {{currency_fmt this.amount @root.intent.currency}}
 {{~#if this.originalAmount}} (rabatite de {{currency_fmt this.originalAmount @root.intent.currency}}){{/if}}
 ---

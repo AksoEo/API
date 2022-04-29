@@ -8,6 +8,74 @@
                     <p>
                         Estimata{{#if intent.customer_name}} {{intent.customer_name}}{{/if}},
                     </p>
+                    <p>
+                        Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
+                    </p>
+                    <table border="0">
+                        <tbody>
+                            {{#each intent.purposes}}
+                            <tr style="
+                                {{#if_eq (mod @index 2) 0}}
+                                background-color: #ccc;
+                                {{/if_eq}}
+                            ">
+                                <td>
+                                    <strong>
+                                        {{#if this.invalid}}<strike>{{/if}}
+                                        {{#if this.title}}{{this.title}}{{/if}}
+                                        {{#if_eq this.type "addon"}}Donaco al {{this.paymentAddon.name}}{{/if_eq}}
+                                        {{#if this.invalid}}</strike>{{/if}}
+                                    </strong>
+                                    <p>
+                                        {{~#if this.description}}{{breaklines this.description}}{{/if}}
+
+                                        {{#if_eq this.type "trigger"}}
+                                        {{#if this.description}}</p><p>{{/if}}
+                                        {{#if_eq this.triggers "registration_entry"}}
+                                        {{#each (lookup @root.registrationEntryInfo this._registrationEntryIdHex)}}
+                                        {{this}}{{#unless @last}}<br>{{/unless}}
+                                        {{~/each}}
+                                        {{/if_eq}}
+                                        {{/if_eq~}}
+                                    </p>
+                                </td>
+                                <td>
+                                    {{#if this.invalid}}<strike>{{/if}}
+                                    {{#if this.originalAmount}}
+                                    <strike>{{currency_fmt this.originalAmount @root.intent.currency}}</strike><br>
+                                    {{/if}}
+                                    {{currency_fmt this.amount @root.intent.currency}}
+                                    {{#if this.invalid}}</strike>{{/if}}
+                                </td>
+                            </tr>
+                            {{/each}}
+                            <tr>
+                                <td>SUME</td>
+                                <td style="text-decoration: underline double;">{{currency_fmt totalAmount intent.currency}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas <span style="font-family: monospace;">{{idEncoded}}</span>.<br>Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per <a href="mailto:info@uea.org">info@uea.org</a> aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe <a href="https://uea.org/kontakti">uea.org/kontakti</a>.
+                    </p>
+
+                    {{~#if_eq intent.paymentMethod.type stripe}}
+                    <p>
+                        Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.
+                    </p>
+                    {{/if_eq}}
+
+                    {{~#if_eq registrationEntryInfo.length 0}}{{else}}
+                    <p>
+                        Kutime aliĝoj kaj revuaj abonoj estas aŭtomate traktitaj ene de 2 minutoj, tamen povas malofte okazi, ke via aliĝo devos esti permane traktita de oficisto. Pro tio, ni dekore petas, ke vi permesu al ni ĝis 5 labortagoj por trakti vian aliĝon, okaze ke ĝi ne rapide aŭtomate traktiĝas.
+                    </p>
+                    {{/if_eq}}
+
+                    <p>
+                        Salutas<br>
+                        Universala Esperanto-Asocio
+                    </p>
                 </td>
             </tr>
         </table>
