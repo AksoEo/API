@@ -231,7 +231,7 @@ export function init () {
 						AKSO.log.error(
 							`A SQL error occured at ${req.method} ${url}\n` +
 							`${err.errno} ${err.code} [state ${err.sqlState}]\n` +
-							`${err.originalStack}\n\n${err.stack}`
+							`${err.stack || err.originalStack}`
 						);
 					} else {
 						const error = err.stack ? err.stack : err;
