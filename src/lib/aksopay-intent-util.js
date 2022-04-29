@@ -49,8 +49,7 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 			try {
 				await sendReceiptEmail(id);
 			} catch (e) {
-				//if (!e.isAKSO) { throw e; }
-				throw e;
+				if (!e.isAKSO) { throw e; }
 			}
 		}
 	}

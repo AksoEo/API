@@ -142,7 +142,7 @@ export async function renderSendEmail ({
 }
 
 /**
- * Schedules a raw mail for sending
+ * Schedules a raw email for sending
  * @param  {Object} msg A Sendgrid mail object
  */
 export async function sendRawMail (msg) {
