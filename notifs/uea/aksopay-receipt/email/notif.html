@@ -11,7 +11,7 @@
                     <p>
                         Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
                     </p>
-                    <table border="0">
+                    <table border="0" style="width:100%;">
                         <tbody>
                             {{#each intent.purposes}}
                             <tr style="
@@ -39,7 +39,7 @@
                                         {{/if_eq~}}
                                     </p>
                                 </td>
-                                <td>
+                                <td style="text-align: right;">
                                     {{#if this.invalid}}<strike>{{/if}}
                                     {{#if this.originalAmount}}
                                     <strike>{{currency_fmt this.originalAmount @root.intent.currency}}</strike><br>
@@ -51,7 +51,7 @@
                             {{/each}}
                             <tr>
                                 <td>SUME</td>
-                                <td style="text-decoration: underline double;">{{currency_fmt totalAmount intent.currency}}</td>
+                                <td style="text-decoration: underline double;text-align: right;">{{currency_fmt totalAmount intent.currency}}</td>
                             </tr>
                         </tbody>
                     </table>
