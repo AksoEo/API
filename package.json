@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/gulp compile-src",
-    "preinstall": "npm install --ignore-scripts && npm rebuild && npm run build",
+    "preinstall": "npm install --ignore-scripts && npm rebuild --ignore-scripts && npm run build",
     "start": "node dist/index.js",
     "populate-db": "node dist/test-data/index.js $MODE",
     "populate-geo-db": "node dist/test-data/geo-db.js $GEODB_PATH"
