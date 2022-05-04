@@ -89,7 +89,7 @@ export function init () {
 				signed: true,
 				sameSite: 'lax',
 				overwrite: true,
-				httpOnly: false // TODO: Temp debug, remove before launch
+				httpOnly: true,
 			}));
 
 			// Add custom methods to req and res
