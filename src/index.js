@@ -7,7 +7,6 @@ import fs from 'fs-extra';
 import fetch from 'node-fetch';
 import Stripe from 'stripe';
 import { Cashify } from 'cashify';
-import promiseAny from 'promise-any';
 
 import * as AKSODb from './db';
 
@@ -162,7 +161,7 @@ async function init () {
 		}
 		let ip;
 		try {
-			ip = await promiseAny([
+			ip = await Promise.any([
 				(async () => { return await (await fetch('https://api64.ipify.org')).text(); })(),
 				(async () => { return await (await fetch('https://myexternalip.com/raw')).text(); })()
 			]);
