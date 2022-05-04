@@ -7,7 +7,6 @@ import fs from 'fs-extra';
 import fetch from 'node-fetch';
 import Stripe from 'stripe';
 import { Cashify } from 'cashify';
-import promiseAny from 'promise-any';
 
 import * as AKSODb from './db';
 
@@ -42,8 +41,8 @@ async function init () {
 
 		conf: {
 			http: {
-				port: 				process.env.AKSO_HTTP_PORT || 1111,
-				trustProxy:	process.env.AKSO_HTTP_TRUST_PROXY || false,
+				port: 				process.env.AKSO_HTTP_PORT ?? 1111,
+				trustProxy:	process.env.AKSO_HTTP_TRUST_PROXY ?? false,
 				helmet:				process.env.AKSO_HTTP_USE_HELMET === undefined ?
 					true : process.env.AKSO_HTTP_USE_HELMET != '0',
 				sessionSecret:		process.env.AKSO_HTTP_SESSION_SECRET,
@@ -59,7 +58,7 @@ async function init () {
 					'/' : process.env.AKSO_HTTP_PATH,
 				threads: 			process.env.AKSO_HTTP_THREADS === undefined ?
 					3 : parseInt(process.env.AKSO_HTTP_THREADS, 10),
-				outsideAddress:		process.env.AKSO_HTTP_OUTSIDE_ADDRESS || null
+				outsideAddress:		process.env.AKSO_HTTP_OUTSIDE_ADDRESS ?? null
 			},
 			mysql: {
 				host: process.env.AKSO_MYSQL_HOST,
@@ -78,8 +77,8 @@ async function init () {
 				deleteWebhooks: process.env.AKSO_STRIPE_WEBHOOKS_ARE_TEMP === undefined ?
 					false : process.env.AKSO_STRIPE_WEBHOOKS_ARE_TEMP != '0'
 			},
-			prodMode: process.env.NODE_ENV || 'dev',
-			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY || '', 'hex'),
+			prodMode: process.env.NODE_ENV ?? 'dev',
+			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY ?? '', 'hex'),
 			dataDir: process.env.AKSO_DATA_DIR,
 			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
@@ -162,7 +161,7 @@ async function init () {
 		}
 		let ip;
 		try {
-			ip = await promiseAny([
+			ip = await Promise.any([
 				(async () => { return await (await fetch('https://api64.ipify.org')).text(); })(),
 				(async () => { return await (await fetch('https://myexternalip.com/raw')).text(); })()
 			]);

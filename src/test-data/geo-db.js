@@ -76,7 +76,7 @@ async function init () {
 
 	console.log('Connecting to geo-db');
 	const sqlite = knex({
-		client: 'sqlite3',
+		client: 'better-sqlite3',
 		useNullAsDefault: true,
 		connection: {
 			filename: process.env.GEODB_PATH

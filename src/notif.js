@@ -72,7 +72,7 @@ export async function sendNotification ({
 	// Send emails
 	if (recipients.email.length) {
 		const personalizations = recipients.email.map(recipient => {
-			const personalization = emailPersonalizations.get(recipient) || {};
+			const personalization = emailPersonalizations.get(recipient) ?? {};
 			personalization.to = recipient;
 			return personalization;
 		});

@@ -8,11 +8,11 @@ const header = require('gulp-header');
 const compileSrc = function (source) {
 	return source
 		.pipe(plumber())
-		.pipe(header("import '@babel/polyfill';import 'source-map-support/register';"))
+		.pipe(header("import 'core-js/stable';import 'regenerator-runtime/runtime';import 'source-map-support/register';"))
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 				presets: [
-					["@babel/env", {
+					["@babel/preset-env", {
 						"exclude": [ "@babel/plugin-transform-exponentiation-operator" ]
 					}]
 				],
