@@ -12,7 +12,7 @@ const compileSrc = function (source) {
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 				presets: [
-					["@babel/env", {
+					["@babel/preset-env", {
 						"exclude": [ "@babel/plugin-transform-exponentiation-operator" ]
 					}]
 				],
