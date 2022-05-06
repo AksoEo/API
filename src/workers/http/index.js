@@ -244,6 +244,11 @@ export function init () {
 					res.sendStatus(status);
 				} else {
 					if (err.message) {
+						if (err.message === 'Invalid session') {
+							req.session = null;
+							req.logout();
+						}
+
 						res.status(status).type('text/plain').send(err.message);
 					} else {
 						res.sendStatus(status);
