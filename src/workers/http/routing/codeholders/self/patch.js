@@ -70,7 +70,6 @@ export default {
 		let oldDataFields = Object.keys(validationData.updateData);
 
 		const trx = await req.createTransaction();
-		// TODO: Why is this not using view_codeholders?
 		const oldData = await trx('codeholders')
 			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
 			.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')
