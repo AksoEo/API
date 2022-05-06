@@ -148,8 +148,8 @@ export async function renderSendEmail ({
 export async function sendRawMail (msg) {
 	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
 
-	const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
+	const tmpName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tmp-' });
 	await fs.writeFile(tmpName, msgpack.encode(msg, { codec: AKSO.msgpack }));
-	const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'mail-' + moment().unix() });
+	const newName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'mail-' + moment().unix(), keep: true });
 	await fs.move(tmpName, newName);
 }

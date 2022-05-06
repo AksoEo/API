@@ -3,6 +3,7 @@ import Ajv from 'ajv';
 import AjvMergePatch from 'ajv-merge-patch';
 import AjvFormats from 'ajv-formats';
 import moment from 'moment-timezone';
+import path from 'path';
 
 import { formatCurrency } from 'akso/lib/akso-script-util';
 
@@ -80,6 +81,9 @@ export async function promiseAllObject (promises) {
 
 Handlebars.registerHelper('url', options => {
 	return options.data.root.domain + options.fn(this);
+});
+Handlebars.registerHelper('img', options => {
+	return new URL(path.join('assets/img', options.fn(this)), AKSO.conf.http.outsideAddress).toString();
 });
 Handlebars.registerHelper('breaklines', text => {
 	text = Handlebars.Utils.escapeExpression(text)

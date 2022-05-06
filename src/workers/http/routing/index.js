@@ -10,6 +10,7 @@ import msgpack from 'msgpack-lite';
 import Busboy from 'busboy';
 import tmp from 'tmp-promise';
 import streamMeter from 'stream-meter';
+import path from 'path';
 
 import { ajv } from 'akso/util';
 
@@ -52,6 +53,8 @@ export function init () {
 			`Version: ${AKSO.version}`
 		].join('\n'));
 	});
+
+	router.use('/assets/img', express.static(path.join(AKSO.dir, 'data/img')));
 
 	// TOTP excluded endpoints
 	router.use('/auth', route$auth());

@@ -11,8 +11,8 @@ import moment from 'moment-timezone';
 export async function sendNotification (options) {
 	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_telegram');
 
-	const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
+	const tmpName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tmp-' });
 	await fs.writeFile(tmpName, msgpack.encode(options, { codec: AKSO.msgpack }));
-	const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tg-' + moment().unix() });
+	const newName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tg-' + moment().unix(), keep: true });
 	await fs.move(tmpName, newName);
 }

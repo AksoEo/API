@@ -209,9 +209,9 @@ export default {
 		};
 
 		const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
-		const tmpName = await tmp.tmpName({ dir: scheduleDir, prefix: 'tmp-' });
+		const tmpName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tmp-' });
 		await fs.writeFile(tmpName, msgpack.encode(labelInfo, { codec: AKSO.msgpack }));
-		const newName = await tmp.tmpName({ dir: scheduleDir, prefix: 'label-' + moment().unix() });
+		const newName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'label-' + moment().unix(), keep: true });
 		await fs.move(tmpName, newName);
 
 		res.sendStatus(202);
