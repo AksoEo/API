@@ -27,6 +27,7 @@ export const schema = {
 		'address.streetAddress': '',
 		'address.postalCode': '',
 		'address.sortingCode': '',
+		'addressInvalid': 'f',
 		'addressCountryGroups': 'f',
 		'feeCountry': 'f',
 		'feeCountryGroups': 'f',
@@ -567,6 +568,9 @@ export const patchSchema = {
 			additionalProperties: false,
 			required: [ 'country' ]
 		},
+		addressInvalid: {
+			type: 'boolean',
+		},
 		addressPublicity: {
 			type: 'string',
 			enum: [ 'private', 'public', 'members' ]
@@ -896,6 +900,11 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 			// Set feeCountry to address.country if null
 			if (codeholderBefore.feeCountry === null && !body.feeCountry) {
 				updateData.feeCountry = body.feeCountry = body.address.country;
+			}
+
+			// Set addressInvalid to false unless overriden
+			if (!('addressInvalid' in updateData)) {
+				updateData.addressInvalid = false;
 			}
 		} else {
 			if (field === 'feeCountry') {

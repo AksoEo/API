@@ -48,7 +48,6 @@ export default {
 		let oldAddress = null;
 
 		const trx = await req.createTransaction();
-		// TODO: Why is this not using view_codeholders?
 		oldData = await trx('codeholders')
 			.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
 			.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')

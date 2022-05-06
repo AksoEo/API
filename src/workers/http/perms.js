@@ -18,6 +18,7 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		password: 'w',
 		address: 'rw',
 		addressPublicity: 'rw',
+		addressInvalid: 'ra',
 		feeCountry: 'ra',
 		addressLatin: 'r',
 		email: 'rw',
