@@ -83,7 +83,7 @@ async function init () {
 			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
 				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0',
-			openExchangeRatesAppID: process.env.AKSO_OPEN_EXCHANGE_RATES_APP_ID
+			openExchangeRatesAppID: process.env.AKSO_OPEN_EXCHANGE_RATES_APP_ID,
 		},
 
 		// Constants, do not change without updating docs
@@ -113,6 +113,7 @@ async function init () {
 		],
 		RATE_LIMIT_WINDOW_MS: 3*60*1000, // 3 minutes
 		RATE_LIMIT_MAX: 300, // 300 requests per window ms max
+		
 		SLOW_DOWN_WINDOW_MS: 1*60*1000, // 1 minute
 		SLOW_DOWN_DELAY_AFTER: 5, // allow 5 requests per window ms, then ...
 		SLOW_DOWN_DELAY_MS: 500, // add a n*500ms delay for each n'th request past `delay after`
@@ -121,6 +122,8 @@ async function init () {
 
 		CREATE_PASSWORD_FREQ: 3*60*60, // 3 hours
 		PASSWORD_BCRYPT_SALT_ROUNDS: 12,
+
+		LOG_DELETION_TIME: 5184000, // 60 days
 
 		CODEHOLDER_OWN_CHANGE_CMT: 'Memfarita ŝanĝo',
 		CODEHOLDER_OWN_CHANGE_APPROVED_CMT: async authClient => {
