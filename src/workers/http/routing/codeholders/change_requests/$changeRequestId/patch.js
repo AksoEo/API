@@ -62,7 +62,11 @@ export default {
 			.update(req.body);
 
 		if (req.body.status === 'approved') {
-			// Fulfil the change request
+			if ('address' in currentRequest.data) {
+				currentRequest.data.addressInvalid = false;
+			}
+
+			// Fulfill the change request
 			const oldData = await trx('codeholders')
 				.leftJoin('codeholders_human', 'codeholders.id', 'codeholders_human.codeholderId')
 				.leftJoin('codeholders_org', 'codeholders.id', 'codeholders_org.codeholderId')
