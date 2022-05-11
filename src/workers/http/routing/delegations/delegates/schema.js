@@ -106,10 +106,10 @@ export default {
 					.whereRaw('codeholders_delegations_countries.org = codeholders_delegations.org');
 
 				QueryUtil.filter({
-					fields: [
-						'country',
-						'level'
-					],
+					fields: {
+						country: 'f',
+						level: 'f',
+					},
 					query: this,
 					filter
 				});

@@ -176,13 +176,13 @@ export const schema = {
 					.whereRaw('`codeholderId` = `view_codeholders`.`id`');
 
 				QueryUtil.filter({
-					fields: [
-						'categoryId',
-						'givesMembership',
-						'lifetime',
-						'year',
-						'canuto'
-					],
+					fields: {
+						categoryId: 'f',
+						givesMembership: 'f',
+						lifetime: 'f',
+						year: 'f',
+						canuto: 'f',
+					},
 					query: this,
 					filter
 				});
@@ -201,12 +201,12 @@ export const schema = {
 					.whereRaw('codeholderId = view_codeholders.id');
 
 				QueryUtil.filter({
-					fields: [
-						'roleId',
-						'durationFrom',
-						'durationTo',
-						'isActive'
-					],
+					fields: {
+						roleId: 'f',
+						durationFrom: 'f',
+						durationTo: 'f',
+						isActive: 'f',
+					},
 					fieldAliases: {
 						isActive: () => AKSO.db.raw(`
 							(
@@ -239,9 +239,10 @@ export const schema = {
 					})
 					.whereRaw('codeholders_delegations.codeholderId = view_codeholders.id');
 
-				const fields = Object.keys(delegationsSchema.fields)
-					.filter(x => delegationsSchema.fields[x].includes('f'));
-				fields.splice(fields.indexOf('codeholderId'), 1);
+				const fields = {
+					...delegationsSchema.fields
+				};
+				delete fields.codeholderId;
 
 				QueryUtil.filter({
 					fields,
@@ -264,9 +265,10 @@ export const schema = {
 					.leftJoin('delegations_applications_cities', 'delegations_applications.id', 'delegations_applications_cities.id')
 					.whereRaw('delegations_applications.codeholderId = view_codeholders.id');
 
-				const fields = Object.keys(delegationApplicationsSchema.fields)
-					.filter(x => delegationApplicationsSchema.fields[x].includes('f'));
-				fields.splice(fields.indexOf('codeholderId'), 1);
+				const fields = {
+					...delegationApplicationsSchema.fields
+				};
+				delete fields.codeholderId;
 
 				QueryUtil.filter({
 					fields,
@@ -288,11 +290,8 @@ export const schema = {
 				this.select(1).from('magazines_subscriptions')
 					.whereRaw('magazines_subscriptions.codeholderId = view_codeholders.id');
 
-				const fields = Object.keys(magazineSubscriptionsSchema.fields)
-					.filter(x => magazineSubscriptionsSchema.fields[x].includes('f'));
-
 				QueryUtil.filter({
-					fields,
+					fields: magazineSubscriptionsSchema.fields,
 					fieldAliases: magazineSubscriptionsSchema.fieldAliases,
 					customCompOps: magazineSubscriptionsSchema.customFilterCompOps,
 					customLogicOps: magazineSubscriptionsSchema.customFilterLogicOps,
@@ -319,8 +318,7 @@ export const memberRestrictionFields = [...new Set(
 
 export function memberFilter (schema, query, req) {
 	QueryUtil.filter({
-		fields: Object.keys(schema.fields)
-			.filter(x => schema.fields[x].includes('f')),
+		fields: schema.fields,
 		query,
 		filter: req.memberFilter,
 		fieldAliases: schema.fieldAliases,

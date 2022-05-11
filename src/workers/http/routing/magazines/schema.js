@@ -75,8 +75,7 @@ function assertValidCodeholderFilter (filter) {
 	QueryUtil.filter({
 		filter: filter,
 		query: testQuery,
-		fields: Object.keys(codeholderSchema.fields)
-			.filter(x => codeholderSchema.fields[x].includes('f')),
+		fields: codeholderSchema.fields,
 		fieldAliases: codeholderSchema.fieldAliases,
 		customCompOps: codeholderSchema.customFilterCompOps,
 		customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,

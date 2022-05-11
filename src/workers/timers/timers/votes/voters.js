@@ -11,8 +11,7 @@ export async function updateVoterCodeholdersOnTimeStart () {
 
 	for (const vote of votesToUpdate) {
 		const quFilterOpts = {
-			fields: Object.keys(codeholderSchema.fields)
-				.filter(x => codeholderSchema.fields[x].indexOf('f' > -1)),
+			fields: codeholderSchema.fields,
 			fieldAliases: codeholderSchema.fieldAliases,
 			customCompOps: codeholderSchema.customFilterCompOps,
 			customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,

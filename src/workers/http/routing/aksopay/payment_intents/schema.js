@@ -59,15 +59,15 @@ export const schema = {
 					.whereRaw('`view_pay_intents_purposes`.`paymentIntentId` = `pay_intents`.`id`');
 
 				QueryUtil.filter({
-					fields: [
-						'type',
-						'invalid',
-						'amount',
-						'originalAmount',
-						'paymentAddonId',
-						'triggers',
-						'triggerStatus'
-					],
+					fields: {
+						type: 'f',
+						invalid: 'f',
+						amount: 'f',
+						originalAmount: 'f',
+						paymentAddonId: 'f',
+						triggers: 'f',
+						triggerStatus: 'f',
+					},
 					query: this,
 					filter
 				});

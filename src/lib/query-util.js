@@ -224,7 +224,7 @@ const QueryUtil = {
 
 	/**
 	 * Handles the ?filter parameter
-	 * @param {string[]}          fields           The permitted filterable fields
+	 * @param {Object}            fields           The fields with their flags
 	 * @param {knex.QueryBuilder} query            The query builder to apply the where statement to
 	 * @param {Object}            filter           The filter object as supplied by `req.query.filter`
 	 * @param {Object}            [fieldAliases]   The field aliases as defined in the schema
@@ -244,7 +244,25 @@ const QueryUtil = {
 	} = {}) {
 		query.where(function () {
 			for (let key in filter) { // Iterate through each key
-				if (fields.indexOf(key) > -1) { // key is a field
+				if (key in fields) { // key is a field
+					let val = filter[key];
+					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
+						val = { $eq: val }; // turn into an $eq comparison operator
+					}
+
+					// Ensure the field is filterable
+					if (!fields[key].includes('f')) {
+						// Error unless only permitted custom comp ops are used
+						for (const compOp in val) {
+							if (compOp in customCompOps && key in customCompOps[compOp]) {
+								continue;
+							}
+							const err = new Error(`Non-filterable field ${key} used in ?filter`);
+							err.statusCode = 400;
+							throw err;
+						}
+					}
+
 					// Ensure the client has the necessary permissions
 					if (fieldWhitelist && !fieldWhitelist.includes(key)) {
 						const err = new Error(`Disallowed field ${key} used in ?filter`);
@@ -252,14 +270,9 @@ const QueryUtil = {
 						throw err;
 					}
 
-					let val = filter[key];
-					if (val === null || val instanceof Buffer || (typeof val !== 'object' && !(val instanceof Array))) { // normal equality
-						val = { $eq: val }; // turn into an $eq comparison operator
-					}
-
-					// Handle comparison operator
+					// Handle comparison operators
 					this.where(function () {
-						for (let compOp in val) {
+						for (const compOp in val) {
 							// Check if the field is an alias
 							const orgKey = key;
 							key = QueryUtil.getAlias(fieldAliases, key, false);
@@ -291,11 +304,11 @@ const QueryUtil = {
 
 					// Make sure the user has access to the logic op
 					if (fieldWhitelist) {
-						let fields = customLogicOpsFields[key];
-						if (!fields) { fields = []; }
-						else if (!Array.isArray(fields)) { fields = [fields]; }
+						let logicOpFields = customLogicOpsFields[key];
+						if (!logicOpFields) { logicOpFields = []; }
+						else if (!Array.isArray(logicOpFields)) { logicOpFields = [logicOpFields]; }
 
-						for (const field of fields) {
+						for (const field of logicOpFields) {
 							if (!fieldWhitelist.includes(field)) {
 								const err = new Error(`Disallowed logic op ${key} used in ?filter`);
 								err.statusCode = 403;
@@ -418,8 +431,7 @@ const QueryUtil = {
 		// ?filter
 		if (req.query.filter) {
 			QueryUtil.filter({
-				fields: Object.keys(schema.fields)
-					.filter(x => schema.fields[x].indexOf('f' > -1)),
+				fields: schema.fields,
 				query,
 				filter: req.query.filter,
 				fieldAliases: schema.fieldAliases || {},

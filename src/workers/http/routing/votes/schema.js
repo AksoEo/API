@@ -71,8 +71,7 @@ export async function manualDataValidation (req, res, vote = undefined) {
 		try {
 			const query = AKSO.db('view_codeholders');
 			QueryUtil.filter({
-				fields: Object.keys(codeholderSchema.fields)
-					.filter(x => codeholderSchema.fields[x].indexOf('f' > -1)),
+				fields: codeholderSchema.fields,
 				fieldAliases: codeholderSchema.fieldAliases,
 				fieldWhitelist: req.memberFields,
 				customCompOps: codeholderSchema.customFilterCompOps,

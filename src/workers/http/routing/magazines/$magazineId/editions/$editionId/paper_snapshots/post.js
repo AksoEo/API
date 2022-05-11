@@ -92,8 +92,7 @@ export default {
 			QueryUtil.filter({
 				filter,
 				query: subQuery,
-				fields: Object.keys(codeholderSchema.fields)
-					.filter(x => codeholderSchema.fields[x].includes('f')),
+				fields: codeholderSchema.fields,
 				fieldAliases: codeholderSchema.fieldAliases,
 				customCompOps: codeholderSchema.customFilterCompOps,
 				customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,
