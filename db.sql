@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.29, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.28-0ubuntu0.20.04.3
+-- Server version	8.0.29-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -294,6 +294,7 @@ CREATE TABLE `codeholders` (
   `deathdate` date DEFAULT NULL,
   `profilePictureHash` binary(20) DEFAULT NULL,
   `addressPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
+  `addressInvalid` tinyint(1) NOT NULL DEFAULT '0',
   `emailPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
   `officePhonePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
   `profilePicturePublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'public',
@@ -313,6 +314,7 @@ CREATE TABLE `codeholders` (
   KEY `profilePictureHash` (`profilePictureHash`) USING BTREE,
   KEY `publicCountry` (`publicCountry`),
   KEY `publicEmail` (`publicEmail`),
+  KEY `addressInvalid` (`addressInvalid`),
   FULLTEXT KEY `email_2` (`email`),
   FULLTEXT KEY `notes` (`notes`),
   FULLTEXT KEY `officePhone` (`officePhone`),
@@ -3246,6 +3248,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `address_sortingCode_latin`,
  1 AS `address_search`,
  1 AS `addressPublicity`,
+ 1 AS `addressInvalid`,
  1 AS `notes`,
  1 AS `officePhone`,
  1 AS `officePhonePublicity`,
@@ -3596,7 +3599,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`publicEmail` AS `publicEmail`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders`.`publicCountry` AS `publicCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_org`.`mainDescriptor` AS `mainDescriptor`,`codeholders_org`.`factoids` AS `factoids`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
+/*!50001 VIEW `view_codeholders` AS select `codeholders`.`id` AS `id`,`codeholders`.`codeholderType` AS `codeholderType`,`codeholders`.`creationTime` AS `creationTime`,`codeholders`.`oldCode` AS `oldCode`,`codeholders`.`newCode` AS `newCode`,`codeholders`.`password` AS `password`,`codeholders`.`email` AS `email`,`codeholders`.`publicEmail` AS `publicEmail`,`codeholders`.`emailPublicity` AS `emailPublicity`,`codeholders`.`enabled` AS `enabled`,`codeholders`.`feeCountry` AS `feeCountry`,`codeholders`.`publicCountry` AS `publicCountry`,`codeholders_address`.`country` AS `address_country`,`codeholders_address`.`countryArea` AS `address_countryArea`,`codeholders_address`.`countryArea_latin` AS `address_countryArea_latin`,`codeholders_address`.`city` AS `address_city`,`codeholders_address`.`city_latin` AS `address_city_latin`,`codeholders_address`.`cityArea` AS `address_cityArea`,`codeholders_address`.`cityArea_latin` AS `address_cityArea_latin`,`codeholders_address`.`streetAddress` AS `address_streetAddress`,`codeholders_address`.`streetAddress_latin` AS `address_streetAddress_latin`,`codeholders_address`.`postalCode` AS `address_postalCode`,`codeholders_address`.`postalCode_latin` AS `address_postalCode_latin`,`codeholders_address`.`sortingCode` AS `address_sortingCode`,`codeholders_address`.`sortingCode_latin` AS `address_sortingCode_latin`,`codeholders_address`.`search` AS `address_search`,`codeholders`.`addressPublicity` AS `addressPublicity`,`codeholders`.`addressInvalid` AS `addressInvalid`,`codeholders`.`notes` AS `notes`,`codeholders`.`officePhone` AS `officePhone`,`codeholders`.`officePhonePublicity` AS `officePhonePublicity`,`codeholders`.`isDead` AS `isDead`,`codeholders`.`deathdate` AS `deathdate`,`codeholders`.`profilePictureHash` AS `profilePictureHash`,`codeholders_human`.`firstName` AS `firstName`,`codeholders_human`.`firstNameLegal` AS `firstNameLegal`,`codeholders_human`.`lastName` AS `lastName`,`codeholders_human`.`lastNameLegal` AS `lastNameLegal`,`codeholders_human`.`lastNamePublicity` AS `lastNamePublicity`,`codeholders_human`.`honorific` AS `honorific`,`codeholders_human`.`birthdate` AS `birthdate`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now()))) AS `age`,if(((0 <> `codeholders`.`isDead`) and (0 = `codeholders`.`deathdate`)),NULL,timestampdiff(YEAR,`codeholders_human`.`birthdate`,makedate(year(if(`codeholders`.`deathdate`,`codeholders`.`deathdate`,now())),1))) AS `agePrimo`,`codeholders_human`.`profession` AS `profession`,`codeholders`.`profilePicturePublicity` AS `profilePicturePublicity`,`codeholders`.`website` AS `website`,`codeholders`.`biography` AS `biography`,`codeholders_human`.`landlinePhone` AS `landlinePhone`,`codeholders_human`.`landlinePhonePublicity` AS `landlinePhonePublicity`,`codeholders_human`.`cellphone` AS `cellphone`,`codeholders_human`.`cellphonePublicity` AS `cellphonePublicity`,`codeholders_org`.`fullName` AS `fullName`,`codeholders_org`.`fullNameLocal` AS `fullNameLocal`,`codeholders_org`.`careOf` AS `careOf`,`codeholders_org`.`nameAbbrev` AS `nameAbbrev`,`codeholders_org`.`mainDescriptor` AS `mainDescriptor`,`codeholders_org`.`factoids` AS `factoids`,`codeholders_human`.`searchName` AS `searchNameHuman`,`codeholders_org`.`searchName` AS `searchNameOrg` from (((`codeholders` left join `codeholders_human` on((`codeholders`.`id` = `codeholders_human`.`codeholderId`))) left join `codeholders_org` on((`codeholders`.`id` = `codeholders_org`.`codeholderId`))) left join `codeholders_address` on((`codeholders`.`id` = `codeholders_address`.`codeholderId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3682,4 +3685,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-08 10:29:26
+-- Dump completed on 2022-05-11 12:19:58
