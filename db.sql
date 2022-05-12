@@ -574,6 +574,27 @@ CREATE TABLE `codeholders_hist_address` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `codeholders_hist_addressInvalid`
+--
+
+DROP TABLE IF EXISTS `codeholders_hist_addressInvalid`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `codeholders_hist_addressInvalid` (
+  `modId` int unsigned NOT NULL AUTO_INCREMENT,
+  `codeholderId` int unsigned NOT NULL,
+  `modTime` bigint unsigned NOT NULL,
+  `modBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modCmt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `addressInvalid` tinyint(1) NOT NULL,
+  PRIMARY KEY (`modId`) USING BTREE,
+  KEY `codeholderId` (`codeholderId`),
+  KEY `enabled` (`addressInvalid`),
+  CONSTRAINT `codeholders_hist_addressInvalid_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `codeholders_hist_addressPublicity`
 --
 
@@ -3685,4 +3706,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-11 12:19:58
+-- Dump completed on 2022-05-12 14:43:10
