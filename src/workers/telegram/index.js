@@ -8,6 +8,7 @@ const nodeFs = require('fs').promises;
 
 import { renderTemplate } from 'akso/util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 
 let telegraf;
 const queue = new PQueue({
@@ -24,6 +25,12 @@ export async function init () {
 	telegraf = new Telegraf(AKSO.conf.telegram.token);
 	telegraf.start(handleDeepLink);
 	await telegraf.launch();
+
+	process.send({
+		forward: true,
+		action: 'set_telegraf_userinfo',
+		data: await telegraf.telegram.getMe(),
+	});
 
 	// Set up dir scanning
 	scheduleTimer(0);
@@ -187,5 +194,17 @@ async function handleDeepLink (ctx) {
 			telegram_deepLink_time: null
 		});
 
-	ctx.reply('Via Telegram-konto nun estas ligita al via konto ĉe AKSO.');
+	const nameData = await AKSO.db('view_codeholders')
+		.where('id', deepLinkData.codeholderId)
+		.first([
+			'codeholderType',
+			'firstName',
+			'firstNameLegal',
+			'lastName',
+			'lastNameLegal',
+			'fullName',
+			'honorific',
+		]);
+	const name = formatCodeholderName(nameData);
+	ctx.reply(`Estimata ${name},\n\nVia Telegram-konto nun estas ligita al via konto ĉe AKSO kaj TEJO/UEA.`);
 }

@@ -35,6 +35,7 @@ async function init () {
 
 		db: null,
 		geodb: null,
+		telegrafBotUser: null,
 
 		exchangeRates: null,
 		cashify: null,
@@ -282,6 +283,8 @@ async function init () {
 		} else if (msg.action === 'set_exchange_rates') {
 			AKSO.exchangeRates = msg.data;
 			AKSO.cashify = new Cashify(msg.data);
+		} else if (msg.action === 'set_telegraf_userinfo') {
+			AKSO.telegrafBotUser = msg.data;
 		}
 	};
 	if (cluster.isMaster) {
