@@ -9,6 +9,6 @@ Iu ĵus ensalutis al via konto ĉe UEA/TEJO de loko, kiun ni ne povis rekoni. Bo
 **Koordinatoj**: {{coords}}
 {{/if}}
 
-[Vi povas vidi vian plenan ensaluthistorion tie ĉi]({{#url}}/vi/ensalutoj{{/url}}).
+[Vi povas vidi vian plenan ensaluthistorion tie ĉi]({{#url}}/konto/ensalutoj{{/url}}).
 
 [Por ŝanĝi vian pasvorton, iru tien ĉi]({{#url}}/nova_pasvorto{{/url}}).
