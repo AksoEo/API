@@ -7,7 +7,5 @@ https://tejo.org
 Nieuwe Binnenweg 176, 3015 BJ Rotterdam, Nederlando
 +31 10 310 4924
 
-{{#if unsubscribe}}
-	Malaboni aŭ ŝanĝi viajn retpoŝtagordojn:
-	{{{unsubscribe}}}
-{{/if}}
+Iru al la jena ligilo por ŝanĝi viajn retpoŝtajn agordojn:
+{{#url}}konto/sciigoj{{/url}}

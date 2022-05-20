@@ -122,7 +122,6 @@ export async function renderSendEmail ({
 	// Render outer
 	const outerView = {
 		subject: msg.subject,
-		unsubscribe: false // TODO: unsubscribe link
 	};
 	msg.html = renderTemplate(templs.outerHtml, {...outerView, ...{ content: innerHtml } });
 	msg.text = renderTemplate(templs.outerText, {...outerView, ...{ content: innerText } }, false);

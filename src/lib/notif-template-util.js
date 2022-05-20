@@ -80,7 +80,6 @@ async function renderInheritTemplate (templateData, viewFn) {
 
 	const outerView = {
 		subject: templateData.subject,
-		unsubscribe: false
 	};
 
 	return {
