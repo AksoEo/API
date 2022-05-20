@@ -32,6 +32,7 @@ import { init as route$intermediaries } from './intermediaries';
 import { init as route$lists } from './lists';
 import { init as route$magazines } from './magazines';
 import { init as route$membership_categories } from './membership_categories';
+import { init as route$newsletters } from './newsletters';
 import { init as route$notif_templates } from './notif_templates';
 import { init as route$org_lists } from './org_lists';
 import { init as route$queries } from './queries';
@@ -79,6 +80,7 @@ export function init () {
 	router.use('/lists', route$lists());
 	router.use('/magazines', route$magazines());
 	router.use('/membership_categories', route$membership_categories());
+	router.use('/newsletters', route$newsletters());
 	router.use('/notif_templates', route$notif_templates());
 	router.use('/org_lists', route$org_lists());
 	router.use('/queries', route$queries());

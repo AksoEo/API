@@ -10,6 +10,7 @@ import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
 import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/applications/schema';
 import magazineSubscriptionsSchema from './$codeholderId/magazine_subscriptions/schema';
+import { schema as newsletterSubscriptionsSchema } from './self/newsletter_subscriptions/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -299,7 +300,28 @@ export const schema = {
 					filter
 				});
 			});
-		}
+		},
+		$newsletterSubscriptions: ({ query, filter } = {}) => {
+			if (typeof filter !== 'object' || filter === null || Array.isArray(filter)) {
+				const err = new Error('$newsletterSubscriptions expects an object');
+				err.statusCode = 400;
+				throw err;
+			}
+			query.whereExists(function () {
+				this.select(1).from('newsletters_subscribers')
+					.innerJoin('newsletters', 'newsletters_subscribers.newsletterId', 'newsletters.id')
+					.whereRaw('newsletters_subscribers.codeholderId = view_codeholders.id');
+
+				QueryUtil.filter({
+					fields: newsletterSubscriptionsSchema.fields,
+					fieldAliases: newsletterSubscriptionsSchema.fieldAliases,
+					customCompOps: newsletterSubscriptionsSchema.customFilterCompOps,
+					customLogicOps: newsletterSubscriptionsSchema.customFilterLogicOps,
+					query: this,
+					filter,
+				});
+			});
+		},
 	}
 };
 
