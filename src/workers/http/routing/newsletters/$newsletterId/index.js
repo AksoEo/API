@@ -2,6 +2,8 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
+import { init as route$unsubscriptions } from './unsubscriptions';
+
 import method$get from './get';
 import method$patch from './patch';
 import method$delete from './delete';
@@ -12,6 +14,8 @@ import method$delete from './delete';
  */
 export function init () {
 	const router = new express.Router({ mergeParams: true });
+
+	router.use('/unsubscriptions', route$unsubscriptions());
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);

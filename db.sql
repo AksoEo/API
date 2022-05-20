@@ -589,7 +589,7 @@ CREATE TABLE `codeholders_hist_addressInvalid` (
   `addressInvalid` tinyint(1) NOT NULL,
   PRIMARY KEY (`modId`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
-  KEY `enabled` (`addressInvalid`),
+  KEY `addressInvalid` (`addressInvalid`) USING BTREE,
   CONSTRAINT `codeholders_hist_addressInvalid_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2629,6 +2629,69 @@ CREATE TABLE `membershipCategories_codeholders` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `newsletters`
+--
+
+DROP TABLE IF EXISTS `newsletters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `newsletters` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `org` (`org`),
+  KEY `name` (`name`),
+  KEY `public` (`public`),
+  FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `name_2` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `newsletters_subscribers`
+--
+
+DROP TABLE IF EXISTS `newsletters_subscribers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `newsletters_subscribers` (
+  `newsletterId` int unsigned NOT NULL,
+  `codeholderId` int unsigned NOT NULL,
+  `time` bigint unsigned NOT NULL,
+  PRIMARY KEY (`newsletterId`,`codeholderId`),
+  KEY `time` (`time`),
+  KEY `codeholderId` (`codeholderId`),
+  CONSTRAINT `newsletters_subscribers_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `newsletters_subscribers_ibfk_2` FOREIGN KEY (`newsletterId`) REFERENCES `newsletters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `newsletters_unsubscriptions`
+--
+
+DROP TABLE IF EXISTS `newsletters_unsubscriptions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `newsletters_unsubscriptions` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `newsletterId` int unsigned NOT NULL,
+  `time` bigint unsigned NOT NULL,
+  `reason` tinyint unsigned DEFAULT '0',
+  `description` varchar(400) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subscriberCount` int unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reason` (`reason`),
+  KEY `newsletterId` (`newsletterId`),
+  KEY `time` (`time`),
+  CONSTRAINT `newsletters_unsubscriptions_ibfk_1` FOREIGN KEY (`newsletterId`) REFERENCES `newsletters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `notif_templates`
 --
 
@@ -3706,4 +3769,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-12 14:43:10
+-- Dump completed on 2022-05-20 12:04:37
