@@ -14,7 +14,7 @@ export async function init () {
 	scheduleTimer(0);
 }
 
-function scheduleTimer (wait = 500) {
+function scheduleTimer (wait = 1500) {
 	setTimeout(() => {
 		timer().catch(e => {
 			AKSO.log.error(e);
