@@ -3,4 +3,4 @@ Estimata \{{name}},
 Iu petis krei pasvorton ĉe UEA.org per via UEA-kodo. Se ne estas vi, kiu faris tion, vi povas senprobleme ignori tiun ĉi mesaĝon.
 
 Se vi ja volas krei pasvorton, bonvolu iri al la ĉi-suba ligilo:
-{{#url}}/krei_pasvorton/{{../code}}/{{../key}}{{/url}}
+{{#url}}ensaluti?krei-pasvorton={{../code}}/{{../key}}{{/url}}
