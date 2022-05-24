@@ -5,7 +5,7 @@ import { schema as parSchema } from './schema';
 const schema = {
 	...parSchema,
 	...{
-		query: 'resource',
+		query: 'collection',
 		body: null
 	}
 };
