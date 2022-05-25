@@ -27,6 +27,9 @@ const formValues = {
 		'codeholder.agePrimo': union([ NULL, NUMBER ])
 	}
 };
+formValues.NEWSLETTER = {
+	...formValues.CODEHOLDER,
+};
 
 const bogusData = {
 	CODEHOLDER: {
@@ -56,6 +59,9 @@ POLLANDO`,
 		'codeholder.age': 57,
 		'codeholder.agePrimo': 56
 	}
+};
+bogusData.NEWSLETTER = {
+	...bogusData.CODEHOLDER,
 };
 
 class AKSONotifTemplateIntent extends Enum {
