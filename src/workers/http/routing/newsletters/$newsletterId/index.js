@@ -8,7 +8,7 @@ import method$get from './get';
 import method$patch from './patch';
 import method$delete from './delete';
 
-import operation$send from './!send';
+import operation$send_notif_template from './!send_notif_template';
 
 /**
  * Sets up /newsletters/{newsletterId}
@@ -23,7 +23,7 @@ export function init () {
 	bindMethod(router, '/', 'patch', method$patch);
 	bindMethod(router, '/', 'delete', method$delete);
 
-	bindMethod(router, '/!send', 'post', operation$send);
+	bindMethod(router, '/!send_notif_template', 'post', operation$send_notif_template);
 
 	return router;
 }
