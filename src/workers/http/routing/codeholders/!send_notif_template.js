@@ -1,7 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
-import { sendRawMail } from 'akso/mail';
-import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
-import { sendTemplate, renderTemplate as renderNotifTemplate } from 'akso/lib/notif-template-util';
+import { sendTemplate } from 'akso/lib/notif-template-util';
 
 import { schema as parSchema, memberFilter } from './schema';
 
