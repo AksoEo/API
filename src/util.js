@@ -80,7 +80,9 @@ export async function promiseAllObject (promises) {
 }
 
 Handlebars.registerHelper('url', options => {
-	return options.data.root.domain + options.fn(this);
+	let url = options.fn(this);
+	if (url[0] !== '/') { url = '/' + url; }
+	return options.data.root.domain + url;
 });
 Handlebars.registerHelper('img', options => {
 	return new URL(path.join('assets/img', options.fn(this)), AKSO.conf.http.outsideAddress).toString();

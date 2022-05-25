@@ -73,7 +73,7 @@ export async function manualDataValidation (req, res, vote = undefined) {
 			QueryUtil.filter({
 				fields: codeholderSchema.fields,
 				fieldAliases: codeholderSchema.fieldAliases,
-				fieldWhitelist: req.memberFields,
+				fieldWhitelist: Object.keys(req.memberFields),
 				customCompOps: codeholderSchema.customFilterCompOps,
 				customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,
 				customLogicOps: codeholderSchema.customFilterLogicOps,

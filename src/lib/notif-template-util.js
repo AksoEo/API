@@ -1,9 +1,171 @@
+import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import path from 'path';
 import fs from 'fs-extra';
 import MarkdownIt from 'markdown-it';
 
+import QueryUtil from 'akso/lib/query-util';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
+import { sendRawMail } from 'akso/mail';
+import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
+import CodeholderResource from 'akso/lib/resources/codeholder-resource';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import { doAscMagic, evaluateSync } from 'akso/lib/akso-script-util';
 import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
+
+/**
+ * Renders a notif template and sends it to the recipients
+ * @param  {number}  templateId           The id of the notif template
+ * @param  {Object}  [intentData]         An object containing the context data relevant for the template's intent. Codeholder data is automatically added.
+ * @param  {Object}  req                  The data to pass to QueryUtil.simpleCollection, e.g. filter
+ * @param  {Object}  [fieldWhitelist]     A field whitelist to pass to QueryUtil.simpleCollection
+ * @param  {boolean} [ignoreMemberFilter] Whether to ignore the member filter if present in req
+ */
+export async function sendTemplate ({
+	templateId, intentData = {}, req, fieldWhitelist = [],
+	ignoreMemberFilter = false,
+}) {
+	const template = await AKSO.db('notif_templates')
+		.where('id', templateId)
+		.first('*');
+	if (!template) { throw new Error('Could not fetch notif template with id ' + templateId); }
+
+	const recipientsQuery = AKSO.db('view_codeholders')
+		.whereNotNull('email') // TODO: Remove when adding proper Telegram notif support
+		.where('isDead', false);
+
+	if (!ignoreMemberFilter) {
+		memberFilter(codeholderSchema, recipientsQuery, req);
+	}
+
+	const customReq = {
+		query: {},
+		...req
+	};
+	customReq.query.fields = [
+		'id',
+		'firstName',
+		'firstNameLegal',
+		'lastName',
+		'lastNameLegal',
+		'fullName',
+		'honorific',
+		'oldCode',
+		'newCode',
+		'codeholderType',
+		'hasPassword',
+
+		'address.country',
+		'address.countryArea',
+		'address.city',
+		'address.cityArea',
+		'address.streetAddress',
+		'address.postalCode',
+		'address.sortingCode',
+
+		'addressLatin.country',
+		'addressLatin.countryArea',
+		'addressLatin.city',
+		'addressLatin.cityArea',
+		'addressLatin.streetAddress',
+		'addressLatin.postalCode',
+		'addressLatin.sortingCode',
+
+		'feeCountry',
+		'email',
+		'birthdate',
+		'cellphone',
+		'officePhone',
+		'landlinePhone',
+		'age',
+		'agePrimo'
+	];
+	QueryUtil.simpleCollection(customReq, codeholderSchema, recipientsQuery, fieldWhitelist);
+
+	const countryNames = [];
+	(await AKSO.db('countries')
+		.select('code', 'name_eo')
+	).forEach(x => {
+		countryNames[x.code] = x.name_eo;
+	});
+
+	const sendPromises = [];
+
+	const recipientsStream = recipientsQuery.stream();
+	const donePromise = new Promise((resolve, reject) => {
+		recipientsStream.on('end', () => resolve());
+		recipientsStream.on('error', reject);
+	});
+
+	for await (const row of recipientsStream) {
+		const codeholder = new CodeholderResource(row, customReq, codeholderSchema).obj;
+		const addressObj = {
+			countryCode: 	codeholder.address.country,
+			countryArea: 	codeholder.address.countryArea,
+			city: 			codeholder.address.city,
+			cityArea: 		codeholder.address.cityArea,
+			streetAddress: 	codeholder.address.streetAddress,
+			postalCode: 	codeholder.address.postalCode,
+			sortingCode: 	codeholder.address.sortingCode,
+			name: ''
+		};
+		const address = await AddressFormat.formatAddress(
+			addressObj,
+			false,
+			'eo',
+			countryNames[addressObj.countryCode]
+		);
+
+		const notifView = {
+			'codeholder.id': codeholder.id,
+			'codeholder.name': formatCodeholderName(codeholder),
+			'codeholder.oldCode': codeholder.oldCode,
+			'codeholder.newCode': codeholder.newCode,
+			'codeholder.codeholderType': codeholder.codeholderType,
+			'codeholder.hasPassword': codeholder.hasPassword,
+			'codeholder.addressFormatted': address,
+			'codeholder.addressLatin.country': codeholder.addressLatin.country,
+			'codeholder.addressLatin.countryArea': codeholder.addressLatin.countryArea,
+			'codeholder.addressLatin.city': codeholder.addressLatin.city,
+			'codeholder.addressLatin.cityArea': codeholder.addressLatin.cityArea,
+			'codeholder.addressLatin.streetAddress': codeholder.addressLatin.streetAddress,
+			'codeholder.addressLatin.postalCode': codeholder.addressLatin.postalCode,
+			'codeholder.addressLatin.sortingCode': codeholder.addressLatin.sortingCode,
+			'codeholder.feeCountry': codeholder.feeCountry,
+			'codeholder.email': codeholder.email,
+			'codeholder.birthdate': codeholder.birthdate ?? null,
+			'codeholder.cellphone': codeholder.cellphone ?? null,
+			'codeholder.officePhone': codeholder.officePhone,
+			'codeholder.landlinePhone': codeholder.landlinePhone ?? null,
+			'codeholder.age': codeholder.age ?? null,
+			'codeholder.agePrimo': codeholder.agePrimo ?? null,
+			...intentData,
+		};
+
+		sendPromises.push(new Promise((resolve, reject) => {
+			renderTemplate(template, notifView)
+				.then(renderedEmail => {
+					const msg = {
+						...renderedEmail,
+						to: {
+							name: notifView['codeholder.name'],
+							email: codeholder.email
+						},
+						from: {
+							name: template.fromName || '',
+							email: template.from
+						}
+					};
+					// TODO: Change this when we support Telegram for notif templates
+					return sendRawMail(msg);
+				})
+				.then(resolve)
+				.catch(reject);
+		}));
+	}
+
+	await donePromise;
+	await Promise.all(sendPromises);
+}
 
 /**
  * Renders a notif template
@@ -80,11 +242,20 @@ async function renderInheritTemplate (templateData, viewFn) {
 
 	const outerView = {
 		subject: templateData.subject,
+		domain: AKSOOrganization.getDomain(templateData.org),
 	};
 
+	const outerViewHtml = {
+		content: innerHtml,
+		...outerView,
+	};
+	const outerViewText = {
+		content: innerText,
+		...outerView,
+	};
 	return {
-		html: renderNativeTemplate(tmpls.outerHtml, {...outerView, ...{ content: innerHtml } }),
-		text: renderNativeTemplate(tmpls.outerText, {...outerView, ...{ content: innerText } }, false)
+		html: renderNativeTemplate(tmpls.outerHtml, outerViewHtml),
+		text: renderNativeTemplate(tmpls.outerText, outerViewText, false)
 	};
 }
 
