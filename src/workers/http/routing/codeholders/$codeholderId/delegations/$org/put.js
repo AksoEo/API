@@ -20,7 +20,8 @@ const schema = {
 						pattern: '^Q\\d+$'
 					},
 					maxItems: 10,
-					uniqueItems: true
+					uniqueItems: true,
+					default: [],
 				},
 				countries: {
 					type: 'array',
@@ -43,7 +44,8 @@ const schema = {
 						],
 						additionalProperties: false
 					},
-					maxItems: 10
+					maxItems: 10,
+					default: [],
 				},
 				subjects: {
 					type: 'array',
@@ -52,7 +54,8 @@ const schema = {
 						format: 'uint32'
 					},
 					maxItems: 50,
-					uniqueItems: true
+					uniqueItems: true,
+					default: [],
 				},
 				hosting: {
 					type: 'object',
@@ -129,10 +132,6 @@ const schema = {
 				}
 			},
 			required: [
-				'cities',
-				'countries',
-				'subjects',
-				'hosting',
 				'tos'
 			],
 			additionalProperties: false
