@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { init as route$builtin$category } from './builtin:$category';
 import { init as route$global } from './global';
 
 /**
@@ -17,6 +18,7 @@ export function init () {
 	});
 
 	router.use('/global', route$global());
+	router.use('/builtin\\::category', route$builtin$category());
 
 	return router;
 }
