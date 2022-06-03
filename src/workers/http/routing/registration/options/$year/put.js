@@ -269,35 +269,38 @@ export default {
 			}));
 
 		// Insert new offers
-		await trx('registration_options_offerGroups_offers')
-			.insert(req.body.offers.flatMap((offerGroup, offerGroupId) => {
-				if (!offerGroup.offers) { return []; }
-				return offerGroup.offers.map((offer, i) => {
-					const offerData = {
-						year: req.params.year,
-						offerGroupId,
-						id: i,
-						type: offer.type
-					};
+		const offers = req.body.offers.flatMap((offerGroup, offerGroupId) => {
+			if (!offerGroup.offers) { return []; }
+			return offerGroup.offers.map((offer, i) => {
+				const offerData = {
+					year: req.params.year,
+					offerGroupId,
+					id: i,
+					type: offer.type
+				};
 
-					if (offer.type === 'addon') {
-						offerData.paymentAddonId = offer.id;
-					} else if (offer.type === 'membership') {
-						offerData.membershipCategoryId = offer.id;
-					} else if (offer.type === 'magazine') {
-						offerData.magazineId = offer.id;
-						offerData.paperVersion = offer.paperVersion;
-					}
+				if (offer.type === 'addon') {
+					offerData.paymentAddonId = offer.id;
+				} else if (offer.type === 'membership') {
+					offerData.membershipCategoryId = offer.id;
+				} else if (offer.type === 'magazine') {
+					offerData.magazineId = offer.id;
+					offerData.paperVersion = offer.paperVersion;
+				}
 
-					if (offer.price) {
-						offerData.price_script      = JSON.stringify(offer.price.script);
-						offerData.price_var         = offer.price.var;
-						offerData.price_description = offer.price.description;
-					}
+				if (offer.price) {
+					offerData.price_script      = JSON.stringify(offer.price.script);
+					offerData.price_var         = offer.price.var;
+					offerData.price_description = offer.price.description;
+				}
 
-					return offerData;
-				});
-			}));
+				return offerData;
+			});
+		});
+		if (offers.length) {
+			await trx('registration_options_offerGroups_offers')
+				.insert(offers);
+		}
 
 		await trx.commit();
 
