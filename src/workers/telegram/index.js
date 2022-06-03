@@ -137,6 +137,11 @@ async function sendNotification ({
 						// Remove telegram from the list unless it's the only item, in which case it should be replaced by email
 						.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
 
+					await AKSO.db('codeholders_notif_pref_global')
+						.where('codeholderId', recipient.codeholderId)
+						// Remove telegram from the list unless it's the only item, in which case it should be replaced by email
+						.update('pref', AKSO.db.raw('IF(`pref` = "telegram", "email", `pref` & ~FIND_IN_SET("telegram", `pref`))'));
+
 					// Unlink the notif account since it clearly doesn't exist
 					await AKSO.db('codeholders_notifAccounts_telegram')
 						.where('codeholderId', recipient.codeholderId)

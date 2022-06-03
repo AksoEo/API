@@ -39,13 +39,22 @@ export async function sendNotification ({
 		msgPrefs.set(parseInt(id, 10), [ 'email' ]); // Default to sending by email
 	}
 
-	const msgPrefsDb = await AKSO.db('codeholders_notif_pref')
-		.where('category', category)
-		.whereIn('codeholderId', codeholderIds)
-		.select('codeholderId', 'pref');
+	const msgPrefsDb = await AKSO.db('codeholders AS c')
+		.select('c.id', {
+			pref: AKSO.db.raw('COALESCE(np.pref, npg.pref)'),
+		})
+		.leftJoin('codeholders_notif_pref AS np', function () {
+			this.on('np.codeholderId', 'c.id')
+				.on(AKSO.db.raw('np.category = ?', [ category ]));
+		})
+		.leftJoin('codeholders_notif_pref_global AS npg', function () {
+			this.on('npg.codeholderId', 'c.id');
+		})
+		.whereIn('c.id', codeholderIds);
 
 	for (let pref of msgPrefsDb) {
-		msgPrefs.set(pref.codeholderId, pref.pref.split(','));
+		if (!pref.pref) { continue; }
+		msgPrefs.set(pref.id, pref.pref.split(','));
 	}
 
 	const recipients = {
