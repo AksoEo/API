@@ -2591,7 +2591,9 @@ CREATE TABLE `magazines_subscriptions` (
   KEY `year` (`year`),
   KEY `codeholderId` (`codeholderId`),
   KEY `paperVersion` (`paperVersion`),
-  FULLTEXT KEY `internalNotes` (`internalNotes`)
+  FULLTEXT KEY `internalNotes` (`internalNotes`),
+  CONSTRAINT `magazines_subscriptions_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `magazines_subscriptions_ibfk_2` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3784,4 +3786,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-03 11:14:23
+-- Dump completed on 2022-06-08  9:35:24
