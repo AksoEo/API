@@ -70,6 +70,7 @@ export default {
 			if (delegationApplicationOrgs.length) {
 				tasks.delegates.pendingApplications = (await AKSO.db('delegations_applications')
 					.where('status', 'pending')
+					.whereIn('org', delegationApplicationOrgs)
 					.count({ count: 1 })
 					.whereExists(function () {
 						this.select(1)
@@ -77,6 +78,21 @@ export default {
 							.whereRaw('view_codeholders.id = delegations_applications.codeholderId');
 						memberFilter(codeholderSchema, this, req);
 					})
+				)[0].count;
+			}
+
+			const delegatesOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+				.filter(org => req.hasPermission('codeholders.delegations.read.' + org));
+
+			if (delegatesOrgs.length && req.hasPermission('geodb.read')) {
+				tasks.delegates.missingGeodbCities = (await AKSO.db('codeholders_delegations_cities')
+					.whereIn('org', delegatesOrgs)
+					.whereNotExists(function () {
+						this.withSchema(AKSO.conf.mysql.geodbDatabase)
+							.from('cities')
+							.whereRaw('geodb.cities.id = codeholders_delegations_cities.city');
+					})
+					.count({ count: 1 })
 				)[0].count;
 			}
 			
@@ -96,12 +112,16 @@ export default {
 				if (magazineSubscriberOrgs.length && req.hasPermission('codeholders.read')) {
 					tasks.magazines.paperNoAddress = (await AKSO.db('magazines_subscriptions')
 						.innerJoin('view_codeholders', 'view_codeholders.id', 'magazines_subscriptions.codeholderId')
+						.innerJoin('magazines', 'magazines.id', 'magazines_subscriptions.magazineId')
 						.where('paperVersion', true)
+						.whereIn('org', magazineSubscriberOrgs)
 						.where(function () {
 							this.where('addressInvalid', true)
 								.orWhereNull('address_streetAddress');
 						})
-						.where(function () {
+						.whereExists(function () {
+							this.from('view_codeholders AS v')
+								.whereRaw('v.id = magazines_subscriptions.codeholderId');
 							memberFilter(codeholderSchema, this, req);
 						})
 						.count({ count: 1 })
