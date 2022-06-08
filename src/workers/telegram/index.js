@@ -100,7 +100,7 @@ async function sendNotification ({
 	const queuePromises = [];
 	for (let recipient of recipientData) {
 		queuePromises.push(queue.add(function renderSendTelegramNotif () {
-			const msg = renderTemplate(notifTmpl, view, doEscape);
+			const msg = renderTemplate(notifTmpl, view, !doEscape);
 
 			let fn;
 			let args = [recipient.telegram_chatId];

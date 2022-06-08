@@ -113,11 +113,11 @@ Handlebars.registerHelper('currency_fmt', function (amt, currency, currencyName 
  * Renders a template using handlebars
  * @param  {string}  tmpl       The template data
  * @param  {Object}  view       The view
- * @param  {boolean} [noEscape] If true nothing is escaped
+ * @param  {boolean} [escape]   Whether to escape HTML
  * @return {string} The rendered template
  */
-export function renderTemplate (tmpl, view = {}, noEscape = false) {
-	return Handlebars.compile(tmpl, noEscape)(view);
+export function renderTemplate (tmpl, view = {}, escape = true) {
+	return Handlebars.compile(tmpl, { noEscape: !escape })(view);
 }
 
 /**
