@@ -83,6 +83,31 @@ export default {
 			if (!Object.keys(tasks.delegates).length) {
 				delete tasks.delegates;
 			}
+
+			const magazineOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+				.filter(org => req.hasPermission('magazines.read.' + org));
+
+			if (magazineOrgs.length) {
+				tasks.magazines = {};
+
+				const magazineSubscriberOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
+					.filter(org => req.hasPermission('magazines.subscriptions.read.' + org));
+
+				if (magazineSubscriberOrgs.length && req.hasPermission('codeholders.read')) {
+					tasks.magazines.paperNoAddress = (await AKSO.db('magazines_subscriptions')
+						.innerJoin('view_codeholders', 'view_codeholders.id', 'magazines_subscriptions.codeholderId')
+						.where('paperVersion', true)
+						.where(function () {
+							this.where('addressInvalid', true)
+								.orWhereNull('address_streetAddress');
+						})
+						.where(function () {
+							memberFilter(codeholderSchema, this, req);
+						})
+						.count({ count: 1 })
+					)[0].count;
+				}
+			}
 		}
 
 		res.sendObj(tasks);
