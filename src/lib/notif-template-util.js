@@ -2,6 +2,7 @@ import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import path from 'path';
 import fs from 'fs-extra';
 import MarkdownIt from 'markdown-it';
+import MarkdownItMultimdTable from 'markdown-it-multimd-table';
 
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
@@ -264,6 +265,10 @@ const identifierRegex = /\{\{([^#/].*?)}}/gs;
 
 const inheritTextMd = new MarkdownIt('zero', {
 	breaks: true,
+}).use(MarkdownItMultimdTable, {
+	multiline: true,
+	rowspan: true,
+	headerless: true,
 });
 inheritTextMd.enable([
 	'newline',
@@ -272,6 +277,7 @@ inheritTextMd.enable([
 	'strikethrough', 'link', 'list',
 	'table', 'image'
 ]);
+export { inheritTextMd };
 function renderInheritModule (type, module, viewFn) {
 	const view = { ...module };
 	if (view.type === 'image') {

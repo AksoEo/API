@@ -30,6 +30,27 @@ const formValues = {
 formValues.NEWSLETTER = {
 	...formValues.CODEHOLDER,
 };
+formValues.NEWSLETTER_MAGAZINE = {
+	...formValues.NEWSLETTER,
+
+	'magazine.id': NUMBER,
+	'magazine.org': STRING,
+	'magazine.name': STRING,
+	'magazine.description': union([ NULL, STRING ]),
+	'magazine.issn': union([ NULL, STRING ]),
+	'magazine.magazineURL': STRING,
+
+	'edition.id': NUMBER,
+	'edition.idHuman': union([ NULL, STRING ]),
+	'edition.date': STRING,
+	'edition.thumbnailURL': union([ NULL, STRING ]),
+	'edition.description': union([ NULL, STRING ]),
+	'edition.editionURL': STRING,
+
+	'toc.md': STRING,
+	'toc.html': STRING,
+	'toc.text': STRING,
+};
 
 const bogusData = {
 	CODEHOLDER: {
@@ -62,6 +83,27 @@ POLLANDO`,
 };
 bogusData.NEWSLETTER = {
 	...bogusData.CODEHOLDER,
+};
+bogusData.NEWSLETTER_MAGAZINE = {
+	...bogusData.CODEHOLDER,
+
+	'magazine.id': 3,
+	'magazine.org': 'uea',
+	'magazine.name': 'Esperanto',
+	'magazine.description': 'Esperanto estas la **ĉefa** revuo de UEA.',
+	'magazine.issn': '00140635',
+	'magazine.magazineURL': 'https://uea.org/revuoj/revuo/3',
+
+	'edition.id': 7,
+	'edition.idHuman': 'julio-aŭgusto',
+	'edition.date': '2021-07-01',
+	'edition.thumbnailURL': 'https://uea.org/_/revuo/bildo?m=3&e=7&s=512px',
+	'edition.description': null,
+	'edition.editionURL': 'https://uea.org/revuoj/revuo/3/numero/7',
+
+	'toc.md': '', // todo
+	'toc.html': '',
+	'toc.text': '',
 };
 
 class AKSONotifTemplateIntent extends Enum {
