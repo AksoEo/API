@@ -86,14 +86,16 @@ export default {
 
 			if (delegatesOrgs.length && req.hasPermission('geodb.read')) {
 				tasks.delegates.missingGeodbCities = (await AKSO.db('codeholders_delegations_cities')
+					.distinct('city')
+					.pluck('city')
 					.whereIn('org', delegatesOrgs)
 					.whereNotExists(function () {
 						this.withSchema(AKSO.conf.mysql.geodbDatabase)
 							.from('cities')
 							.whereRaw('geodb.cities.id = codeholders_delegations_cities.city');
 					})
-					.count({ count: 1 })
-				)[0].count;
+					.limit(10)
+				).map(x => `Q${x}`);
 			}
 			
 			if (!Object.keys(tasks.delegates).length) {
