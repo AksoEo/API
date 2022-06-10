@@ -3016,6 +3016,7 @@ CREATE TABLE `pay_methods` (
   `internal` tinyint(1) NOT NULL DEFAULT '0',
   `currencies` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentValidity` int unsigned DEFAULT NULL,
+  `maxAmount` int unsigned DEFAULT NULL,
   `isRecommended` tinyint(1) NOT NULL DEFAULT '0',
   `feePercent` float DEFAULT NULL,
   `feeFixed_val` smallint unsigned DEFAULT NULL,
@@ -3786,4 +3787,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-08  9:35:24
+-- Dump completed on 2022-06-10  9:00:36

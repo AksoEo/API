@@ -11,6 +11,7 @@ export const schema = {
 		description: 's',
 		currencies: '',
 		paymentValidity: '',
+		maxAmount: '',
 		isRecommended: 'f',
 		internal: 'f',
 		feePercent:  '',

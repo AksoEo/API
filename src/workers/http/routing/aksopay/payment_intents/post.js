@@ -323,6 +323,9 @@ export default {
 		} else if (totalAmountInUSD > 500000) {
 			return res.type('text/plain').status(417)
 				.send('Payments may not have a total amount of more than USD 500,000');
+		} else if (paymentMethod.maxAmount !== null && totalAmountInUSD > paymentMethod.maxAmount) {
+			return res.type('text/plain').status(400)
+				.send('Payments may not have a total amount exceeding the payment method\'s max amount.');
 		}
 
 		const id = await crypto.randomBytes(15);

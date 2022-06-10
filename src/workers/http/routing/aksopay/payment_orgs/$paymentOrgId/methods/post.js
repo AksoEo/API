@@ -40,6 +40,11 @@ const allTypesProps = {
 		format: 'uint32',
 		nullable: true
 	},
+	maxAmount: {
+		type: 'integer',
+		format: 'uint32',
+		nullable: true,
+	},
 	isRecommended: {
 		type: 'boolean'
 	},
