@@ -35,6 +35,11 @@ export default {
 						enum: AKSOCurrency.all
 					}
 				},
+				maxAmount: {
+					type: 'integer',
+					format: 'uint32',
+					nullable: true,
+				},
 				paymentValidity: {
 					type: 'integer',
 					format: 'uint32',
