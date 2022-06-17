@@ -7,7 +7,7 @@ import fs from 'pn/fs';
 import nodePath from 'pn/path';
 import bytesUtil from 'bytes';
 import msgpack from 'msgpack-lite';
-import Busboy from 'busboy';
+import busboy from 'busboy';
 import tmp from 'tmp-promise';
 import streamMeter from 'stream-meter';
 import path from 'path';
@@ -251,10 +251,28 @@ export function bindMethod (router, path, method, bind) {
 					req.files[field.name] = [];
 				}
 
+				// Always clean up temp files
+				res.on('finish', async () => {
+					for (let fileArr of Object.values(req.files)) {
+						for (let file of fileArr) {
+							if (file && file.path) {
+								try {
+									await fs.unlink(file.path);
+								} catch (e) {
+									if (e.code !== 'ENOENT') {
+										throw e;
+									}
+								}
+							}
+						}
+					}
+				});
+
+				// Set up busboy
 				await new Promise((resolve, reject) => {
-					let busboy;
+					let bb;
 					try {
-						busboy = new Busboy({
+						bb = busboy({
 							headers: req.headers,
 							limits: {
 								fileSize: uploadFields.reduce((a, b) => {
@@ -267,7 +285,7 @@ export function bindMethod (router, path, method, bind) {
 						err.statusCode = 400;
 						return reject(err);
 					}
-					busboy.on('file', async function (fieldname, stream, filename, encoding, mimetype) {
+					bb.on('file', async function (fieldname, stream, info) {
 						const fieldDecl = fieldsObj[fieldname];
 						if (!fieldDecl) {
 							const err = new Error(`Illegal field ${fieldname}`);
@@ -285,7 +303,7 @@ export function bindMethod (router, path, method, bind) {
 						fieldCount[fieldname]++;
 
 						if (fieldDecl.mimeCheck) {
-							if (!fieldDecl.mimeCheck(mimetype)) {
+							if (!fieldDecl.mimeCheck(info.mimetype)) {
 								const err = new Error(`Unsupported mimetype in field ${fieldname}`);
 								err.statusCode = 415;
 								stream.resume();
@@ -306,9 +324,9 @@ export function bindMethod (router, path, method, bind) {
 						stream.on('end', () => {
 							req.files[fieldname].push({
 								fieldname,
-								originalname: filename,
-								encoding,
-								mimetype,
+								originalname: info.filename,
+								encoding: info.encoding,
+								mimetype: info.mimetype,
 								size: meter.bytes,
 								destination: nodePath.dirname(tmpFile),
 								filename: nodePath.basename(tmpFile),
@@ -324,27 +342,10 @@ export function bindMethod (router, path, method, bind) {
 							.pipe(meter)
 							.pipe(writeStream);
 
-						busboy.on('finish', () => { resolve(); });
-						busboy.on('error', e => { reject(e); });
+						bb.on('finish', () => { resolve(); });
+						bb.on('error', e => { reject(e); });
 					});
-					req.pipe(busboy);
-				});
-
-				// Always clean up temp files
-				res.on('finish', async () => {
-					for (let fileArr of Object.values(req.files)) {
-						for (let file of fileArr) {
-							if (file && file.path) {
-								try {
-									await fs.unlink(file.path);
-								} catch (e) {
-									if (e.code !== 'ENOENT') {
-										throw e;
-									}
-								}
-							}
-						}
-					}
+					req.pipe(bb);
 				});
 
 				for (let fileSchema of uploadFields) {
