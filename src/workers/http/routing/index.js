@@ -303,8 +303,8 @@ export function bindMethod (router, path, method, bind) {
 						fieldCount[fieldname]++;
 
 						if (fieldDecl.mimeCheck) {
-							if (!fieldDecl.mimeCheck(info.mimetype)) {
-								const err = new Error(`Unsupported mimetype in field ${fieldname}`);
+							if (!fieldDecl.mimeCheck(info.mimeType)) {
+								const err = new Error(`Unsupported mime type in field ${fieldname}`);
 								err.statusCode = 415;
 								stream.resume();
 								return reject(err);
@@ -326,7 +326,7 @@ export function bindMethod (router, path, method, bind) {
 								fieldname,
 								originalname: info.filename,
 								encoding: info.encoding,
-								mimetype: info.mimetype,
+								mimetype: info.mimeType,
 								size: meter.bytes,
 								destination: nodePath.dirname(tmpFile),
 								filename: nodePath.basename(tmpFile),
