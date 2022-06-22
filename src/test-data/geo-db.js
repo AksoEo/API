@@ -177,7 +177,7 @@ async function init () {
 				return {
 					id: row.id.substring(1),
 					lang: row.lang,
-					label: row.label ? row.label.toString().substring(0, 255) : null
+					label: row.label ? row.label.toString().substring(0, 255) : ''
 				};
 			}));
 		}
