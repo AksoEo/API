@@ -2,6 +2,8 @@
 
 import knex from 'knex';
 
+const MAX_POPULATION = 100 * 10**6;
+
 async function iterateTable ({ query, fn }) {
 	const limit = 1000;
 
@@ -99,6 +101,10 @@ async function init () {
 					console.warn(`Warn! ${row.id} has a truncated native label`);
 				}
 
+				if (row.population > MAX_POPULATION) {
+					console.warn(`Warn! ${row.id} has an unreasonably high population, ignoring`);
+				}
+
 				if (row.eo_label && typeof row.eo_label !== 'string') {
 					console.warn(`Warn! ${row.id} has a non-string eo label`);
 				}
@@ -123,7 +129,7 @@ async function init () {
 				return {
 					id: row.id.substring(1),
 					country: row.country,
-					population: row.population,
+					population: Math.min(row.population, MAX_POPULATION),
 					nativeLabel: row.native_label ? row.native_label.toString().substring(0, 255) : null,
 					eoLabel: row.eo_label ? row.eo_label.toString().substring(0, 255) : null,
 					subdivision_nativeLabel: row['2nd_native_label'] ? row['2nd_native_label'].toString().substring(0, 255) : null,
