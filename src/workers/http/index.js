@@ -227,9 +227,11 @@ export function init () {
 				const status = err.status || err.statusCode || 500;
 
 				// Kill any incompleted transactions to ensure we release table locks
-				for (const trx of req.transactions) {
-					if (trx.isCompleted()) { continue; }
-					await rollbackTransaction(trx);
+				if (req.transactions) {
+					for (const trx of req.transactions) {
+						if (trx.isCompleted()) { continue; }
+						await rollbackTransaction(trx);
+					}
 				}
 
 				if (status >= 500) {
