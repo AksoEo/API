@@ -237,7 +237,7 @@ export default {
 	run: async function run (req, res) {
 		// Member fields
 		const fields = Object.keys(req.body);
-		if (!memberFieldsManual(fields, req, res, 'w')) {
+		if (!memberFieldsManual(fields, req, 'w')) {
 			return res.status(403).type('text/plain').send('Illegal codeholder fields used, check /perms');
 		}
 
