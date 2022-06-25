@@ -43,7 +43,14 @@ export function init () {
 				corsSettings.origin = function cors (origin, cb) {
 					if (!origin) { return cb(null, true); }
 
-					const parsedUrl = Url.parse(origin);
+					let parsedUrl;
+					try {
+						parsedUrl = new URL(origin);
+					} catch {
+						const err = new Error('Invalid Origin header');
+						err.statusCode = 400;
+						throw err;
+					}
 
 					// Validate protocol
 					if (parsedUrl.protocol !== 'https:') {
@@ -56,7 +63,7 @@ export function init () {
 					let foundValidHostname = false;
 					for (let hostname of AKSO.CORS_ORIGIN_WHITELIST) {
 						if (typeof hostname === 'string') {
-							if (parsedUrl.hostname === origin) {
+							if (hostname === origin) {
 								foundValidHostname = true;
 								break;
 							}
