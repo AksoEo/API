@@ -148,7 +148,7 @@ async function init () {
 			'charge.dispute.created',
 			'charge.dispute.closed'
 		],
-		STRIPE_WEBHOOK_URL: '/aksopay/stripe_webhook_handler',
+		STRIPE_WEBHOOK_URL: 'aksopay/stripe_webhook_handler',
 
 		EXCHANGE_RATES_LIFETIME: 3600 * 2 // 2 hours. The Open Exchange Rates API supports 1000 requests/month on the free plan. That's slightly more than once an hour
 	};
@@ -159,7 +159,11 @@ async function init () {
 	}
 
 	// Determine defaults when needed
-	if (!AKSO.conf.http.outsideAddress) {
+	if (AKSO.conf.http.outsideAddress) {
+		if (AKSO.conf.http.outsideAddress[AKSO.conf.http.outsideAddress.length - 1] !== '/') {
+			AKSO.conf.http.outsideAddress += '/';
+		}
+	} else {
 		if (cluster.isMaster) {
 			AKSO.log.warn('AKSO_HTTP_OUTSIDE_ADDRESS not specified, determining IP address ...');
 		}
