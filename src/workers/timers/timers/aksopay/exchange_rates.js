@@ -24,7 +24,12 @@ export async function updateExchangeRatesIfNeeded () {
 		try {
 			const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${AKSO.conf.openExchangeRatesAppID}`);
 			rates = await res.json();
-			await fs.writeJSON(exchangeRatesPath, rates);
+			if (rates.error) {
+				AKSO.log.error(rates);
+				await fs.utimes(exchangeRatesPath, stat.atime, new Date());
+			} else {
+				await fs.writeJSON(exchangeRatesPath, rates);
+			}
 		} catch (e) {
 			AKSO.log.error('Failed to update exchange rates');
 			AKSO.log.error(e);
