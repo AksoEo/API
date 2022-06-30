@@ -62,14 +62,6 @@ export default async function init (req, res, next) { // eslint-disable-line no-
 		nameAbbrev: 'rw'
 	};
 
-	// Grant active member perms
-	if (req.user && await req.user.isActiveMember()) {
-		req.permissions.push(
-			'magazines.read.uea',
-			'magazines.read.tejo'
-		);
-	}
-
 	// Grant contextual perms
 	if (req.user && req.user.isUser()) {
 		// Grant limited codeholders access if the user is a country delegate

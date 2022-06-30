@@ -137,13 +137,17 @@ export default class AuthClient {
 	async getGroups () {
 		if (this._groups) { return this._groups; }
 
-		const query = AKSO.db('admin_groups').select('id');
+		const query = AKSO.db('admin_groups AS a').select('id');
 
+		const self = this;
 		if (this.isUser()) {
-			query.innerJoin('admin_groups_members_codeholders', 'codeholderId', this.user);
+			query.innerJoin('admin_groups_members_codeholders AS ach', function () {
+				this.on('a.id', 'ach.adminGroupId')
+					.on('ach.codeholderId', AKSO.db.raw('?', [self.user]));
+			});
 		} else if (this.isApp()) {
 			// Using raw joins here as knex errors when trying to join on a buffer
-			query.joinRaw('inner join `admin_groups_members_clients` on `apiKey` = ?', [ this.app ]);
+			query.joinRaw('inner join `admin_groups_members_clients` acl  on a.id = acl.adminGroupId AND acl.`apiKey` = ?', [ this.app ]);
 		}
 
 		query
