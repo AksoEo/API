@@ -46,7 +46,7 @@ export default {
 			}
 		}
 
-		const validationData = await validatePatchFields(req, res, codeholderBefore);
+		const validationData = await validatePatchFields(req, codeholderBefore);
 		fields = Object.keys(validationData.body);
 
 		let oldAddress = null;

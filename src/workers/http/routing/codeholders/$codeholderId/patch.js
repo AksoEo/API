@@ -41,7 +41,7 @@ export default {
 			}
 		}
 
-		const validationData = await validatePatchFields(req, res, codeholderBefore);
+		const validationData = await validatePatchFields(req, codeholderBefore);
 
 		let oldDataFields = Object.keys(validationData.updateData);
 		let oldData = null;

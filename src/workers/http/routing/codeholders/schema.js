@@ -843,7 +843,7 @@ export const exclusiveFields = {
 };
 exclusiveFields.all = Object.values(exclusiveFields).reduce((a, b) => a.concat(b));
 
-export async function validatePatchFields (req, res, codeholderBefore) {
+export async function validatePatchFields (req, codeholderBefore) {
 	const updateData = {};
 	let addressUpdateData = null;
 
@@ -872,7 +872,9 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 				.where({ enabled: true, code: body.address.country })
 				.first('name_eo');
 			if (!addressCountry) {
-				return res.status(400).type('text/plain').send('Unknown address.country');
+				const err = new Error('Unknown address.country');
+				err.statusCode = 400;
+				throw err;
 			}
 
 			const addressInput = {...body.address};
@@ -883,7 +885,9 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 				addressNormalized = await AddressFormat.normalizeAddress(addressInput);
 			} catch (e) {
 				if (e instanceof AddressFormat.InvalidAddress) {
-					return res.status(400).type('text/plain').send('Invalid address: ' + JSON.stringify(e.errors));
+					const err = new Error('Invalid address: ' + JSON.stringify(e.errors));
+					err.statusCode = 400;
+					throw err;
 				}
 				throw e;
 			}
@@ -933,7 +937,9 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 					.where({ enabled: true, code: body.feeCountry })
 					.first(1);
 				if (!feeCountryFound) {
-					return res.status(400).type('text/plain').send('Unknown feeCountry');
+					const err = new Error('Unknown feeCountry');
+					err.statusCode = 400;
+					throw err;
 				}
 			} else if (field === 'publicCountry' && body.publicCountry !== null) {
 				// Make sure the country exists
@@ -941,7 +947,9 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 					.where({ enabled: true, code: body.publicCountry })
 					.first(1);
 				if (!publicCountryFound) {
-					return res.status(400).type('text/plain').send('Unknown publicCountry');
+					const err = new Error('Unknown publicCountry');
+					err.statusCode = 400;
+					throw err;
 				}
 			} else if (field === 'email' && body.email !== null) {
 				// Make sure the email isn't taken
@@ -949,7 +957,9 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 					.where('email', body.email)
 					.first(1);
 				if (emailTaken) {
-					return res.status(400).type('text/plain').send('email taken');
+					const err = new Error('email taken');
+					err.statusCode = 400;
+					throw err;
 				}
 			} else if (field === 'newCode') {
 				// Make sure the newCode isn't taken
@@ -957,19 +967,25 @@ export async function validatePatchFields (req, res, codeholderBefore) {
 					.where('newCode', body.newCode)
 					.first(1);
 				if (newCodeTaken) {
-					return res.status(400).type('text/plain').send('newCode taken');
+					const err = new Error('newCode taken');
+					err.statusCode = 400;
+					throw err;
 				}
 
 				// Make sure newCode isn't banned
 				for (const bannedCode of bannedCodes) {
 					if (body.newCode.includes(bannedCode)) {
-						return res.status(400).type('text/plain').send('newCode is banned');
+						const err = new Error('newCode is banned');
+						err.statusCode = 400;
+						throw err;
 					}
 				}
 			} else if (field === 'deathdate') {
 				// Make sure it's not greater than the current date
 				if (moment(body.deathdate).isAfter(moment(), 'day')) {
-					return res.status(400).type('text/plain').send('deathdate is in the future');
+					const err = new Error('deathdate is in the future');
+					err.statusCode = 400;
+					throw err;
 				}
 			} else if (field === 'isDead') {
 				// Set deathdate to current date if true, null if false assuming it's not manually set
