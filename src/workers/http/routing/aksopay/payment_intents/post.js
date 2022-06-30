@@ -114,7 +114,7 @@ export default {
 	run: async function run (req, res) {
 		// Check perms
 		const fullPermOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
-			.filter(org => req.hasPermission('pay.payment_intents.read.' + org));
+			.filter(org => req.hasPermission('pay.payment_intents.create.' + org));
 		const intermediaryOrgs = AKSOOrganization.allLower.filter(x => x !== 'akso')
 			.filter(org => req.hasPermission('pay.payment_intents.intermediary.' + org));
 		const orgs = fullPermOrgs.concat(intermediaryOrgs);
