@@ -14,7 +14,7 @@ export default {
 		if (!['manual', 'intermediary'].includes(paymentIntent.paymentMethod.type)) {
 			return res.sendStatus(409);
 		}
-		if (!['pending', 'disputed'].includes(paymentIntent.status)) {
+		if (!['pending', 'disputed', 'submitted'].includes(paymentIntent.status)) {
 			return res.sendStatus(409);
 		}
 
