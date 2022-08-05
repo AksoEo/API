@@ -116,6 +116,7 @@ export default {
 						.innerJoin('view_codeholders', 'view_codeholders.id', 'magazines_subscriptions.codeholderId')
 						.innerJoin('magazines', 'magazines.id', 'magazines_subscriptions.magazineId')
 						.where('paperVersion', true)
+						.where('magazines_subscriptions.year', '<=', (new Date()).getFullYear())
 						.whereIn('org', magazineSubscriberOrgs)
 						.where(function () {
 							this.where('addressInvalid', true)
