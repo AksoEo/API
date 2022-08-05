@@ -230,6 +230,14 @@ async function processLabelOrder (data) {
 
 	} while (codeholders.length > 0);
 
+	if (offset === 0) { // never found any codeholders
+		doc.addPage({
+			size: req.body.paper
+		});
+		doc.text('Nul etikedoj estis generitaj. Eble kontrolu vian filtrilon aŭ kontrolu ĉu la rezultaj trovitoj havas (validan) poŝtadreson.');
+
+	}
+
 	doc.end();
 	await docReady;
 
