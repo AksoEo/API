@@ -25,17 +25,13 @@ export default {
 		);
 		if (!await fs.exists(file)) { return res.sendStatus(404); }
 
-		const edition = await AKSO.db('magazines_editions')
+		// Bump the download count
+		await AKSO.db('magazines_editions_files')
 			.where({
-				id: req.params.editionId,
-				magazineId: req.params.magazineId
+				magazineId: req.params.magazineId,
+				editionId: req.params.editionId,
+				format: req.params.format
 			})
-			.first('idHuman');
-
-		let name = `${magazine.name}-${edition.idHuman || req.params.editionId}.${req.params.format}`;
-		res
-			.type(req.params.format)
-			.set('Content-Disposition', 'inline; filename*=UTF-8\'\'' + encodeURIComponent(name))
-			.sendFile(file);
+			.update('downloads', AKSO.db.raw('downloads + 1'));
 	}
 };
