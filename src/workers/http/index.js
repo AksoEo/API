@@ -255,7 +255,12 @@ export function init () {
 					if (err.message) {
 						if (err.message === 'Invalid session') {
 							req.session = null;
-							req.logout();
+							await new Promise((resolve, reject) => {
+								req.logOut(err => {
+									if (err) { reject(err); }
+									else { resolve(); }
+								});
+							});
 						}
 
 						res.status(status).type('text/plain').send(err.message);
