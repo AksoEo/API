@@ -150,13 +150,14 @@ const filterCompOps = {
 		filterAssertScalar(val);
 
 		if (typeof val === 'string' && val.startsWith('==base64==')) {
-			val = val.substring(10);
+			let binary;
 			try {
-				val = Buffer.from(val, 'base64');
-			} catch {
-				const err = new Error('Invalid base64 string in ?filter');
-				err.statusCode = 400;
-				throw err;
+				binary = Buffer.from(val.substring(10), 'base64');
+			} catch {}
+			if (binary) {
+				query.orWhere(field, val);
+				query.orWhere(field, binary);
+				return;
 			}
 		}
 
