@@ -149,10 +149,32 @@ const filterCompOps = {
 	$eq: function filterCompOpEq (field, query, val) {
 		filterAssertScalar(val);
 
+		if (typeof val === 'string' && val.startsWith('==base64==')) {
+			val = val.substring(10);
+			try {
+				val = Buffer.from(val, 'base64');
+			} catch {
+				const err = new Error('Invalid base64 string in ?filter');
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+
 		query.where(field, val);
 	},
 	$neq: function filterCompOpNeq (field, query, val) {
 		filterAssertScalar(val);
+
+		if (typeof val === 'string' && val.startsWith('==base64==')) {
+			val = val.substring(10);
+			try {
+				val = Buffer.from(val, 'base64');
+			} catch {
+				const err = new Error('Invalid base64 string in ?filter');
+				err.statusCode = 400;
+				throw err;
+			}
+		}
 
 		query.whereNot(field, val);
 	},
