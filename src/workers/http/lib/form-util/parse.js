@@ -63,7 +63,7 @@ export async function parseForm ({
 		.map(x => x.code);
 
 	const existingFields = {};
-	for (const formEntry of Object.values(existingForm)) {
+	for (const formEntry of Object.values(existingForm || {})) {
 		if (formEntry.el !== 'input') { continue; }
 		existingFields[formEntry.name] = formEntry;
 	}
