@@ -40,6 +40,10 @@ const subscribersSubSchema = {
 						}
 					]
 				},
+				membersFilterInner: {
+					type: 'object',
+					nullable: true,
+				},
 				membersIncludeLastYear: {
 					type: 'string',
 					pattern: '^P(\\d\\d?Y)?(\\d\\d?M)?(\\d\\d?D)?$',
@@ -94,6 +98,7 @@ export function setDefaultsSubscribers (subscribers) {
 		if (!(typeof subscribers[key] === 'object')) { continue; }
 		subscribers[key] = {
 			members: true,
+			membersFilterInner: null,
 			membersIncludeLastYear: null,
 			filter: null,
 			freelyAvailableAfter: null,
@@ -117,7 +122,19 @@ export function verifySubscribers (subscribers) {
 			}
 		}
 
-		if (typeof settings.filter === 'object' && settings.filter) {
+		if (settings.membersFilterInner) {
+			try {
+				assertValidCodeholderFilter({
+					$membership: settings.membersFilterInner,
+				});
+			} catch (e) {
+				const err = new Error(`Invalid $membership filter used in subscribers.${key}.membersFilterInner: ${e.message}`);
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+
+		if (settings.filter) {
 			try {
 				assertValidCodeholderFilter(settings.filter);
 			} catch (e) {

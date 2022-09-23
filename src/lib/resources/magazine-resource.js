@@ -43,7 +43,7 @@ class MagazineResource extends SimpleResource {
 				if (val.members) { // true or object
 					const memberFilter = {
 						$membership: {
-							givesMembership: true,
+							givesMembership: val.membersFilterInner ? undefined : true,
 							$or: [
 								{
 									year: includeLastYear
@@ -57,6 +57,14 @@ class MagazineResource extends SimpleResource {
 							]
 						}
 					};
+					if (val.membersFilterInner) {
+						memberFilter.$membership = {
+							$and: [
+								memberFilter.$membership,
+								val.membersFilterInner
+							],
+						};
+					}
 
 					if (typeof val.members === 'object') {
 						filterArr.push({
