@@ -285,6 +285,7 @@ export function bindMethod (router, path, method, bind) {
 						err.statusCode = 400;
 						return reject(err);
 					}
+					const filePromises = [];
 					bb.on('file', async function (fieldname, stream, info) {
 						const fieldDecl = fieldsObj[fieldname];
 						if (!fieldDecl) {
@@ -318,34 +319,44 @@ export function bindMethod (router, path, method, bind) {
 						stream.on('limit', () => {
 							const err = new Error(`Field ${fieldname} is too big`);
 							err.statusCode = 413;
+							stream.resume();
 							return reject(err);
 						});
 
-						stream.on('end', () => {
-							req.files[fieldname].push({
-								fieldname,
-								originalname: info.filename,
-								encoding: info.encoding,
-								mimetype: info.mimeType,
-								size: meter.bytes,
-								destination: nodePath.dirname(tmpFile),
-								filename: nodePath.basename(tmpFile),
-								path: tmpFile
+						const streamPromise = new Promise(resolve => {
+							stream.on('end', () => {
+								req.files[fieldname].push({
+									fieldname,
+									originalname: info.filename,
+									encoding: info.encoding,
+									mimetype: info.mimeType,
+									size: meter.bytes,
+									destination: nodePath.dirname(tmpFile),
+									filename: nodePath.basename(tmpFile),
+									path: tmpFile,
+								});
+								resolve();
 							});
 						});
+						filePromises.push(streamPromise);
 
 						stream.on('error', e => {
+							stream.resume();
 							throw e;
 						});
 
 						stream
 							.pipe(meter)
 							.pipe(writeStream);
-
-						bb.on('finish', () => { resolve(); });
-						bb.on('error', e => { reject(e); });
 					});
 					req.pipe(bb);
+
+					bb.on('finish', () => {
+						Promise.all(filePromises)
+							.then(resolve)
+							.catch(reject);
+					});
+					bb.on('error', e => { reject(e); });
 				});
 
 				for (let fileSchema of uploadFields) {
