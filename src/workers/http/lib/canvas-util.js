@@ -1,42 +1,54 @@
-import * as Canvas from 'canvas';
+import sharp from 'sharp';
 
 /**
- * Crops a Canvas.Image to an array of image buffers of given sizes
- * @param  {Canvas.Image} img        The original image
- * @param  {string}       mimeType   The mime type to output as
- * @param  {number[]}     sizes      The sizes to crop to in px
- * @param  {boolean}      [toSquare] Whether to crop the image to a square (alternatively reducing the largest dimension to the size)
- * @return {object} An object of size:Buffer
+ * Crops an image to an array of image buffers of given sizes
+ * @param  {mixed}        imgIn        The original image (see https://sharp.pixelplumbing.com/api-constructor)
+ * @param  {number[]}     sizes        The sizes to crop to in px
+ * @param  {boolean}      [toSquare]   Whether to crop the image to a square (alternatively reducing the largest dimension to the size)
+ * @param  {boolean}      [includeOrg] Whether to include the original image
+ * @return {object} An object like { org: Buffer, <size>: Buffer }
  */
-export function cropImgToSizes (img, mimeType, sizes, toSquare = false) {
+export async function cropImgToSizes (imgIn, sizes, toSquare = false, includeOrg = false) {
+	const orgImg = sharp(imgIn, {
+		failOn: 'error',
+	});
+	const orgImgMetadata = await orgImg.metadata();
+
 	const pictures = {};
+	if (includeOrg) {
+		pictures.org = await orgImg.toBuffer();
+	}
+
 	for (let size of sizes) {
-		let canvas;
+		let img;
 		if (toSquare) {
-			canvas = Canvas.createCanvas(size, size);
-			const ctx = canvas.getContext('2d');
-			const hRatio = canvas.width / img.width;
-			const vRatio = canvas.height / img.height;
-			const ratio = Math.max(hRatio, vRatio);
-			const centerShiftX = (canvas.width - img.width * ratio) / 2;
-			const centerShiftY = (canvas.height - img.height * ratio) / 2;
-			ctx.drawImage(img, 0, 0, img.width, img.height, centerShiftX, centerShiftY, img.width * ratio, img.height * ratio);
+			img = orgImg
+				.clone()
+				.resize(size, size, {
+					fit: 'contain',
+					background: { r: 0, g: 0, b: 0, alpha: 0 },
+					fastShrinkOnLoad: false,
+				});
 		} else {
-			const aspectRatio = img.width / img.height;
+			const aspectRatio = orgImgMetadata.width / orgImgMetadata.height;
 			let newWidth, newHeight;
 			if (aspectRatio > 1) {
 				newWidth = size;
-				newHeight = size / aspectRatio;
+				newHeight = Math.round(size / aspectRatio);
 			} else {
-				newWidth = size * aspectRatio;
+				newWidth = Math.round(size * aspectRatio);
 				newHeight = size;
 			}
-			canvas = Canvas.createCanvas(newWidth, newHeight);
-			const ctx = canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0, newWidth, newHeight);
+			img = orgImg
+				.clone()
+				.resize(newWidth, newHeight, {
+					fit: 'contain',
+					background: { r: 0, g: 0, b: 0, alpha: 0 },
+					fastShrinkOnLoad: false,
+				});
 		}
 		
-		pictures[size] = canvas.toBuffer(mimeType);
+		pictures[size] = await img.toBuffer();
 	}
 
 	return pictures;

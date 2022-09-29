@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs-extra';
-import * as Canvas from 'canvas';
 
 import { cropImgToSizes } from 'akso/workers/http/lib/canvas-util';
 
@@ -45,18 +44,17 @@ export default {
 		if (!editionExists) { return res.sendStatus(404); }
 
 		const tmpFile = req.files.thumbnail[0];
-		// Try to load the picture
-		let img;
+		// Try to process the picture
+		let pictures;
 		try {
-			img = await Canvas.loadImage(tmpFile.path);
+			// Crop and scale the picture to all the necessary sizes
+			pictures = await cropImgToSizes(tmpFile.path, thumbnailSizes);
 		} catch (e) {
+			console.error(e)
 			const err = new Error('Unable to load picture');
 			err.statusCode = 400;
 			throw err;
 		}
-
-		// Crop and scale the picture to all the necessary sizes
-		const pictures = cropImgToSizes(img, tmpFile.mimetype, thumbnailSizes, false);
 
 		// Ensure the dir for the thumbnails exists
 		const picDir = path.join(

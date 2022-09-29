@@ -1,4 +1,3 @@
-import * as Canvas from 'canvas';
 import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment-timezone';
@@ -24,10 +23,11 @@ export const modQuerySchema = {
 };
 
 export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy, modCmt) {
-	// Try to load the picture
-	let img;
+	// Try to process the picture
+	let pictures;
 	try {
-		img = await Canvas.loadImage(tmpFile);
+		// Crop and scale the picture to all the necessary sizes
+		pictures = await cropImgToSizes(tmpFile.path, profilePictureSizes, true);
 	} catch (e) {
 		const err = new Error('Unable to load picture');
 		err.statusCode = 400;
@@ -35,10 +35,8 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	}
 
 	// Hash the picture
-	const hash = crypto.createHash('sha1').update(img.src).digest();
-
-	// Crop and scale the picture to all the necessary sizes
-	const pictures = cropImgToSizes(img, mimetype, profilePictureSizes, true);
+	const hash = crypto.createHash('sha1').update(pictures.org).digest();
+	delete pictures.org;
 
 	// Ensure the dir for the codeholder's profile picture exists
 	const picDir = path.join(AKSO.conf.dataDir, 'codeholder_pictures', codeholderId.toString());
