@@ -50,7 +50,6 @@ export default {
 			// Crop and scale the picture to all the necessary sizes
 			pictures = await cropImgToSizes(tmpFile.path, thumbnailSizes);
 		} catch (e) {
-			console.error(e)
 			const err = new Error('Unable to load picture');
 			err.statusCode = 400;
 			throw err;
