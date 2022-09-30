@@ -2463,7 +2463,7 @@ CREATE TABLE `magazines_editions_toc` (
   `editionId` int unsigned NOT NULL,
   `page` int unsigned NOT NULL,
   `title` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `author` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `recitationAuthor` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `text` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `highlighted` tinyint(1) NOT NULL DEFAULT '0',
@@ -3745,4 +3745,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-30 11:39:53
+-- Dump completed on 2022-09-30 19:30:45
