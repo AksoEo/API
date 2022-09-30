@@ -1991,41 +1991,6 @@ CREATE TABLE `countries_groups_members` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `countries_lists`
---
-
-DROP TABLE IF EXISTS `countries_lists`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `countries_lists` (
-  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `countries_lists_orgs`
---
-
-DROP TABLE IF EXISTS `countries_lists_orgs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `countries_lists_orgs` (
-  `listName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `orgCodeholderId` int unsigned NOT NULL,
-  `i` int unsigned NOT NULL,
-  PRIMARY KEY (`listName`,`country`,`orgCodeholderId`),
-  UNIQUE KEY `listName` (`i`,`listName`,`country`) USING BTREE,
-  KEY `country` (`country`),
-  KEY `orgCodeholderId` (`orgCodeholderId`),
-  CONSTRAINT `countries_lists_orgs_ibfk_1` FOREIGN KEY (`listName`) REFERENCES `countries_lists` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `countries_lists_orgs_ibfk_2` FOREIGN KEY (`country`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `countries_lists_orgs_ibfk_3` FOREIGN KEY (`orgCodeholderId`) REFERENCES `codeholders_org` (`codeholderId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `delegations_applications`
 --
 
@@ -2741,39 +2706,6 @@ CREATE TABLE `notif_templates` (
   FULLTEXT KEY `description` (`description`),
   FULLTEXT KEY `name_2` (`name`),
   FULLTEXT KEY `subject_2` (`subject`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `orgLists`
---
-
-DROP TABLE IF EXISTS `orgLists`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `orgLists` (
-  `name` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `orgLists_orgs`
---
-
-DROP TABLE IF EXISTS `orgLists_orgs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `orgLists_orgs` (
-  `listName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tagName` varchar(48) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `orgCodeholderId` int unsigned NOT NULL,
-  `i` int unsigned NOT NULL,
-  PRIMARY KEY (`listName`,`tagName`,`orgCodeholderId`),
-  KEY `codeholderId` (`orgCodeholderId`),
-  KEY `i` (`i`),
-  CONSTRAINT `orgLists_orgs_ibfk_1` FOREIGN KEY (`orgCodeholderId`) REFERENCES `codeholders_org` (`codeholderId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `orgLists_orgs_ibfk_2` FOREIGN KEY (`listName`) REFERENCES `orgLists` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3813,4 +3745,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-05 11:19:51
+-- Dump completed on 2022-09-30 11:39:53
