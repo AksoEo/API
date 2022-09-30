@@ -17,7 +17,7 @@ export default {
 				author: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 100,
+					maxLength: 200,
 					pattern: '^[^\\n]+$',
 					nullable: true
 				},

@@ -12,7 +12,7 @@ export default {
 				name: 'file',
 				maxCount: 1,
 				minCount: 1,
-				maxSize: '25mb'
+				maxSize: '80mb'
 			}
 		]
 	},
