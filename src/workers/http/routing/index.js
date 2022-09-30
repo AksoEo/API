@@ -324,7 +324,7 @@ export function bindMethod (router, path, method, bind) {
 						});
 
 						const streamPromise = new Promise(resolve => {
-							stream.on('end', () => {
+							writeStream.on('close', () => {
 								req.files[fieldname].push({
 									fieldname,
 									originalname: info.filename,
