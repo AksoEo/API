@@ -27,7 +27,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	let pictures;
 	try {
 		// Crop and scale the picture to all the necessary sizes
-		pictures = await cropImgToSizes(tmpFile.path, profilePictureSizes, true);
+		pictures = await cropImgToSizes(tmpFile, profilePictureSizes, true);
 	} catch (e) {
 		const err = new Error('Unable to load picture');
 		err.statusCode = 400;
