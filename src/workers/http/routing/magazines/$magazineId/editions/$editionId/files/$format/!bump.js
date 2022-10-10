@@ -33,5 +33,7 @@ export default {
 				format: req.params.format
 			})
 			.update('downloads', AKSO.db.raw('downloads + 1'));
+
+		res.sendStatus(204);
 	}
 };
