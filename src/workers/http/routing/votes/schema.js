@@ -82,8 +82,6 @@ export async function manualDataValidation (req, res, vote = undefined) {
 			});
 			await query;
 		} catch (e) {
-			console.log(e);
-			console.log(validateFilter);
 			return res.status(400).type('text/plain').send('Invalid voterCodeholders or viewerCodeholders');
 		}
 	}
