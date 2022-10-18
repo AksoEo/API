@@ -157,7 +157,9 @@ export function insertAsInsertIgnore (query, db = AKSO.db) {
 }
 
 export function escapeHTML(s) { 
-	return s.replace(/&/g, '&amp;')
+	return s
+		.toString()
+		.replace(/&/g, '&amp;')
 		.replace(/"/g, '&quot;')
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;');
