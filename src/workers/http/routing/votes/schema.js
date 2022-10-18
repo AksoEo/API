@@ -73,7 +73,7 @@ export async function manualDataValidation (req, res, vote = undefined) {
 			QueryUtil.filter({
 				fields: codeholderSchema.fields,
 				fieldAliases: codeholderSchema.fieldAliases,
-				fieldWhitelist: Object.keys(req.memberFields),
+				fieldWhitelist: req.memberFields ? Object.keys(req.memberFields) : null,
 				customCompOps: codeholderSchema.customFilterCompOps,
 				customLogicOpsFields: codeholderSchema.customFilterLogicOpsFields,
 				customLogicOps: codeholderSchema.customFilterLogicOps,
@@ -82,6 +82,8 @@ export async function manualDataValidation (req, res, vote = undefined) {
 			});
 			await query;
 		} catch (e) {
+			console.log(e);
+			console.log(validateFilter);
 			return res.status(400).type('text/plain').send('Invalid voterCodeholders or viewerCodeholders');
 		}
 	}
