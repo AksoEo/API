@@ -93,7 +93,7 @@ export default {
 
 		let price = null;
 		if (formData.price_var) {
-			price = participantMetadata.evaluate('price');
+			price = participantMetadata.evaluate(formData.price_var);
 		}
 
 		// Insert the participant
