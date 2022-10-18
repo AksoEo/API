@@ -75,15 +75,19 @@ export default {
 
 		// Obtain existing data for data validation
 		const data = await AKSO.db('congresses_instances')
-			.first('dateFrom')
+			.first('dateFrom', 'dateTo')
 			.where({
 				congressId: req.params.congressId,
 				id: req.params.instanceId
 			});
 		if (!data) { return res.sendStatus(404); }
 
-		const dateFrom = req.body.dateFrom || data.dateFrom;
-		if (req.body.dateTo && moment(req.body.dateTo) < moment(dateFrom)) {
+		const dateFrom = req.body.dateFrom ?? data.dateFrom;
+		const dateTo = req.body.dateTo ?? data.dateTo;
+		if (
+			(req.body.dateTo && moment(req.body.dateTo) < moment(dateFrom)) ||
+			(req.body.dateFrom && moment(req.body.dateFrom) > moment(dateTo))
+		) {
 			return res.type('text/plain').status(400).send('dateTo must be greater than or equal to dateFrom');
 		}
 
