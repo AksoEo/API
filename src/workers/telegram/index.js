@@ -1,4 +1,4 @@
-import Telegraf from 'telegraf/telegraf';
+import { Telegraf } from 'telegraf';
 import { base64url } from 'rfc4648';
 import path from 'path';
 import fs from 'fs-extra';
