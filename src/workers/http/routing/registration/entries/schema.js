@@ -243,8 +243,9 @@ export async function afterQuery (arr, done) {
 		const offers = await AKSO.db('registration_entries_offers')
 			.whereIn('registrationEntryId', ids)
 			.orderBy('registrationEntryId', 'arrayId')
-			.select('registrationEntryId', 'type', 'amount', 'paperVersion',
-				AKSO.db.raw('COALESCE(`membershipCategoryId`, `magazineId`) AS `id`'));
+			.select(
+				'registrationEntryId', 'type', 'amount', 'paperVersion',
+				AKSO.db.raw('IF(`type`="membership", `membershipCategoryId`, `magazineId`) AS `id`'));
 
 		const offersById = {};
 		for (const offer of offers) {

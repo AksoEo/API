@@ -2789,7 +2789,7 @@ CREATE TABLE `pay_intents` (
   CONSTRAINT `pay_intents_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `pay_intents_ibfk_2` FOREIGN KEY (`paymentMethodId`) REFERENCES `pay_methods` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `pay_intents_ibfk_3` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `pay_intents_ibfk_4` FOREIGN KEY (`intermediaryCountryCode`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `pay_intents_ibfk_4` FOREIGN KEY (`intermediaryCountryCode`) REFERENCES `countries` (`code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3136,7 +3136,8 @@ CREATE TABLE `registration_entries_offers` (
   KEY `magazineId` (`magazineId`),
   KEY `paperVersion` (`paperVersion`),
   CONSTRAINT `registration_entries_offers_ibfk_1` FOREIGN KEY (`registrationEntryId`) REFERENCES `registration_entries` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `registration_entries_offers_ibfk_2` FOREIGN KEY (`membershipCategoryId`) REFERENCES `membershipCategories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `registration_entries_offers_ibfk_3` FOREIGN KEY (`magazineId`) REFERENCES `magazines` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3745,4 +3746,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-30 19:30:45
+-- Dump completed on 2022-10-19 14:28:14
