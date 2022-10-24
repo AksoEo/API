@@ -756,7 +756,7 @@ export const patchSchema = {
 			additionalProperties: false,
 			nullable: true,
 			patternProperties: {
-				'^[^\\n]{1,30}$': {
+				'^[^\\n]{1,50}$': {
 					oneOf: [
 						'tel', 'text', 'number', 'email', 'url'
 					].map(type => {
@@ -772,7 +772,7 @@ export const patchSchema = {
 						case 'text':
 							valObj = {
 								type: 'string',
-								maxLength: 250
+								maxLength: 1500,
 							};
 							break;
 						case 'number':
