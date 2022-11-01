@@ -35,7 +35,7 @@ const schema = {
 				dataString: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 50,
+					maxLength: 128,
 					pattern: '^[^\\n]+$',
 					nullable: true
 				}
