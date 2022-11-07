@@ -6,7 +6,7 @@ export async function validateDataEntry ({
 	data,
 	oldData = undefined,
 	addFormValues = {},
-	allowInvalidData = false
+	allowInvalidData = false,
 } = {}) {
 	await doAscMagic();
 

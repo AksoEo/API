@@ -4,7 +4,7 @@ import crypto from 'pn/crypto';
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
-import { manualDataValidation } from './schema';
+import { manualDataValidation, sendParticipantConfirmationNotif } from './schema';
 
 export default {
 	schema: {
@@ -119,5 +119,9 @@ export default {
 		));
 		res.set('X-Identifier', dataIdHex);
 		res.sendStatus(201);
+
+		if (formData.confirmationNotifTemplateId) {
+			await sendParticipantConfirmationNotif(req.params.instanceId, dataId, formData.confirmationNotifTemplateId);
+		}
 	}
 };

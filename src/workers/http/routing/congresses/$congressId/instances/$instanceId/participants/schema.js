@@ -1,4 +1,11 @@
+import { escapeId } from 'mysql2';
+
 import { memberFilter, schema as chSchema } from 'akso/workers/http/routing/codeholders/schema';
+import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
+import { renderTemplate } from 'akso/lib/notif-template-util';
+import { sendRawMail } from 'akso/mail';
+import { validateDataEntry } from 'akso/workers/http/lib/form-util';
+import { BOOL, union, NUMBER, NULL } from '@tejo/akso-script';
 
 export const schema = {
 	defaultFields: [ 'dataId' ],
@@ -40,6 +47,12 @@ export const schema = {
 	]
 };
 
+export const formValues = {
+	'@is_member': BOOL,
+	'@created_time': union([ NUMBER, NULL ]),
+	'@edited_time': union([ NUMBER, NULL ]),
+}; 
+
 // Takes care of additional data validation for POST and PATCH
 export async function manualDataValidation (req, res, formData) {
 	// Require codeholderId if not allowGuests
@@ -65,7 +78,7 @@ export async function manualDataValidation (req, res, formData) {
 }
 
 // Handles read requests for participants
-export async function getFormMetaData (req, res) {
+export async function getFormMetaData (instanceId) {
 	const dynSchema = {
 		...schema,
 		...{
@@ -75,9 +88,13 @@ export async function getFormMetaData (req, res) {
 	};
 
 	const formData = await AKSO.db('congresses_instances_registrationForm')
-		.where('congressInstanceId', req.params.instanceId)
-		.first('formId');
-	if (!formData) { return res.sendStatus(404); }
+		.where('congressInstanceId', instanceId)
+		.first('*');
+	if (!formData) {
+		const err = new Error();
+		err.statusCode = 404;
+		throw err;
+	}
 	
 	const formFields = await AKSO.db('forms_fields')
 		.where('formId', formData.formId)
@@ -86,9 +103,10 @@ export async function getFormMetaData (req, res) {
 	const query = AKSO.db('congresses_instances_participants')
 		.leftJoin('congresses_instances_registrationForm', 'congresses_instances_registrationForm.congressInstanceId', 'congresses_instances_participants.congressInstanceId')
 		.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = congresses_instances_participants.dataId')
-		.where('congresses_instances_participants.congressInstanceId', req.params.instanceId);
+		.where('congresses_instances_participants.congressInstanceId', instanceId);
 
 	// Add the fields of the form
+	const formFieldsObj = {};
 	for (const formField of formFields) {
 		// Set the flags for the data field
 		let flags = '';
@@ -109,13 +127,78 @@ export async function getFormMetaData (req, res) {
 				.on(AKSO.db.raw('??.name', fieldTableAlias), AKSO.db.raw('?', formField.name))
 				.on(AKSO.db.raw('??.dataId', fieldTableAlias), 'd.dataId');
 		});
+
+		formFieldsObj[formField.name] = formField.type;
 	}
 
-	// TODO: Is there a reason this a separate loop
-	const formFieldsObj = {};
-	for (const field of formFields) {
-		formFieldsObj[field.name] = field.type;
+	return { schema: dynSchema, query, formFields, formFieldsObj, formData };
+}
+
+export async function sendParticipantConfirmationNotif (instanceId, dataId, templateId) {
+	const formMetaData = await getFormMetaData(instanceId);
+
+	formMetaData.query
+		.where('d.dataId', dataId)
+		.first([
+			'price', 'sequenceId', 'createdTime', 'd.dataId',
+			...Object.entries(formMetaData.schema.fieldAliases)
+				.filter(([key]) => key.startsWith('data.'))
+				.map(([key, aliasFn]) => {
+					return AKSO.db.raw(`(${aliasFn()}) AS ${escapeId(key, true)}`);
+				})
+		]);
+	const participant = new CongressParticipantResource(
+		await formMetaData.query,
+		{
+			query: {
+				fields: [ 'price', 'sequenceId', 'createdTime', 'dataId' ],
+			},
+		},
+		null,
+		formMetaData.formFieldsObj,
+	).obj;
+
+	let dataKeys = [];
+	let dataMeta = [];
+	let dataVals = [];
+	for (const formField of formMetaData.formData.form) {
+		if (!formField.el === 'input') { continue; }
+		dataKeys.push(formField.name);
+		dataMeta.push([ formField.type, formField.label, formField.variant ?? formField.currency ?? formField.tz ?? null ]);
+		dataVals.push(participant.data[formField.name]);
 	}
 
-	return { schema: dynSchema, query, formFields, formFieldsObj };
+	const intentData = {
+		'registrationEntry.price': participant.price,
+		'registrationEntry.currency': formMetaData.formData.price_currency,
+		'registrationEntry.sequenceId': participant.sequenceId,
+		'registrationEntry.createdTime': participant.createdTime,
+		'registrationEntry.canEdit': formMetaData.formData.editable,
+		'registrationEntry.dataId': participant.dataId.toString('hex'),
+		'registrationEntry.dataKeys': dataKeys,
+		'registrationEntry.dataMeta': dataMeta,
+		'registrationEntry.dataVals': dataVals,
+	};
+
+	const template = await AKSO.db('notif_templates')
+		.where('id', templateId)
+		.first('*');
+
+	const validatedDataEntry = await validateDataEntry({
+		formData: formMetaData.formData,
+		data: participant.data,
+		allowInvalidData: true,
+	});
+
+	await sendRawMail({
+		...await renderTemplate(template, intentData),
+		to: {
+			name: validatedDataEntry.evaluate(formMetaData.formData.identifierName),
+			email: validatedDataEntry.evaluate(formMetaData.formData.identifierEmail),
+		},
+		from: {
+			name: template.fromName || '',
+			email: template.from
+		},
+	});
 }

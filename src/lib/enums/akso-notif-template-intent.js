@@ -1,6 +1,6 @@
 import Enum from './enum';
 
-import { union, NULL, STRING, NUMBER, BOOL } from '@tejo/akso-script';
+import { union, NULL, STRING, NUMBER, BOOL, array as ascArray } from '@tejo/akso-script';
 
 const formValues = {
 	CODEHOLDER: {
@@ -50,6 +50,17 @@ formValues.NEWSLETTER_MAGAZINE = {
 	'toc.md': STRING,
 	'toc.html': STRING,
 	'toc.text': STRING,
+};
+formValues.CONGRESS_REGISTRATION = {
+	'registrationEntry.price': union([ NULL, NUMBER ]),
+	'registrationEntry.currency': union([ NULL, STRING ]),
+	'registrationEntry.sequenceId': union([ NULL, NUMBER ]),
+	'registrationEntry.createdTime': NUMBER,
+	'registrationEntry.canEdit': BOOL,
+	'registrationEntry.dataId': STRING,
+	'registrationEntry.dataKeys': ascArray(STRING),
+	'registrationEntry.dataMeta': ascArray(union([ NULL, NUMBER, STRING, BOOL ])),
+	'registrationEntry.dataVals': ascArray(union([ NULL, NUMBER, STRING, BOOL, ascArray(union([ BOOL, NULL ])) ])),
 };
 
 const bogusData = {
@@ -104,6 +115,22 @@ bogusData.NEWSLETTER_MAGAZINE = {
 	'toc.md': '', // todo
 	'toc.html': '',
 	'toc.text': '',
+};
+bogusData.CONGRESS_REGISTRATION = {
+	'registrationEntry.price': 10000,
+	'registrationEntry.currency': 'EUR',
+	'registrationEntry.sequenceId': 34,
+	'registrationEntry.createdTime': 1667814523,
+	'registrationEntry.canEdit': true,
+	'registrationEntry.dataId': 'c1f05fd1b995c9f70f903064',
+	'registrationEntry.dataKeys': [ 'nomo', 'retpoŝto', 'lando', 'donaco' ],
+	'registrationEntry.dataMeta': [
+		[ 'text', 'Nomo', 'text' ],
+		[ 'text', 'Retpoŝtadreso', 'email' ],
+		[ 'country', 'Loĝlando', null ],
+		[ 'money', 'Donaco al la kongreso', 'EUR' ],
+	],
+	'registrationEntry.dataVals': [ 'Test McTest', 'example@example.com', 'fr', 1000 ],
 };
 
 class AKSONotifTemplateIntent extends Enum {

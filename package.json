@@ -28,7 +28,7 @@
     "@cpsdqs/google-i18n-address": "^1.0.2",
     "@sendgrid/mail": "^7.6.0",
     "@tejo/akso-client": "^0.4.2",
-    "@tejo/akso-script": "^0.2.2",
+    "@tejo/akso-script": "^0.2.5",
     "ajv": "^8.9.0",
     "ajv-formats": "^2.1.1",
     "ajv-merge-patch": "^5.0.1",

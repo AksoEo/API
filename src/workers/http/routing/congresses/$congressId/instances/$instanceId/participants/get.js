@@ -4,7 +4,7 @@ import CongressParticipantResource from 'akso/lib/resources/congress-participant
 import { getFormMetaData, schema } from './schema';
 
 export default {
-	schema: async (req, res) => (await getFormMetaData(req, res)).schema,
+	schema: async req => (await getFormMetaData(req.params.instanceId)).schema,
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
@@ -18,7 +18,7 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.participants.read.' + orgData.org)) { return res.sendStatus(403); }
 
-		const formMetaData = await getFormMetaData(req, res);
+		const formMetaData = await getFormMetaData(req.params.instanceId);
 
 		await QueryUtil.handleCollection({
 			req, res, schema: formMetaData.schema, query: formMetaData.query,

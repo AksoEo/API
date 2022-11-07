@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.30, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.30-0ubuntu0.20.04.2
+-- Server version	8.0.31-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -252,7 +252,7 @@ CREATE TABLE `codeholderRoles_codeholders` (
   `codeholderId` int unsigned NOT NULL,
   `dataCountry` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dataOrg` int unsigned DEFAULT NULL,
-  `dataString` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dataString` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `durationFrom` (`durationFrom`),
   KEY `durationTo` (`durationTo`),
@@ -1906,6 +1906,7 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `price_currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_var` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price_minUpfront` int unsigned DEFAULT NULL,
+  `confirmationNotifTemplateId` int unsigned DEFAULT NULL,
   `formId` int unsigned NOT NULL,
   `form` json NOT NULL,
   `identifierName` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -1913,8 +1914,10 @@ CREATE TABLE `congresses_instances_registrationForm` (
   `identifierCountryCode` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`),
   UNIQUE KEY `formId` (`formId`),
+  KEY `confirmationNotifTemplateId` (`confirmationNotifTemplateId`),
   CONSTRAINT `congresses_instances_registrationForm_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `congresses_instances_registrationForm_ibfk_2` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `congresses_instances_registrationForm_ibfk_2` FOREIGN KEY (`formId`) REFERENCES `forms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_registrationForm_ibfk_3` FOREIGN KEY (`confirmationNotifTemplateId`) REFERENCES `notif_templates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -3722,4 +3725,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-25 10:56:22
+-- Dump completed on 2022-11-07 14:08:38

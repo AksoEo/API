@@ -3,8 +3,7 @@ import CongressParticipantResource from 'akso/lib/resources/congress-participant
 import { formSchema, parseForm, setFormFields, validateDataEntry} from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 import { escapeId } from 'mysql2';
-import { BOOL } from '@tejo/akso-script';
-import { schema as parSchema } from '../participants/schema';
+import { schema as parSchema, formValues } from '../participants/schema';
 
 export default {
 	schema: {
@@ -90,6 +89,11 @@ export default {
 					minLength: 1,
 					maxLength: 40
 				},
+				confirmationNotifTemplateId: {
+					type: 'integer',
+					format: 'uint32',
+					nullable: true,
+				},
 			},
 			required: [
 				'form',
@@ -112,19 +116,31 @@ export default {
 		if (!congressData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.update.' + congressData.org)) { return res.sendStatus(403); }
 
+		// Make sure confirmationNotifTemplateId is valid, if present
+		if (typeof req.body.confirmationNotifTemplateId === 'number') {
+			const notifTemplateExists = await AKSO.db('notif_templates')
+				.first(1)
+				.where({
+					id: req.body.confirmationNotifTemplateId,
+					intent: 'congress_registration',
+					org: congressData.org,
+				});
+			if (!notifTemplateExists) {
+				return res.status(400)
+					.send('Invalid confirmationNotifTemplateId');
+			}
+		}
+
 		// Obtain the existing form if one exists
 		const existingRegistrationForm = await AKSO.db('congresses_instances_registrationForm')
 			.where('congressInstanceId', req.params.instanceId)
 			.first('formId', 'form');
 
 		// Validate the form
-		const formValues = {
-			'@is_member': BOOL
-		};
 		const parsedForm = await parseForm({
 			form: req.body.form,
 			existingForm: existingRegistrationForm ? existingRegistrationForm.form : undefined,
-			formValues
+			formValues,
 		});
  
 		if (req.body.price) {
@@ -190,7 +206,8 @@ export default {
 			formId,
 			identifierName: req.body.identifierName,
 			identifierEmail: req.body.identifierEmail,
-			identifierCountryCode: req.body.identifierCountryCode
+			identifierCountryCode: req.body.identifierCountryCode,
+			confirmationNotifTemplateId: req.body.confirmationNotifTemplateId,
 		};
 		const data = {
 			...rawData,
