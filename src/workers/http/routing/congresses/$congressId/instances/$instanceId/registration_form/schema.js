@@ -14,7 +14,8 @@ export default {
 		form: '',
 		identifierName: '',
 		identifierEmail: '',
-		identifierCountryCode: ''
+		identifierCountryCode: '',
+		confirmationNotifTemplateId: '',
 	},
 	fieldAliases: {
 		'price.currency': 'price_currency',
