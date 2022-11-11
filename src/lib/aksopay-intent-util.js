@@ -60,32 +60,7 @@ export function updateStatus (id, ...args) {
 	return updateStatuses([id], ...args);
 }
 
-export async function sendReceiptEmail (id, email = undefined) {
-	// Try to find the intent
-	const intent = await AKSO.db('pay_intents')
-		.first(
-			'id', 'customer_email', 'customer_name', 'paymentMethod', 'currency',
-			'org', 'succeededTime', 'intermediaryCountryCode', {
-				purposes: 1,
-			})
-		.where({
-			id,
-			status: 'succeeded'
-		});
-	if (!intent) {
-		const err = new Error('unknown intent');
-		err.isAKSO = true;
-		throw err;
-	}
-	if (!email) {
-		email = intent.customer_email;
-	}
-	if (!email) {
-		const err = new Error('no customer email, cannot send receipt');
-		err.isAKSO = true;
-		throw err;
-	}
-
+async function getIntentData (intent) {
 	// Obtain purposes etc.
 	await new Promise(resolve => intentAfterQuery([intent], resolve));
 	for (const purpose of intent.purposes) {
@@ -148,6 +123,39 @@ export async function sendReceiptEmail (id, email = undefined) {
 			});
 	}
 
+	return {
+		isDonation, registrationEntryInfo,
+	};
+}
+
+export async function sendReceiptEmail (id, email = undefined) {
+	// Try to find the intent
+	const intent = await AKSO.db('pay_intents')
+		.first(
+			'id', 'customer_email', 'customer_name', 'paymentMethod', 'currency',
+			'org', 'succeededTime', 'intermediaryCountryCode', {
+				purposes: 1,
+			})
+		.where({
+			id,
+			status: 'succeeded'
+		});
+	if (!intent) {
+		const err = new Error('unknown intent');
+		err.isAKSO = true;
+		throw err;
+	}
+	if (!email) {
+		email = intent.customer_email;
+	}
+	if (!email) {
+		const err = new Error('no customer email, cannot send receipt');
+		err.isAKSO = true;
+		throw err;
+	}
+
+	const intentData = await getIntentData(intent);
+
 	await renderSendEmail({
 		org: intent.org,
 		tmpl: 'aksopay-receipt',
@@ -158,13 +166,71 @@ export async function sendReceiptEmail (id, email = undefined) {
 			},
 		}],
 		view: {
+			...intentData,
 			intent,
-			isDonation,
 			idEncoded: base32.stringify(intent.id),
-			registrationEntryInfo,
 			totalAmount: intent.purposes
 				.map(p => p.amount)
 				.reduce((a, b) => a + b),
+		},
+	});
+}
+
+export async function sendInstructionsEmail (id) {
+	// Try to find the intent
+	const intent = await AKSO.db('pay_intents')
+		.first(
+			'id', 'customer_email', 'customer_name', 'paymentMethod', 'currency',
+			'org', 'succeededTime', 'intermediaryCountryCode', 'timeCreated', {
+				purposes: 1,
+			})
+		.where({
+			id,
+			status: 'pending',
+		});
+	if (!intent) {
+		const err = new Error('unknown intent');
+		err.isAKSO = true;
+		throw err;
+	}
+	if (!intent.customer_email) {
+		const err = new Error('no customer email, cannot send receipt');
+		throw err;
+	}
+	if (intent.paymentMethod.type === 'stripe') {
+		const err = new Error('cannot send instruction emails for payment methods of type stripe');
+		throw err;
+	}
+
+	const intentData = await getIntentData(intent);
+
+	let validityStr = null;
+	if (intent.paymentMethod.paymentValidity) {
+		validityStr = moment(1000 * intent.timeCreated + intent.paymentMethod.paymentValidity)
+			.format('YYYY-MM-DD HH:mm:ss [UTC]');
+	}
+
+	const idEncoded = base32.stringify(intent.id);
+	const paymentFacilitatorURL = new URL('i/' + idEncoded, AKSO.conf.paymentFacilitator);
+
+	await renderSendEmail({
+		org: intent.org,
+		tmpl: 'aksopay-instructions',
+		personalizations: [{
+			to: {
+				email: intent.customer_email,
+				name: intent.customer_name,
+			},
+		}],
+		view: {
+			...intentData,
+			intent,
+			idEncoded,
+			totalAmount: intent.purposes
+				.map(p => p.amount)
+				.reduce((a, b) => a + b),
+			paymentFacilitatorURL,
+			validityStr,
 		},
 	});
 }

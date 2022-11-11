@@ -25,9 +25,9 @@ Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
 SUME {{currency_fmt totalAmount intent.currency}}
 
 
-Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per info@uea.org aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe https://uea.org/kontakti.
+Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per oficejo@tejo.org.
 
-{{~#if_eq intent.paymentMethod.type stripe}}
+{{~#if_eq intent.paymentMethod.type "stripe"}}
 
 Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.{{/if_eq}}
 
@@ -37,4 +37,4 @@ Kutime aliĝoj kaj revuaj abonoj estas aŭtomate traktitaj ene de 2 minutoj, tam
 {{/if_eq}}
 
 Salutas
-Tutmonda Esperantista Junulara Organizo
+Tutmonda Esperantista Junulara Organizo (TEJO)

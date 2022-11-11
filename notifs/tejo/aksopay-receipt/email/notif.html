@@ -57,10 +57,10 @@
                     </table>
 
                     <p>
-                        Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas <span style="font-family: monospace;">{{idEncoded}}</span>.<br>Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per <a href="mailto:info@uea.org">info@uea.org</a> aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe <a href="https://uea.org/kontakti">uea.org/kontakti</a>.
+                        Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas <span style="font-family: monospace;">{{idEncoded}}</span>.<br>Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per <a href="mailto:oficejo@tejo.org">oficejo@tejo.org</a>.
                     </p>
 
-                    {{~#if_eq intent.paymentMethod.type stripe}}
+                    {{~#if_eq intent.paymentMethod.type "stripe"}}
                     <p>
                         Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.
                     </p>
@@ -74,7 +74,7 @@
 
                     <p>
                         Salutas<br>
-                        Tutmonda Esperantista Junulara Asocio
+                        Tutmonda Esperantista Junulara Organizo (TEJO)
                     </p>
                 </td>
             </tr>

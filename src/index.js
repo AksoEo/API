@@ -85,6 +85,8 @@ async function init () {
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
 				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0',
 			openExchangeRatesAppID: process.env.AKSO_OPEN_EXCHANGE_RATES_APP_ID,
+			paymentFacilitator: process.env.AKSO_PAYMENT_FACILITATOR === undefined ?
+				'https://pago.akso.org' : process.env.AKSO_PAYMENT_FACILITATOR,
 		},
 
 		// Constants, do not change without updating docs

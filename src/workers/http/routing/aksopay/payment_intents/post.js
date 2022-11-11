@@ -4,6 +4,7 @@ import AKSOCurrency from 'akso/lib/enums/akso-currency';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 import { schema as paymentMethodSchema } from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
+import { sendInstructionsEmail } from 'akso/lib/aksopay-intent-util';
 
 import path from 'path';
 import crypto from 'pn/crypto';
@@ -448,5 +449,10 @@ export default {
 		res.set('Location', path.join(AKSO.conf.http.path, 'aksopay/payment_intents', idEncoded));
 		res.set('X-Identifier', idEncoded);
 		res.sendStatus(201);
+
+		// Send payment instructions email if applicable
+		if (paymentMethod.type !== 'stripe' && req.body.customer?.email) {
+			await sendInstructionsEmail(id);
+		}
 	}
 };

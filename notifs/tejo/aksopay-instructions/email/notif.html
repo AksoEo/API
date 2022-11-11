@@ -57,24 +57,22 @@
                     </table>
 
                     <p>
-                        Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas <span style="font-family: monospace;">{{idEncoded}}</span>.<br>Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per <a href="mailto:info@uea.org">info@uea.org</a> aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe <a href="https://uea.org/kontakti">uea.org/kontakti</a>.
+                        Bonvolu sekvi la ĉi-subajn instrukciojn por plenumi vian pagon. {{#if_eq intent.paymentMethod.type "manual"}}Kiam vi sukcese pagis, bonvolu tion indiki alklakante la butonon » Pago sendita « en <a href="{{@root.paymentFacilitatorURL}}">la paga paĝo</a>. Tio sciigos al oficisto, ke oni atendu vian pagon.
+                        {{#if validityStr}}Post {{validityStr}} la mendo estos konsiderata nuligita, se la pago ne estas markita kiel sendita.{{/if}}{{/if_eq}}
                     </p>
 
-                    {{~#if_eq intent.paymentMethod.type "stripe"}}
                     <p>
-                        Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.
+                        <strong>Paginstrukcioj:</strong>
+                        {{markdown_fmt intent.paymentMethod.description "emphasis,strikethrough,link,list,table"}}
                     </p>
-                    {{/if_eq}}
 
-                    {{~#if_eq registrationEntryInfo.length 0}}{{else}}
                     <p>
-                        Kutime aliĝoj kaj revuaj abonoj estas aŭtomate traktitaj ene de 2 minutoj, tamen povas malofte okazi, ke via aliĝo devos esti permane traktita de oficisto. Pro tio, ni dekore petas, ke vi permesu al ni ĝis 5 labortagoj por trakti vian aliĝon, okaze ke ĝi ne rapide aŭtomate traktiĝas.
+                        Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas <span style="font-family: monospace;">{{idEncoded}}</span>.<br>Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per <a href="mailto:oficejo@tejo.org">oficejo@tejo.org</a>.
                     </p>
-                    {{/if_eq}}
 
                     <p>
                         Salutas<br>
-                        Universala Esperanto-Asocio
+                        Tutmonda Esperantista Junulara Organizo (TEJO)
                     </p>
                 </td>
             </tr>

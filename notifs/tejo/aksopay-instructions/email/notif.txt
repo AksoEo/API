@@ -25,16 +25,16 @@ Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
 SUME {{currency_fmt totalAmount intent.currency}}
 
 
-Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per info@uea.org aŭ rekte kontakti la koncernan fakon per retadreso trovebla ĉe https://uea.org/kontakti.
+Bonvolu sekvi la ĉi-subajn instrukciojn por plenumi vian pagon.{{#if_eq intent.paymentMethod.type manual}} Kiam vi sukcese pagis, bonvolu tion indiki alklakante la butonon » Pago sendita « en la paga paĝo: {{paymentFacilitatorURL}}. Tio sciigos al oficisto, ke oni atendu vian pagon.{{#if validityStr}}
 
-{{~#if_eq intent.paymentMethod.type "stripe"}}
+Post {{validityStr}} la mendo estos konsiderata nuligita, se la pago ne estas markita kiel sendita.{{/if}}{{/if_eq}}
 
-Vi ricevos ankaŭ apartan kvitancon de nia pagprovizoranto Stripe.{{/if_eq}}
 
-{{~#if_eq registrationEntryInfo.length 0}}{{else}}
+PAGINSTRUKCIOJ:
+{{intent.paymentMethod.description}}
 
-Kutime aliĝoj kaj revuaj abonoj estas aŭtomate traktitaj ene de 2 minutoj, tamen povas malofte okazi, ke via aliĝo devos esti permane traktita de oficisto. Pro tio, ni dekore petas, ke vi permesu al ni ĝis 5 labortagoj por trakti vian aliĝon, okaze ke ĝi ne rapide aŭtomate traktiĝas.
-{{/if_eq}}
+
+Via {{#if isDonation}}donaco{{else}}mendo{{/if}}-numero estas {{idEncoded}}. Bonvolu ĝin indiki en eventualaj komunikoj kun ni pri via {{#if isDonation}}donaco{{else}}mendo{{/if}}. Vi povas kontakti nin per oficejo@tejo.org.
 
 Salutas
-Universala Esperanto-Asocio
+Tutmonda Esperantista Junulara Organizo (TEJO)

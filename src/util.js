@@ -4,6 +4,8 @@ import AjvMergePatch from 'ajv-merge-patch';
 import AjvFormats from 'ajv-formats';
 import moment from 'moment-timezone';
 import path from 'path';
+import MarkdownIt from 'markdown-it';
+import MarkdownItMultimdTable from 'markdown-it-multimd-table';
 
 import { formatCurrency } from 'akso/lib/akso-script-util';
 
@@ -107,6 +109,20 @@ Handlebars.registerHelper('if_eq', function(a, b, opts) {
 });
 Handlebars.registerHelper('currency_fmt', function (amt, currency, currencyName = true) {
 	return formatCurrency(amt, currency, currencyName);
+});
+Handlebars.registerHelper('markdown_fmt', function (mdStr, rules) {
+	const markdownIt = new MarkdownIt('zero', {
+		breaks: true,
+	}).use(MarkdownItMultimdTable, {
+		multiline: true,
+		rowspan: true,
+		headerless: true,
+	});
+	markdownIt.enable([
+		'newline',
+		...rules.split(','),
+	]);
+	return new Handlebars.SafeString(markdownIt.render(mdStr));
 });
 
 /**
