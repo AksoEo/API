@@ -56,6 +56,7 @@ export async function validateDataEntry ({
 			type: 'string',
 			enum: formEntry.options
 				.filter(x => {
+					if (allowInvalidData) return true;
 					if (x.disabled === true) return false;
 					if (x.disabled === 'onlyExisting') {
 						if (!oldData) return false;
@@ -134,7 +135,16 @@ export async function validateDataEntry ({
 
 	const getFieldSchema = formEntry => {
 		const fieldSchema = getBasicFieldSchema(formEntry);
-		if (allowInvalidData) { return fieldSchema; }
+		if (allowInvalidData) {
+			return {
+				oneOf: [
+					{
+						type: 'null'
+					},
+					fieldSchema
+				]
+			};
+		}
 
 		const disabled = getComputedProp(formEntry, 'disabled');
 		if (disabled) { return { type: 'null' }; }
