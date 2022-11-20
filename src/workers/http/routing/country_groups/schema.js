@@ -22,17 +22,25 @@ export const schema = {
 	},
 };
 
-export async function afterQuery (arr, done, req) {
+export async function afterQuery (arr, done) {
 	if (!arr.length || !arr[0].countries) { return done(); }
 
 	const countries = await AKSO.db('countries_groups')
 		.leftJoin('countries_groups_members', 'code', 'group_code')
-		.select(AKSO.db.raw('group_concat(country_code) as countries'))
-		.whereIn('code', arr.map(obj => obj.code))
-		.groupBy('code');
+		.select('code', 'country_code')
+		.whereIn('code', arr.map(obj => obj.code));
 
-	for (let i in countries) {
-		arr[i].countries = countries[i].countries ? countries[i].countries.split(',') : null;
+	const countriesMap = {};
+
+	for (const countryObj of countries) {
+		if (!(countryObj.code in countriesMap)) {
+			countriesMap[countryObj.code] = [];
+		}
+		countriesMap[countryObj.code].push(countryObj.country_code);
+	}
+
+	for (const row of arr) {
+		row.countries = countriesMap[row.code];
 	}
 
 	done();
