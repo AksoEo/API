@@ -1487,7 +1487,7 @@ DROP TABLE IF EXISTS `codeholders_notif_pref_global`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `codeholders_notif_pref_global` (
   `codeholderId` int unsigned NOT NULL,
-  `pref` set('email','telegram') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `pref` set('email','telegram') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codeholderId`),
   CONSTRAINT `codeholders_notif_pref_global_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1823,6 +1823,25 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
+-- Table structure for table `congresses_instances_participants_customFormVars`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_participants_customFormVars`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `congresses_instances_participants_customFormVars` (
+  `congressInstanceId` int unsigned NOT NULL,
+  `dataId` binary(12) NOT NULL,
+  `name` varchar(22) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` json DEFAULT NULL,
+  PRIMARY KEY (`dataId`,`name`) USING BTREE,
+  KEY `congressInstanceId` (`congressInstanceId`,`name`),
+  CONSTRAINT `congresses_instances_participants_customFormVars_ibfk_2` FOREIGN KEY (`congressInstanceId`, `name`) REFERENCES `congresses_instances_registrationForm_customFormVars` (`congressInstanceId`, `name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `congresses_instances_participants_customFormVars_ibfk_3` FOREIGN KEY (`dataId`) REFERENCES `congresses_instances_participants` (`dataId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `congresses_instances_programTags`
 --
 
@@ -1935,6 +1954,23 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `congresses_instances_registrationForm_customFormVars`
+--
+
+DROP TABLE IF EXISTS `congresses_instances_registrationForm_customFormVars`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `congresses_instances_registrationForm_customFormVars` (
+  `congressInstanceId` int unsigned NOT NULL,
+  `name` varchar(22) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `default` json DEFAULT NULL,
+  PRIMARY KEY (`congressInstanceId`,`name`),
+  CONSTRAINT `congresses_instances_registrationForm_customFormVars_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances_registrationForm` (`congressInstanceId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `countries`
@@ -2357,7 +2393,7 @@ DROP TABLE IF EXISTS `intermediaries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `intermediaries` (
-  `countryCode` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `countryCode` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `codeholderId` int unsigned NOT NULL,
   `paymentDescription` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`countryCode`),
@@ -2622,9 +2658,9 @@ DROP TABLE IF EXISTS `newsletters`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `newsletters` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `org` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `public` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `org` (`org`),
@@ -2666,7 +2702,7 @@ CREATE TABLE `newsletters_unsubscriptions` (
   `newsletterId` int unsigned NOT NULL,
   `time` bigint unsigned NOT NULL,
   `reason` tinyint unsigned DEFAULT '0',
-  `description` varchar(400) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `subscriberCount` int unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `reason` (`reason`),
@@ -2751,7 +2787,7 @@ CREATE TABLE `pay_intents` (
   `currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `timeCreated` bigint unsigned NOT NULL,
-  `createdBy` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `createdBy` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `statusTime` bigint unsigned NOT NULL,
   `succeededTime` bigint unsigned DEFAULT NULL,
   `refundedTime` bigint unsigned DEFAULT NULL,
@@ -2762,7 +2798,7 @@ CREATE TABLE `pay_intents` (
   `stripeClientSecret` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amountRefunded` int unsigned NOT NULL DEFAULT '0',
-  `intermediaryCountryCode` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intermediaryCountryCode` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `intermediaryIdentifier_year` year DEFAULT NULL,
   `intermediaryIdentifier_number` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -3041,7 +3077,7 @@ DROP TABLE IF EXISTS `registration_entries`;
 CREATE TABLE `registration_entries` (
   `id` binary(15) NOT NULL,
   `year` year DEFAULT NULL,
-  `intermediary` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intermediary` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'submitted',
   `pendingIssue_what` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pendingIssue_where` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3725,4 +3761,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-07 14:08:38
+-- Dump completed on 2022-11-20 16:00:48

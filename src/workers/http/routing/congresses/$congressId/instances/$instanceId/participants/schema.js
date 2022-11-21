@@ -6,6 +6,7 @@ import { renderTemplate } from 'akso/lib/notif-template-util';
 import { sendRawMail } from 'akso/mail';
 import { validateDataEntry } from 'akso/workers/http/lib/form-util';
 import { BOOL, union, NUMBER, NULL } from '@tejo/akso-script';
+import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
 export const schema = {
 	defaultFields: [ 'dataId' ],
@@ -21,7 +22,8 @@ export const schema = {
 		cancelledTime: 'f',
 		amountPaid: 'f',
 		hasPaidMinimum: 'f',
-		isValid: 'f'
+		isValid: 'f',
+		customFormVars: '',
 	},
 	fieldAliases: {
 		'dataId': 'congresses_instances_participants.dataId',
@@ -34,7 +36,8 @@ export const schema = {
 				.sum('pay_triggerHist.amountTriggered')
 				.whereRaw('`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`'),
 		hasPaidMinimum: () => AKSO.db.raw('1'),
-		isValid: () => AKSO.db.raw('1')
+		isValid: () => AKSO.db.raw('1'),
+		customFormVars: () => AKSO.db.raw('1'),
 	},
 	alwaysSelect: [
 		'amountPaid',
@@ -43,21 +46,21 @@ export const schema = {
 		'price',
 		'hasPaidMinimum',
 		'manualApproval',
-		'cancelledTime'
+		'cancelledTime',
+		'dataId',
 	]
 };
 
 export const formValues = {
-	'@is_member': BOOL,
-	'@created_time': union([ NUMBER, NULL ]),
-	'@edited_time': union([ NUMBER, NULL ]),
+	'is_member': BOOL,
+	'created_time': union([ NUMBER, NULL ]),
+	'edited_time': union([ NUMBER, NULL ]),
 }; 
 
 // Takes care of additional data validation for POST and PATCH
-export async function manualDataValidation (req, res, formData) {
+export async function manualDataValidation (req, res, formData, isPatch = false) {
 	// Require codeholderId if not allowGuests
-	// TODO: In patch this shouldn't be required
-	if (!formData.allowGuests && !('codeholderId' in req.body)) {
+	if (!isPatch && !formData.allowGuests && !('codeholderId' in req.body)) {
 		const err = new Error('codeholderId is required as allowGuests is false in the registration form');
 		err.statusCode = 400;
 		throw err;
@@ -73,6 +76,35 @@ export async function manualDataValidation (req, res, formData) {
 			const err = new Error();
 			err.statusCode = 404;
 			throw err;
+		}
+	}
+
+	if ('customFormVars' in req.body) {
+		// Find the custom form var def
+		const customFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
+			.select('name', 'type')
+			.where('congressInstanceId', req.params.instanceId);
+		const customFormVarsObj = {};
+		for (const customFormVar of customFormVars) {
+			customFormVarsObj[customFormVar.name] = customFormVar.type;
+		}
+
+		for (const [name, val] of Object.entries(req.body.customFormVars)) {
+			if (!(name in customFormVarsObj)) {
+				const err = new Error(`Unknown customFormVar ${name}`);
+				err.statusCode = 400;
+				throw err;
+			}
+			if (!(
+				val === null ||
+				( typeof val === 'string' && customFormVarsObj[name] === 'text' ) ||
+				( typeof val === 'boolean' && customFormVarsObj[name] === 'boolean' ) ||
+				( typeof val === 'number' && customFormVarsObj[name] === 'number' )
+			)) {
+				const err = new Error(`Type mismatch for customFormVar ${name}. Expected type=${customFormVarsObj[name]}`);
+				err.statusCode = 400;
+				throw err;
+			}
 		}
 	}
 }
@@ -134,6 +166,28 @@ export async function getFormMetaData (instanceId) {
 	return { schema: dynSchema, query, formFields, formFieldsObj, formData };
 }
 
+export async function afterQuery (arr, done) {
+	if (!arr.length || !arr[0].customFormVars) { return done(); }
+
+	const customFormVars = await AKSO.db('congresses_instances_participants_customFormVars')
+		.select('dataId', 'name', 'value')
+		.whereIn('dataId', arr.map(x => x.dataId));
+	const customFormVarsMap = {};
+	for (const customFormVar of customFormVars) {
+		const dataId = customFormVar.dataId.toString('hex');
+		if (!(dataId in customFormVarsMap)) {
+			customFormVarsMap[dataId] = {};
+		}
+		customFormVarsMap[dataId][customFormVar.name] = customFormVar.value;
+	}
+
+	for (const row of arr) {
+		row.customFormVars = customFormVarsMap[row.dataId.toString('hex')];
+	}
+
+	done();
+}
+
 export async function sendParticipantConfirmationNotif (instanceId, dataId, templateId) {
 	const formMetaData = await getFormMetaData(instanceId);
 
@@ -180,15 +234,42 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		'registrationEntry.dataVals': dataVals,
 	};
 
-	const template = await AKSO.db('notif_templates')
-		.where('id', templateId)
-		.first('*');
+	const congressData = await AKSO.db('congresses_instances')
+		.where('id', instanceId)
+		.first('dateFrom');
+
+	const addFormValues = {
+		'created_time': participant.obj.createdTime,
+		'edited_time': participant.obj.editedTime,
+		'is_member': participant.obj.codeholderId ?
+			await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
+	};
+
+	// Add default custom form vars
+	const defaultCustomFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
+		.select('name', 'default')
+		.where('congressInstanceId', instanceId);
+	for (const defaultCustomFormVar of defaultCustomFormVars) {
+		formValues[defaultCustomFormVar.name.substring(1)] = defaultCustomFormVar.default;
+	}
+	// Add custom form var overrides
+	const customFormVars = await AKSO.db('congresses_instances_participants_customFormVars')
+		.select('name', 'value')
+		.where('dataId', participant.dataId);
+	for (const customFormVar of customFormVars) {
+		formValues[customFormVar.name.substring(1)] = customFormVar.value;
+	}
 
 	const validatedDataEntry = await validateDataEntry({
 		formData: formMetaData.formData,
 		data: participant.data,
 		allowInvalidData: true,
+		addFormValues,
 	});
+
+	const template = await AKSO.db('notif_templates')
+		.where('id', templateId)
+		.first('*');
 
 	await sendRawMail({
 		...await renderTemplate(template, intentData),

@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
 
-import { getFormMetaData, schema } from './schema';
+import { getFormMetaData, schema, afterQuery } from './schema';
 
 export default {
 	schema: async req => (await getFormMetaData(req.params.instanceId)).schema,
@@ -22,7 +22,8 @@ export default {
 
 		await QueryUtil.handleCollection({
 			req, res, schema: formMetaData.schema, query: formMetaData.query,
-			Res: CongressParticipantResource, passToCol: [[ req, schema, formMetaData.formFieldsObj ]]
+			Res: CongressParticipantResource, passToCol: [[ req, schema, formMetaData.formFieldsObj ]],
+			afterQuery,
 		});
 	}
 };

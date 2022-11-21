@@ -42,7 +42,26 @@ export default {
 					type: 'integer',
 					format: 'uint64',
 					nullable: true
-				}
+				},
+				customFormVars: {
+					type: 'object',
+					patternProperties: {
+						'^@@v_[\\w\\-:ĥŝĝĉĵŭ]{1,18}$': {
+							oneOf: [
+								{ type: 'boolean' },
+								{ type: 'number' },
+								{ type: 'null' },
+								{
+									type: 'string',
+									minLength: 1,
+									maxLength: 8192,
+								},
+							],
+						},
+					},
+					maxProperties: 64,
+					additionalProperties: false,
+				},
 			},
 			minProperties: 1,
 			additionalProperties: false
@@ -117,7 +136,7 @@ export default {
 		};
 		const oldData = new CongressParticipantResource(participantData, fakeReq, {}, formFieldsObj).obj.data;
 
-		await manualDataValidation(req, res, formData);
+		await manualDataValidation(req, res, formData, true);
 
 		if ('codeholderId' in req.body) {
 			// Make sure the participant doesn't already exist
@@ -135,16 +154,37 @@ export default {
 		}
 
 		let price = undefined;
-		if (req.body.data) {
+		if (req.body.data || req.body.customFormVars) {
 			const formValues = {
-				'@created_time': participantData.createdTime,
-				'@edited_time': participantData.editedTime,
-				'@is_member': req.body.codeholderId ?
+				'created_time': participantData.createdTime,
+				'edited_time': participantData.editedTime,
+				'is_member': req.body.codeholderId ?
 					await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 			};
+			// Add default custom form vars
+			const defaultCustomFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
+				.select('name', 'default')
+				.where('congressInstanceId', req.params.instanceId);
+			for (const defaultCustomFormVar of defaultCustomFormVars) {
+				formValues[defaultCustomFormVar.name.substring(1)] = defaultCustomFormVar.default;
+			}
+			// Add custom form var overrides
+			if (req.body.customFormVars) {
+				for (const [name, value] of Object.entries(req.body.customFormVars)) {
+					formValues[name.substring(1)] = value;
+				}
+			} else {
+				const customFormVars = await AKSO.db('congresses_instances_participants_customFormVars')
+					.select('name', 'value')
+					.where('dataId', req.params.dataId);
+				for (const customFormVar of customFormVars) {
+					formValues[customFormVar.name.substring(1)] = customFormVar.value;
+				}
+			}
+
 			const participantMetadata = await validateDataEntry({
 				formData,
-				data: req.body.data,
+				data: req.body.data ?? oldData,
 				oldData: oldData,
 				addFormValues: formValues,
 				allowInvalidData: req.body.allowInvalidData
@@ -160,7 +200,8 @@ export default {
 		}	
 
 		// Update the participant
-		await AKSO.db('congresses_instances_participants')
+		const trx = await req.createTransaction();
+		await trx('congresses_instances_participants')
 			.where('dataId', req.params.dataId)
 			.update({
 				codeholderId: req.body.codeholderId,
@@ -170,6 +211,28 @@ export default {
 				cancelledTime: req.body.cancelledTime,
 				sequenceId: req.body.sequenceId
 			});
+		if (req.body.customFormVars) {
+			await trx('congresses_instances_participants_customFormVars')
+				.where('dataId', req.params.dataId)
+				.delete();
+
+			if (Object.keys(req.body.customFormVars).length) {
+				await trx('congresses_instances_participants_customFormVars')
+					.where('dataId', req.params.dataId)
+					.insert(
+						Object.entries(req.body.customFormVars)
+							.map(([name, value]) => {
+								return {
+									congressInstanceId: req.params.instanceId,
+									dataId: req.params.dataId,
+									name,
+									value: JSON.stringify(value),
+								};
+							})
+					);
+			}
+		}
+		await trx.commit();
 
 		const dataIdHex = req.params.dataId.toString('hex');
 		res.set('Location', path.join(

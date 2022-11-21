@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import CongressInstanceRegistrationFormResource from 'akso/lib/resources/congress-instance-registration-form-resource';
 
-import parSchema from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
@@ -34,6 +34,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
+		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new CongressInstanceRegistrationFormResource(row, req, schema);
 		res.sendObj(obj);
 	}

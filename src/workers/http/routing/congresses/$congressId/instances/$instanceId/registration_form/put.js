@@ -4,6 +4,7 @@ import { formSchema, parseForm, setFormFields, validateDataEntry} from 'akso/wor
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 import { escapeId } from 'mysql2';
 import { schema as parSchema, formValues } from '../participants/schema';
+import { union as ascUnion, BOOL, NUMBER, STRING, NULL } from '@tejo/akso-script';
 
 export default {
 	schema: {
@@ -72,6 +73,43 @@ export default {
 					],
 					additionalProperties: false
 				},
+				customFormVars: {
+					type: 'object',
+					minProperties: 0,
+					maxProperties: 64,
+					patternProperties: {
+						'^@@v_[\\w\\-:ĥŝĝĉĵŭ]{1,18}$': {
+							type: 'object',
+							properties: {
+								type: {
+									type: 'string',
+									enum: [
+										'boolean', 'number', 'text',
+									],
+								},
+								oldName: {
+									type: 'string',
+									pattern: '^@@v_[\\w\\-:ĥŝĝĉĵŭ]{1,18}$',
+								},
+								default: {
+									oneOf: [
+										{ type: 'boolean' },
+										{ type: 'number' },
+										{ type: 'null' },
+										{
+											type: 'string',
+											minLength: 1,
+											maxLength: 8192,
+										},
+									]
+								},
+							},
+							required: [ 'type', 'default' ],
+							additionalProperties: false,
+						},
+					},
+					additionalProperties: false,
+				},
 				form: formSchema,
 				identifierName: {
 					type: 'string',
@@ -137,10 +175,32 @@ export default {
 			.first('formId', 'form');
 
 		// Validate the form
+		const customFormVarTypeDefs = {};
+		for (const [rawName, customFormVar] of Object.entries(req.body.customFormVars)) {
+			const name = rawName.substring(1);
+			switch (customFormVar.type) {
+			case 'boolean': {
+				customFormVarTypeDefs[name] = ascUnion([ NULL, BOOL ]);
+				break;
+			}
+			case 'number': {
+				customFormVarTypeDefs[name] = ascUnion([ NULL, NUMBER ]);
+				break;
+			}
+			case 'text': {
+				customFormVarTypeDefs[name] = ascUnion([ NULL, STRING ]);
+				break;
+			}
+			}
+		}
+
 		const parsedForm = await parseForm({
 			form: req.body.form,
 			existingForm: existingRegistrationForm ? existingRegistrationForm.form : undefined,
-			formValues,
+			formValues: {
+				...customFormVarTypeDefs,
+				...formValues,
+			},
 		});
  
 		if (req.body.price) {
@@ -175,6 +235,39 @@ export default {
 				parsedForm.validateDefinition(req.body.identifierCountryCode);
 			} catch (e) {
 				const err = new Error(`The AKSO Script for identifierCountryCode ${req.body.identifierCountryCode} errored: ${e.message}`);
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+
+		// Validate custom form vars
+		const oldCustomFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
+			.select('name', 'type')
+			.where('congressInstanceId', req.params.instanceId);
+		const oldCustomFormVarsObj = {};
+		for (const oldCustomFormVar of oldCustomFormVars) {
+			oldCustomFormVarsObj[oldCustomFormVar.name] = oldCustomFormVar.type;
+		}
+		for (const [name, customFormVar] of Object.entries(req.body.customFormVars ?? {})) {
+			if (customFormVar.oldName) {
+				if (!(customFormVar.oldName in oldCustomFormVarsObj)) {
+					const err = new Error(`oldName ${customFormVar.oldName} in customFormVars does not exist`);
+					err.statusCode = 400;
+					throw err;
+				}
+				if (customFormVar.type !== oldCustomFormVarsObj[customFormVar.oldName]) {
+					const err = new Error(`${customFormVar.oldName} does not have the same type as new custom form var ${name} in customFormVars`);
+					err.statusCode = 400;
+					throw err;
+				}
+			}
+			if (!(
+				customFormVar.default === null ||
+				( customFormVar.type === 'boolean' && typeof customFormVar.default === 'boolean' ) ||
+				( customFormVar.type === 'number' && typeof customFormVar.default === 'number' ) ||
+				( customFormVar.type === 'text' && typeof customFormVar.default === 'string' )
+			)) {
+				const err = new Error(`Type mismatch in custom form var ${name}`);
 				err.statusCode = 400;
 				throw err;
 			}
@@ -217,12 +310,71 @@ export default {
 			await AKSO.db('congresses_instances_registrationForm')
 				.where('congressInstanceId', req.params.instanceId)
 				.update(data);
+
+			// Find oldCustomFormVars that no longer exist or have been renamed
+			for (const oldCustomFormVar in oldCustomFormVarsObj) {
+				let found = false;
+				for (const [name, customFormVar] of Object.entries(req.body.customFormVars)) {
+					// Same name
+					if (oldCustomFormVar === name) {
+						found = true;
+						break;
+					}
+					// Renamed
+					if (oldCustomFormVar === customFormVar.oldName) {
+						found = true;
+						await AKSO.db('congresses_instances_registrationForm_customFormVars')
+							.where({
+								congressInstanceId: req.params.instanceId,
+								name: oldCustomFormVar,
+							})
+							.update('name', name);
+						break;
+					}
+				}
+				if (found) { continue; }
+				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+					.where({
+						congressInstanceId: req.params.instanceId,
+						name: oldCustomFormVar
+					})
+					.delete();
+			}
+
+			// Create new custom form vars
+			const newCustomFormVars = Object.entries(req.body.customFormVars)
+				.filter(([name, customFormVar]) => !(customFormVar.oldName || (name in oldCustomFormVarsObj)))
+				.map(([name, customFormVar]) => {
+					return {
+						congressInstanceId: req.params.instanceId,
+						name,
+						type: customFormVar.type,
+						default: JSON.stringify(customFormVar.default),
+					};
+				});
+			if (newCustomFormVars.length) {
+				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+					.insert(newCustomFormVars);
+			}
 		} else {
 			await AKSO.db('congresses_instances_registrationForm')
 				.insert({
 					...data,
 					congressInstanceId: req.params.instanceId
 				});
+			const customFormVarsInsert = Object.entries(req.body.customFormVars)
+				.map(([name, customFormVar]) => {
+					return {
+						congressInstanceId: req.params.instanceId,
+						name,
+						type: customFormVar.type,
+						default: JSON.stringify(customFormVar.default),
+					};
+				});
+			if (customFormVarsInsert.length) {
+				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+					.insert(customFormVarsInsert);
+			}
 		}
 
 		res.sendStatus(204);
@@ -253,6 +405,11 @@ export default {
 			}
 			participantQuery.select(selectFields);
 
+			const customFormVarDefaults = {};
+			for (const [name, customFormVar] of Object.entries(req.body.customFormVars)) {
+				customFormVarDefaults[name.substring(1)] = customFormVar.default;
+			}
+
 			const participants = await participantQuery;
 			await Promise.all(participants.map(async participantObj => {
 				const fakeReq = {
@@ -261,11 +418,18 @@ export default {
 				const participant = new CongressParticipantResource(participantObj, fakeReq, {}, formFieldsObj);		
 
 				const formValues = {
-					'@created_time': participant.obj.createdTime,
-					'@edited_time': participant.obj.editedTime,
-					'@is_member': participant.obj.codeholderId ?
-						await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false
+					...customFormVarDefaults,
+					'created_time': participant.obj.createdTime,
+					'edited_time': participant.obj.editedTime,
+					'is_member': participant.obj.codeholderId ?
+						await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
 				};
+				const customForVarOverrides = await AKSO.db('congresses_instances_participants_customFormVars')
+					.select('name', 'value')
+					.where('dataId', participant.obj.dataId);
+				for (const customFormVarOverride of customForVarOverrides) {
+					formValues[customFormVarOverride.name.substring(1)] = customFormVarOverride.value;
+				}
 
 				// This should never fail assuming data migration succeeded
 				const participantMetadata = await validateDataEntry({

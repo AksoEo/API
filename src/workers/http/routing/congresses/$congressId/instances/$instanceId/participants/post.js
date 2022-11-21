@@ -31,7 +31,26 @@ export default {
 				},
 				data: {
 					type: 'object'
-				}
+				},
+				customFormVars: {
+					type: 'object',
+					patternProperties: {
+						'^@@v_[\\w\\-:ĥŝĝĉĵŭ]{1,18}$': {
+							oneOf: [
+								{ type: 'boolean' },
+								{ type: 'number' },
+								{ type: 'null' },
+								{
+									type: 'string',
+									minLength: 1,
+									maxLength: 8192,
+								},
+							],
+						},
+					},
+					maxProperties: 64,
+					additionalProperties: false,
+				},
 			},
 			required: [
 				'data'
@@ -75,11 +94,25 @@ export default {
 		}
 
 		const formValues = {
-			'@created_time': null,
-			'@edited_time': null,
-			'@is_member': req.body.codeholderId ?
+			'created_time': null,
+			'edited_time': null,
+			'is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
+		// Add default custom form vars
+		const defaultCustomFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
+			.select('name', 'default')
+			.where('congressInstanceId', req.params.instanceId);
+		for (const defaultCustomFormVar of defaultCustomFormVars) {
+			formValues[defaultCustomFormVar.name.substring(1)] = defaultCustomFormVar.default;
+		}
+		// Add custom form var overrides
+		if (req.body.customFormVars) {
+			for (const [name, value] of Object.entries(req.body.customFormVars)) {
+				formValues[name.substring(1)] = value;
+			}
+		}
+
 		const participantMetadata = await validateDataEntry({
 			formData,
 			data: req.body.data,
@@ -97,7 +130,8 @@ export default {
 		}
 
 		// Insert the participant
-		await AKSO.db('congresses_instances_participants')
+		const trx = await req.createTransaction();
+		await trx('congresses_instances_participants')
 			.insert({
 				congressInstanceId: req.params.instanceId,
 				codeholderId: req.body.codeholderId,
@@ -106,6 +140,21 @@ export default {
 				notes: req.body.notes,
 				price: price
 			});
+		if (Object.keys(req.body.customFormVars ?? {}).length) {
+			await trx('congresses_instances_participants_customFormVars')
+				.insert(
+					Object.entries(req.body.customFormVars)
+						.map(([name, value]) => {
+							return {
+								congressInstanceId: req.params.instanceId,
+								dataId,
+								name,
+								value: JSON.stringify(value),
+							};
+						})
+				);
+		}
+		await trx.commit();
 
 		const dataIdHex = dataId.toString('hex');
 		res.set('Location', path.join(

@@ -22,8 +22,8 @@ export async function parseForm ({
 	let scripts = {};
 	formValues = {
 		...formValues,
-		'@created_time': union([ NULL, NUMBER ]),
-		'@edited_time': union([ NULL, NUMBER ])
+		'created_time': union([ NULL, NUMBER ]),
+		'edited_time': union([ NULL, NUMBER ]),
 	};
 	const getFormValue = key => {
 		return formValues[key.normalize('NFC')];
