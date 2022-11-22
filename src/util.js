@@ -111,6 +111,7 @@ Handlebars.registerHelper('currency_fmt', function (amt, currency, currencyName 
 	return formatCurrency(amt, currency, currencyName);
 });
 Handlebars.registerHelper('markdown_fmt', function (mdStr, rules) {
+	if (mdStr === null) { return ''; }
 	const markdownIt = new MarkdownIt('zero', {
 		breaks: true,
 	}).use(MarkdownItMultimdTable, {

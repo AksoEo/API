@@ -3357,6 +3357,28 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary view structure for view `view_congresses_instances_participants`
+--
+
+DROP TABLE IF EXISTS `view_congresses_instances_participants`;
+/*!50001 DROP VIEW IF EXISTS `view_congresses_instances_participants`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `view_congresses_instances_participants` AS SELECT 
+ 1 AS `congressInstanceId`,
+ 1 AS `dataId`,
+ 1 AS `codeholderId`,
+ 1 AS `approved`,
+ 1 AS `notes`,
+ 1 AS `sequenceId`,
+ 1 AS `price`,
+ 1 AS `cancelledTime`,
+ 1 AS `amountPaid`,
+ 1 AS `hasPaidMinimum`,
+ 1 AS `isValid`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary view structure for view `view_pay_intents_purposes`
 --
 
@@ -3681,6 +3703,24 @@ USE `akso`;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `view_congresses_instances_participants`
+--
+
+/*!50001 DROP VIEW IF EXISTS `view_congresses_instances_participants`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `view_congresses_instances_participants` AS select `congresses_instances_participants`.`congressInstanceId` AS `congressInstanceId`,`congresses_instances_participants`.`dataId` AS `dataId`,`congresses_instances_participants`.`codeholderId` AS `codeholderId`,`congresses_instances_participants`.`approved` AS `approved`,`congresses_instances_participants`.`notes` AS `notes`,`congresses_instances_participants`.`sequenceId` AS `sequenceId`,`congresses_instances_participants`.`price` AS `price`,`congresses_instances_participants`.`cancelledTime` AS `cancelledTime`,(select coalesce(sum(`pay_triggerHist`.`amountTriggered`),0) from (`pay_triggerHist` join `view_pay_intents_purposes` on(((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`)))) where (`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`)) AS `amountPaid`,if((`congresses_instances_registrationForm`.`price_var` = NULL),NULL,((select `amountPaid`) >= least(`congresses_instances_participants`.`price`,coalesce(`congresses_instances_registrationForm`.`price_minUpfront`,`congresses_instances_participants`.`price`)))) AS `hasPaidMinimum`,if((`congresses_instances_participants`.`cancelledTime` <> NULL),false,if(`congresses_instances_registrationForm`.`manualApproval`,`congresses_instances_participants`.`approved`,((0 <> `congresses_instances_participants`.`approved`) or (0 <> (select `hasPaidMinimum`))))) AS `isValid` from (`congresses_instances_participants` join `congresses_instances_registrationForm` on((`congresses_instances_participants`.`congressInstanceId` = `congresses_instances_registrationForm`.`congressInstanceId`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `view_pay_intents_purposes`
 --
 
@@ -3761,4 +3801,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-20 16:00:48
+-- Dump completed on 2022-11-22 19:51:52

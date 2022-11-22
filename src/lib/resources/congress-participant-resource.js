@@ -33,18 +33,7 @@ class CongressParticipantResource extends SimpleResource {
 
 		obj.approved = !!obj.approved;
 
-		if (obj.amountPaid === null) { obj.amountPaid = 0; }
-		else { obj.amountPaid = parseInt(obj.amountPaid, 10); }
-			
-		obj.hasPaidMinimum = obj.amountPaid >= Math.min(obj.price, obj.price_minUpfront === null ? Math.MAX_SAFE_INTEGER : obj.price_minUpfront);
-
-		if ('isValid' in obj) {
-			if (obj.cancelledTime) { obj.isValid = false; }
-			else if (obj.manualApproval) { obj.isValid = obj.approved; }
-			else {
-				obj.isValid = obj.approved || obj.hasPaidMinimum;
-			}
-		}
+		obj.amountPaid = parseInt(obj.amountPaid, 10);
 
 		delete obj.price_minUpfront;
 		delete obj.manualApproval;

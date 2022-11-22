@@ -26,17 +26,7 @@ export const schema = {
 		customFormVars: '',
 	},
 	fieldAliases: {
-		'dataId': 'congresses_instances_participants.dataId',
-		amountPaid: () =>
-			AKSO.db('pay_triggerHist')
-				.innerJoin('view_pay_intents_purposes', function () {
-					this.on('pay_triggerHist.paymentIntentId', '=', 'view_pay_intents_purposes.paymentIntentId')
-						.on('pay_triggerHist.pos', '=', 'view_pay_intents_purposes.pos');
-				})
-				.sum('pay_triggerHist.amountTriggered')
-				.whereRaw('`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`'),
-		hasPaidMinimum: () => AKSO.db.raw('1'),
-		isValid: () => AKSO.db.raw('1'),
+		'dataId': 'view_congresses_instances_participants.dataId',
 		customFormVars: () => AKSO.db.raw('1'),
 	},
 	alwaysSelect: [
@@ -132,10 +122,10 @@ export async function getFormMetaData (instanceId) {
 		.where('formId', formData.formId)
 		.select('name', 'type');
 
-	const query = AKSO.db('congresses_instances_participants')
-		.leftJoin('congresses_instances_registrationForm', 'congresses_instances_registrationForm.congressInstanceId', 'congresses_instances_participants.congressInstanceId')
-		.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = congresses_instances_participants.dataId')
-		.where('congresses_instances_participants.congressInstanceId', instanceId);
+	const query = AKSO.db('view_congresses_instances_participants')
+		.leftJoin('congresses_instances_registrationForm', 'congresses_instances_registrationForm.congressInstanceId', 'view_congresses_instances_participants.congressInstanceId')
+		.joinRaw('INNER JOIN `forms_data` d on `d`.dataId = view_congresses_instances_participants.dataId')
+		.where('view_congresses_instances_participants.congressInstanceId', instanceId);
 
 	// Add the fields of the form
 	const formFieldsObj = {};
