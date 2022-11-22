@@ -1,3 +1,5 @@
+import crypto from 'pn/crypto';
+
 import * as AKSODb from 'akso/db';
 
 import { createUniversalData } from './universal-data';
@@ -24,20 +26,63 @@ async function init () {
 	await AKSODb.init();
 	AKSO.log('done.\n');
 
-	AKSO.log('Setting up universal data ...');
-	await createUniversalData();
-	AKSO.log('done.\n');
+	if (mode === 'client') {
+		AKSO.log('Creating client ...');
+		const apiKey = await crypto.randomBytes(16);
+		const apiSecret = await crypto.randomBytes(32);
+		await AKSO.db('clients')
+			.insert({
+				apiKey,
+				apiSecret,
+				name: 'Provizora AKSO-instalkliento',
+				ownerName: 'AKSO',
+				ownerEmail: 'admin@akso.org',
+			});
 
-	if ([ 'test', 'dev' ].includes(mode)) {
-		AKSO.log('Setting up universal testing data ...');
-		await createUniversalTestData();
+		AKSO.log('Setting up admin group ...');
+		await AKSO.db('admin_groups')
+			.insert({
+				id: 1,
+				name: 'Ĉefadministranto',
+				description: 'Havas ĉiujn rajtojn',
+			});
+		await AKSO.db('admin_permissions_groups')
+			.insert({
+				adminGroupId: 1,
+				permission: '*',
+			});
+		await AKSO.db('admin_permissions_memberRestrictions_groups')
+			.insert({
+				adminGroupId: 1,
+				filter: '{}',
+				fields: null,
+			});
+		await AKSO.db('admin_groups_members_clients')
+			.insert({
+				adminGroupId: 1,
+				apiKey,
+			});
+
+		console.log(); // eslint-disable-line no-console
+		AKSO.log(`Key: ${apiKey.toString('hex')}`);
+		AKSO.log(`Secret: ${apiSecret.toString('hex')}\n`);
 		AKSO.log('done.\n');
-	}
-	
-	if (mode === 'dev') {
-		AKSO.log('Setting up dev data ...');
-		await createDevData();
+	} else {
+		AKSO.log('Setting up universal data ...');
+		await createUniversalData();
 		AKSO.log('done.\n');
+
+		if ([ 'test', 'dev' ].includes(mode)) {
+			AKSO.log('Setting up universal testing data ...');
+			await createUniversalTestData();
+			AKSO.log('done.\n');
+		}
+		
+		if (mode === 'dev') {
+			AKSO.log('Setting up dev data ...');
+			await createDevData();
+			AKSO.log('done.\n');
+		}
 	}
 }
 
