@@ -306,8 +306,10 @@ export default {
 			...rawData,
 			form: JSON.stringify(rawData.form)
 		};
+
+		const trx = await req.createTransaction();
 		if (existingRegistrationForm) {
-			await AKSO.db('congresses_instances_registrationForm')
+			await trx('congresses_instances_registrationForm')
 				.where('congressInstanceId', req.params.instanceId)
 				.update(data);
 
@@ -318,22 +320,31 @@ export default {
 					// Same name
 					if (oldCustomFormVar === name) {
 						found = true;
+						// Update default
+						await trx('congresses_instances_registrationForm_customFormVars')
+							.where({
+								congressInstanceId: req.params.instanceId,
+								name,
+							})
+							.update('default', JSON.stringify(customFormVar.default));
 						break;
 					}
 					// Renamed
 					if (oldCustomFormVar === customFormVar.oldName) {
 						found = true;
-						await AKSO.db('congresses_instances_registrationForm_customFormVars')
+						await trx('congresses_instances_registrationForm_customFormVars')
 							.where({
 								congressInstanceId: req.params.instanceId,
 								name: oldCustomFormVar,
 							})
-							.update('name', name);
+							.update({
+								name, default: JSON.stringify(customFormVar.default),
+							});
 						break;
 					}
 				}
 				if (found) { continue; }
-				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+				await trx('congresses_instances_registrationForm_customFormVars')
 					.where({
 						congressInstanceId: req.params.instanceId,
 						name: oldCustomFormVar
@@ -343,6 +354,7 @@ export default {
 
 			// Create new custom form vars
 			const newCustomFormVars = Object.entries(req.body.customFormVars)
+				// Filter out existing form vars (renamed or not)
 				.filter(([name, customFormVar]) => !(customFormVar.oldName || (name in oldCustomFormVarsObj)))
 				.map(([name, customFormVar]) => {
 					return {
@@ -353,11 +365,11 @@ export default {
 					};
 				});
 			if (newCustomFormVars.length) {
-				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+				await trx('congresses_instances_registrationForm_customFormVars')
 					.insert(newCustomFormVars);
 			}
 		} else {
-			await AKSO.db('congresses_instances_registrationForm')
+			await trx('congresses_instances_registrationForm')
 				.insert({
 					...data,
 					congressInstanceId: req.params.instanceId
@@ -372,10 +384,12 @@ export default {
 					};
 				});
 			if (customFormVarsInsert.length) {
-				await AKSO.db('congresses_instances_registrationForm_customFormVars')
+				await trx('congresses_instances_registrationForm_customFormVars')
 					.insert(customFormVarsInsert);
 			}
 		}
+
+		await trx.commit();
 
 		res.sendStatus(204);
 
