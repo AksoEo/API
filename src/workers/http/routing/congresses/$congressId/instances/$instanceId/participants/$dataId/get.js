@@ -20,7 +20,7 @@ export default {
 
 		const formMetaData = await getFormMetaData(req.params.instanceId);
 
-		formMetaData.query.where('congresses_instances_participants.dataId', req.params.dataId);
+		formMetaData.query.where('view_congresses_instances_participants.dataId', req.params.dataId);
 		QueryUtil.simpleResource(req, formMetaData.schema, formMetaData.query);
 
 		const row = await formMetaData.query;
