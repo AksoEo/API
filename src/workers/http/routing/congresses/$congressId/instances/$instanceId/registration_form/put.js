@@ -391,8 +391,6 @@ export default {
 
 		await trx.commit();
 
-		res.sendStatus(204);
-
 		// Recalculate prices for all participants
 		if (req.body.price) {
 			const participantQuery = AKSO.db('congresses_instances_participants')
@@ -461,5 +459,7 @@ export default {
 				}
 			}));
 		}
+
+		res.sendStatus(204);
 	}
 };
