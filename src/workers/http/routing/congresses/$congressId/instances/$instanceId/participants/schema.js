@@ -172,7 +172,7 @@ export async function afterQuery (arr, done) {
 	}
 
 	for (const row of arr) {
-		row.customFormVars = customFormVarsMap[row.dataId.toString('hex')];
+		row.customFormVars = customFormVarsMap[row.dataId.toString('hex')] ?? {};
 	}
 
 	done();
