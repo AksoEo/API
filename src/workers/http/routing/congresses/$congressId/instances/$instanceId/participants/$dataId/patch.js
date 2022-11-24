@@ -156,9 +156,9 @@ export default {
 		let price = undefined;
 		if (req.body.data || req.body.customFormVars) {
 			const formValues = {
-				'created_time': participantData.createdTime,
-				'edited_time': participantData.editedTime,
-				'is_member': req.body.codeholderId ?
+				'@created_time': participantData.createdTime,
+				'@edited_time': participantData.editedTime,
+				'@is_member': req.body.codeholderId ?
 					await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 			};
 			// Add default custom form vars

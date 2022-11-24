@@ -94,9 +94,9 @@ export default {
 		}
 
 		const formValues = {
-			'created_time': null,
-			'edited_time': null,
-			'is_member': req.body.codeholderId ?
+			'@created_time': null,
+			'@edited_time': null,
+			'@is_member': req.body.codeholderId ?
 				await isActiveMember(req.body.codeholderId, congressData.dateFrom) : false
 		};
 		// Add default custom form vars

@@ -42,9 +42,9 @@ export const schema = {
 };
 
 export const formValues = {
-	'is_member': BOOL,
-	'created_time': union([ NUMBER, NULL ]),
-	'edited_time': union([ NUMBER, NULL ]),
+	'@is_member': BOOL,
+	'@created_time': union([ NUMBER, NULL ]),
+	'@edited_time': union([ NUMBER, NULL ]),
 }; 
 
 // Takes care of additional data validation for POST and PATCH
@@ -229,9 +229,9 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		.first('dateFrom');
 
 	const addFormValues = {
-		'created_time': participant.obj.createdTime,
-		'edited_time': participant.obj.editedTime,
-		'is_member': participant.obj.codeholderId ?
+		'@created_time': participant.obj.createdTime,
+		'@edited_time': participant.obj.editedTime,
+		'@is_member': participant.obj.codeholderId ?
 			await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
 	};
 

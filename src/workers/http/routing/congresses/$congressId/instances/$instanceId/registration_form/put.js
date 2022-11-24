@@ -433,9 +433,9 @@ export default {
 
 				const formValues = {
 					...customFormVarDefaults,
-					'created_time': participant.obj.createdTime,
-					'edited_time': participant.obj.editedTime,
-					'is_member': participant.obj.codeholderId ?
+					'@created_time': participant.obj.createdTime,
+					'@edited_time': participant.obj.editedTime,
+					'@is_member': participant.obj.codeholderId ?
 						await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
 				};
 				const customForVarOverrides = await AKSO.db('congresses_instances_participants_customFormVars')

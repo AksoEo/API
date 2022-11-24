@@ -150,6 +150,7 @@ export default {
 				'magazine.name': editionData.name,
 				'magazine.description': editionData.magazineDescription,
 				'magazine.issn': editionData.issn,
+				// TODO: All these URLs need to use per-org URLs
 				'magazine.magazineURL': 'https://uea.org/revuoj/revuo/' + editionData.magazineId,
 
 				'edition.id': editionData.editionId,
