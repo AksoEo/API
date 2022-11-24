@@ -452,7 +452,7 @@ export default {
 					addFormValues: formValues, 
 					allowInvalidData: true
 				});
-				const price = participantMetadata.evaluate('price');
+				const price = participantMetadata.evaluate(req.body.price.var);
 				
 				if (price !== participant.obj.price) {
 					await AKSO.db('congresses_instances_participants')
