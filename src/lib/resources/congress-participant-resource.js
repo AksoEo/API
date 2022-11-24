@@ -37,6 +37,7 @@ class CongressParticipantResource extends SimpleResource {
 
 		delete obj.price_minUpfront;
 		delete obj.manualApproval;
+		if (!fields.includes('dataId')) { delete obj.dataId; }
 		if (!fields.includes('approved')) { delete obj.approved; }
 		if (!fields.includes('amountPaid')) { delete obj.amountPaid; }
 		if (!fields.includes('hasPaidMinimum')) { delete obj.hasPaidMinimum; }
