@@ -190,8 +190,10 @@ export default {
 				allowInvalidData: req.body.allowInvalidData
 			});
 
-			// Replace the participant's data
-			await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);
+			if (req.body.data) {
+				// Replace the participant's data
+				await insertFormDataEntry(formData.form, formData.formId, req.params.dataId, req.body.data);
+			}
 
 			price = null;
 			if (formData.price_var) {
