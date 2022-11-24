@@ -33,7 +33,7 @@ async function init () {
 		await AKSO.db('clients')
 			.insert({
 				apiKey,
-				apiSecret,
+				apiSecret: crypto.createHash('sha256').update(apiSecret.toString('hex')).digest(),
 				name: 'Provizora AKSO-instalkliento',
 				ownerName: 'AKSO',
 				ownerEmail: 'admin@akso.org',
