@@ -176,7 +176,7 @@ export default {
 
 		// Validate the form
 		const customFormVarTypeDefs = {};
-		for (const [rawName, customFormVar] of Object.entries(req.body.customFormVars)) {
+		for (const [rawName, customFormVar] of Object.entries(req.body.customFormVars ?? {})) {
 			const name = rawName.substring(1);
 			switch (customFormVar.type) {
 			case 'boolean': {
