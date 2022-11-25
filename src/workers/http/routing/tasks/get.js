@@ -92,7 +92,7 @@ export default {
 					.whereNotExists(function () {
 						this.withSchema(AKSO.conf.mysql.geodbDatabase)
 							.from('cities')
-							.whereRaw('geodb.cities.id = codeholders_delegations_cities.city');
+							.whereRaw('??.cities.id = codeholders_delegations_cities.city', [AKSO.conf.mysql.geodbDatabase]);
 					})
 					.limit(10)
 				).map(x => `Q${x}`);
