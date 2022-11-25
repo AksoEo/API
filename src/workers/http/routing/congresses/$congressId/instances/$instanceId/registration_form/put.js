@@ -316,7 +316,7 @@ export default {
 			// Find oldCustomFormVars that no longer exist or have been renamed
 			for (const oldCustomFormVar in oldCustomFormVarsObj) {
 				let found = false;
-				for (const [name, customFormVar] of Object.entries(req.body.customFormVars)) {
+				for (const [name, customFormVar] of Object.entries(req.body.customFormVars ?? {})) {
 					// Same name
 					if (oldCustomFormVar === name) {
 						found = true;
@@ -353,7 +353,7 @@ export default {
 			}
 
 			// Create new custom form vars
-			const newCustomFormVars = Object.entries(req.body.customFormVars)
+			const newCustomFormVars = Object.entries(req.body.customFormVars ?? {})
 				// Filter out existing form vars (renamed or not)
 				.filter(([name, customFormVar]) => !(customFormVar.oldName || (name in oldCustomFormVarsObj)))
 				.map(([name, customFormVar]) => {
@@ -374,7 +374,7 @@ export default {
 					...data,
 					congressInstanceId: req.params.instanceId
 				});
-			const customFormVarsInsert = Object.entries(req.body.customFormVars)
+			const customFormVarsInsert = Object.entries(req.body.customFormVars ?? {})
 				.map(([name, customFormVar]) => {
 					return {
 						congressInstanceId: req.params.instanceId,
@@ -418,7 +418,7 @@ export default {
 			participantQuery.select(selectFields);
 
 			const customFormVarDefaults = {};
-			for (const [name, customFormVar] of Object.entries(req.body.customFormVars)) {
+			for (const [name, customFormVar] of Object.entries(req.body.customFormVars ?? {})) {
 				customFormVarDefaults[name.substring(1)] = customFormVar.default;
 			}
 
