@@ -239,8 +239,8 @@ export async function parseForm ({
 					err.statusCode = 400;
 					throw err;
 				}
-				if (formEntry.headerLeft && formEntry.headerLeft.length !== formEntry.cols) {
-					const err = new Error(`headerLeft in formEntry ${formEntry.name} must have as many items as it has columns`);
+				if (formEntry.headerLeft && formEntry.headerLeft.length !== formEntry.rows) {
+					const err = new Error(`headerLeft in formEntry ${formEntry.name} must have as many items as it has rows`);
 					err.statusCode = 400;
 					throw err;
 				}
