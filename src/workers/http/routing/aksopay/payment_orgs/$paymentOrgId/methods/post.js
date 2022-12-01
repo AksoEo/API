@@ -199,8 +199,8 @@ export default {
 		if (data.feeFixed) {
 			data.feeFixed_val = data.feeFixed.val;
 			data.feeFixed_cur = data.feeFixed.cur;
-			delete data.feeFixed;
 		}
+		delete data.feeFixed;
 
 		const id = (await AKSO.db('pay_methods').insert(data))[0];
 
