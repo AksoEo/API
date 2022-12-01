@@ -22,6 +22,9 @@ export default {
 					maxLength: 1000,
 					nullable: true
 				},
+				internal: {
+					type: 'boolean',
+				},
 				description: {
 					type: 'string',
 					minLength: 1,
