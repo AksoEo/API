@@ -24,7 +24,8 @@ export default {
 			return res.sendStatus(404);
 		}
 
-		const data = req.body.map(perm => {
+		// Remove duplicates
+		const data = [...new Set(req.body)].map(perm => {
 			return { apiKey: req.params.apiKey, permission: perm };
 		});
 
