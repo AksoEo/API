@@ -155,7 +155,7 @@ export async function validateDataEntry ({
 			fieldSchema.const = oldData[formEntry.name];
 		}
 
-		if (['date','datetime'].includes(formEntry.type)) {
+		if (['date','datetime','time'].includes(formEntry.type)) {
 			if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
 			if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
 		} else if (['number','money'].includes(formEntry.type)) {
@@ -166,9 +166,6 @@ export async function validateDataEntry ({
 			if (formEntry.pattern !== null) { fieldSchema.pattern = formEntry.pattern; }
 			if (formEntry.minLength !== null) { fieldSchema.minLength = formEntry.minLength; }
 			if (formEntry.maxLength !== null) { fieldSchema.maxLength = formEntry.maxLength; }
-		} else if (formEntry.type === 'time') {
-			if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
-			if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
 		} else if (formEntry.type === 'boolean') {
 			if (required) { fieldSchema.const = true; }
 		} else if (formEntry.type === 'boolean_table') {
