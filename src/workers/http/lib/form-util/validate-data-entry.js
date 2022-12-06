@@ -155,10 +155,12 @@ export async function validateDataEntry ({
 			fieldSchema.const = oldData[formEntry.name];
 		}
 
-		if (['number','money','date','datetime'].includes(formEntry.type)) {
+		if (['date','datetime'].includes(formEntry.type)) {
+			if (formEntry.min !== null) { fieldSchema.formatMinimum = formEntry.min; }
+			if (formEntry.max !== null) { fieldSchema.formatMaximum = formEntry.max; }
+		} else if (['number','money'].includes(formEntry.type)) {
 			if (formEntry.min !== null) { fieldSchema.minimum = formEntry.min; }
 			if (formEntry.max !== null) { fieldSchema.maximum = formEntry.max; }
-		} else if (['number','money'].includes(formEntry.type)) {
 			if (formEntry.step !== null) { fieldSchema.multipleOf = formEntry.step; }
 		} else if (formEntry.type === 'text') {
 			if (formEntry.pattern !== null) { fieldSchema.pattern = formEntry.pattern; }
