@@ -17,14 +17,16 @@ class CongressParticipantResource extends SimpleResource {
 			const bits = key.split('.');
 			if (bits[0] !== 'data') { continue; }
 
-			let parsedVal;
-			const type = formFieldsObj[bits[1]];
-			if (type === 'boolean') { parsedVal = !!rawVal; }
-			else if (type === 'date') {
-				parsedVal = moment(rawVal).format('Y-MM-DD');
-			} else if (type === 'time') {
-				parsedVal = rawVal.split(':').slice(0, 2).join(':');
-			} else { parsedVal = rawVal; }
+			let parsedVal = rawVal;
+			if (rawVal !== null) {
+				const type = formFieldsObj[bits[1]];
+				if (type === 'boolean') { parsedVal = !!rawVal; }
+				else if (type === 'date') {
+					parsedVal = moment(rawVal).format('Y-MM-DD');
+				} else if (type === 'time') {
+					parsedVal = rawVal.split(':').slice(0, 2).join(':');
+				} else { parsedVal = rawVal; }
+			}
 
 			obj.data[bits[1]] = parsedVal;
 			delete obj[key];
