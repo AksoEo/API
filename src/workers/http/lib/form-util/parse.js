@@ -129,7 +129,7 @@ export async function parseForm ({
 			} else if (['text', 'enum', 'country', 'date', 'time'].includes(formEntry.type)) {
 				formValues[formEntry.name] = union([ NULL, STRING ]);
 			} else if (formEntry.type === 'boolean_table') {
-				formValues[formEntry.name] = ascArray(union([ NULL, BOOL ]));
+				formValues[formEntry.name] = ascArray(ascArray(union([ NULL, BOOL ])));
 			}
 
 			// AKSO Script expressions

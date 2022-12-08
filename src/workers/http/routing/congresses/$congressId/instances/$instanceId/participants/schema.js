@@ -132,7 +132,7 @@ export async function getFormMetaData (instanceId) {
 	for (const formField of formFields) {
 		// Set the flags for the data field
 		let flags = '';
-		if (![ 'text', 'boolean_table' ].includes(formField.type)) { flags += 'f'; }
+		if (!([ 'text', 'boolean_table' ].includes(formField.type))) { flags += 'f'; }
 		if (formField.type === 'text') { flags += 's'; }
 
 		// Add the fields to the schema

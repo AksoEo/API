@@ -83,32 +83,32 @@ export async function validateDataEntry ({
 			format: 'uint64'
 		};
 		case 'boolean_table':
-			const items = [];
+			const items = []; // rows
 			for (let x = 0; x < formEntry.cols; x++) {
-				const rowItems = [];
-				items[x] = {
+				const colItems = [];
+				for (let y = 0; y < formEntry.rows; y++) {
+					colItems[y] = {
+						type: 'boolean',
+					};
+				}
+				items[x] = { // cols
 					type: 'array',
-					items: rowItems,
+					items: colItems,
 					minItems: formEntry.cols,
 					maxItems: formEntry.cols
 				};
-				for (let y = 0; y < formEntry.rows; y++) {
-					rowItems[y] = {
-						type: 'boolean'
-					};
-				}
 			}
-			for (const cell of formEntry.excludeCells || []) {
-				const [x, y] = cell;
+			for (const cell of formEntry.excludeCells ?? []) {
+				const [y, x] = cell;
 				if (items[x] && items[x].items[y]) {
 					items[x].items[y] = { type: 'null' };
 				}
 			}
-			return {
+			return { // full bool table
 				type: 'array',
 				items: items,
 				minItems: formEntry.rows,
-				maxItems: formEntry.rows
+				maxItems: formEntry.rows,
 			};
 		}
 	};
