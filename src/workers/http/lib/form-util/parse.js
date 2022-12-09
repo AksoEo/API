@@ -149,6 +149,7 @@ export async function parseForm ({
 			if (!('default' in formEntry)) { formEntry.default = null; }
 			if (!('required' in formEntry)) { formEntry.required = false; }
 			if (!('disabled' in formEntry)) { formEntry.disabled = false; }
+			if (!('hideIfDisabled' in formEntry)) { formEntry.hideIfDisabled = false; }
 			if (!('editable' in formEntry)) { formEntry.editable = true; }
 
 			if (formEntry.type === 'number' || formEntry.type === 'money') {

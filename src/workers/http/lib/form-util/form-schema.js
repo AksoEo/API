@@ -39,6 +39,9 @@ const formEntryInputProps = {
 			{ type: 'boolean' }
 		]
 	},
+	hideIfDisabled: {
+		type: 'boolean',
+	},
 	editable: {
 		type: 'boolean'
 	}
