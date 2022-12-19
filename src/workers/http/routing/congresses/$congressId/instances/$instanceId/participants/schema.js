@@ -229,10 +229,10 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		.first('dateFrom');
 
 	const addFormValues = {
-		'@created_time': participant.obj.createdTime,
-		'@edited_time': participant.obj.editedTime,
-		'@is_member': participant.obj.codeholderId ?
-			await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
+		'@created_time': participant.createdTime,
+		'@edited_time': participant.editedTime,
+		'@is_member': participant.codeholderId ?
+			await isActiveMember(participant.codeholderId, congressData.dateFrom) : false,
 	};
 
 	// Add default custom form vars
