@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.31-0ubuntu0.20.04.1
+-- Server version	8.0.31-0ubuntu0.20.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -2947,7 +2947,7 @@ CREATE TABLE `pay_intents_purposes_trigger_congress_registration` (
   PRIMARY KEY (`paymentIntentId`,`pos`),
   KEY `dataId` (`dataId`),
   CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_1` FOREIGN KEY (`paymentIntentId`, `pos`) REFERENCES `pay_intents_purposes_trigger` (`paymentIntentId`, `pos`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_2` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON UPDATE CASCADE
+  CONSTRAINT `pay_intents_purposes_trigger_congress_registration_ibfk_2` FOREIGN KEY (`dataId`) REFERENCES `forms_data` (`dataId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3801,4 +3801,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-22 20:04:06
+-- Dump completed on 2022-12-19 15:18:23
