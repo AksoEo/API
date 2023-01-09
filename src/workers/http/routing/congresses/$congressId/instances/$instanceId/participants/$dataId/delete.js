@@ -13,7 +13,7 @@ export default {
 		if (!orgData) { return res.sendStatus(404); }
 		if (!req.hasPermission('congress_instances.participants.delete.' + orgData.org)) { return res.sendStatus(403); }
 
-		const deleted = await AKSO.db('congresses_instances_participants')
+		const deleted = await AKSO.db('forms_data')
 			.where('dataId', req.params.dataId)
 			.delete();
 
