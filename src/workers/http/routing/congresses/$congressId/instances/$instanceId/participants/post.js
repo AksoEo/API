@@ -138,7 +138,7 @@ export default {
 				dataId,
 				approved: req.body.approved,
 				notes: req.body.notes,
-				price: price
+				price,
 			});
 		if (Object.keys(req.body.customFormVars ?? {}).length) {
 			await trx('congresses_instances_participants_customFormVars')

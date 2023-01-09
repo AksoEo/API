@@ -427,18 +427,18 @@ export default {
 				const fakeReq = {
 					query: { fields: Object.keys(parSchema.fields) }
 				};
-				const participant = new CongressParticipantResource(participantObj, fakeReq, {}, formFieldsObj);		
+				const participant = new CongressParticipantResource(participantObj, fakeReq, {}, formFieldsObj).obj;		
 
 				const formValues = {
 					...customFormVarDefaults,
-					'@created_time': participant.obj.createdTime,
-					'@edited_time': participant.obj.editedTime,
-					'@is_member': participant.obj.codeholderId ?
-						await isActiveMember(participant.obj.codeholderId, congressData.dateFrom) : false,
+					'@created_time': participant.createdTime,
+					'@edited_time': participant.editedTime,
+					'@is_member': participant.codeholderId ?
+						await isActiveMember(participant.codeholderId, congressData.dateFrom) : false,
 				};
 				const customForVarOverrides = await AKSO.db('congresses_instances_participants_customFormVars')
 					.select('name', 'value')
-					.where('dataId', participant.obj.dataId);
+					.where('dataId', participant.dataId);
 				for (const customFormVarOverride of customForVarOverrides) {
 					formValues[customFormVarOverride.name.substring(1)] = customFormVarOverride.value;
 				}
@@ -446,15 +446,16 @@ export default {
 				// This should never fail assuming data migration succeeded
 				const participantMetadata = await validateDataEntry({
 					formData: rawData,
-					data: participant.obj.data,
+					data: participant.data,
 					addFormValues: formValues, 
-					allowInvalidData: true
+					allowInvalidData: true,
 				});
+
 				const price = participantMetadata.evaluate(req.body.price.var);
-				
-				if (price !== participant.obj.price) {
+
+				if (price !== participant.price) {
 					await AKSO.db('congresses_instances_participants')
-						.where('dataId', participant.obj.dataId)
+						.where('dataId', participant.dataId)
 						.update('price', price);
 				}
 			}));
