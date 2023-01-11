@@ -67,6 +67,10 @@ export const schema = {
 						paymentAddonId: 'f',
 						triggers: 'f',
 						triggerStatus: 'f',
+						dataId: 'f',
+					},
+					fieldAliases: {
+						dataId: () => AKSO.db.raw('COALESCE(trigger_congress_registration_dataId, trigger_registration_entry_registrationEntryId)'),
 					},
 					query: this,
 					filter
