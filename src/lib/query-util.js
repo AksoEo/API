@@ -403,7 +403,7 @@ const QueryUtil = {
 			}
 
 			const allCols = req.query.search.cols.join(',');
-			if (allCols in schema.customSearch) {
+			if (schema.customSearch && allCols in schema.customSearch) {
 				const customSearchFn = schema.customSearch[allCols];
 				const matchFn = cols => {
 					const colsArr = Array.isArray(cols) ? cols : [cols];

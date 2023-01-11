@@ -170,6 +170,7 @@ export async function validateDataEntry ({
 			if (required) { fieldSchema.const = true; }
 		} else if (formEntry.type === 'boolean_table') {
 			fieldSchema.validateFunction = function (val) {
+				if (!Array.isArray(val)) { return false; }
 				const numValues = []
 					.concat(...val)
 					.filter(x => x === true)
