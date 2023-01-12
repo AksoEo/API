@@ -1,6 +1,5 @@
 import * as intentUtil from 'akso/lib/aksopay-intent-util';
-
-import Stripe from 'stripe';
+import { getStripe } from 'akso/lib/stripe';
 
 export default {
 	schema: {},
@@ -29,9 +28,7 @@ export default {
 		let stripeClient = null;
 		if (paymentIntent.paymentMethod.type === 'stripe') {
 			try {
-				stripeClient = new Stripe(paymentIntent.stripeSecretKey, {
-					apiVersion: AKSO.STRIPE_API_VERSION
-				});
+				stripeClient = await getStripe(paymentIntent.stripeSecretKey, false);
 
 				await stripeClient.paymentIntents.cancel(paymentIntent.stripePaymentIntentId);
 			} catch (e) {

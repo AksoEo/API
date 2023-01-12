@@ -33,7 +33,7 @@ function registerTimer ({ name, intervalMs, fn, disregardExecutionTime = false }
 				await Promise.resolve(fn());
 			} catch (e) {
 				AKSO.log.error(`An error occured in timer ${name}, exiting`);
-				AKSO.log.error(e);
+				console.error(e); // eslint-disable-line no-console
 				process.exit(1);
 			}
 			const timeNow = process.hrtime.bigint();

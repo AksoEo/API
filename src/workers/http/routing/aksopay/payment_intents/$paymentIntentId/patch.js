@@ -1,5 +1,4 @@
-import Stripe from 'stripe';
-
+import { getStripe } from 'akso/lib/stripe';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
@@ -84,9 +83,7 @@ export default {
 		let stripeClient = null;
 		if (paymentIntent.paymentMethod.type === 'stripe') {
 			try {
-				stripeClient = new Stripe(paymentIntent.stripeSecretKey, {
-					apiVersion: AKSO.STRIPE_API_VERSION
-				});
+				stripeClient = await getStripe(paymentIntent.stripeSecretKey, true);
 			} catch (e) {
 				e.statusCode = 500;
 				throw e;

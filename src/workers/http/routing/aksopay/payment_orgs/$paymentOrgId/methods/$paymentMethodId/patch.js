@@ -1,6 +1,5 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
-
-import Stripe from 'stripe';
+import { getStripe } from 'akso/lib/stripe';
 
 import { pricesSchema, validatePrices } from '../schema';
 
@@ -103,9 +102,9 @@ export default {
 			.innerJoin('pay_orgs', 'paymentOrgId', 'pay_orgs.id')
 			.where({
 				'pay_methods.id': req.params.paymentMethodId,
-				'pay_orgs.id': req.params.paymentOrgId
+				'pay_orgs.id': req.params.paymentOrgId,
 			})
-			.first('org');
+			.first('org', 'type', 'stripeSecretKey');
 		if (!paymentMethod) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_methods.update.' + paymentMethod.org)) {
 			return res.sendStatus(403);
@@ -129,17 +128,24 @@ export default {
 
 			// Verify Stripe keys
 			if ('stripeSecretKey' in data) {
-				const stripe = new Stripe(data.stripeSecretKey, {
-					apiVersion: AKSO.STRIPE_API_VERSION
-				});
+				await getStripe(data.stripeSecretKey, true);
+				await ensureWebhook(data.stripeSecretKey);
+
+				// Delete old webhook
+				const oldWebhook = await AKSO.db('pay_stripe_webhooks')
+					.where('stripeSecretKey', paymentMethod.stripeSecretKey)
+					.first('stripeId');
 				try {
-					await stripe.paymentIntents.list({ limit: 1 }); // random request to verify key
+					await stripeClient.webhookEndpoints.del(oldWebhook.stripeId);
 				} catch (e) {
-					if (e.type === 'StripeAuthenticationError') {
-						return res.sendStatus(409);
+					if (e.statusCode !== 404) {
+						e.statusCode = 500;
+						throw e;
 					}
-					throw e;
 				}
+				await AKSO.db('pay_stripe_webhooks')
+					.where('stripeSecretKey', paymentMethod.stripeSecretKey)
+					.delete();
 			}
 		} else if (paymentMethod.type === 'intermediary') {
 			if ('stripeMethods' in data ||

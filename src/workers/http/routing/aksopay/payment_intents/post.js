@@ -5,10 +5,10 @@ import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-met
 import { schema as paymentMethodSchema } from 'akso/workers/http/routing/aksopay/payment_orgs/$paymentOrgId/methods/schema';
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 import { sendInstructionsEmail } from 'akso/lib/aksopay-intent-util';
+import { getStripe } from 'akso/lib/stripe';
 
 import path from 'path';
 import crypto from 'pn/crypto';
-import Stripe from 'stripe';
 import moment from 'moment-timezone';
 import { base32 } from 'rfc4648';
 
@@ -337,9 +337,7 @@ export default {
 			stripeClient			= null;
 		if (paymentMethod.type === 'stripe') {
 			try {
-				stripeClient = new Stripe(paymentMethodRaw.stripeSecretKey, {
-					apiVersion: AKSO.STRIPE_API_VERSION
-				});
+				stripeClient = await getStripe(paymentMethodRaw.stripeSecretKey);
 
 				// TODO: Improve error handling
 				const stripePaymentIntent = await stripeClient.paymentIntents.create({

@@ -1,4 +1,4 @@
-import { ajv } from 'akso/util';
+import { ajv } from 'akso/lib/ajv';
 import { evaluateSync, doAscMagic } from 'akso/lib/akso-script-util';
 
 export async function validateDataEntry ({

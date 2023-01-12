@@ -1832,7 +1832,7 @@ DROP TABLE IF EXISTS `congresses_instances_participants_customFormVars`;
 CREATE TABLE `congresses_instances_participants_customFormVars` (
   `congressInstanceId` int unsigned NOT NULL,
   `dataId` binary(12) NOT NULL,
-  `name` varchar(22) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `value` json DEFAULT NULL,
   PRIMARY KEY (`dataId`,`name`) USING BTREE,
   KEY `congressInstanceId` (`congressInstanceId`,`name`),
@@ -1964,8 +1964,8 @@ DROP TABLE IF EXISTS `congresses_instances_registrationForm_customFormVars`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `congresses_instances_registrationForm_customFormVars` (
   `congressInstanceId` int unsigned NOT NULL,
-  `name` varchar(22) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(22) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `default` json DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`name`),
   CONSTRAINT `congresses_instances_registrationForm_customFormVars_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances_registrationForm` (`congressInstanceId`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3040,6 +3040,7 @@ CREATE TABLE `pay_stripe_webhooks` (
   `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `apiVersion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `enabledEvents` varchar(3072) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`stripeSecretKey`),
   UNIQUE KEY `stripeId` (`stripeId`),
   KEY `apiVersion` (`apiVersion`)
@@ -3801,4 +3802,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-19 15:18:23
+-- Dump completed on 2023-01-11 18:47:11

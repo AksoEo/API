@@ -5,7 +5,6 @@ import msgpack from 'msgpack-lite';
 import path from 'path';
 import fs from 'fs-extra';
 import fetch from 'node-fetch';
-import Stripe from 'stripe';
 import { Cashify } from 'cashify';
 
 import * as AKSODb from './db';
@@ -294,38 +293,6 @@ async function init () {
 		}
 	};
 	if (cluster.isMaster) {
-		// Set up stripe webhooks if needed
-		AKSO.log.info('Setting up Stripe webhooks ...');
-		const methodsWithoutHook = await AKSO.db('pay_methods')
-			.where('type', 'stripe')
-			.whereNotExists(function () {
-				this.select(1).from('pay_stripe_webhooks')
-					.whereRaw('pay_stripe_webhooks.stripeSecretKey = pay_methods.stripeSecretKey');
-			})
-			.select('stripeSecretKey');
-		const uniqueSecretKeys = [
-			...new Set(methodsWithoutHook
-				.map(x => x.stripeSecretKey))
-		];
-		for (const secretKey of uniqueSecretKeys) {
-			const stripeClient = new Stripe(secretKey, {
-				apiVersion: AKSO.STRIPE_API_VERSION
-			});
-			const hook = await stripeClient.webhookEndpoints.create({
-				api_version: AKSO.STRIPE_API_VERSION,
-				enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
-				url: new URL(AKSO.STRIPE_WEBHOOK_URL, AKSO.conf.http.outsideAddress).toString()
-			});
-			await AKSO.db('pay_stripe_webhooks')
-				.insert({
-					stripeSecretKey: secretKey,
-					stripeId: hook.id,
-					secret: hook.secret,
-					apiVersion: AKSO.STRIPE_API_VERSION,
-					enabledEvents: AKSO.STRIPE_WEBHOOK_EVENTS.join(',')
-				});
-		}
-
 		// Set up cluster
 		let shuttingDown = false;
 		const workers = {};
@@ -388,9 +355,7 @@ async function init () {
 					.select('stripeId', 'stripeSecretKey');
 
 				for (const hook of webhooks) {
-					const stripeClient = new Stripe(hook.stripeSecretKey, {
-						apiVersion: AKSO.STRIPE_API_VERSION
-					});
+					const stripeClient = await require('akso/lib/stripe').getStripe(hook.stripeSecretKey, false);
 					try {
 						await stripeClient.webhookEndpoints.del(hook.stripeId);
 					} catch (e) {

@@ -1,6 +1,4 @@
-import Stripe from 'stripe';
-import moment from 'moment-timezone';
-import * as intentUtil from 'akso/lib/aksopay-intent-util';
+import { getStripe, processEvent } from 'akso/lib/stripe';
 
 export default {
 	schema: {
@@ -29,10 +27,7 @@ export default {
 
 		const typeBits = req.body.type.split('.');
 
-		const time = req.body.created || moment().unix();
-
-		let stripeClient,
-			stripeSecretKey,
+		let stripeSecretKey,
 			stripePaymentIntentId,
 			paymentIntent;
 		switch (typeBits[0]) {
@@ -49,20 +44,18 @@ export default {
 
 			paymentIntent = await AKSO.db('pay_intents')
 				.where('stripePaymentIntentId', stripePaymentIntentId)
-				.first('stripeSecretKey', 'amountRefunded', 'id');
+				.first('stripeSecretKey');
 			if (!paymentIntent) { return; }
-			stripeSecretKey = paymentIntent.stripeSecretKey;
-
-			stripeClient = new Stripe(stripeSecretKey, {
-				apiVersion: AKSO.STRIPE_API_VERSION
-			});		
+			stripeSecretKey = paymentIntent.stripeSecretKey;	
 		}
-		if (!stripeClient) { return; }
+		if (!stripeSecretKey) { return; }
 
 		const webhook = await AKSO.db('pay_stripe_webhooks')
 			.where('stripeSecretKey', stripeSecretKey)
 			.first('secret');
 		if (!webhook) { return; }
+
+		const stripeClient = await getStripe(stripeSecretKey, false);
 
 		const sig = req.headers['stripe-signature'];
 		let event;
@@ -71,49 +64,7 @@ export default {
 		} catch (e) {
 			return;
 		}
-		
 
-		switch (req.body.type) {
-		case 'payment_intent.canceled': {
-			const newStatus = event.data.object.cancellation_reason === 'abandoned' ?
-				'abandoned' : 'canceled';
-
-			await intentUtil.updateStatus(paymentIntent.id, newStatus, time);
-			break;
-		}
-		case 'payment_intent.processing':
-			await intentUtil.updateStatus(paymentIntent.id, 'processing', time);
-			break;
-
-		case 'payment_intent.succeeded':
-			await intentUtil.updateStatus(paymentIntent.id, 'succeeded', time);
-			break;
-
-		case 'charge.refunded':
-			let allCharges;
-			try {
-				allCharges = await stripeClient.charges.list({
-					limit: 100,
-					payment_intent: stripePaymentIntentId
-				});
-			} catch (e) {
-				AKSO.log.error('Error occured while processing Stripe charge.refunded for ' + stripePaymentIntentId);
-				AKSO.log.error(e);
-				return;
-			}
-			const totalRefund = allCharges.data.reduce((a, b) => a.amount_refunded + b.amount_refunded);
-
-			await intentUtil.updateStatus(paymentIntent.id, 'refunded', time, { amountRefunded: totalRefund });
-			break;
-
-		case 'charge.dispute.created':
-			await intentUtil.updateStatus(paymentIntent.id, 'disputed', time);
-			break;
-
-		case 'charge.dispute.closed':
-			// Check if anything has been refunded
-			const newStatus = paymentIntent.amountRefunded > 0 ? 'refunded' : 'succeeded';
-			await intentUtil.updateStatus(paymentIntent.id, newStatus, time);
-		}
+		await processEvent(stripeSecretKey, event, stripePaymentIntentId);
 	}
 };

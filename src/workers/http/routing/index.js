@@ -12,7 +12,7 @@ import tmp from 'tmp-promise';
 import streamMeter from 'stream-meter';
 import path from 'path';
 
-import { ajv } from 'akso/util';
+import { ajv } from 'akso/lib/ajv';
 
 import { init as route$address_label_templates } from './address_label_templates';
 import { init as route$admin_groups } from './admin_groups';

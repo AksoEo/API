@@ -15,34 +15,64 @@ import { base32 } from 'rfc4648';
  * @param  {Object}   [updateData] Additional update data
  */
 export async function updateStatuses (ids, status, time = moment().unix(), updateData = {}) {
-	if (!updateData.status) {
-		updateData.status = status;
-		updateData.statusTime = time;
+	// Obtain existing intent info
+	const paymentIntentsArr = await AKSO.db('pay_intents')
+		.select('id', 'statusTime')
+		.whereIn('id', ids);
+	const paymentIntentsStatusTime = {};
+	for (const paymentIntent of paymentIntentsArr) {
+		paymentIntentsStatusTime[paymentIntent.id.toString('hex')] = paymentIntent.statusTime;
 	}
 
-	if (status === 'succeeded') {
-		updateData.succeededTime = time;
-	} else if (status === 'refunded') {
-		updateData.refundedTime = time;
+	const updateDataById = {};
+
+	for (const id of ids) {
+		const hexId = id.toString('hex');
+		const statusTime = paymentIntentsStatusTime[hexId];
+		const data = updateDataById[hexId] = {};
+
+		if (!updateData.status && statusTime < time) {
+			data.status = status;
+			data.statusTime = time;
+		}
+
+		if (status === 'succeeded') {
+			data.succeededTime = time;
+		} else if (status === 'refunded') {
+			data.refundedTime = time;
+		}
 	}
 
 	const trx = await createTransaction();
 
-	await Promise.all([
-		trx('pay_intents')
-			.whereIn('id', ids)
-			.update(updateData),
-
+	const promises = [
 		trx('pay_intents_events')
 			.insert(ids.map(id => {
 				return {
 					paymentIntentId: id,
 					time: time,
-					status: status
+					status: status,
 				};
 			}))
-	]);
+	];
 
+	if (Object.keys(updateData).length) {
+		promises.push(
+			trx('pay_intents')
+				.whereIn('id', ids)
+				.update(updateData)
+		);
+	}
+
+	for (const [id, data] of Object.entries(updateDataById)) {
+		promises.push(
+			trx('pay_intents')
+				.where('id', Buffer.from(id, 'hex'))
+				.update(data)
+		);
+	}
+
+	await Promise.all(promises);
 	await trx.commit();
 
 	if (status === 'succeeded') {
@@ -51,6 +81,7 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 				await sendReceiptEmail(id);
 			} catch (e) {
 				if (!e.isAKSO) { throw e; }
+				// Errors with isAKSO are fine to ignore
 			}
 		}
 	}

@@ -5,9 +5,9 @@ import tmp from 'tmp-promise';
 import msgpack from 'msgpack-lite';
 import moment from 'moment-timezone';
 
-import { promiseAllObject, renderTemplate } from './util';
+import { renderTemplate, promiseAllObject } from 'akso/util';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
-import AKSOOrganization from './lib/enums/akso-organization';
+import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
 /**
  * Obtains the names and emails of codeholders by their ids

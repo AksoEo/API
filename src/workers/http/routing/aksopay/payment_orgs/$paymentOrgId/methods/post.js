@@ -1,9 +1,9 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
+import { getStripe, ensureWebhook } from 'akso/lib/stripe';
 
 import { pricesSchema, validatePrices } from './schema';
 
 import path from 'path';
-import Stripe from 'stripe';
 import { default as deepmerge } from 'deepmerge';
 
 const allTypesProps = {
@@ -145,49 +145,9 @@ export default {
 		};
 
 		if (data.type === 'stripe') {
-			// Verify Stripe keys
-			const stripe = new Stripe(data.stripeSecretKey, {
-				apiVersion: AKSO.STRIPE_API_VERSION
-			});
-			try {
-				await stripe.paymentIntents.list({ limit: 1 }); // random request to verify key
-			} catch (e) {
-				if (e.type === 'StripeAuthenticationError') {
-					return res.sendStatus(409);
-				}
-				e.statusCode = 500;
-				throw e;
-			}
-
-			// Check if stripe secretKey has already been used elsewhere, in which case a webhook is not needed
-			const webhookRegistered = await AKSO.db('pay_stripe_webhooks')
-				.where('stripeSecretKey', data.stripeSecretKey)
-				.first(1);
-			if (!webhookRegistered) {
-				// Register the webhook
-				let webhookSecret, webhookId;
-				try {
-					const webhook = await stripe.webhookEndpoints.create({
-						api_version: AKSO.STRIPE_API_VERSION,
-						enabled_events: AKSO.STRIPE_WEBHOOK_EVENTS,
-						url: new URL(AKSO.STRIPE_WEBHOOK_URL, AKSO.conf.http.outsideAddress).toString()
-					});
-					webhookSecret = webhook.secret;
-					webhookId = webhook.id;
-				} catch (e) {
-					e.statusCode = 500;
-					throw e;
-				}
-
-				await AKSO.db('pay_stripe_webhooks')
-					.insert({
-						stripeSecretKey: data.stripeSecretKey,
-						stripeId: webhookId,
-						secret: webhookSecret,
-						apiVersion: AKSO.STRIPE_API_VERSION,
-						enabledEvents: AKSO.STRIPE_WEBHOOK_EVENTS.join(',')
-					});
-			}
+			// Verify Stripe key
+			await getStripe(data.stripeSecretKey, true);
+			await ensureWebhook(data.stripeSecretKey);
 		} else if (data.type === 'intermediary') {
 			await validatePrices(data.prices);
 		}

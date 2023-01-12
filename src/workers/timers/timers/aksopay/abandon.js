@@ -1,6 +1,5 @@
 import * as intentUtil from 'akso/lib/aksopay-intent-util';
-
-import Stripe from 'stripe';
+import { getStripe, ensureAndValidateWebhook } from 'akso/lib/stripe';
 
 export async function abandonExpiredPaymentIntents () {
 	let expiredIntents = await AKSO.db('pay_intents')
@@ -18,15 +17,14 @@ export async function abandonExpiredPaymentIntents () {
 
 	for (const expiredIntent of expiredIntents) {
 		if (expiredIntent.type !== 'stripe') { continue; }
-		const stripeClient = new Stripe(expiredIntent.stripeSecretKey, {
-			apiVersion: AKSO.STRIPE_API_VERSION
-		});
+		const stripeClient = await getStripe(expiredIntent.stripeSecretKey, false);
 		try {
 			await stripeClient.paymentIntents.cancel(expiredIntent.stripePaymentIntentId, {
 				cancellation_reason: 'abandoned'
 			});
 		} catch (e) {
 			AKSO.log.error(e);
+			await ensureAndValidateWebhook(expiredIntent.stripeSecretKey);
 			break;
 		}
 	}
