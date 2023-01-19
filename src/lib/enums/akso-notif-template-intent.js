@@ -113,7 +113,7 @@ bogusData.NEWSLETTER_MAGAZINE = {
 	'edition.editionURL': 'https://uea.org/revuoj/revuo/3/numero/7',
 
 	'toc.md': '', // todo
-	'toc.html': '',
+	'toc.html': { _akso_safeHtml: true, val: '<table></table>' },
 	'toc.text': '',
 };
 bogusData.CONGRESS_REGISTRATION = {

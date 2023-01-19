@@ -11,7 +11,7 @@ import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/rout
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import { doAscMagic, evaluateSync } from 'akso/lib/akso-script-util';
-import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate } from 'akso/util';
+import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate, getSafeHandlebarsString } from 'akso/util';
 
 /**
  * Renders a notif template and sends it to the recipients
@@ -184,12 +184,21 @@ export async function renderTemplate (template, intentData) {
 		if (!template) { throw new Error('Could not fetch notif template with id ' + template); }
 	}
 
+	const getIntentDataKey = (key, forRender = false) => {
+		const intentVal = intentData[key];
+		if (typeof intentVal === 'object' && intentVal._akso_safeHtml) {
+			if (forRender) { return getSafeHandlebarsString(intentVal.val); }
+			return intentVal.val;
+		}
+		return intentVal;
+	};
+
 	const viewFn = key => {
 		if (key[0] === '@') {
-			return intentData[key.substring(1)];
+			return getIntentDataKey(key.substring(1), true);
 		} else {
 			try {
-				return evaluateSync(template.script, key, formKey => intentData[formKey]);
+				return evaluateSync(template.script, key, formKey => getIntentDataKey(formKey, false));
 			} catch (e) { return undefined; } // this should never happen
 		}
 	};
@@ -316,10 +325,15 @@ function renderTemplateStr (type, str, viewFn) {
 
 	// {{identifiers}}
 	str = str.replace(identifierRegex, (match, identifier) => {
-		let value = viewFn(identifier);
+		const value = viewFn(identifier);
 		if (typeof value === 'undefined') { return match; }
 		else {
-			if (type === 'html') { return escapeHTML(value); }
+			if (type === 'html') {
+				if (typeof value.toHTML === 'function') {
+					return value.toHTML();
+				}
+				return escapeHTML(value);
+			}
 			else if (type === 'text') { return value; }
 		}
 	});

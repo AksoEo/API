@@ -51,6 +51,10 @@ Handlebars.registerHelper('markdown_fmt', function (mdStr, rules) {
 	return new Handlebars.SafeString(markdownIt.render(mdStr));
 });
 
+export function getSafeHandlebarsString (str) {
+	return new Handlebars.SafeString(str);
+}
+
 /**
  * Renders a template using handlebars
  * @param  {string}  tmpl       The template data

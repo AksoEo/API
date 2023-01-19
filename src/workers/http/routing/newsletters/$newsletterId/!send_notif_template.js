@@ -161,7 +161,7 @@ export default {
 				'edition.editionURL': `https://uea.org/revuoj/revuo/${editionData.magazineId}/numero/${editionData.editionId}`,
 
 				'toc.md': tocMd,
-				'toc.html': inheritTextMd.render(tocMd),
+				'toc.html': { _akso_safeHtml: true, val: inheritTextMd.render(tocMd) },
 				'toc.text': tocText,
 			};
 		}
