@@ -6,6 +6,7 @@ import moment from 'moment-timezone';
 const ajv = new Ajv({
 	useDefaults: true,
 	strictTypes: true,
+	strictTuples: false, // disabled as the warnings are currently broken, see https://github.com/ajv-validator/ajv/issues/1417
 	discriminator: true,
 	logger: AKSO.log,
 });

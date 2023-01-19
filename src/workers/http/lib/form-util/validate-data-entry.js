@@ -95,7 +95,7 @@ export async function validateDataEntry ({
 					type: 'array',
 					items: colItems,
 					minItems: formEntry.cols,
-					maxItems: formEntry.cols
+					maxItems: formEntry.cols,
 				};
 			}
 			for (const cell of formEntry.excludeCells ?? []) {
