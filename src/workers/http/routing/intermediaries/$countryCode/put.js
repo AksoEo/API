@@ -6,21 +6,33 @@ export default {
 		body: {
 			type: 'object',
 			properties: {
-				codeholderId: {
-					type: 'integer',
-					format: 'uint32',
-				},
-				paymentDescription: {
-					type: 'string',
-					minLength: 1,
-					maxLength: 5000,
-					nullable: true,
+				codeholders: {
+					type: 'array',
+					minItems: 1,
+					maxItems: 127,
+					items: {
+						type: 'object',
+						additionalProperties: false,
+						properties: {
+							codeholderId: {
+								type: 'integer',
+								format: 'uint32',
+							},
+							paymentDescription: {
+								type: 'string',
+								minLength: 1,
+								maxLength: 5000,
+								nullable: true,
+							},
+						},
+						required: [ 'codeholderId' ],
+					}
 				},
 			},
 			additionalProperties: false,
-			required: [ 'codeholderId' ],
+			required: [ 'codeholders' ],
 		},
-		requirePerms: ['intermediaries.update', 'codeholders.read']
+		requirePerms: ['intermediaries.update', 'codeholders.read'],
 	},
 
 	run: async function run (req, res) {
@@ -36,26 +48,38 @@ export default {
 				.send('Invalid or disabled countryCode');
 		}
 
-		// Ensure the codeholder exists and is visible through the member filter
-		const codeholderExistsQuery = AKSO.db('view_codeholders')
-			.where({
-				enabled: true,
-				id: req.body.codeholderId,
-			})
-			.first(1);
-		memberFilter(codeholderSchema, codeholderExistsQuery, req);
-		if (!await codeholderExistsQuery) {
+		// Ensure the codeholders exist and are visible through the member filter
+		const codeholderIds = req.body.codeholders.map(x => x.codeholderId);
+		const codeholdersExistQuery = AKSO.db('view_codeholders')
+			.where('enabled', true)
+			.whereIn('id', codeholderIds)
+			.pluck('id')
+			.select('id');
+		memberFilter(codeholderSchema, codeholdersExistQuery, req);
+		const foundCodeholderIds = await codeholdersExistQuery;
+		for (const codeholderId of codeholderIds) {
+			if (foundCodeholderIds.includes(codeholderId)) { continue; }
 			return res.type('text/plain').status(400)
-				.send(`Could not find an enabled codeholder with id ${req.body.codeholderId}`);
+				.send(`Could not find an enabled codeholder with id ${codeholderId}`);
 		}
 
-		await AKSO.db('intermediaries')
-			.insert({
-				countryCode: req.params.countryCode,
-				...req.body
-			})
-			.onConflict('countryCode')
-			.merge();
+		const trx = await req.createTransaction();
+
+		await trx('intermediaries')
+			.where('countryCode', req.params.countryCode)
+			.delete();
+
+		await trx('intermediaries')
+			.insert(req.body.codeholders.map((codeholder, arrIndex) => {
+				return {
+					countryCode: req.params.countryCode,
+					arrIndex,
+					...codeholder,
+				};
+			}));
+
+		await trx.commit();
+
 		res.sendStatus(204);
 	}
 };

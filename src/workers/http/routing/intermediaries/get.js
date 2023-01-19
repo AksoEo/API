@@ -1,6 +1,6 @@
 import QueryUtil from 'akso/lib/query-util';
 
-import parSchema from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
@@ -15,7 +15,8 @@ export default {
 	schema: schema,
 
 	run: async function run (req, res) {
-		const query = AKSO.db('intermediaries');
-		await QueryUtil.handleCollection({ req, res, schema, query });
+		const query = AKSO.db('intermediaries')
+			.groupBy('countryCode');
+		await QueryUtil.handleCollection({ req, res, schema, query, afterQuery, });
 	}
 };

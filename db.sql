@@ -2394,11 +2394,11 @@ DROP TABLE IF EXISTS `intermediaries`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `intermediaries` (
   `countryCode` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `arrIndex` tinyint NOT NULL,
   `codeholderId` int unsigned NOT NULL,
   `paymentDescription` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`countryCode`),
+  PRIMARY KEY (`countryCode`,`arrIndex`) USING BTREE,
   KEY `codeholderId` (`codeholderId`),
-  FULLTEXT KEY `paymentDescription` (`paymentDescription`),
   CONSTRAINT `intermediaries_ibfk_1` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `intermediaries_ibfk_2` FOREIGN KEY (`countryCode`) REFERENCES `countries` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -3802,4 +3802,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-11 18:47:11
+-- Dump completed on 2023-01-19 18:00:02

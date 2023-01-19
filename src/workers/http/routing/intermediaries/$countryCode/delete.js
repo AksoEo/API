@@ -1,4 +1,4 @@
-import parSchema from '../schema';
+import { schema as parSchema } from '../schema';
 
 const schema = {
 	...parSchema,
