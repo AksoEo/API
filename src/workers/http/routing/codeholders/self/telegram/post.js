@@ -10,10 +10,10 @@ export default {
 
 	run: async function run (req, res) {
 		// Make sure Telegraf is ready
-		// This only happens if the request is performed faster than the worker is ready, which should never happen
+		// This only happens if the telegraf worker is not (yet) ready
 		if (!AKSO.telegrafBotUser) {
-			return res.type('text/plain').status(400)
-				.send('Please try again later');
+			return res.type('text/plain').status(403)
+				.send('Telegram support is currently unavailable, please try again later.');
 		}
 
 		// Check if Telegram is already linked

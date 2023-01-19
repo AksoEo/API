@@ -24,7 +24,15 @@ const queue = new PQueue({
 export async function init () {
 	telegraf = new Telegraf(AKSO.conf.telegram.token);
 	telegraf.start(handleDeepLink);
-	await telegraf.launch();
+	try {
+		await telegraf.launch();
+	} catch (e) {
+		AKSO.log.error('An error occured when setting up Telegram:');
+		console.error(e); // eslint-disable-line no-console
+		AKSO.log.warn('Running without sending Telegram messages.');
+
+		return;
+	}
 
 	process.send({
 		forward: true,
@@ -63,7 +71,7 @@ async function timer () {
 		}
 	} while (entry);
 	await dir.close();
-	scheduleTimer();
+	scheduleTimer(2000);
 }
 
 /**
