@@ -449,7 +449,7 @@ export default {
 		res.sendStatus(201);
 
 		// Send payment instructions email if applicable
-		if (paymentMethod.type !== 'stripe' && req.body.customer?.email) {
+		if (paymentMethod.type !== 'stripe' && req.body.customer?.email && !paymentMethod.internal) {
 			await sendInstructionsEmail(id);
 		}
 	}
