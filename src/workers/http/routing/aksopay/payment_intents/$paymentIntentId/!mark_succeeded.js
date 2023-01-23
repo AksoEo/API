@@ -1,7 +1,18 @@
 import * as intentUtil from 'akso/lib/aksopay-intent-util';
 
 export default {
-	schema: {},
+	schema: {
+		body: {
+			type: 'object',
+			properties: {
+				sendReceipt: {
+					type: 'boolean',
+					default: true,
+				}
+			},
+			additionalProperties: false
+		},
+	},
 
 	run: async function run (req, res) {
 		// Make sure the user has the necessary perms
@@ -22,7 +33,7 @@ export default {
 			await intentUtil.updateStatus(paymentIntent.id, 'submitted');
 		}
 
-		await intentUtil.updateStatus(paymentIntent.id, 'succeeded');
+		await intentUtil.updateStatus(paymentIntent.id, 'succeeded', undefined, undefined, req.body.sendReceipt);
 
 		res.sendStatus(204);
 	}

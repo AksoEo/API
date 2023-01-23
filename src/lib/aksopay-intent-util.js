@@ -14,7 +14,7 @@ import { base32 } from 'rfc4648';
  * @param  {number}   [time]       The time of the change, defaults to the current time
  * @param  {Object}   [updateData] Additional update data
  */
-export async function updateStatuses (ids, status, time = moment().unix(), updateData = {}) {
+export async function updateStatuses (ids, status, time = moment().unix(), updateData = {}, sendReceipt = true) {
 	// Obtain existing intent info
 	const paymentIntentsArr = await AKSO.db('pay_intents')
 		.select('id', 'statusTime')
@@ -31,7 +31,7 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 		const statusTime = paymentIntentsStatusTime[hexId];
 		const data = updateDataById[hexId] = {};
 
-		if (!updateData.status && statusTime < time) {
+		if (!updateData.status && statusTime <= time) {
 			data.status = status;
 			data.statusTime = time;
 		}
@@ -75,7 +75,7 @@ export async function updateStatuses (ids, status, time = moment().unix(), updat
 	await Promise.all(promises);
 	await trx.commit();
 
-	if (status === 'succeeded') {
+	if (status === 'succeeded' && sendReceipt) {
 		for (const id of ids) {
 			try {
 				await sendReceiptEmail(id);
@@ -169,7 +169,7 @@ export async function sendReceiptEmail (id, email = undefined) {
 			})
 		.where({
 			id,
-			status: 'succeeded'
+			status: 'succeeded',
 		});
 	if (!intent) {
 		const err = new Error('unknown intent');

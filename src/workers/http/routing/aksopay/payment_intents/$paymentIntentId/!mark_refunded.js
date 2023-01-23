@@ -42,7 +42,8 @@ export default {
 		}
 
 		if (paymentIntent.succeededTime === null) {
-			await intentUtil.updateStatus(paymentIntent.id, 'succeeded');
+			// If we are refunding an intent that never was marked as succeeded, we first need to set it to succeeded
+			await intentUtil.updateStatus(paymentIntent.id, 'succeeded', undefined, undefined, false);
 		}
 		await intentUtil.updateStatus(paymentIntent.id, 'refunded', moment().unix(), { amountRefunded: totalRefund });
 
