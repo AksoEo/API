@@ -14,7 +14,7 @@ export async function init () {
 	scheduleTimer(0);
 }
 
-function scheduleTimer (wait = 1500) {
+function scheduleTimer (wait = 5000) {
 	setTimeout(() => {
 		timer().catch(e => {
 			AKSO.log.error(e);
@@ -42,7 +42,7 @@ async function timer () {
 		} catch (e) {
 			AKSO.log.error(e);
 			if (e.response && e.response.body && e.response.body.errors) {
-				console.log(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
+				console.error(e.response.body.errors.map(JSON.stringify).join('\n\n')); // eslint-disable-line no-console
 			}
 
 			const newName = entry.name.replace('mail-', 'err-');
