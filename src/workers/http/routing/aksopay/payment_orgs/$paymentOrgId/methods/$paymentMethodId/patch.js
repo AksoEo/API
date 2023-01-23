@@ -30,6 +30,12 @@ export default {
 					maxLength: 5000,
 					nullable: true
 				},
+				descriptionPreview: {
+					type: 'string',
+					minLength: 1,
+					maxLength: 2000,
+					nullable: true
+				},
 				currencies: {
 					type: 'array',
 					items: {

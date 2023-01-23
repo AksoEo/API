@@ -9,6 +9,7 @@ export const schema = {
 		name: 'fs',
 		internalDescription: 's',
 		description: 's',
+		descriptionPreview: 's',
 		currencies: '',
 		paymentValidity: '',
 		maxAmount: '',
