@@ -2984,6 +2984,7 @@ CREATE TABLE `pay_methods` (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `internalDescription` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descriptionPreview` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `internal` tinyint(1) NOT NULL DEFAULT '0',
   `currencies` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentValidity` int unsigned DEFAULT NULL,
@@ -3004,6 +3005,7 @@ CREATE TABLE `pay_methods` (
   FULLTEXT KEY `internalDescription` (`internalDescription`),
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `description` (`description`),
+  FULLTEXT KEY `descriptionPreview` (`descriptionPreview`),
   CONSTRAINT `pay_methods_ibfk_1` FOREIGN KEY (`paymentOrgId`) REFERENCES `pay_orgs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3802,4 +3804,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-19 18:00:02
+-- Dump completed on 2023-01-23 17:07:34
