@@ -236,10 +236,11 @@ export function init () {
 				if (status >= 500) {
 					const url = Url.parse(req.originalUrl).pathname;
 					if (err.sqlState) { // It's from knex
+						const error = err.sqlMessage ?? err.originalStack ?? err.stack ?? err;
 						AKSO.log.error(
 							`A SQL error occured at ${req.method} ${url}\n` +
 							`${err.errno} ${err.code} [state ${err.sqlState}]\n` +
-							`${err.stack || err.originalStack}`
+							error
 						);
 					} else {
 						const error = err.stack ? err.stack : err;
