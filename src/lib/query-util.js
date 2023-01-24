@@ -419,7 +419,7 @@ const QueryUtil = {
 				query.whereRaw(searchStmt);
 
 			} else {
-				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f, true, db));
+				const searchCols = req.query.search.cols.map(f => QueryUtil.getAlias(schema.fieldAliases, f, false, db));
 				selectFields.push(db.raw(
 					`MATCH (${'??,'.repeat(searchCols.length).slice(0,-1)})
 					AGAINST (? IN BOOLEAN MODE) as ??`,
