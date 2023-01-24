@@ -10,6 +10,7 @@ import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
 import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/applications/schema';
 import magazineSubscriptionsSchema from './$codeholderId/magazine_subscriptions/schema';
+import codeholderMembershipSchema from './$codeholderId/membership/schema';
 import { schema as newsletterSubscriptionsSchema } from './self/newsletter_subscriptions/schema';
 
 export const schema = {
@@ -183,9 +184,11 @@ export const schema = {
 						lifetime: 'f',
 						year: 'f',
 						canuto: 'f',
+						isActive: 'f',
 					},
+					fieldAliases: codeholderMembershipSchema.fieldAliases,
 					query: this,
-					filter
+					filter,
 				});
 			});
 		},
