@@ -1,4 +1,3 @@
-import path from 'path';
 import { escapeId } from 'mysql2';
 
 import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
@@ -78,7 +77,7 @@ export default {
 			})
 			.first('org', 'dateFrom');
 		if (!congressData) { return res.sendStatus(404); }
-		if (!req.hasPermission('congress_instances.participants.create.' + congressData.org)) { return res.sendStatus(403); }
+		if (!req.hasPermission('congress_instances.participants.update.' + congressData.org)) { return res.sendStatus(403); }
 
 		// Make sure the form exists
 		const formData = await AKSO.db('congresses_instances_registrationForm')
@@ -236,17 +235,6 @@ export default {
 		}
 		await trx.commit();
 
-		const dataIdHex = req.params.dataId.toString('hex');
-		res.set('Location', path.join(
-			AKSO.conf.http.path,
-			'congresses',
-			req.params.congressId,
-			'instances',
-			req.params.instanceId,
-			'participants',
-			dataIdHex
-		));
-		res.set('X-Identifier', dataIdHex);
 		res.sendStatus(204);
 	}
 };
