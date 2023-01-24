@@ -54,6 +54,10 @@ const subscribersSubSchema = {
 					type: 'object',
 					nullable: true
 				},
+				excludeFilter: {
+					type: 'object',
+					nullable: true,
+				},
 				freelyAvailableAfter: {
 					type: 'string',
 					pattern: '^P(\\d\\d?Y)?(\\d\\d?M)?(\\d\\d?D)?$',
@@ -139,6 +143,16 @@ export function verifySubscribers (subscribers) {
 				assertValidCodeholderFilter(settings.filter);
 			} catch (e) {
 				const err = new Error(`Invalid codeholder filter used in subscribers.${key}.filter: ${e.message}`);
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+
+		if (settings.excludeFilter) {
+			try {
+				assertValidCodeholderFilter(settings.excludeFilter);
+			} catch (e) {
+				const err = new Error(`Invalid codeholder filter used in subscribers.${key}.excludeFilter: ${e.message}`);
 				err.statusCode = 400;
 				throw err;
 			}

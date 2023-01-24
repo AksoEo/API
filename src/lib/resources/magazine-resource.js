@@ -84,13 +84,28 @@ class MagazineResource extends SimpleResource {
 
 				let filter;
 				if (filterArr.length === 1) {
-					filter = filterArr[0];
+					filter = {
+						isDead: false,
+						...filterArr[0],
+					};
 				} else {
 					filter = {
 						isDead: false,
 						$or: filterArr
 					};
 				}
+
+				if (val.excludeFilter) {
+					filter = {
+						$and: [
+							filter,
+							{
+								$not: val.excludeFilter,
+							},
+						],
+					};
+				}
+
 				obj.subscriberFiltersCompiled[key] = filter;
 			}
 		}
