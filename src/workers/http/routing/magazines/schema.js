@@ -105,6 +105,7 @@ export function setDefaultsSubscribers (subscribers) {
 			membersFilterInner: null,
 			membersIncludeLastYear: null,
 			filter: null,
+			excludeFilter: null,
 			freelyAvailableAfter: null,
 			...subscribers[key]
 		};
