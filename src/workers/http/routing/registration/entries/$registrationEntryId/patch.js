@@ -15,9 +15,6 @@ const schema = {
 			year: {
 				type: 'number',
 				format: 'year',
-				validateFunction: function (val) {
-					return val >= (new Date()).getFullYear();
-				}
 			},
 			intermediary: {
 				type: 'string',
