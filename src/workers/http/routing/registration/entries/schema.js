@@ -244,7 +244,7 @@ export async function afterQuery (arr, done) {
 			.whereIn('registrationEntryId', ids)
 			.orderBy('registrationEntryId', 'arrayId')
 			.select(
-				'registrationEntryId', 'type', 'amount', 'paperVersion',
+				'registrationEntryId', 'type', 'amount', 'paperVersion', 'membershipCategory', 'magazine',
 				AKSO.db.raw('IF(`type`="membership", `membershipCategoryId`, `magazineId`) AS `id`'));
 
 		const offersById = {};
@@ -259,6 +259,8 @@ export async function afterQuery (arr, done) {
 				amount: offer.amount,
 				id: offer.id,
 				paperVersion: offer.type === 'magazine' ? !!offer.paperVersion : undefined,
+				magazine: offer.type === 'magazine' ? offer.magazine : undefined,
+				membershipCategory: offer.type === 'membership' ? offer.membershipCategory : undefined,
 			});
 		}
 
