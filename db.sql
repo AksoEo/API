@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.31-0ubuntu0.20.04.2
+-- Server version	8.0.32-0ubuntu0.20.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -3171,7 +3171,9 @@ CREATE TABLE `registration_entries_offers` (
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` int unsigned NOT NULL,
   `membershipCategoryId` int unsigned DEFAULT NULL,
+  `membershipCategory` json DEFAULT NULL,
   `magazineId` int unsigned DEFAULT NULL,
+  `magazine` json DEFAULT NULL,
   `paperVersion` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`registrationEntryId`,`arrayId`),
   KEY `membershipCategoryId` (`membershipCategoryId`),
@@ -3804,4 +3806,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-23 17:07:34
+-- Dump completed on 2023-01-31 16:40:33

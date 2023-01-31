@@ -6,6 +6,8 @@ import { base32 } from 'rfc4648';
 
 import { schema as codeholderSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
+import MembershipCategoryResource from 'akso/lib/resources/membership-category-resource';
+import MagazineResource from 'akso/lib/resources/magazine-resource';
 
 import { offersSchema, codeholderDataSchema } from './schema';
 
@@ -141,12 +143,16 @@ export default {
 			}
 		}
 
-		const membershipsExisting = await AKSO.db('membershipCategories')
-			.select('id')
-			.whereIn('id', membershipIds)
-			.pluck('id');
+		const membershipsArr = await AKSO.db('membershipCategories')
+			.select('id', 'nameAbbrev', 'name', 'description', 'givesMembership', 'lifetime', 'availableFrom', 'availableTo')
+			.whereIn('id', membershipIds);
+		const membershipsObj = {};
+		for (const membership of membershipsArr) {
+			membershipsObj[membership.id] = (new MembershipCategoryResource(membership)).obj;
+		}
+
 		for (const id of membershipIds) {
-			if (membershipsExisting.includes(id)) { continue; }
+			if (id in membershipsObj) { continue; }
 			return res.type('text/plain').status(400)
 				.send(`Unknown membership category ${id}`);
 		}
@@ -155,16 +161,28 @@ export default {
 		const magazineIds = [];
 		for (const offer of req.body.offers) {
 			if (offer.type === 'magazine') {
-				membershipIds.push(offer.id);
+				magazineIds.push(offer.id);
 			}
 		}
 
-		const magazinesExisting = await AKSO.db('magazines')
-			.select('id')
-			.whereIn('id', magazineIds)
-			.pluck('id');
+		const magazinesArr = await AKSO.db('magazines')
+			.select('id', 'org', 'name', 'description', 'issn', 'subscribers')
+			.whereIn('id', magazineIds);
+		const magazinesObj = {};
+		for (const magazine of magazinesArr) {
+			magazine.subscriberFiltersCompiled = 1;
+			const fakeReq = {
+				query: {
+					fields: [
+						'id', 'org', 'name', 'description', 'issn', 'subscribers',
+						'subscriberFiltersCompiled',
+					],
+				},
+			};
+			magazinesObj[magazine.id] = (new MagazineResource(magazine, fakeReq)).obj;
+		}
 		for (const id of magazineIds) {
-			if (magazinesExisting.includes(id)) { continue; }
+			if (id in magazinesObj) { continue; }
 			return res.type('text/plain').status(400)
 				.send(`Unknown magazine ${id}`);
 		}
@@ -243,8 +261,10 @@ export default {
 					type: offer.type,
 					amount: offer.amount,
 					membershipCategoryId: offer.type === 'membership' ? offer.id : undefined,
+					membershipCategory: offer.type === 'membership' ? membershipsObj[offer.id]: undefined,
 					magazineId: offer.type === 'magazine' ? offer.id : undefined,
-					paperVersion: offer.type === 'magazine' ? (offer.paperVersion || false) : undefined,
+					magazine: offer.type === 'magazine' ? magazinesObj[offer.id] : undefined,
+					paperVersion: offer.type === 'magazine' ? (offer.paperVersion ?? false) : undefined,
 				};
 			}));
 
