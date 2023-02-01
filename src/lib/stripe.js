@@ -166,7 +166,9 @@ export async function processEvent (stripeSecretKey, event, stripePaymentIntentI
 			AKSO.log.error(e);
 			return;
 		}
-		const totalRefund = allCharges.data.reduce((a, b) => a.amount_refunded + b.amount_refunded);
+		const totalRefund = allCharges.data
+			.map(x => x.amount_refunded)
+			.reduce((a, b) => a + b);
 		const updateData = { amountRefunded: totalRefund };
 
 		if (existingEvents.includes('refunded')) {
