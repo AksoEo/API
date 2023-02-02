@@ -2590,7 +2590,7 @@ CREATE TABLE `magazines_subscriptions` (
   `paperVersion` tinyint(1) NOT NULL DEFAULT '0',
   `internalNotes` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `magazineId` (`magazineId`,`year`,`codeholderId`),
+  UNIQUE KEY `magazineId` (`magazineId`,`year`,`codeholderId`,`paperVersion`) USING BTREE,
   KEY `createdTime` (`createdTime`),
   KEY `year` (`year`),
   KEY `codeholderId` (`codeholderId`),
@@ -3806,4 +3806,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-31 16:40:33
+-- Dump completed on 2023-02-02 20:26:49
