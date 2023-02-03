@@ -97,6 +97,19 @@ export function init () {
 				overwrite: true,
 				httpOnly: true,
 			}));
+			// FIXME: temp fix for broken compat between cookie-session and passport@0.6
+			// from: https://github.com/jaredhanson/passport/issues/904#issuecomment-1307558283
+			// Downgrading to passport@0.5 is not an option due to CVE-2022-25896 fixed in 0.6 which has not been backported
+			// register regenerate & save after the cookieSession middleware initialization
+			app.use(function(request, response, next) {
+				if (request.session && !request.session.regenerate) {
+					request.session.regenerate = cb => cb();
+				}
+				if (request.session && !request.session.save) {
+					request.session.save = cb => cb();
+				}
+				next();
+			});
 
 			// Add custom methods to req and res
 			app.use(setupMiddleware);
