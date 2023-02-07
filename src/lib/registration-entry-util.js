@@ -292,7 +292,8 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 			const duplicateMagazineSubscription = await db('magazines_subscriptions')
 				.where({
 					codeholderId: existingCodeholderData.codeholderId,
-					year: registrationEntry.year
+					year: registrationEntry.year,
+					paperVersion: registrationEntry.paperVersion,
 				})
 				.whereIn('magazineId', magazineOffers.map(x => x.magazineId))
 				.first('magazineId');
