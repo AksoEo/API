@@ -293,7 +293,9 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 				.where({
 					codeholderId: existingCodeholderData.codeholderId,
 					year: registrationEntry.year,
-					paperVersion: registrationEntry.paperVersion,
+					// for paperVersion == 1 we only need to check for 1
+					// for paperVersion == 0 we need to check for any (as 1 includes 0)
+					paperVersion: registrationEntry.paperVersion ? true : undefined,
 				})
 				.whereIn('magazineId', magazineOffers.map(x => x.magazineId))
 				.first('magazineId');
