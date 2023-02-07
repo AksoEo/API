@@ -6,8 +6,7 @@ export default {
 
 	run: async function run (req, res, next) { // eslint-disable-line no-unused-vars
 		if (req.user && req.user.isUser()) {
-			req.logOut();
-			req.session = null;
+			await req.logOut({ keepSessionInfo: false });
 			res.clearCookie('remember_totp', { path: '/' });
 			res.sendStatus(204);
 		} else {

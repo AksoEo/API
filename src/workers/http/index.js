@@ -267,8 +267,7 @@ export function init () {
 				} else {
 					if (err.message) {
 						if (err.message === 'Invalid session') {
-							req.session = null;
-							req.logout();
+							await req.logOut();
 						}
 
 						res.status(status).type('text/plain').send(err.message);
