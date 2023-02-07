@@ -167,7 +167,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 		// Give the offers
 		const offers = await AKSO.db('registration_entries_offers')
 			.where('registrationEntryId', registrationEntryId)
-			.select('type', 'membershipCategoryId', 'magazineId');
+			.select('type', 'membershipCategoryId', 'magazineId', 'paperVersion');
 
 		const membershipInsert = [];
 		const magazineInsert = [];
@@ -176,7 +176,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				membershipInsert.push({
 					year: registrationEntry.year,
 					categoryId: offer.membershipCategoryId,
-					codeholderId
+					codeholderId,
 				});
 			} else if (offer.type === 'magazine') {
 				magazineInsert.push({
@@ -185,7 +185,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 					year: registrationEntry.year,
 					codeholderId,
 					createdTime: moment().unix(),
-					paperVersion: registrationEntry.paperVersion,
+					paperVersion: offer.paperVersion,
 				});
 			}
 		}
@@ -251,10 +251,10 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 		// Check for offer issues
 		const offers = await db('registration_entries_offers')
 			.where('registrationEntryId', registrationEntryId)
-			.select('arrayId', 'membershipCategoryId');
+			.select('*');
 
 		const membershipOffers = offers
-			.filter(x => x.membershipCategoryId !== undefined);
+			.filter(x => x.type === 'membership');
 		if (membershipOffers.length) {
 			// Check if the codeholder already has any of the membership offers
 			const duplicateMembership = await db('membershipCategories_codeholders')
@@ -286,28 +286,36 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 		}
 
 		const magazineOffers = offers
-			.filter(x => x.magazineId !== undefined);
+			.filter(x => x.type === 'magazine');
 		if (magazineOffers.length) {
 			// Check if the codeholder already has any of the magazine offers
 			const duplicateMagazineSubscription = await db('magazines_subscriptions')
 				.where({
 					codeholderId: existingCodeholderData.codeholderId,
 					year: registrationEntry.year,
-					// for paperVersion == 1 we only need to check for 1
-					// for paperVersion == 0 we need to check for any (as 1 includes 0)
-					paperVersion: registrationEntry.paperVersion ? true : undefined,
 				})
-				.whereIn('magazineId', magazineOffers.map(x => x.magazineId))
-				.first('magazineId');
+				.where(function () {
+					for (const offer of magazineOffers) {
+						this.orWhere({
+							magazineId: offer.magazineId,
+							paperVersion: offer.paperVersion,
+						});
+					}
+				})
+				.first('magazineId', 'paperVersion');
 
 			if (duplicateMagazineSubscription) {
 				// Find the arrayId of the duplicate offer
 				let arrayId;
 				for (const magazineSubscriptionOffer of offers) {
-					arrayId = magazineSubscriptionOffer.arrayId;
-					if (magazineSubscriptionOffer.magazineId === duplicateMagazineSubscription.magazineId) {
-						break;
+					if (magazineSubscriptionOffer.magazineId !== duplicateMagazineSubscription.magazineId) {
+						continue;
 					}
+					// soft compare because of a lack of type-casting num to bool
+					if (magazineSubscriptionOffer.paperVersion != duplicateMagazineSubscription.paperVersion) {
+						continue;
+					}
+					arrayId = magazineSubscriptionOffer.arrayId;
 				}
 
 				const updateData = {
