@@ -11,7 +11,8 @@ export default {
 			.where({
 				codeholderId: req.user.user,
 				voteId: req.params.voteId,
-				hasResults: true
+				hasResults: true,
+				publishResults: true,
 			});
 
 		if (!voteData) { return res.sendStatus(404); }
