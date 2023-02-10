@@ -76,7 +76,7 @@ export default {
 						usedOptions.push(col);
 					}
 				}
-				ballot = ballot.map(x => x.join(','));
+				ballot = ballot.map(x => x.join('='));
 			} else { // stv, tm
 				for (const row of ballot) {
 					if (!Number.isSafeInteger(row) || row < 0 || row >= numOptions || usedOptions.includes(row)) {
@@ -94,7 +94,7 @@ export default {
 				}
 			}
 
-			ballot = ballot.join('\n');
+			ballot = ballot.join('>');
 		}
 
 		if (voteData.isTieBreaker) {
