@@ -62,6 +62,23 @@ formValues.CONGRESS_REGISTRATION = {
 	'registrationEntry.dataMeta': ascArray(union([ NULL, NUMBER, STRING, BOOL ])),
 	'registrationEntry.dataVals': ascArray(union([ NULL, NUMBER, STRING, BOOL, ascArray(union([ BOOL, NULL ])) ])),
 };
+formValues.VOTE_CAST_BALLOT = {
+	...formValues.CODEHOLDER,
+
+	'vote.id': NUMBER,
+	'vote.org': STRING,
+	'vote.name': STRING,
+	'vote.description': union([ NULL, STRING ]),
+	'vote.timeStart': NUMBER,
+	'vote.timeEnd': NUMBER,
+	'vote.hasStarted': BOOL,
+	'vote.ballotsSecret': BOOL,
+	'vote.type': STRING,
+	'vote.publishVoters': BOOL,
+	'vote.publishResults': BOOL,
+	'vote.optionsKeys': union([ NULL, ascArray(ascArray(STRING)) ]),
+	'vote.optionsVals': union([ NULL, ascArray(ascArray(union([ STRING, NUMBER, NULL ]))) ]),
+};
 
 const bogusData = {
 	CODEHOLDER: {
@@ -131,6 +148,21 @@ bogusData.CONGRESS_REGISTRATION = {
 		[ 'money', 'Donaco al la kongreso', 'EUR' ],
 	],
 	'registrationEntry.dataVals': [ 'Test McTest', 'example@example.com', 'fr', 1000 ],
+};
+bogusData.VOTE_CAST_BALLOT = {
+	...bogusData.CODEHOLDER,
+
+	'vote.id': 3,
+	'vote.org': 'uea',
+	'vote.name': 'Elekto de Komitatanoj B',
+	'vote.description': 'Venis la tempo por elekti niajn **Komitatanojn B**. *Voĉdonu nun!*',
+	'vote.timeStart': 1667814523,
+	'vote.timeEnd': 1667900923,
+	'vote.hasStarted': true,
+	'vote.ballotsSecret': true,
+	'vote.type': 'tm',
+	'vote.publishVoters': false,
+	'vote.publishResults': true,
 };
 
 class AKSONotifTemplateIntent extends Enum {

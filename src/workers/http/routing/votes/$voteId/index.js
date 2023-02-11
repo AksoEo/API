@@ -9,6 +9,8 @@ import method$get from './get';
 import method$delete from './delete';
 import method$patch from './patch';
 
+import operation$send_cast_ballot_notif from './!send_cast_ballot_notif';
+
 /**
  * Sets up /votes/{voteId}
  * @return {express.Router}
@@ -22,6 +24,8 @@ export function init () {
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);
 	bindMethod(router, '/', 'patch', method$patch);
+
+	bindMethod(router, '/!send_cast_ballot_notif', 'post', operation$send_cast_ballot_notif);
 
 	return router;
 }

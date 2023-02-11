@@ -17,13 +17,14 @@ import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate, g
  * Renders a notif template and sends it to the recipients
  * @param  {number}  templateId           The id of the notif template
  * @param  {Object}  [intentData]         An object containing the context data relevant for the template's intent. Codeholder data is automatically added.
- * @param  {Object}  req                  The data to pass to QueryUtil.simpleCollection, e.g. filter
+ * @param  {Object}  [req]                Data to pass to QueryUtil.simpleCollection, e.g. filter
  * @param  {Object}  [fieldWhitelist]     A field whitelist to pass to QueryUtil.simpleCollection
  * @param  {boolean} [ignoreMemberFilter] Whether to ignore the member filter if present in req
+ * @param  {Function}[queryModifier]      A sync function to modify the raw knex codeholder query
  */
 export async function sendTemplate ({
-	templateId, intentData = {}, req, fieldWhitelist = [],
-	ignoreMemberFilter = false,
+	templateId, intentData = {}, req = {}, fieldWhitelist = [],
+	ignoreMemberFilter = false, queryModifier,
 }) {
 	const template = await AKSO.db('notif_templates')
 		.where('id', templateId)
@@ -33,13 +34,18 @@ export async function sendTemplate ({
 	const recipientsQuery = AKSO.db('view_codeholders')
 		.whereNotNull('email') // TODO: Remove when adding proper Telegram notif support
 		.where('isDead', false);
+	if (queryModifier) {
+		queryModifier(recipientsQuery);
+	}
 
 	if (!ignoreMemberFilter) {
 		memberFilter(codeholderSchema, recipientsQuery, req);
 	}
 
 	const customReq = {
-		query: {},
+		query: {
+			filter: {},
+		},
 		...req
 	};
 	customReq.query.fields = [
