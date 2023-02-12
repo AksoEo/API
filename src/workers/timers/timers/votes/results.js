@@ -42,13 +42,13 @@ async function obtainVoteResult (vote) {
 	if ([ 'rp', 'stv', 'tm' ].includes(vote.type)) {
 		candidates = [...vote.options.keys()];
 		ballots = ballots.map(ballot => {
-			ballot = ballot.split('\n')
+			ballot = ballot.split('>')
 				.filter(x => x); // remove empty rows
 			if (vote.type === 'rp') {
 				ballot = ballot
 					.map(row => {
 						return row
-							.split(',')
+							.split('=')
 							.filter(x => x) // remove empty cols
 							.map(col => parseInt(col, 10));
 					});
