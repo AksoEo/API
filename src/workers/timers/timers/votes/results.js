@@ -67,8 +67,7 @@ async function obtainVoteResult (vote) {
 
 	let tieBreakerBallot = undefined;
 	if (vote.tieBreakerBallot) {
-		tieBreakerBallot = vote.tieBreakerBallot.split('\n');
-		if (vote.type === 'stv') { tieBreakerBallot = tieBreakerBallot.join(''); }
+		tieBreakerBallot = vote.tieBreakerBallot.split('>');
 	}
 
 	const result = runMappedConfigVote(vote, ballots, numVoters, candidates, tieBreakerBallot);
