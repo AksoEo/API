@@ -41,22 +41,30 @@ async function obtainVoteResult (vote) {
 		.pluck('ballot');
 	if ([ 'rp', 'stv', 'tm' ].includes(vote.type)) {
 		candidates = [...vote.options.keys()];
-		ballots = ballots.map(ballot => {
-			ballot = ballot.split('>')
-				.filter(x => x); // remove empty rows
-			if (vote.type === 'rp') {
-				ballot = ballot
-					.map(row => {
-						return row
-							.split('=')
-							.filter(x => x) // remove empty cols
-							.map(col => parseInt(col, 10));
-					});
-			} else {
-				ballot = ballot.map(row => parseInt(row, 10));
-			}
-			return ballot;
-		});
+		if (vote.type === 'tm') {
+			ballots = ballots.map(ballot => {
+				return ballot.split('=')
+					.filter(x => x) // remove empty rows
+					.map(x => parseInt(x, 10));
+			});
+		} else { // rp, stv
+			ballots = ballots.map(ballot => {
+				ballot = ballot.split('>')
+					.filter(x => x); // remove empty rows
+				if (vote.type === 'rp') {
+					ballot = ballot
+						.map(row => {
+							return row
+								.split('=')
+								.filter(x => x) // remove empty cols
+								.map(col => parseInt(col, 10));
+						});
+				} else {
+					ballot = ballot.map(row => parseInt(row, 10));
+				}
+				return ballot;
+			});
+		}
 	} else if ([ 'yn', 'ynb' ].includes(vote.type)) {
 		candidates = ['y','n'];
 		ballots = ballots.map(ballot => {
