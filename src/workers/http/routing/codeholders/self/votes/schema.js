@@ -32,6 +32,7 @@ export default {
 		'mentionThresholdInclusive': '',
 		'maxOptionsPerBallot': '',
 		'tieBreakerCodeholder': '',
+		'publishResults': '',
 		'publishVoters': '',
 		'publishVotersPercentage': '',
 		'options': ''
