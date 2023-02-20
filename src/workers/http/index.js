@@ -267,7 +267,12 @@ export function init () {
 				} else {
 					if (err.message) {
 						if (err.message === 'Invalid session') {
-							await req.logOut();
+							await new Promise((resolve, reject) => {
+								req.logOut({ keepSessionInfo: false }, err => {
+									if (err) { reject(err); }
+									else { resolve(); }
+								});
+							});
 						}
 
 						res.status(status).type('text/plain').send(err.message);
