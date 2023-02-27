@@ -32,6 +32,11 @@ export default {
 				data: {
 					type: 'object'
 				},
+				sequenceId: {
+					type: 'integer',
+					format: 'int32',
+					nullable: true
+				},
 				customFormVars: {
 					type: 'object',
 					patternProperties: {
@@ -138,6 +143,7 @@ export default {
 				dataId,
 				approved: req.body.approved,
 				notes: req.body.notes,
+				sequenceId: req.body.sequenceId,
 				price,
 			});
 		if (Object.keys(req.body.customFormVars ?? {}).length) {

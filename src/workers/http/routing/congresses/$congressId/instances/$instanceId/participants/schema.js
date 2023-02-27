@@ -49,11 +49,30 @@ export const formValues = {
 
 // Takes care of additional data validation for POST and PATCH
 export async function manualDataValidation (req, res, formData, isPatch = false) {
+	const congressInstanceId = formData.congressInstanceId;
+	const dataId = req.params?.dataId ?? null;
+
 	// Require codeholderId if not allowGuests
 	if (!isPatch && !formData.allowGuests && !('codeholderId' in req.body)) {
 		const err = new Error('codeholderId is required as allowGuests is false in the registration form');
 		err.statusCode = 400;
 		throw err;
+	}
+
+	// Make sure the sequenceId isn't taken by another participant
+	if ('sequenceId' in req.body) {
+		const sequenceIdTaken = await AKSO.db('congresses_instances_participants')
+			.where({
+				congressInstanceId,
+				sequenceId: req.body.sequenceId
+			})
+			.whereNot({ dataId })
+			.first(1);
+		if (sequenceIdTaken) {
+			const err = new Error('sequenceId already registered with another dataId');
+			err.statusCode = 423;
+			throw err;
+		}
 	}
 
 	if ('codeholderId' in req.body) {
@@ -73,7 +92,7 @@ export async function manualDataValidation (req, res, formData, isPatch = false)
 		// Find the custom form var def
 		const customFormVars = await AKSO.db('congresses_instances_registrationForm_customFormVars')
 			.select('name', 'type')
-			.where('congressInstanceId', req.params.instanceId);
+			.where({ congressInstanceId });
 		const customFormVarsObj = {};
 		for (const customFormVar of customFormVars) {
 			customFormVarsObj[customFormVar.name] = customFormVar.type;
