@@ -86,6 +86,20 @@ export async function manualDataValidation (req, res, formData, isPatch = false)
 			err.statusCode = 404;
 			throw err;
 		}
+
+		// Make sure the participant doesn't already exist
+		const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
+			.where({
+				congressInstanceId: req.params.instanceId,
+				codeholderId: req.body.codeholderId,
+			})
+			.whereNot({ dataId })
+			.first(1);
+		if (codeholderAlreadyExists) {
+			const err = new Error('codeholderId already registered with another dataId');
+			err.statusCode = 409;
+			throw err;
+		}
 	}
 
 	if ('customFormVars' in req.body) {

@@ -1794,12 +1794,13 @@ CREATE TABLE `congresses_instances_participants` (
   `price` int unsigned DEFAULT NULL,
   `cancelledTime` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
-  UNIQUE KEY `codeholderId` (`codeholderId`) USING BTREE,
   UNIQUE KEY `congressInstanceId` (`congressInstanceId`,`sequenceId`),
+  UNIQUE KEY `congressInstanceId_2` (`congressInstanceId`,`codeholderId`),
   KEY `dataId` (`dataId`),
   KEY `approved` (`approved`),
   KEY `price` (`price`),
   KEY `cancelledTime` (`cancelledTime`),
+  KEY `codeholderId` (`codeholderId`) USING BTREE,
   FULLTEXT KEY `notes` (`notes`),
   CONSTRAINT `congresses_instances_participants_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `congresses_instances_participants_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2984,7 +2985,7 @@ CREATE TABLE `pay_methods` (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `internalDescription` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descriptionPreview` varchar(2000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descriptionPreview` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `internal` tinyint(1) NOT NULL DEFAULT '0',
   `currencies` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `paymentValidity` int unsigned DEFAULT NULL,
@@ -3042,7 +3043,7 @@ CREATE TABLE `pay_stripe_webhooks` (
   `secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `apiVersion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `enabledEvents` varchar(3072) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`stripeSecretKey`),
   UNIQUE KEY `stripeId` (`stripeId`),
   KEY `apiVersion` (`apiVersion`)
@@ -3806,4 +3807,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-02-03 13:55:11
+-- Dump completed on 2023-02-28 12:51:37

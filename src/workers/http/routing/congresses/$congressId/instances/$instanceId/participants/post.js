@@ -84,20 +84,6 @@ export default {
 
 		await manualDataValidation(req, res, formData);
 
-		if ('codeholderId' in req.body) {
-			// Make sure the participant doesn't already exist
-			const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
-				.where({
-					congressInstanceId: req.params.instanceId,
-					codeholderId: req.body.codeholderId
-				})
-				.first(1);
-			if (codeholderAlreadyExists) {
-				return res.status(409).type('text/plain')
-					.send('codeholderId already registered');
-			}
-		}
-
 		const formValues = {
 			'@created_time': null,
 			'@edited_time': null,

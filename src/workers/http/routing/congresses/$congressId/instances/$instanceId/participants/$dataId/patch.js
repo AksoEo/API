@@ -122,21 +122,6 @@ export default {
 
 		await manualDataValidation(req, res, formData, true);
 
-		if ('codeholderId' in req.body) {
-			// Make sure the participant doesn't already exist
-			const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
-				.where({
-					congressInstanceId: req.params.instanceId,
-					codeholderId: req.body.codeholderId
-				})
-				.whereNot('dataId', req.params.dataId)
-				.first(1);
-			if (codeholderAlreadyExists) {
-				return res.status(409).type('text/plain')
-					.send('codeholderId already registered with another dataId');
-			}
-		}
-
 		let price = undefined;
 		if (req.body.data || req.body.customFormVars) {
 			const formValues = {
