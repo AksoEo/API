@@ -60,14 +60,14 @@ export async function manualDataValidation (req, res, formData, isPatch = false)
 	}
 
 	// Make sure the sequenceId isn't taken by another participant
-	if ('sequenceId' in req.body) {
+	if ('sequenceId' in req.body && req.body.sequenceId !== null) {
 		const sequenceIdTaken = await AKSO.db('congresses_instances_participants')
 			.where({
 				congressInstanceId,
-				sequenceId: req.body.sequenceId
+				sequenceId: req.body.sequenceId,
 			})
 			.whereNot({ dataId })
-			.first(1);
+			.first('dataId', 'sequenceId');
 		if (sequenceIdTaken) {
 			const err = new Error('sequenceId already registered with another dataId');
 			err.statusCode = 423;
@@ -75,7 +75,7 @@ export async function manualDataValidation (req, res, formData, isPatch = false)
 		}
 	}
 
-	if ('codeholderId' in req.body) {
+	if ('codeholderId' in req.body && req.body.codeholderId !== null) {
 		// Ensure that the we can access the codeholder through the member filter
 		const codeholderQuery = AKSO.db('view_codeholders')
 			.where('id', req.body.codeholderId)
@@ -90,7 +90,7 @@ export async function manualDataValidation (req, res, formData, isPatch = false)
 		// Make sure the participant doesn't already exist
 		const codeholderAlreadyExists = await AKSO.db('congresses_instances_participants')
 			.where({
-				congressInstanceId: req.params.instanceId,
+				congressInstanceId,
 				codeholderId: req.body.codeholderId,
 			})
 			.whereNot({ dataId })
