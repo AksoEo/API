@@ -107,7 +107,9 @@ export default {
 				donationPurposes.push(purpose);
 			} else if (purpose.type === 'trigger') {
 				if (purpose.triggers === 'registration_entry') {
-					registrationPurposes.push(purpose);
+					if (purpose.registrationEntryId !== null) {
+						registrationPurposes.push(purpose);
+					}
 				}
 			}
 		}
@@ -202,9 +204,7 @@ export default {
 			})
 			.whereIn(
 				'id',
-				registrationPurposes
-					.map(x => x.registrationEntryId)
-					.filter(x => x !== null) ?? []
+				registrationPurposes.map(x => x.registrationEntryId) ?? []
 			);
 		await new Promise(resolve => registrationEntryAfterQuery(registrationEntriesRaw, resolve));
 		const registrationEntries = arrToObjByKey(
