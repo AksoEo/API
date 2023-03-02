@@ -9,7 +9,7 @@ export default {
 				category: {
 					type: 'string',
 					minLength: 1,
-					maxLength: 15,
+					maxLength: 63,
 					pattern: '^[^\\n]+$'
 				},
 				name: {

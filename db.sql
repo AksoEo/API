@@ -3281,7 +3281,7 @@ DROP TABLE IF EXISTS `savedQueries`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `savedQueries` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category` varchar(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `query` json NOT NULL,
@@ -3807,4 +3807,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-02-28 19:39:28
+-- Dump completed on 2023-03-02 18:31:15
