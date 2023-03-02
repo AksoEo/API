@@ -200,7 +200,12 @@ export default {
 				offers: 1,
 				codeholderData: 1,
 			})
-			.whereIn('id', registrationPurposes.map(x => x.registrationEntryId));
+			.whereIn(
+				'id',
+				registrationPurposes
+					.map(x => x.registrationEntryId)
+					.filter(x => x !== null) ?? []
+			);
 		await new Promise(resolve => registrationEntryAfterQuery(registrationEntriesRaw, resolve));
 		const registrationEntries = arrToObjByKey(
 			registrationEntriesRaw

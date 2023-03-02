@@ -14,7 +14,7 @@ export async function afterQuery (arr, done) {
 
 	const codeholders = await AKSO.db('intermediaries')
 		.select('countryCode', 'arrIndex', 'codeholderId', 'paymentDescription')
-		.whereIn('countryCode', arr.map(obj => obj.countryCode));
+		.whereIn('countryCode', arr.map(obj => obj.countryCode) ?? []);
 
 	const codeholdersMap = {};
 
