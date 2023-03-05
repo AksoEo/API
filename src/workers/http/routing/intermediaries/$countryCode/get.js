@@ -1,5 +1,5 @@
 import QueryUtil from 'akso/lib/query-util';
-import SimpleResource from 'akso/lib/resources/simple-resource';
+import IntermediaryResource from 'akso/lib/resources/intermediary-resource';
 
 import { schema as parSchema, afterQuery } from '../schema';
 
@@ -24,7 +24,7 @@ export default {
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
 		await new Promise(resolve => afterQuery([row], resolve));
-		const obj = new SimpleResource(row);
+		const obj = new IntermediaryResource(row);
 		res.sendObj(obj);
 	}
 };

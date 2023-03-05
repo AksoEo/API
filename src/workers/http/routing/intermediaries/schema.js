@@ -7,6 +7,7 @@ export const schema = {
 	fieldAliases: {
 		codeholders: () => AKSO.db.raw('1'),
 	},
+	alwaysSelect: [ 'countryCode' ],
 };
 
 export async function afterQuery (arr, done) {
