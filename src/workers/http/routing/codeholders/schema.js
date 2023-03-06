@@ -3,7 +3,6 @@ import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import { bannedCodes } from '@tejo/akso-client';
 import deepEqual from 'deep-equal';
 
-import * as AKSONotif from 'akso/notif';
 import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
@@ -1032,7 +1031,7 @@ export async function handleHistory ({
 	const histPromises = [];
 	for (let field of fields) {
 		let histEntry = {
-			codeholderId: codeholderId,
+			codeholderId,
 			modTime: moment().unix(),
 			modBy: req.user.modBy,
 			modCmt: cmt
@@ -1056,35 +1055,43 @@ export async function handleHistory ({
 
 		if (field === 'email' && cmtType === 'modCmt') {
 			const view = {
-				emailFrom: oldData.email || '-nenio-',
-				emailTo: validationData.updateData.email || '-nenio-',
-				note: cmt
+				emailFrom: oldData.email ?? '-nenio-',
+				emailTo: validationData.updateData.email ?? '-nenio-',
+				note: cmt,
 			};
-			// Send to old
-			if (oldData.email !== null) {
-				const to = (await AKSOMail.getNamesAndEmails(codeholderId))[0];
-				to.email = oldData.email;
-				const personalization = {
-					to: to,
+
+			const to = (await AKSOMail.getNamesAndEmailsDb([codeholderId], db))[0];
+			const personalizations = [];
+			if (validationData.updateData.email !== null) {
+				personalizations.push({ // new
+					to: {
+						...to,
+						email: validationData.updateData.email,
+					},
 					substitutions: {
-						name: to.name
-					}
-				};
+						name: to.name,
+					},
+				});
+			}
+			if (oldData.email !== null) {
+				personalizations.push({ // old
+					to: {
+						...to,
+						email: oldData.email,
+					},
+					substitutions: {
+						name: to.name,
+					},
+				});
+			}
+			if (personalizations.length) {
 				histPromises.push(AKSOMail.renderSendEmail({
 					org: 'uea',
 					tmpl: 'email-changed-admin',
 					view: view,
-					personalizations: [ personalization ]
+					personalizations,
 				}));
 			}
-			// Send to new
-			histPromises.push(AKSONotif.sendNotification({
-				codeholderIds: [ codeholderId ],
-				org: 'uea',
-				notif: 'email-changed-admin',
-				category: 'account',
-				view: view
-			}));
 		}
 	}
 	await Promise.all(histPromises);

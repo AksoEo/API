@@ -15,11 +15,15 @@ import AKSOOrganization from 'akso/lib/enums/akso-organization';
  * @return {Object[]} The names and emails of the codeholders in the same order as they were provided
  */
 export async function getNamesAndEmails (...ids) {
+	return getNamesAndEmailsDb(ids);
+}
+
+export async function getNamesAndEmailsDb (ids, db = AKSO.db) {
 	const map = {};
 	ids.forEach((id, i) => {
 		map[id] = i;
 	});
-	const codeholders = await AKSO.db('view_codeholders')
+	const codeholders = await db('view_codeholders')
 		.whereIn('id', ids)
 		.whereNotNull('email')
 		.select('id', 'codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName', 'email');
