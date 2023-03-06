@@ -3,6 +3,7 @@ import express from 'express';
 import { bindMethod } from 'akso/workers/http/routing';
 
 import { init as route$admin_groups } from './admin_groups';
+import { init as route$congress_participations } from './congress_participations';
 import { init as route$delegations } from './delegations';
 import { init as route$files } from './files';
 import { init as route$hist } from './hist';
@@ -28,6 +29,7 @@ export function init () {
 	const router = new express.Router({ mergeParams: true });
 
 	router.use('/admin_groups', route$admin_groups());
+	router.use('/congress_participations', route$congress_participations());
 	router.use('/delegations', route$delegations());
 	router.use('/files', route$files());
 	router.use('/hist', route$hist());
