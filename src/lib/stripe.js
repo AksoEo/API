@@ -113,7 +113,7 @@ export async function ensureAndValidateWebhook (stripeSecretKey) {
 				await processEvent(stripeSecretKey, event, stripePaymentIntentId);	
 			}
 
-			if (!events.has_more) { break; }
+			if (!events.has_more || !events.data.length) { break; }
 			starting_after = events.data[events.data.length - 1].id;
 		} while (events);
 	}
