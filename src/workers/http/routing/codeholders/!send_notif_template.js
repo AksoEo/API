@@ -24,7 +24,7 @@ const schema = {
 		},
 		requirePerms: [
 			'codeholders.read',
-			'codeholders.send_email'
+			'codeholders.send_notif'
 		]
 	}
 };
