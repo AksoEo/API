@@ -273,14 +273,14 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		.select('name', 'default')
 		.where('congressInstanceId', instanceId);
 	for (const defaultCustomFormVar of defaultCustomFormVars) {
-		formValues[defaultCustomFormVar.name.substring(1)] = defaultCustomFormVar.default;
+		addFormValues[defaultCustomFormVar.name.substring(1)] = defaultCustomFormVar.default;
 	}
 	// Add custom form var overrides
 	const customFormVars = await AKSO.db('congresses_instances_participants_customFormVars')
 		.select('name', 'value')
 		.where('dataId', participant.dataId);
 	for (const customFormVar of customFormVars) {
-		formValues[customFormVar.name.substring(1)] = customFormVar.value;
+		addFormValues[customFormVar.name.substring(1)] = customFormVar.value;
 	}
 
 	const validatedDataEntry = await validateDataEntry({

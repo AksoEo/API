@@ -51,7 +51,7 @@ formValues.NEWSLETTER_MAGAZINE = {
 	'toc.html': STRING,
 	'toc.text': STRING,
 };
-formValues.CONGRESS_REGISTRATION = {
+formValues.CONGRESS = {
 	'registrationEntry.price': union([ NULL, NUMBER ]),
 	'registrationEntry.currency': union([ NULL, STRING ]),
 	'registrationEntry.sequenceId': union([ NULL, NUMBER ]),
@@ -62,6 +62,7 @@ formValues.CONGRESS_REGISTRATION = {
 	'registrationEntry.dataMeta': ascArray(union([ NULL, NUMBER, STRING, BOOL ])),
 	'registrationEntry.dataVals': ascArray(union([ NULL, NUMBER, STRING, BOOL, ascArray(union([ BOOL, NULL ])) ])),
 };
+formValues.CONGRESS_REGISTRATION = {...formValues.CONGRESS};
 formValues.VOTE_CAST_BALLOT = {
 	...formValues.CODEHOLDER,
 
@@ -133,7 +134,7 @@ bogusData.NEWSLETTER_MAGAZINE = {
 	'toc.html': { _akso_safeHtml: true, val: '<table></table>' },
 	'toc.text': '',
 };
-bogusData.CONGRESS_REGISTRATION = {
+bogusData.CONGRESS = {
 	'registrationEntry.price': 10000,
 	'registrationEntry.currency': 'EUR',
 	'registrationEntry.sequenceId': 34,
@@ -149,6 +150,7 @@ bogusData.CONGRESS_REGISTRATION = {
 	],
 	'registrationEntry.dataVals': [ 'Test McTest', 'example@example.com', 'fr', 1000 ],
 };
+bogusData.CONGRESS_REGISTRATION = {...bogusData.CONGRESS};
 bogusData.VOTE_CAST_BALLOT = {
 	...bogusData.CODEHOLDER,
 
