@@ -12,10 +12,12 @@ export const schema = {
 		'hasThumbnail': '',
 		'subscribers': '',
 		'subscriberFiltersCompiled': '',
+		'files': '',
 	},
 	fieldAliases: {
 		hasThumbnail: () => AKSO.db.raw('1'),
 		subscriberFiltersCompiled: () => AKSO.db.raw('1'),
+		files: () => AKSO.db.raw('SELECT GROUP_CONCAT(format) FROM magazines_editions_files WHERE editionId = magazines_editions.id'),
 	},
 	alwaysSelect: [
 		'magazineId',
@@ -25,25 +27,27 @@ export const schema = {
 };
 
 export async function afterQuery (arr, done) {
-	if (!arr.length || !arr[0].hasThumbnail) { return done(); }
+	if (!arr.length) { return done(); }
 
-	for (const row of arr) {
-		const thumbnailPath = path.join(
-			AKSO.conf.dataDir,
-			'magazine_edition_thumbnails',
-			row.magazineId.toString(),
-			row.id.toString()
-		);
+	if (arr[0].hasThumbnail) {
+		for (const row of arr) {
+			const thumbnailPath = path.join(
+				AKSO.conf.dataDir,
+				'magazine_edition_thumbnails',
+				row.magazineId.toString(),
+				row.id.toString()
+			);
 
-		let access = false;
-		try {
-			await fs.access(thumbnailPath);
-			access = true;
-		} catch (e) {
-			// noop
+			let access = false;
+			try {
+				await fs.access(thumbnailPath);
+				access = true;
+			} catch (e) {
+				// noop
+			}
+
+			row.hasThumbnail = access;
 		}
-
-		row.hasThumbnail = access;
 	}
 
 	done();

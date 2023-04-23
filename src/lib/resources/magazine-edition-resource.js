@@ -13,6 +13,11 @@ class MagazineEditionResource extends SimpleResource {
 
 		if ('date' in obj) { obj.date = moment(obj.date).format('Y-MM-DD'); }
 
+		if ('files' in obj) {
+			if (obj.files === null) { obj.files = []; }
+			else { obj.files = obj.files.split(','); }
+		}
+
 		if (fields.includes('subscriberFiltersCompiled')) {
 			if (obj.subscribers === null) {
 				obj.subscriberFiltersCompiled = null;
