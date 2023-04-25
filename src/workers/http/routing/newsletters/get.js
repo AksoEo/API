@@ -17,7 +17,7 @@ export default {
 
 	run: async function run (req, res) {
 		const newsletterOrgs = AKSOOrganization.allLower
-			.filter(org => req.hasPermission('magazines.' + org + '.read'));
+			.filter(org => req.hasPermission('newsletters.' + org + '.read'));
 		if (!newsletterOrgs.length) {
 			res.type('text/plain').status(400)
 				.send('Missing perm newsletters.<org>.read');
