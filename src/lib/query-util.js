@@ -153,7 +153,9 @@ const filterCompOps = {
 			let binary;
 			try {
 				binary = Buffer.from(val.substring(10), 'base64');
-			} catch {}
+			} catch {
+				// noop
+			}
 			if (binary) {
 				query.orWhere(field, val);
 				query.orWhere(field, binary);
@@ -221,12 +223,27 @@ const filterCompOps = {
 	$in: function filterCompOpIn (field, query, val) {
 		filterAssertArray(val);
 		val.forEach(filterAssertScalar);
+		val = val.map(x => {
+			if (typeof x === 'string' && x.startsWith('==base64==')) {
+				x = x.substring(10);
+				try {
+					x = Buffer.from(x, 'base64');
+				} catch {
+					const err = new Error('Invalid base64 string in ?filter');
+					err.statusCode = 400;
+					throw err;
+				}
+				return x;
+			}
+		});
 
 		query.whereIn(field, val);
 	},
 	$nin: function filterCompOpNin (field, query, val) {
 		filterAssertArray(val);
 		val.forEach(filterAssertScalar);
+
+		
 
 		query.whereNotIn(field, val);
 	}
