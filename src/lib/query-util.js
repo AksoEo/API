@@ -233,8 +233,8 @@ const filterCompOps = {
 					err.statusCode = 400;
 					throw err;
 				}
-				return x;
 			}
+			return x;
 		});
 
 		query.whereIn(field, val);
