@@ -1,3 +1,5 @@
+import { arrToObjByKey } from 'akso/util';
+
 export const schema = {
 	defaultFields: [ 'year' ],
 	fields: {
@@ -18,52 +20,59 @@ export async function afterQuery (arr, done) {
 
 	const years = arr.map(row => row.year);
 
-	const offerGroups = await AKSO.db('registration_options_offerGroups')
-		.select('year', 'id', 'title', 'description')
-		.whereIn('year', years)
-		.orderBy('year', 'id');
+	const offerGroups = arrToObjByKey(
+		await AKSO.db('registration_options_offerGroups')
+			.select('*')
+			.whereIn('year', years),
+		'year',
+	);
 
-	const offers = await AKSO.db('registration_options_offerGroups_offers')
-		.select('year', 'offerGroupId', 'type', 'paymentAddonId',
-			'membershipCategoryId', 'magazineId', 'price_script', 'price_var',
-			'price_description', 'paperVersion')
-		.whereIn('year', years)
-		.orderBy('year', 'offerGroupId', 'id');
-
-	// TODO: Does this break if order is not `year ASC`?
-
-	let offerGroupIndex = 0;
-	let offerGroupOffersIndex = 0;
-	for (const row of arr) {
-		for (let i = offerGroupIndex; i < offerGroups.length; i = ++offerGroupIndex) {
-			const offerGroup = offerGroups[i];
-			if (offerGroup.year !== row.year) { break; }
-			if (typeof row.offers !== 'object') { row.offers = []; }
-
-			const offerGroupOffers = [];
-			for (let n = offerGroupOffersIndex; n < offers.length; n = ++offerGroupOffersIndex) {
-				const offer = offers[n];
-				if (offer.year !== row.year) { break; }
-				if (offer.offerGroupId !== offerGroup.id) { break; }
-
-				offerGroupOffers.push({
-					type: offer.type,
-					id: offer.paymentAddonId || offer.membershipCategoryId || offer.magazineId,
-					price: offer.price_script ? {
-						script: offer.price_script,
-						var: offer.price_var,
-						description: offer.price_description
-					} : undefined,
-					paperVersion: offer.type === 'magazine' ? !!offer.paperVersion : undefined,
-				});
-			}
-
-			row.offers.push({
-				title: offerGroup.title,
-				description: offerGroup.description,
-				offers: offerGroupOffers
-			});
+	const offersRaw = await AKSO.db('registration_options_offerGroups_offers')
+		.select('*')
+		.whereIn('year', years);
+	const offers = {};
+	for (const offer of offersRaw) {
+		const year = offer.year;
+		delete offer.year;
+		if (!(year in offers)) {
+			offers[year] = {};
 		}
+		const yearOffers = offers[year];
+
+		const offerGroupId = offer.offerGroupId;
+		delete offer.offerGroupId;
+		if (!(offerGroupId in yearOffers)) {
+			yearOffers[offerGroupId] = [];
+		}
+		yearOffers[offerGroupId].push({
+			offerId: offer.id,
+			type: offer.type,
+			id: offer.paymentAddonId ?? offer.membershipCategoryId ?? offer.magazineId,
+			price: offer.price_script ? {
+				script: offer.price_script,
+				var: offer.price_var,
+				description: offer.price_description
+			} : undefined,
+			paperVersion: offer.type === 'magazine' ? !!offer.paperVersion : undefined,
+		});
+	}
+	for (const offerYear of Object.values(offers)) {
+		for (const offerGroup of Object.values(offerYear)) {
+			offerGroup.sort((a, b) => a.offerId - b.offerId);
+			offerGroup.forEach(offer => { delete offer.offerId; });
+		}
+	}
+
+	for (const row of arr) {
+		row.offers = offerGroups[row.year]
+			.sort((a, b) => a.id - b.id)
+			.map(offerGroup => {
+				const offerGroupId = offerGroup.id;
+				delete offerGroup.id;
+				delete offerGroup.year;
+				offerGroup.offers = offers[row.year][offerGroupId];
+				return offerGroup;
+			});
 	}
 
 	done();
