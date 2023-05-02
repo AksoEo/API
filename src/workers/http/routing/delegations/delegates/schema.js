@@ -121,7 +121,7 @@ export default {
 				err.statusCode = 400;
 				throw err;
 			}
-			query.whereRaw(`codeholders_delegations_hosting.codeholderId IS${filter ? ' NOT ' : ' '}NULL`);
+			query.whereRaw(`codeholders_delegations_hosting.codeholderId IS ${filter ? 'NOT' : ''} NULL`);
 		}
 	},
 	alwaysSelect: [
