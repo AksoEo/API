@@ -1,5 +1,6 @@
 import { escapeId } from 'mysql2';
 import Url from 'url';
+import moment from 'moment-timezone';
 
 import SimpleCollection from './simple-collection';
 import SimpleResource from './resources/simple-resource';
@@ -30,6 +31,26 @@ function filterAssertScalar (val) {
 function filterAssertNumber (val) {
 	if (typeof val !== 'number' || !Number.isFinite(val)) {
 		const err = new Error('Invalid number in ?filter');
+		err.statusCode = 400;
+		throw err;
+	}
+}
+
+function filterAssertNumberOrDate (val) {
+	if (typeof val === 'number') {
+		if (!Number.isFinite(val)) {
+			const err = new Error('Invalid number in ?filter');
+			err.statusCode = 400;
+			throw err;
+		}
+	} else if (typeof val === 'string') {
+		if (!moment(val, 'YYYY-MM-DD').isValid()) {
+			const err = new Error('Invalid date in ?filter');
+			err.statusCode = 400;
+			throw err;
+		}
+	} else {
+		const err = new Error('Expected number or date string in ?filter');
 		err.statusCode = 400;
 		throw err;
 	}
@@ -201,22 +222,22 @@ const filterCompOps = {
 		query.whereBetween(field, val);
 	},
 	$gt: function filterCompOpGt (field, query, val) {
-		filterAssertNumber(val);
+		filterAssertNumberOrDate(val);
 
 		query.where(field, '>', val);
 	},
 	$gte: function filterCompOpGte (field, query, val) {
-		filterAssertNumber(val);
+		filterAssertNumberOrDate(val);
 
 		query.where(field, '>=', val);
 	},
 	$lt: function filterCompOpLt (field, query, val) {
-		filterAssertNumber(val);
+		filterAssertNumberOrDate(val);
 
 		query.where(field, '<', val);
 	},
 	$lte: function filterCompOpLte (field, query, val) {
-		filterAssertNumber(val);
+		filterAssertNumberOrDate(val);
 
 		query.where(field, '<=', val);
 	},
