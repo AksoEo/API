@@ -25,12 +25,14 @@ export async function updateTriggeredRegistrationEntry () {
 	const processableRegistrationEntries = await AKSO.db('view_registration_entries_processable')
 		.select('*')
 		.limit(5);
+	// TODO: There are many continue; statements beneath. We risk never getting through the stack if all five are skipped
 
 	for (const processableRegistrationEntry of processableRegistrationEntries) {
 		const amountsAlreadyProcessed = await AKSO.db('view_registration_entries_amountProcessed')
 			.where('registrationEntryId', processableRegistrationEntry.registrationEntryId)
 			.select('*');
 		if (amountsAlreadyProcessed.length > 1) {
+			AKSO.log.error(`Registration entry trigger timer: Multiple currencies for ${processableRegistrationEntry.registrationEntryId.toString('hex')}. Skipping`);
 			continue;
 			// TODO: This happens if there's more than one currency
 			// I am not sure if this can even happen, but something other than this is probably preferable
@@ -38,7 +40,7 @@ export async function updateTriggeredRegistrationEntry () {
 		let totalAlreadyProcessed = 0;
 		if (amountsAlreadyProcessed.length) {
 			if (processableRegistrationEntry.currencyTriggered !== amountsAlreadyProcessed.currency) {
-				AKSO.log.error(`Registration entry trigger timer: Currency mismatch for ${processableRegistrationEntry.registrationEntryId.toString('hex')}`);
+				AKSO.log.error(`Registration entry trigger timer: Currency mismatch for ${processableRegistrationEntry.registrationEntryId.toString('hex')}. Skipping`);
 				continue;
 				// TODO: This situation should definitely not be allowed to happen;
 				// I am not sure if it even can, though
