@@ -5,6 +5,7 @@ import crypto from 'pn/crypto';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
 import { createTransaction } from 'akso/util';
+import { sendNotification } from 'akso/notif';
 
 export async function handlePaidRegistrationEntry (registrationEntryId, db = undefined) {
 	let selfCommitTrx = false;
@@ -18,14 +19,15 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 	const issue = await checkIssuesInPaidRegistrationEntry(registrationEntryId, db);
 
 	// Assuming nothing went wrong, fulfill the registration
+	let isExistingCodeholder,
+		codeholderId;
 	if (!issue) {
 		const existingCodeholderData = await AKSO.db('registration_entries_codeholderData_id')
 			.where('registrationEntryId', registrationEntryId)
 			.first('codeholderId');
 
-		let isExistingCodeholder = true;
+		isExistingCodeholder = true;
 		let newCodeholderData = null;
-		let codeholderId;
 		if (!existingCodeholderData) {
 			isExistingCodeholder = false;
 			newCodeholderData = await AKSO.db('registration_entries_codeholderData_obj')
@@ -208,9 +210,20 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				pendingIssue_what: null,
 				pendingIssue_where: null
 			});
+
 	}
 
 	if (selfCommitTrx) { await db.commit(); }
+
+	if (!issue && !isExistingCodeholder) {
+		// Send welcome notif to the new codeholder
+		await sendNotification({
+			codeholderIds: [ codeholderId ],
+			org: 'uea',
+			notif: 'new-member-welcome',
+			
+		});
+	}
 }
 
 export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, db = AKSO.db) {

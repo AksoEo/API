@@ -25,12 +25,9 @@ export default {
 	run: async function run (req, res) {
 		// Make sure the category is real and exists
 		const permittedCategories = [
-			'admin-address-labels-ready',
-			'tie-breaker-needed',
-			'fishy-location',
-			'email-changed-admin',
-			'forgot-password',
-
+			'admin',
+			'vote',
+			'account',
 		];
 		if (!permittedCategories.includes(req.params.category)) {
 			return res.status(400).type('text/plain')
