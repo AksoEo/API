@@ -20,14 +20,15 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 
 	// Assuming nothing went wrong, fulfill the registration
 	let isExistingCodeholder,
-		codeholderId;
+		codeholderId,
+		newCodeholderData;
 	if (!issue) {
 		const existingCodeholderData = await AKSO.db('registration_entries_codeholderData_id')
 			.where('registrationEntryId', registrationEntryId)
 			.first('codeholderId');
 
 		isExistingCodeholder = true;
-		let newCodeholderData = null;
+		newCodeholderData = null;
 		if (!existingCodeholderData) {
 			isExistingCodeholder = false;
 			newCodeholderData = await AKSO.db('registration_entries_codeholderData_obj')
@@ -215,15 +216,22 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 
 	if (selfCommitTrx) { await db.commit(); }
 
+	/* TODO
 	if (!issue && !isExistingCodeholder) {
 		// Send welcome notif to the new codeholder
 		await sendNotification({
 			codeholderIds: [ codeholderId ],
 			org: 'uea',
 			notif: 'new-member-welcome',
-			
+			category: 'account',
+			view: {
+				isTEJO: moment(newCodeholderData.birthdate, 'YYYY-MM-DD')
+					.month(1).date(1)
+					.diff(moment(), 'years') * -1 <= 35, // now > then
+			},
 		});
 	}
+	*/
 }
 
 export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, db = AKSO.db) {
