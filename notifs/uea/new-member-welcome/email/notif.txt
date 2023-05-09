@@ -1,0 +1,9 @@
+Estimata \{{name}},
+
+Koran dankon pro via membriĝo en UEA{{#if isTEJO}} kaj TEJO{{/if}}. Ĝi nun estas sukcese traktita.
+
+Via UEA-kodo estas {{newCode}}. Bonvolu aliri la ĉi-suban ligilon por starigi pasvorton por via konto. Poste vi povos aliri la membrospacojn de UEA, inkluzive legi retajn revuojn, fari mendojn, facile aliĝi al kongresoj kaj redakti viajn personajn informojn.
+
+Se vi ekhavas demandojn okaze de via membriĝo, ne hezitu skribi al info@uea.org.
+
+{{#url}}ensaluti?restarigi-pasvorton{{/url}}

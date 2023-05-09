@@ -9,16 +9,7 @@ import { renderTemplate, promiseAllObject } from 'akso/util';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
-/**
- * Obtains the names and emails of codeholders by their ids
- * @param  {...number} ids The internal ids of the codeholders to look up
- * @return {Object[]} The names and emails of the codeholders in the same order as they were provided
- */
-export async function getNamesAndEmails (...ids) {
-	return getNamesAndEmailsDb(ids);
-}
-
-export async function getNamesAndEmailsDb (ids, db = AKSO.db) {
+export async function getNamesAndEmails (ids, db = AKSO.db) {
 	const map = {};
 	ids.forEach((id, i) => {
 		map[id] = i;
@@ -49,6 +40,7 @@ export async function getNamesAndEmailsDb (ids, db = AKSO.db) {
  * @param  {Array}  [options.personalizations] Sendgrid personalizations with `to` either as codeholder ids (number) or something understood by sendgrid
  * @param  {Object} [options.view]             The view
  * @param  {Object} [msgData]                  Additional options to pass to sendgrid
+ * @param  {KnexTrx}[db]                       The knex transaction to use for db queries, defaults to AKSO.db
  */
 export async function renderSendEmail ({
 	org,
@@ -56,7 +48,8 @@ export async function renderSendEmail ({
 	to,
 	personalizations = [],
 	view = {},
-	msgData = {}
+	msgData = {},
+	db = AKSO.db,
 } = {}) {
 	const notifsDir = path.join(AKSO.dir, 'notifs');
 
@@ -76,7 +69,7 @@ export async function renderSendEmail ({
 		});
 	}
 	if (codeholderIds.length) {
-		const names = await getNamesAndEmails(codeholderIds.map(x => x.id));
+		const names = await getNamesAndEmails(codeholderIds.map(x => x.id), db);
 		for (let i = 0; i < codeholderIds.length; i++) {
 			const index = codeholderIds[i].index;
 			if (!names[i]) {
@@ -141,7 +134,7 @@ export async function renderSendEmail ({
 		};
 		sendPromises.push(sendRawMail(msgChunk));
 	}
-	await Promise.all(sendPromises);	
+	await Promise.all(sendPromises);
 }
 
 /**

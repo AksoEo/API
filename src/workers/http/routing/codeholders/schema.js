@@ -1060,7 +1060,7 @@ export async function handleHistory ({
 				note: cmt,
 			};
 
-			const to = (await AKSOMail.getNamesAndEmailsDb([codeholderId], db))[0];
+			const to = (await AKSOMail.getNamesAndEmails([codeholderId], db))[0];
 			const personalizations = [];
 			if (validationData.updateData.email !== null) {
 				personalizations.push({ // new

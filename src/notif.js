@@ -11,6 +11,7 @@ import * as AKSOMail from './mail';
  * @param  {Map}      [emailPersonalizations] A `Map` of codeholderId:personalization object
  * @param  {Object}   [tgAttach]              A Telegram attachment object
  * @param  {Object}   [view]                  A view for rendering the notification
+ * @param  {KnexTrx}  [db]                    The knex transaction to use for db queries, defaults to AKSO.db
  */
 export async function sendNotification ({
 	codeholderIds,
@@ -20,12 +21,13 @@ export async function sendNotification ({
 	emailConf = {},
 	emailPersonalizations = new Map(),
 	tgAttach = undefined,
-	view = {}
+	view = {},
+	db = AKSO.db,
 } = {}) {
 	if (!codeholderIds.length) { return; }
 
 	// Ensure any dead people are moved from recipients
-	const deadCodeholders = await AKSO.db('view_codeholders')
+	const deadCodeholders = await db('view_codeholders')
 		.select('id')
 		.where('isDead', true)
 		.whereIn('id', codeholderIds);
@@ -39,7 +41,7 @@ export async function sendNotification ({
 		msgPrefs.set(parseInt(id, 10), [ 'email' ]); // Default to sending by email
 	}
 
-	const msgPrefsDb = await AKSO.db('codeholders AS c')
+	const msgPrefsDb = await db('codeholders AS c')
 		.select('c.id', {
 			pref: AKSO.db.raw('COALESCE(np.pref, npg.pref)'),
 		})
@@ -74,7 +76,7 @@ export async function sendNotification ({
 			org: org,
 			tmpl: notif,
 			view: view,
-			attach: tgAttach
+			attach: tgAttach,
 		}));
 	}
 
@@ -91,7 +93,8 @@ export async function sendNotification ({
 			tmpl: notif,
 			personalizations: personalizations,
 			view: view,
-			msgData: emailConf
+			msgData: emailConf,
+			db,
 		}));
 	}
 
