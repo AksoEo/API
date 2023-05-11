@@ -7,15 +7,12 @@ class BallotResource extends SimpleResource {
 	constructor (obj) {
 		super(obj);
 
-		if (obj.ballot) {
-			if (['stv','tm','rp'].includes(obj.type)) {
-				obj.ballot = obj.ballot.split('\n');
-
-				if (obj.type === 'rp') {
-					obj.ballot = obj.ballot.map(row => row.split(',').map(col => parseInt(col, 10)));
-				} else {
-					obj.ballot = obj.ballot.map(col => parseInt(col, 10));
-				}
+		if (obj.ballot && !['yn', 'ynb'].includes(obj.type)) {
+			obj.ballot = obj.ballot.split('>');
+			if (obj.type === 'rp') {
+				obj.ballot = obj.ballot.map(x => x.split('=').map(y => parseInt(y, 10)));
+			} else {
+				obj.ballot = obj.ballot.map(x => parseInt(x, 10));
 			}
 		}
 

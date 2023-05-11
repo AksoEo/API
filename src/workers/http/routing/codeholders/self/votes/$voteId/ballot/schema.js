@@ -2,10 +2,10 @@ export default {
 	defaultFields: [ 'ballot' ],
 	fields: {
 		time: '',
-		ballot: ''
+		ballot: '',
 	},
 	fieldAliases: {
-		time: 'timeVoted'
+		time: 'timeVoted',
 	},
-	alwaysSelect: [ 'type' ]
+	alwaysSelect: [ 'type' ],
 };
