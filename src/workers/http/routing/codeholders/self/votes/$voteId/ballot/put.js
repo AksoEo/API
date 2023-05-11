@@ -85,7 +85,7 @@ export default {
 					usedOptions.push(row);
 				}
 			}
-			if (usedOptions.length !== numOptions) {
+			if (voteData.isTieBreaker && usedOptions.length !== numOptions) {
 				return res.type('text/plain').status(400).send('Tie breaker ballots must list all options.');
 			}
 			if (voteData.type === 'tm') {
@@ -102,7 +102,7 @@ export default {
 				.where('id', voteData.id)
 				.update({
 					'tieBreakerBallot': ballot,
-					results: null
+					results: null,
 				});
 		} else {
 			let ballotId = voteData.ballotId;
