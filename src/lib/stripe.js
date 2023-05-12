@@ -98,6 +98,13 @@ export async function ensureAndValidateWebhook (stripeSecretKey) {
 				starting_after,
 			});
 			for (const event of events.data) {
+				if (!event.data.object) {
+					// Stripe is down, like what happened on 2023-05-13
+					// https://twitter.com/stripestatus/status/1657146532704178177
+					AKSO.log.warn('Stripe is emitting invalid event data!');
+					break;
+				}
+
 				const typeBits = event.type.split('.');
 				let stripePaymentIntentId;
 				switch (typeBits[0]) {
