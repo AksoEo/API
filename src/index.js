@@ -10,7 +10,7 @@ import { Cashify } from 'cashify';
 import * as AKSODb from './db';
 
 async function init () {
-	Error.stackTraceLimit = 20;
+	Error.stackTraceLimit = 30;
 
 	global.AKSO = {
 		dir: path.normalize(path.join(__dirname, '../')),
