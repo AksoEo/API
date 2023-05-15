@@ -11,6 +11,7 @@ import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/
 import magazineSubscriptionsSchema from './$codeholderId/magazine_subscriptions/schema';
 import codeholderMembershipSchema from './$codeholderId/membership/schema';
 import { schema as newsletterSubscriptionsSchema } from './self/newsletter_subscriptions/schema';
+import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -1060,27 +1061,31 @@ export async function handleHistory ({
 				note: cmt,
 			};
 
-			const to = (await AKSOMail.getNamesAndEmails([codeholderId], db))[0];
+			const codeholderNameBits = await db('view_codeholders')
+				.where('id', codeholderId)
+				.first('codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName');
+			const codeholderName = formatCodeholderName(codeholderNameBits);
+
 			const personalizations = [];
 			if (validationData.updateData.email !== null) {
 				personalizations.push({ // new
 					to: {
-						...to,
+						name: codeholderName,
 						email: validationData.updateData.email,
 					},
 					substitutions: {
-						name: to.name,
+						name: codeholderName,
 					},
 				});
 			}
 			if (oldData.email !== null) {
 				personalizations.push({ // old
 					to: {
-						...to,
+						name: codeholderName,
 						email: oldData.email,
 					},
 					substitutions: {
-						name: to.name,
+						name: codeholderName,
 					},
 				});
 			}
