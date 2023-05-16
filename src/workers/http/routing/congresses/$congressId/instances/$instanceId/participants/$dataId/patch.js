@@ -42,6 +42,11 @@ export default {
 					format: 'uint64',
 					nullable: true
 				},
+				checkInTime: {
+					type: 'integer',
+					format: 'uint64',
+					nullable: true
+				},
 				customFormVars: {
 					type: 'object',
 					patternProperties: {
@@ -181,6 +186,7 @@ export default {
 				price: price,
 				cancelledTime: req.body.cancelledTime,
 				sequenceId: req.body.sequenceId,
+				checkInTime: req.body.checkInTime,
 			});
 		if (req.body.customFormVars) {
 			await trx('congresses_instances_participants_customFormVars')

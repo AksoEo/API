@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.32-0ubuntu0.20.04.2
+-- Server version	8.0.33-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -1793,6 +1793,7 @@ CREATE TABLE `congresses_instances_participants` (
   `sequenceId` int DEFAULT NULL,
   `price` int unsigned DEFAULT NULL,
   `cancelledTime` bigint unsigned DEFAULT NULL,
+  `checkInTime` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`congressInstanceId`,`dataId`) USING BTREE,
   UNIQUE KEY `congressInstanceId` (`congressInstanceId`,`sequenceId`),
   UNIQUE KEY `congressInstanceId_2` (`congressInstanceId`,`codeholderId`),
@@ -1801,6 +1802,7 @@ CREATE TABLE `congresses_instances_participants` (
   KEY `price` (`price`),
   KEY `cancelledTime` (`cancelledTime`),
   KEY `codeholderId` (`codeholderId`) USING BTREE,
+  KEY `checkInTime` (`checkInTime`),
   FULLTEXT KEY `notes` (`notes`),
   CONSTRAINT `congresses_instances_participants_ibfk_1` FOREIGN KEY (`congressInstanceId`) REFERENCES `congresses_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `congresses_instances_participants_ibfk_2` FOREIGN KEY (`codeholderId`) REFERENCES `codeholders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -3379,6 +3381,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `sequenceId`,
  1 AS `price`,
  1 AS `cancelledTime`,
+ 1 AS `checkInTime`,
  1 AS `amountPaid`,
  1 AS `hasPaidMinimum`,
  1 AS `isValid`*/;
@@ -3736,7 +3739,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_congresses_instances_participants` AS select `p`.`congressInstanceId` AS `congressInstanceId`,`p`.`dataId` AS `dataId`,`p`.`codeholderId` AS `codeholderId`,`p`.`approved` AS `approved`,`p`.`notes` AS `notes`,`p`.`sequenceId` AS `sequenceId`,`p`.`price` AS `price`,`p`.`cancelledTime` AS `cancelledTime`,`meta`.`amountPaid` AS `amountPaid`,`meta`.`hasPaidMinimum` AS `hasPaidMinimum`,`meta`.`isValid` AS `isValid` from (`congresses_instances_participants` `p` join `view_congresses_instances_participants_metadata` `meta` on((`meta`.`dataId` = `p`.`dataId`))) */;
+/*!50001 VIEW `view_congresses_instances_participants` AS select `p`.`congressInstanceId` AS `congressInstanceId`,`p`.`dataId` AS `dataId`,`p`.`codeholderId` AS `codeholderId`,`p`.`approved` AS `approved`,`p`.`notes` AS `notes`,`p`.`sequenceId` AS `sequenceId`,`p`.`price` AS `price`,`p`.`cancelledTime` AS `cancelledTime`,`p`.`checkInTime` AS `checkInTime`,`meta`.`amountPaid` AS `amountPaid`,`meta`.`hasPaidMinimum` AS `hasPaidMinimum`,`meta`.`isValid` AS `isValid` from (`congresses_instances_participants` `p` join `view_congresses_instances_participants_metadata` `meta` on((`meta`.`dataId` = `p`.`dataId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3840,4 +3843,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-06 13:44:51
+-- Dump completed on 2023-05-16 16:39:02

@@ -37,6 +37,11 @@ export default {
 					format: 'int32',
 					nullable: true
 				},
+				checkInTime: {
+					type: 'integer',
+					format: 'uint64',
+					nullable: true,
+				},
 				customFormVars: {
 					type: 'object',
 					patternProperties: {
@@ -130,6 +135,7 @@ export default {
 				approved: req.body.approved,
 				notes: req.body.notes,
 				sequenceId: req.body.sequenceId,
+				checkInTime: req.body.checkInTime,
 				price,
 			});
 		if (Object.keys(req.body.customFormVars ?? {}).length) {

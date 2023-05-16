@@ -17,6 +17,7 @@ export const schema = {
 		notes: 's',
 		createdTime: 'f',
 		editedTime: 'f',
+		checkInTime: 'f',
 		sequenceId: 'f',
 		price: 'f',
 		cancelledTime: 'f',
