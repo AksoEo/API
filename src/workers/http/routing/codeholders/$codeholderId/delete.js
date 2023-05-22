@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+import { deleteObjects } from 'akso/lib/s3';
 import { schema as parSchema, memberFilter } from '../schema';
 
 const schema = {
@@ -26,6 +27,15 @@ export default {
 			return res.sendStatus(404);
 		}
 
+		// Find all the codeholder's files ...
+		const codeholderFiles = await AKSO.db('codeholder_files')
+			.pluck('s3Id')
+			.where('codeholderId', req.params.codeholderId);
+
+		// ... and delete them
+		await deleteObjects({ key: codeholderFiles });
+
+		// Delete the codeholder
 		await AKSO.db('codeholders')
 			.where('id', req.params.codeholderId)
 			.delete();

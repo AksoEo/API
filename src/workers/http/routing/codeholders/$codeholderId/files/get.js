@@ -1,10 +1,7 @@
-import fs from 'fs-extra';
-import path from 'path';
-
 import QueryUtil from 'akso/lib/query-util';
-import CodeholderFileResource from 'akso/lib/resources/codeholder-file-resource';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import { getSignedURLObjectGET } from 'akso/lib/s3';
 
 const schema = {
 	query: 'collection',
@@ -18,25 +15,22 @@ const schema = {
 		'name': 'fs',
 		'description': 's',
 		'mime': '',
-		'size': ''
+		'size': '',
+		'url': '',
 	},
 	fieldAliases: {
-		'size': () => AKSO.db.raw('1')
+		url: 's3Id',
 	},
-	alwaysSelect: [
-		'id'
-	]
 };
 
 async function afterQuery (arr, done, req) {
-	if (!arr.length || !arr[0].size) { return done(); }
-	const fileNames = arr.map(row => row.id.toString());
-	const stats = await Promise.all(fileNames.map(file => {
-		return fs.stat(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId, file));
-	}));
-	for (let i in stats) {
-		const stat = stats[i];
-		arr[i].size = stat.size;
+	if (!arr.length || !arr[0].s3Id) { return done(); }
+	for (const row of arr) {
+		row.url = await getSignedURLObjectGET({
+			key: row.s3Id,
+			expiresIn: 15 * 60 * 60, // 15 minutes
+		});
+		delete row.s3Id;
 	}
 	done();
 }
@@ -46,9 +40,7 @@ export default {
 
 	run: async function run (req, res) {
 		// Check member fields
-		const requiredMemberFields = [
-			'files'
-		];
+		const requiredMemberFields = [ 'files' ];
 		if (!memberFieldsManual(requiredMemberFields, req, 'r')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
@@ -64,9 +56,7 @@ export default {
 			.where('codeholderId', req.params.codeholderId);
 
 		await QueryUtil.handleCollection({
-			req, res, schema, query,
-			afterQuery, Res: CodeholderFileResource,
-			passToCol: [[req, schema]]
+			req, res, schema, query, afterQuery,
 		});
 	}
 };

@@ -1,8 +1,9 @@
-import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment-timezone';
+import fs from 'fs';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import { putObject } from 'akso/lib/s3';
 
 export default {
 	schema: {
@@ -23,17 +24,17 @@ export default {
 				}
 			},
 			additionalProperties: false,
-			required: [ 'name' ]
+			required: [ 'name' ],
 		},
 		multipart: [
 			{
 				name: 'file',
 				maxCount: 1,
 				minCount: 1,
-				maxSize: '6mb'
-			}
+				maxSize: '6mb',
+			},
 		],
-		requirePerms: 'codeholders.update'
+		requirePerms: 'codeholders.update',
 	},
 
 	run: async function run (req, res) {
@@ -47,7 +48,6 @@ export default {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
 
-
 		// Ensure that the we can access the codeholder through the member filter
 		const codeholderQuery = AKSO.db('view_codeholders')
 			.where('id', req.params.codeholderId)
@@ -57,6 +57,13 @@ export default {
 			return res.sendStatus(404);
 		}
 
+		// Upload the file
+		const putOut = await putObject({
+			body: fs.createReadStream(file.path),
+			contentType: file.mimetype,
+			keyPrefix: 'codeholders-files',
+		});
+
 		// Insert into the db
 		const fileId = (await AKSO.db('codeholders_files').insert({
 			time: moment().unix(),
@@ -64,11 +71,10 @@ export default {
 			addedBy: req.user && req.user.user ? req.user.user : null,
 			name: req.body.name,
 			description: req.body.description,
-			mime: file.mimetype
+			mime: file.mimetype,
+			s3Id: putOut.key,
+			size: file.size,
 		}))[0];
-
-		// Move the file
-		await fs.move(file.path, path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId, fileId.toString()));
 
 		res.set('Location', path.join(
 			AKSO.conf.http.path,

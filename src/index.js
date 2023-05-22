@@ -69,6 +69,13 @@ async function init () {
 				database: process.env.AKSO_MYSQL_DATABASE,
 				geodbDatabase: process.env.AKSO_MYSQL_GEODB_DATABASE
 			},
+			s3: {
+				bucket: process.env.AKSO_S3_BUCKET,
+				endpoint: process.env.AKSO_S3_ENDPOINT,
+				accessKeyId: process.env.AKSO_S3_ACCESS_KEY_ID,
+				secretAccessKey: process.env.AKSO_S3_SECRET_ACCESS_KEY,
+				region: process.env.AKSO_S3_REGION,
+			},
 			sendgrid: {
 				apiKey: process.env.AKSO_SENDGRID_API_KEY
 			},
@@ -81,7 +88,7 @@ async function init () {
 			},
 			prodMode: process.env.NODE_ENV ?? 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY ?? '', 'hex'),
-			dataDir: process.env.AKSO_DATA_DIR,
+			dataDir: process.env.AKSO_DATA_DIR, // TODO: remove me
 			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
 				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0',
@@ -197,6 +204,26 @@ async function init () {
 			AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 			process.exit(1);
 		}
+		if (!AKSO.conf.s3.bucket) {
+			AKSO.log.error('Missing AKSO_S3_BUCKET');
+			process.exit(1);
+		}
+		if (!AKSO.conf.s3.endpoint) {
+			AKSO.log.error('Missing AKSO_S3_ENDPOINT');
+			process.exit(1);
+		}
+		if (!AKSO.conf.s3.accessKeyId) {
+			AKSO.log.error('Missing AKSO_S3_ACCESS_KEY_ID');
+			process.exit(1);
+		}
+		if (!AKSO.conf.s3.secretAccessKey) {
+			AKSO.log.error('Missing AKSO_S3_SECRET_ACCESS_KEY');
+			process.exit(1);
+		}
+		if (!AKSO.conf.s3.region) {
+			AKSO.log.error('Missing AKSO_S3_REGION');
+			process.exit(1);
+		}
 		if (!AKSO.conf.http.sessionSecret) {
 			AKSO.log.error('Missing AKSO_HTTP_SESSION_SECRET');
 			process.exit(1);
@@ -207,13 +234,6 @@ async function init () {
 		}
 		if (AKSO.conf.totpAESKey.length != 32) {
 			AKSO.log.error('AKSO_TOTP_AES_KEY must be 32 bytes encoded in hex');
-			process.exit(1);
-		}
-		if (!AKSO.conf.dataDir) {
-			AKSO.log.error('Missing AKSO_DATA_DIR');
-			process.exit(1);
-		} else if (!fs.statSync(AKSO.conf.dataDir).isDirectory()) {
-			AKSO.log.error('AKSO_DATA_DIR must be a directory');
 			process.exit(1);
 		}
 		if (!AKSO.conf.stateDir) {
@@ -237,7 +257,7 @@ async function init () {
 			fs.ensureDir(path.join(AKSO.conf.stateDir, 'address_label_orders')),
 
 			// Resources
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_files')),
+			// TODO: Remove me
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures')),
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_files')),
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails')),

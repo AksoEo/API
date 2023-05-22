@@ -1,6 +1,4 @@
-import path from 'path';
-
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { deleteObject } from 'akso/lib/s3';
 
 import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -15,9 +13,7 @@ export default {
 
 	run: async function run (req, res) {
 		// Check member fields
-		const requiredMemberFields = [
-			'files'
-		];
+		const requiredMemberFields = [ 'files' ];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
 			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
 		}
@@ -29,19 +25,23 @@ export default {
 		memberFilter(parSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
-		// Delete the file if it exists
-		const deleted = await AKSO.db('codeholders_files')
+		// Obtain the file's s3Id
+		const fileMeta = await AKSO.db('codeholders_files')
+			.first('s3Id')
 			.where({
 				codeholderId: req.params.codeholderId,
-				id: req.params.fileId
-			})
+				id: req.params.fileId,
+			});
+		if (!fileMeta) { return res.sendStatus(404); }
+
+		// Delete the file from s3
+		await deleteObject(fileMeta.s3Id);
+
+		// Delete the file from db
+		const deleted = await AKSO.db('codeholders_files')
+			.where('id', req.params.fileId)
 			.delete();
 
-		if (!deleted) { return res.sendStatus(404); }
-
-		// Delete from the drive
-		const parPath = path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId);
-		await removePathAndEmptyParents(parPath, path.join(parPath, req.params.fileId));
 		res.sendStatus(204);
 	}
 };

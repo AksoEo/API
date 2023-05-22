@@ -12,7 +12,6 @@ import method$delete from './delete';
 export function init () {
 	const router = new express.Router({ mergeParams: true });
 	
-	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'delete', method$delete);
 
 	return router;

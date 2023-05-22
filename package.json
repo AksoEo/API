@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/AksoEo/API#readme",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.332.0",
+    "@aws-sdk/s3-request-presigner": "^3.332.0",
     "@cpsdqs/google-i18n-address": "^1.0.2",
     "@sendgrid/mail": "^7.6.0",
     "@tejo/akso-client": "^1.0.0",
@@ -83,6 +85,7 @@
     "telegraf": "~4.10.0",
     "tmp-promise": "^3.0.3",
     "useragent": "^2.3.0",
+    "uuid": "^9.0.0",
     "winston": "^3.3.3",
     "xregexp": "^4.4.1"
   },
