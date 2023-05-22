@@ -1,5 +1,5 @@
 import AKSOCurrency from 'akso/lib/enums/akso-currency';
-import { getStripe } from 'akso/lib/stripe';
+import { getStripe, ensureWebhook } from 'akso/lib/stripe';
 
 import { pricesSchema, validatePrices } from '../schema';
 
@@ -134,7 +134,7 @@ export default {
 
 			// Verify Stripe keys
 			if ('stripeSecretKey' in data) {
-				await getStripe(data.stripeSecretKey, true);
+				const stripeClient = await getStripe(data.stripeSecretKey, true);
 				await ensureWebhook(data.stripeSecretKey);
 
 				// Delete old webhook

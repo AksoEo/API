@@ -38,7 +38,7 @@ export default {
 		await deleteObject(fileMeta.s3Id);
 
 		// Delete the file from db
-		const deleted = await AKSO.db('codeholders_files')
+		await AKSO.db('codeholders_files')
 			.where('id', req.params.fileId)
 			.delete();
 

@@ -41,6 +41,7 @@ export default {
 			.delete();
 
 		// Clean up the codeholder's data
+		// TODO: Test that new cleanup works
 		await Promise.all([
 			fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_files', req.params.codeholderId)),
 			fs.remove(path.join(AKSO.conf.dataDir, 'codeholder_pictures', req.params.codeholderId))

@@ -23,7 +23,7 @@ const schema = {
 	},
 };
 
-async function afterQuery (arr, done, req) {
+async function afterQuery (arr, done, req) { // eslint-disable-line no-unused-vars
 	if (!arr.length || !arr[0].s3Id) { return done(); }
 	for (const row of arr) {
 		row.url = await getSignedURLObjectGET({

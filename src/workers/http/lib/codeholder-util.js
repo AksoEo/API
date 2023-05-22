@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import path from 'path';
 import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
 
@@ -38,27 +36,8 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	const hash = crypto.createHash('sha1').update(pictures.org).digest();
 	delete pictures.org;
 
-	// Ensure the dir for the codeholder's profile picture exists
-	const picDir = path.join(AKSO.conf.dataDir, 'codeholder_pictures', codeholderId.toString());
-	await fs.ensureDir(picDir);
-
-	// Write all files
-	const writePromises = [
-		// Write the info file
-		fs.writeFile(path.join(picDir, 'pic.txt'), JSON.stringify({
-			mime: mimetype
-		}))
-	];
-
-	// Write the pictures
-	for (let [size, picture] of Object.entries(pictures)) {
-		writePromises.push(
-			fs.writeFile(path.join(picDir, size), picture)
-		);
-	}
-
-	// Wait for the writes to finish
-	await Promise.all(writePromises);
+	// Upload the pictures
+	
 
 	// Update the db
 	const oldData = await AKSO.db('codeholders')

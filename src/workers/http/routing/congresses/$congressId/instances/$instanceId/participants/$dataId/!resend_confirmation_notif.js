@@ -1,4 +1,4 @@
-import { manualDataValidation, sendParticipantConfirmationNotif } from '../schema';
+import { sendParticipantConfirmationNotif } from '../schema';
 
 export default {
 	schema: {

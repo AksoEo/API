@@ -2,7 +2,6 @@ import express from 'express';
 
 import { bindMethod } from 'akso/workers/http/routing';
 
-import method$get from './get';
 import method$delete from './delete';
 
 /**
