@@ -1681,6 +1681,7 @@ CREATE TABLE `congresses_instances_locations` (
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `congressInstanceId` (`congressInstanceId`),
   KEY `type` (`type`),
@@ -3847,4 +3848,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23  9:14:15
+-- Dump completed on 2023-05-23  9:46:15

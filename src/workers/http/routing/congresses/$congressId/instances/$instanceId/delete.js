@@ -1,6 +1,6 @@
-import path from 'path';
+import { deleteObjects } from 'akso/lib/s3';
 
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { thumbnailSizes } from './locations/$locationId/thumbnail/schema';
 
 export default {
 	schema: {
@@ -9,34 +9,36 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const congress = await AKSO.db('congresses')
+		const congress = await AKSO.db('congresses_instances')
+			.join('congresses', 'congresses.id', 'congresses_instances.congressId')
 			.first('org')
-			.where('id', req.params.congressId);
+			.where({
+				congressId: req.params.congressId,
+				'congresses_instances.id': req.params.instanceId,
+			});
 		if (!congress) { return res.sendStatus(404); }
 		
 		const orgPerm = 'congress_instances.delete.' + congress.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const deleted = await AKSO.db('congresses_instances')
+		// Delete all location thumbnails
+		const thumbnailS3Ids = await AKSO.db('congresses_instances_locations')
+			.where('congressInstanceId', req.params.instanceId)
+			.pluck('thumbnailS3Id');
+
+		if (thumbnailS3Ids.length) {
+			await deleteObjects({
+				keys: thumbnailS3Ids.flatMap(s3Id => thumbnailSizes.map(size => `congresses-locations-thumbnails-${s3Id}-${size}`)),
+			});
+		}
+
+		// Delete the instance
+		await AKSO.db('congresses_instances')
 			.where({
-				congressId: req.params.congressId,
 				id: req.params.instanceId
 			})
 			.delete();
 
-		if (deleted) {
-			const instPar = path.join(
-				AKSO.conf.dataDir,
-				'congress_instance_location_thumbnails',
-				req.params.congressId
-			);
-			const instPath = path.join(
-				instPar,
-				req.params.instanceId
-			);
-			await removePathAndEmptyParents(instPar, instPath);
-		}
-
-		res.sendStatus(deleted ? 204 : 404);
+		res.sendStatus(204);
 	}
 };

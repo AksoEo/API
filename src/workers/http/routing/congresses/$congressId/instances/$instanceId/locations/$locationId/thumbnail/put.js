@@ -1,6 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
+import { v4 as uuidv4 } from 'uuid';
 
+import { putObject, deleteObjects } from 'akso/lib/s3';
 import { cropImgToSizes } from 'akso/workers/http/lib/canvas-util';
 
 import { thumbnailSizes } from './schema';
@@ -58,33 +58,34 @@ export default {
 			throw err;
 		}
 
-		// Ensure the dir for the thumbnails exists
-		const picDir = path.join(
-			AKSO.conf.dataDir,
-			'congress_instance_location_thumbnails',
-			req.params.congressId,
-			req.params.instanceId,
-			req.params.locationId
-		);
-		await fs.ensureDir(picDir);
+		// Upload the pictures
+		const uploadPromises = [];
+		const s3Id = uuidv4();
+		for (const [size, picture] of Object.entries(pictures)) {
+			uploadPromises.push(putObject({
+				body: picture,
+				key: `congresses-locations-thumbnails-${s3Id}-${size}`,
+				contentType: tmpFile.mimetype,
+			}));
+		}
+		await Promise.all(uploadPromises);
 
-		// Write all files
-		const writePromises = [
-			// Write the info file
-			fs.writeFile(path.join(picDir, 'pic.txt'), JSON.stringify({
-				mime: tmpFile.mimetype
-			}))
-		];
-
-		// Write the pictures
-		for (let [size, picture] of Object.entries(pictures)) {
-			writePromises.push(
-				fs.writeFile(path.join(picDir, size), picture)
-			);
+		// Check if there is an old thumbnail to delete
+		const oldData = await AKSO.db('congresses_instances_locations')
+			.first('thumbnailS3Id')
+			.where('id', req.params.locationId);
+		if (oldData.thumbnailS3Id) {
+			await deleteObjects({
+				keys: thumbnailSizes.map(size => `congresses-locations-thumbnails-${oldData.thumbnailS3Id}-${size}`),
+			});
 		}
 
-		// Wait for the writes to finish
-		await Promise.all(writePromises);
+		// Update the db
+		await AKSO.db('congresses_instances_locations')
+			.where('id', req.params.locationId)
+			.update({
+				thumbnailS3Id: s3Id,
+			});
 
 		res.sendStatus(204);
 	}

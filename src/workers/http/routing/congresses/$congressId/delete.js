@@ -1,5 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
+import { deleteObjects } from 'akso/lib/s3';
+
+import { thumbnailSizes } from './instances/$instanceId/locations/$locationId/thumbnail/schema';
 
 export default {
 	schema: {
@@ -16,16 +17,23 @@ export default {
 		const orgPerm = 'congresses.delete.' + congress.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
+		// Delete all location thumbnails
+		const thumbnailS3Ids = await AKSO.db('congresses_instances_locations')
+			.join('congresses_instances', 'congresses_instances.id', 'congresses_instances_locations.congressInstanceId')
+			.join('congresses', 'congresses.id', 'congresses_instances.congressId')
+			.where('congresses.id', req.params.congressId)
+			.pluck('thumbnailS3Id');
+
+		if (thumbnailS3Ids.length) {
+			await deleteObjects({
+				keys: thumbnailS3Ids.flatMap(s3Id => thumbnailSizes.map(size => `congresses-locations-thumbnails-${s3Id}-${size}`)),
+			});
+		}
+
+		// Delete the congress
 		await AKSO.db('congresses')
 			.where('id', req.params.congressId)
 			.delete();
-
-		const dataPath = path.join(
-			AKSO.conf.dataDir,
-			'congress_instance_location_thumbnails',
-			req.params.congressId
-		);
-		await fs.remove(dataPath);
 
 		res.sendStatus(204);
 	}

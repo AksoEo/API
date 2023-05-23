@@ -1,5 +1,9 @@
 import moment from 'moment-timezone';
 
+import { getSignedURLObjectGET } from 'akso/lib/s3';
+
+import { thumbnailSizes } from './$locationId/thumbnail/schema';
+
 export const schema = {
 	defaultFields: [ 'id' ],
 	fields: {
@@ -14,13 +18,15 @@ export const schema = {
 		'rating.type': '',
 		icon: '',
 		externalLoc: 'f',
-		openHours: ''
+		openHours: '',
+		thumbnail: '',
 	},
 	fieldAliases: {
 		'rating.rating': 'rating',
 		'rating.max': 'rating_max',
 		'rating.type': 'rating_type',
-		openHours: () => AKSO.db.raw('1')
+		openHours: () => AKSO.db.raw('1'),
+		thumbnail: 'thumbnailS3Id',
 	},
 	alwaysSelect: [ 'id', 'type', 'rating.rating', 'rating.max', 'rating.type' ],
 	customFilterLogicOps: {
@@ -70,32 +76,48 @@ export const icons = [
 ];
 
 export async function afterQuery (arr, done) {
-	if (!arr.length || !arr[0].openHours) { return done(); }
+	if (!arr.length) { return done(); }
 
-	const openHoursArr = await AKSO.db('congresses_instances_locations_openHours')
-		.select('*')
-		.whereIn('congressInstanceLocationId', arr.map(row => row.id))
-		.orderBy('date', 'openTime');
+	if (arr[0].openHours) {
+		const openHoursArr = await AKSO.db('congresses_instances_locations_openHours')
+			.select('*')
+			.whereIn('congressInstanceLocationId', arr.map(row => row.id))
+			.orderBy('date', 'openTime');
 
-	const hoursObj = {};
-	for (const hoursEntry of openHoursArr) {
-		if (!(hoursEntry.congressInstanceLocationId in hoursObj)) {
-			hoursObj[hoursEntry.congressInstanceLocationId] = {};
+		const hoursObj = {};
+		for (const hoursEntry of openHoursArr) {
+			if (!(hoursEntry.congressInstanceLocationId in hoursObj)) {
+				hoursObj[hoursEntry.congressInstanceLocationId] = {};
+			}
+			const hoursObjEntry = hoursObj[hoursEntry.congressInstanceLocationId];
+
+			const date = moment(hoursEntry.date).format('YYYY-MM-DD');
+			if (!(date in hoursObjEntry)) {
+				hoursObjEntry[date] = [];
+			}
+
+			const openTime = hoursEntry.openTime.substring(0, 5);
+			const closeTime = hoursEntry.closeTime.substring(0, 5);
+			const interval = `${openTime}-${closeTime}`;
+			hoursObjEntry[date].push(interval);
 		}
-		const hoursObjEntry = hoursObj[hoursEntry.congressInstanceLocationId];
-
-		const date = moment(hoursEntry.date).format('YYYY-MM-DD');
-		if (!(date in hoursObjEntry)) {
-			hoursObjEntry[date] = [];
+		for (const row of arr) {
+			row.openHours = hoursObj[row.id] || null;
 		}
-
-		const openTime = hoursEntry.openTime.substring(0, 5);
-		const closeTime = hoursEntry.closeTime.substring(0, 5);
-		const interval = `${openTime}-${closeTime}`;
-		hoursObjEntry[date].push(interval);
 	}
-	for (const row of arr) {
-		row.openHours = hoursObj[row.id] || null;
+
+	if ('thumbnailS3Id' in arr[0]) {
+		for (const row of arr) {
+			if (!row.thumbnailS3Id) {
+				row.thumbnail = null;
+				continue;
+			}
+			row.thumbnail = Object.fromEntries(await Promise.all(thumbnailSizes.map(async size => {
+				const key = `congresses-locations-thumbnails-${row.thumbnailS3Id}-${size}`;
+				const url = await getSignedURLObjectGET({ key, expiresIn: 10 * 60 });
+				return [ size, url ]; // key, val
+			})));
+		}
 	}
 
 	done();
