@@ -332,7 +332,7 @@ export const schema = {
 };
 
 const validFields = Object.keys(schema.fields).concat([
-	'files', 'logins', 'roles', 'profilePicture'
+	'files', 'logins', 'roles'
 ]);
 export const memberRestrictionFields = [...new Set(
 	validFields.flatMap(f => {
@@ -475,8 +475,12 @@ export async function afterQuery (arr, done) {
 		}
 	}
 	
-	if (arr[0].profilePictureS3Id) {
+	if ('profilePictureS3Id' in arr[0]) {
 		for (const row of arr) {
+			if (!row.profilePictureS3Id) {
+				row.profilePicture = null;
+				continue;
+			}
 			row.profilePicture = Object.fromEntries(await Promise.all(profilePictureSizes.map(async size => {
 				const key = `codeholders-profilePictures-${row.profilePictureS3Id}-${size}`;
 				const url = await getSignedURLObjectGET({ key, expiresIn: 10 * 60 });
