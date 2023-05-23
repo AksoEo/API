@@ -1,9 +1,8 @@
-import fs from 'fs-extra';
-import path from 'path';
 import moment from 'moment-timezone';
 
-import { schema as parSchema, memberFilter, memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import { schema as parSchema, memberFilter, memberFieldsManual, profilePictureSizes } from 'akso/workers/http/routing/codeholders/schema';
 import { modQuerySchema } from 'akso/workers/http/lib/codeholder-util';
+import { deleteObjects } from 'akso/lib/s3';
 
 export default {
 	schema: {
@@ -28,14 +27,16 @@ export default {
 		memberFilter(parSchema, codeholderQuery, req);
 		if (!await codeholderQuery) { return res.sendStatus(404); }
 
-		// Check if the codeholder has a profile picture
-		const picDir = path.join(AKSO.conf.dataDir, 'codeholder_pictures', req.params.codeholderId);
-		const hasProfilePicture = await fs.pathExists(picDir);
+		// Get the s3 id of the profile picture, if it exists
+		const picData = await AKSO.db('codeholders')
+			.where('id', req.params.codeholderId)
+			.first('profilePictureS3Id');
+		if (!picData) { return res.sendStatus(404); }
 
-		if (!hasProfilePicture) { return res.sendStatus(404); }
-
-		// Remove the files
-		await fs.remove(picDir);
+		// Delete the files
+		await deleteObjects({
+			keys: profilePictureSizes.map(size => `codeholders-profilePictures-${picData.profilePictureS3Id}-${size}`),
+		});
 
 		// Update the db
 		const oldData = await AKSO.db('codeholders')
@@ -44,7 +45,10 @@ export default {
 
 		await AKSO.db('codeholders')
 			.where('id', req.params.codeholderId)
-			.update({ profilePictureHash: null });
+			.update({
+				profilePictureHash: null,
+				profilePictureS3Id: null,
+			});
 
 		// Update datum history
 		await AKSO.db('codeholders_hist_profilePictureHash')
@@ -53,7 +57,7 @@ export default {
 				modTime: moment().unix(),
 				modBy: req.user.modBy,
 				modCmt: req.query.modCmt,
-				profilePictureHash: oldData.profilePictureHash || null
+				profilePictureHash: oldData.profilePictureHash ?? null,
 			});
 
 		res.sendStatus(204);

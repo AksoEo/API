@@ -83,7 +83,7 @@ export async function deleteObject (key, params = {}) {
 export async function getSignedURLObjectGET ({
 	params = {},
 	key,
-	expiresIn = 30 * 60 * 60, // seconds, default is half an hour
+	expiresIn = 15 * 60, // seconds, default is 15 minutes
 } = {}) {
 	return getSignedUrl(s3Client, new GetObjectCommand({
 		Bucket: BUCKET,

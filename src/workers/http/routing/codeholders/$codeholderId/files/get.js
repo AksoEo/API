@@ -28,7 +28,7 @@ async function afterQuery (arr, done, req) { // eslint-disable-line no-unused-va
 	for (const row of arr) {
 		row.url = await getSignedURLObjectGET({
 			key: row.s3Id,
-			expiresIn: 15 * 60 * 60, // 15 minutes
+			expiresIn: 15 * 60, // 15 minutes
 		});
 		delete row.s3Id;
 	}

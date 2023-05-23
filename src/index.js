@@ -258,7 +258,6 @@ async function init () {
 
 			// Resources
 			// TODO: Remove me
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'codeholder_pictures')),
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_files')),
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails')),
 			fs.ensureDir(path.join(AKSO.conf.dataDir, 'magazine_edition_toc_recitation')),

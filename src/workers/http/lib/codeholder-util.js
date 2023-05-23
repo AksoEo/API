@@ -1,8 +1,10 @@
 import moment from 'moment-timezone';
 import crypto from 'pn/crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 import { profilePictureSizes } from '../routing/codeholders/schema';
 import { cropImgToSizes } from './canvas-util';
+import { putObject, deleteObjects } from 'akso/lib/s3';
 
 /**
  * The JSON schema used for validating codeholder mod query params
@@ -37,16 +39,32 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 	delete pictures.org;
 
 	// Upload the pictures
-	
+	const uploadPromises = [];
+	const s3Id = uuidv4();
+	for (const [size, picture] of Object.entries(pictures)) {
+		uploadPromises.push(putObject({
+			body: picture,
+			key: `codeholders-profilePictures-${s3Id}-${size}`,
+			contentType: mimetype,
+		}));
+	}
+	await Promise.all(uploadPromises);
 
 	// Update the db
 	const oldData = await AKSO.db('codeholders')
 		.where('id', codeholderId)
-		.first('profilePictureHash');
+		.first('profilePictureHash', 'profilePictureS3Id');
+
+	if (oldData.profilePictureS3Id) {
+		// Delete the old pics
+		await deleteObjects({
+			keys: profilePictureSizes.map(size => `codeholders-profilePictures-${oldData.profilePictureS3Id}-${size}`)
+		});
+	}
 
 	await AKSO.db('codeholders')
 		.where('id', codeholderId)
-		.update({ profilePictureHash: hash });
+		.update({ profilePictureHash: hash, profilePictureS3Id: s3Id });
 
 	// Update datum history
 	await AKSO.db('codeholders_hist_profilePictureHash')
@@ -55,7 +73,7 @@ export async function setProfilePicture (codeholderId, tmpFile, mimetype, modBy,
 			modTime: moment().unix(),
 			modBy: modBy,
 			modCmt: modCmt,
-			profilePictureHash: oldData.profilePictureHash || null
+			profilePictureHash: oldData.profilePictureHash ?? null,
 		});
 }
 

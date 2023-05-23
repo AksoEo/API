@@ -5,6 +5,7 @@ import deepEqual from 'deep-equal';
 
 import * as AKSOMail from 'akso/mail';
 import QueryUtil from 'akso/lib/query-util';
+import { getSignedURLObjectGET } from 'akso/lib/s3';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 import delegationsSchema from 'akso/workers/http/routing/delegations/delegates/schema';
 import delegationApplicationsSchema from 'akso/workers/http/routing/delegations/applications/schema';
@@ -53,6 +54,7 @@ export const schema = {
 		'deathdate': 'f',
 		'profilePictureHash': 'f',
 		'profilePicturePublicity': '',
+		'profilePicture': '',
 		'membership': '',
 		'hasPassword': 'f',
 		'isActiveMember': 'f',
@@ -89,6 +91,7 @@ export const schema = {
 		'factoids': ''
 	},
 	fieldAliases: {
+		'profilePicture': 'profilePictureS3Id',
 		'address.country': 'address_country',
 		'address.countryArea': 'address_countryArea',
 		'address.city': 'address_city',
@@ -397,85 +400,96 @@ export function memberFieldsManual (fields, req, flags, memberFields) {
 }
 
 export async function afterQuery (arr, done) {
-	if (!arr.length || !arr[0].membership) { return done(); }
+	if (!arr.length) { return done(); }
 
-	const codeholders = {};
-	const ids = arr.map(x => {
-		codeholders[x.id] = x;
-		x.membership = [];
-		return x.id;
-	});
-	// See: https://stackoverflow.com/a/47696704/1248084
-	// Obtains the two most relevant membership entries for the codeholder
-	const memberships = await AKSO.db.raw(`
-		SELECT
-		    \`categoryId\`,
-		    \`codeholderId\`,
-		    \`year\`,
-		    \`nameAbbrev\`,
-		    \`name\`,
-		    \`lifetime\`,
-		    \`givesMembership\`
-
-			FROM (
-			    SELECT
-		        	*,
-		            (@rn := if(@prev = codeholderId, @rn + 1, 1)) AS rn,
-		            @prev := codeholderId
-
-		        FROM (
-		            SELECT
-		                \`categoryId\`,
-		                \`codeholderId\`,
-		                \`year\`,
-		                \`nameAbbrev\`,
-		                \`name\`,
-		                \`lifetime\`,
-		    			\`givesMembership\`
-		            
-		            FROM membershipCategories_codeholders
-
-		            INNER JOIN membershipCategories
-		                ON membershipCategories.id = membershipCategories_codeholders.categoryId
-
-		            WHERE
-		            	\`codeholderId\` IN (${ids.map(() => '?').join(',')}) AND
-		                \`year\` <= YEAR(CURDATE())
-
-		            ORDER BY
-		                codeholderId,
-		                \`lifetime\` desc,
-		                \`year\` desc
-		            
-		        ) AS \`sortedTable\`
-		        
-		        JOIN (SELECT @prev := NULL, @rn := 0) AS \`vars\`
-			    
-			) AS \`groupedTable\`
-		    
-		    WHERE rn <= 2
-	`,
-
-	ids
-	);
-
-	for (let membership of memberships[0]) {
-		codeholders[membership.codeholderId].membership.push({
-			categoryId: membership.categoryId,
-			year: membership.year,
-			nameAbbrev: membership.nameAbbrev,
-			name: membership.name,
-			lifetime: !!membership.lifetime,
-			givesMembership: !!membership.givesMembership
+	if (arr[0].membership) {
+		const codeholders = {};
+		const ids = arr.map(x => {
+			codeholders[x.id] = x;
+			x.membership = [];
+			return x.id;
 		});
+		// See: https://stackoverflow.com/a/47696704/1248084
+		// Obtains the two most relevant membership entries for the codeholder
+		const memberships = await AKSO.db.raw(`
+			SELECT
+			    \`categoryId\`,
+			    \`codeholderId\`,
+			    \`year\`,
+			    \`nameAbbrev\`,
+			    \`name\`,
+			    \`lifetime\`,
+			    \`givesMembership\`
+
+				FROM (
+				    SELECT
+			        	*,
+			            (@rn := if(@prev = codeholderId, @rn + 1, 1)) AS rn,
+			            @prev := codeholderId
+
+			        FROM (
+			            SELECT
+			                \`categoryId\`,
+			                \`codeholderId\`,
+			                \`year\`,
+			                \`nameAbbrev\`,
+			                \`name\`,
+			                \`lifetime\`,
+			    			\`givesMembership\`
+			            
+			            FROM membershipCategories_codeholders
+
+			            INNER JOIN membershipCategories
+			                ON membershipCategories.id = membershipCategories_codeholders.categoryId
+
+			            WHERE
+			            	\`codeholderId\` IN (${ids.map(() => '?').join(',')}) AND
+			                \`year\` <= YEAR(CURDATE())
+
+			            ORDER BY
+			                codeholderId,
+			                \`lifetime\` desc,
+			                \`year\` desc
+			            
+			        ) AS \`sortedTable\`
+			        
+			        JOIN (SELECT @prev := NULL, @rn := 0) AS \`vars\`
+				    
+				) AS \`groupedTable\`
+			    
+			    WHERE rn <= 2
+		`,
+
+		ids
+		);
+
+		for (let membership of memberships[0]) {
+			codeholders[membership.codeholderId].membership.push({
+				categoryId: membership.categoryId,
+				year: membership.year,
+				nameAbbrev: membership.nameAbbrev,
+				name: membership.name,
+				lifetime: !!membership.lifetime,
+				givesMembership: !!membership.givesMembership
+			});
+		}
 	}
 	
+	if (arr[0].profilePictureS3Id) {
+		for (const row of arr) {
+			row.profilePicture = Object.fromEntries(await Promise.all(profilePictureSizes.map(async size => {
+				const key = `codeholders-profilePictures-${row.profilePictureS3Id}-${size}`;
+				const url = await getSignedURLObjectGET({ key, expiresIn: 10 * 60 });
+				return [ size, url ]; // key, val
+			})));
+		}
+	}
 
 	done();
 }
 
 export const profilePictureSizes = [
-	32, 64, 128, 256, 512
+	32, 64, 128, 256, 512,
 ];
 
 export const histFields = {
@@ -534,7 +548,7 @@ export const histFields = {
 	'careOf': 'careOf',
 	'nameAbbrev': 'nameAbbrev',
 	'mainDescriptor': 'mainDescriptor',
-	'factoids': 'factoids'
+	'factoids': 'factoids',
 };
 for (let field in histFields) {
 	if (Array.isArray(histFields[field])) { continue; }

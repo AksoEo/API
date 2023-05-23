@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/eslint ./src/",
     "build": "./node_modules/.bin/gulp compile-src",
     "preinstall": "npm install --ignore-scripts && npm rebuild --ignore-scripts && npm run build",
     "start": "node dist/index.js",
