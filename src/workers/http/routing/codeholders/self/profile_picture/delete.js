@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import moment from 'moment-timezone';
 
-import { memberFieldsManual } from 'akso/workers/http/routing/codeholders/schema';
+import { deleteObjects } from 'akso/lib/s3';
+import { memberFieldsManual, profilePictureSizes } from 'akso/workers/http/routing/codeholders/schema';
 
 export default {
 	schema: {
@@ -16,17 +17,19 @@ export default {
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w', req.ownMemberFields)) {
-			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
+			return res.status(403).type('text/plain').send('Missing permitted codeholder field profilePicture, check /perms');
 		}
 
-		// Check if the codeholder has a profile picture
-		const picDir = path.join(AKSO.conf.dataDir, 'codeholder_pictures', req.user.user.toString());
-		const hasProfilePicture = await fs.pathExists(picDir);
+		// Get the s3 id of the profile picture, if it exists
+		const picData = await AKSO.db('codeholders')
+			.where('id', req.user.user)
+			.first('profilePictureS3Id');
+		if (!picData) { return res.sendStatus(404); }
 
-		if (!hasProfilePicture) { return res.sendStatus(404); }
-
-		// Remove the files
-		await fs.remove(picDir);
+		// Delete the files
+		await deleteObjects({
+			keys: profilePictureSizes.map(size => `codeholders-profilePictures-${picData.profilePictureS3Id}-${size}`),
+		});
 
 		// Update the db
 		const oldData = await AKSO.db('codeholders')
@@ -35,7 +38,10 @@ export default {
 
 		await AKSO.db('codeholders')
 			.where('id', req.user.user)
-			.update({ profilePictureHash: null });
+			.update({
+				profilePictureHash: null,
+				profilePictureS3Id: null,
+			});
 
 		// Update datum history
 		await AKSO.db('codeholders_hist_profilePictureHash')
@@ -44,7 +50,7 @@ export default {
 				modTime: moment().unix(),
 				modBy: req.user.modBy,
 				modCmt: AKSO.CODEHOLDER_OWN_CHANGE_CMT,
-				profilePictureHash: oldData.profilePictureHash || null
+				profilePictureHash: oldData.profilePictureHash ?? null,
 			});
 
 		res.sendStatus(204);

@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
 import CodeholderResource from 'akso/lib/resources/codeholder-resource';
 
-import { schema as parSchema, memberFields } from '../schema';
+import { schema as parSchema, memberFields, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -25,6 +25,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
+		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new CodeholderResource(row, req, schema);
 		res.sendObj(obj);
 	}

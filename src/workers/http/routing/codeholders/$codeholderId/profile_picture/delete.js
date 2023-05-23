@@ -17,7 +17,7 @@ export default {
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w')) {
-			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
+			return res.status(403).type('text/plain').send('Missing permitted codeholder field profilePicture, check /perms');
 		}
 
 		// Ensure that the we can access the codeholder through the member filter

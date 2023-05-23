@@ -29,7 +29,7 @@ export default {
 			'profilePicture'
 		];
 		if (!memberFieldsManual(requiredMemberFields, req, 'w', req.ownMemberFields)) {
-			return res.status(403).type('text/plain').send('Missing permitted files codeholder fields, check /perms');
+			return res.status(403).type('text/plain').send('Missing permitted codeholder field profilePicture, check /perms');
 		}
 
 		await setProfilePicture(req.user.user, file.path, file.mimetype, req.user.modBy, AKSO.CODEHOLDER_OWN_CHANGE_CMT);
