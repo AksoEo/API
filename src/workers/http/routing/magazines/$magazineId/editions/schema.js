@@ -30,7 +30,7 @@ export const schema = {
 export async function afterQuery (arr, done) {
 	if (!arr.length) { return done(); }
 
-	if (arr[0].thumbnailS3Id) {
+	if ('thumbnailS3Id' in arr[0]) {
 		for (const row of arr) {
 			if (!row.thumbnailS3Id) {
 				row.thumbnail = null;

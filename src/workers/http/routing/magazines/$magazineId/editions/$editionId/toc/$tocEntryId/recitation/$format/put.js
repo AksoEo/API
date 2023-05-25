@@ -31,7 +31,7 @@ export default {
 				magazineId: req.params.magazineId,
 				editionId: req.params.editionId,
 				id: req.params.tocEntryId,
-			})
+			});
 		if (!exists) { return res.sendStatus(404); }
 
 		const existingRecitation = await AKSO.db('magazines_editions_toc_recitations')

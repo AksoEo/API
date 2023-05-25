@@ -3008,6 +3008,7 @@ CREATE TABLE `pay_methods` (
   `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePublishableKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `prices` json DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
@@ -3853,4 +3854,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-25 18:16:02
+-- Dump completed on 2023-05-25 18:32:16

@@ -1,14 +1,14 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 
-import { schema as parSchema } from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
 	...{
 		query: 'collection',
-		body: null
-	}
+		body: null,
+	},
 };
 
 export default {
@@ -26,6 +26,11 @@ export default {
 
 		const query = AKSO.db('pay_methods')
 			.where('paymentOrgId', req.params.paymentOrgId);
-		await QueryUtil.handleCollection({ req, res, schema, query, Res: AKSOPayPaymentMethodResource, passToCol: [[ req, parSchema ]] });
+		await QueryUtil.handleCollection({
+			req, res, schema, query,
+			Res: AKSOPayPaymentMethodResource,
+			passToCol: [[ req, parSchema ]],
+			afterQuery,
+		});
 	}
 };

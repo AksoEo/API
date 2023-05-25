@@ -23,7 +23,8 @@ export default {
 			.where({
 				id: req.params.editionId,
 				magazineId: req.params.magazineId,
-			});
+			})
+			.whereNotNull('thumbnailS3Id');
 		if (!edition) { return res.sendStatus(404); }
 
 		// Delete the pictures

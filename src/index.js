@@ -88,7 +88,6 @@ async function init () {
 			},
 			prodMode: process.env.NODE_ENV ?? 'dev',
 			totpAESKey: Buffer.from(process.env.AKSO_TOTP_AES_KEY ?? '', 'hex'),
-			dataDir: process.env.AKSO_DATA_DIR, // TODO: remove me
 			stateDir: process.env.AKSO_STATE_DIR,
 			loginNotifsEnabled: process.env.AKSO_DISABLE_LOGIN_NOTIFS === undefined ?
 				true : process.env.AKSO_DISABLE_LOGIN_NOTIFS == '0',
@@ -248,17 +247,12 @@ async function init () {
 			process.exit(1);
 		}
 
-		// Set up subdirs in data dir
-		AKSO.log.info('Setting up data dirs');
+		// Set up state dirs
+		AKSO.log.info('Setting up state dirs');
 		await Promise.all([
-			// State machines
 			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_telegram')),
 			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_mail')),
 			fs.ensureDir(path.join(AKSO.conf.stateDir, 'address_label_orders')),
-
-			// Resources
-			// TODO: Remove me
-			fs.ensureDir(path.join(AKSO.conf.dataDir, 'aksopay_payment_method_thumbnails'))
 		]);
 	}
 

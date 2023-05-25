@@ -1,5 +1,9 @@
 import { analyze, union, NULL, NUMBER, BOOL, STRING, array as ascArray } from '@tejo/akso-script';
 
+import { getSignedURLObjectGET } from 'akso/lib/s3';
+
+import { thumbnailSizes } from './$paymentMethodId/thumbnail/schema';
+
 export const schema = {
 	defaultFields: [ 'id' ],
 	fields: {
@@ -20,13 +24,35 @@ export const schema = {
 		'feeFixed.cur': '',
 		stripePublishableKey: '',
 		prices: '',
+		thumbnail: '',
 	},
 	fieldAliases: {
 		'feeFixed.val': 'feeFixed_val',
-		'feeFixed.cur': 'feeFixed_cur'
+		'feeFixed.cur': 'feeFixed_cur',
+		thumbnail: 'thumbnailS3Id',
 	},
-	alwaysSelect: [ 'type' ]
+	alwaysSelect: [ 'type' ],
 };
+
+export async function afterQuery (arr, done) {
+	if (!arr.length) { return done(); }
+
+	if ('thumbnailS3Id' in arr[0]) {
+		for (const row of arr) {
+			if (!row.thumbnailS3Id) {
+				row.thumbnail = null;
+				continue;
+			}
+			row.thumbnail = Object.fromEntries(await Promise.all(thumbnailSizes.map(async size => {
+				const key = `aksopay-paymentMethod-thumbnails-${row.thumbnailS3Id}-${size}`;
+				const url = await getSignedURLObjectGET({ key, expiresIn: 15 * 60 });
+				return [ size, url ]; // key, val
+			})));
+		}
+	}
+
+	done();
+}
 
 export const pricesSchema = {
 	type: 'object',

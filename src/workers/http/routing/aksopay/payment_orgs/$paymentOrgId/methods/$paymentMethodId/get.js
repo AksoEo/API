@@ -1,14 +1,14 @@
 import QueryUtil from 'akso/lib/query-util';
 import AKSOPayPaymentMethodResource from 'akso/lib/resources/aksopay-payment-method-resource';
 
-import { schema as parSchema } from '../schema';
+import { schema as parSchema, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
 	...{
 		query: 'resource',
-		body: null
-	}
+		body: null,
+	},
 };
 
 export default {
@@ -33,6 +33,7 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
+		await new Promise(resolve => afterQuery([row], resolve));
 		const obj = new AKSOPayPaymentMethodResource(row, req, schema);
 		res.sendObj(obj);
 	}

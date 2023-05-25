@@ -1,7 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
+import { deleteObjects } from 'akso/lib/s3';
 
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { thumbnailSizes } from './schema';
 
 export default {
 	schema: {
@@ -17,25 +16,22 @@ export default {
 				'pay_methods.id': req.params.paymentMethodId,
 				'pay_orgs.id': req.params.paymentOrgId
 			})
-			.first('org');
+			.whereNotNull('thumbnailS3Id')
+			.first('org', 'thumbnailS3Id');
 		if (!paymentMethod) { return res.sendStatus(404); }
 		if (!req.hasPermission('pay.payment_methods.update.' + paymentMethod.org)) {
 			return res.sendStatus(403);
 		}
 
-		const picParent = path.join(
-			AKSO.conf.dataDir,
-			'aksopay_payment_method_thumbnails',
-			req.params.paymentOrgId
-		);
-		const picDir = path.join(
-			picParent,
-			req.params.paymentMethodId
-		);
+		// Delete the pictures
+		await deleteObjects({
+			keys: thumbnailSizes.map(size => `aksopay-paymentMethod-thumbnails-${paymentMethod.thumbnailS3Id}-${size}`),
+		});
 
-		if (!await fs.exists(picDir)) { return res.sendStatus(404); }
-
-		await removePathAndEmptyParents(picParent, picDir);
+		// Update the db
+		await AKSO.db('pay_methods')
+			.where('id', req.params.paymentMethodId)
+			.update('thumbnailS3Id', null);
 
 		res.sendStatus(204);
 	}
