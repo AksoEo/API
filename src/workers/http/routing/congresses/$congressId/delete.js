@@ -22,6 +22,7 @@ export default {
 			.join('congresses_instances', 'congresses_instances.id', 'congresses_instances_locations.congressInstanceId')
 			.join('congresses', 'congresses.id', 'congresses_instances.congressId')
 			.where('congresses.id', req.params.congressId)
+			.whereNotNull('thumbnailS3Id')
 			.pluck('thumbnailS3Id');
 
 		if (thumbnailS3Ids.length) {

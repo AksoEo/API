@@ -130,9 +130,9 @@ bogusData.NEWSLETTER_MAGAZINE = {
 	'edition.description': null,
 	'edition.editionURL': 'https://uea.org/revuoj/revuo/3/numero/7',
 
-	'toc.md': '', // todo
-	'toc.html': { _akso_safeHtml: true, val: '<table></table>' },
-	'toc.text': '',
+	'toc.md': '**Enhavtabelo**', // todo: these three
+	'toc.html': { _akso_safeHtml: true, val: '<table><tr><td>Enhavtabelo</td></tr></table>' },
+	'toc.text': 'Enhavtabelo',
 };
 bogusData.CONGRESS = {
 	'registrationEntry.price': 10000,

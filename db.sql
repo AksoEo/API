@@ -293,7 +293,7 @@ CREATE TABLE `codeholders` (
   `isDead` tinyint(1) NOT NULL DEFAULT '0',
   `deathdate` date DEFAULT NULL,
   `profilePictureHash` binary(20) DEFAULT NULL,
-  `profilePictureS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profilePictureS3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `addressPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
   `addressInvalid` tinyint(1) NOT NULL DEFAULT '0',
   `emailPublicity` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'private',
@@ -520,8 +520,8 @@ CREATE TABLE `codeholders_files` (
   `name` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mime` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `s3Id` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `size` mediumint NOT NULL,
+  `s3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `size` mediumint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `codeholderId` (`codeholderId`),
   KEY `addedBy` (`addedBy`),
@@ -1681,7 +1681,7 @@ CREATE TABLE `congresses_instances_locations` (
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `congressInstanceId` (`congressInstanceId`),
   KEY `type` (`type`),
@@ -2468,6 +2468,7 @@ CREATE TABLE `magazines_editions` (
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `published` tinyint(1) NOT NULL DEFAULT '0',
   `subscribers` json DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `date` (`date`),
   KEY `magazineId` (`magazineId`),
@@ -2490,6 +2491,8 @@ CREATE TABLE `magazines_editions_files` (
   `editionId` int unsigned NOT NULL,
   `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `downloads` int unsigned NOT NULL DEFAULT '0',
+  `s3Id` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `size` int unsigned NOT NULL,
   PRIMARY KEY (`magazineId`,`editionId`,`format`),
   KEY `downloads` (`downloads`),
   CONSTRAINT `magazines_editions_files_ibfk_1` FOREIGN KEY (`magazineId`, `editionId`) REFERENCES `magazines_editions` (`magazineId`, `id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -2539,6 +2542,8 @@ CREATE TABLE `magazines_editions_toc_recitations` (
   `tocEntryId` int unsigned NOT NULL,
   `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `downloads` int unsigned NOT NULL DEFAULT '0',
+  `s3Id` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `size` int unsigned NOT NULL,
   PRIMARY KEY (`tocEntryId`,`format`),
   KEY `downloads` (`downloads`),
   CONSTRAINT `magazines_editions_toc_recitations_ibfk_1` FOREIGN KEY (`tocEntryId`) REFERENCES `magazines_editions_toc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -3848,4 +3853,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-23  9:46:15
+-- Dump completed on 2023-05-25 18:16:02

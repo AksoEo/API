@@ -28,7 +28,7 @@ function filterAssertScalar (val) {
  * @param  {number} val
  * @throws {Error} If the input isn't a number
  */
-function filterAssertNumber (val) {
+function filterAssertNumber (val) { // eslint-disable-line no-unused-vars
 	if (typeof val !== 'number' || !Number.isFinite(val)) {
 		const err = new Error('Invalid number in ?filter');
 		err.statusCode = 400;

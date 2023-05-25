@@ -1,7 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
+import { deleteObjects } from 'akso/lib/s3';
 
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { thumbnailSizes } from './schema';
 
 export default {
 	schema: {
@@ -19,27 +18,23 @@ export default {
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
 		// Make sure the edition exists
-		const editionExists = await AKSO.db('magazines_editions')
-			.first(1)
+		const edition = await AKSO.db('magazines_editions')
+			.first('thumbnailS3Id')
 			.where({
 				id: req.params.editionId,
-				magazineId: req.params.magazineId
+				magazineId: req.params.magazineId,
 			});
-		if (!editionExists) { return res.sendStatus(404); }
+		if (!edition) { return res.sendStatus(404); }
 
-		const picParent = path.join(
-			AKSO.conf.dataDir,
-			'magazine_edition_thumbnails',
-			req.params.magazineId
-		);
-		const picDir = path.join(
-			picParent,
-			req.params.editionId
-		);
+		// Delete the pictures
+		await deleteObjects({
+			keys: thumbnailSizes.map(size => `magazines-editions-thumbnails-${edition.thumbnailS3Id}-${size}`),
+		});
 
-		if (!await fs.exists(picDir)) { return res.sendStatus(404); }
-
-		await removePathAndEmptyParents(picParent, picDir);
+		// Update the db
+		await AKSO.db('magazines_editions')
+			.where('id', req.params.editionId)
+			.update('thumbnailS3Id', null);
 		
 		res.sendStatus(204);
 	}

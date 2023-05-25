@@ -1,5 +1,6 @@
-import path from 'path';
-import fs from 'fs-extra';
+import { deleteObjects } from 'akso/lib/s3';
+
+import { thumbnailSizes } from './editions/$editionId/thumbnail/schema';
 
 export default {
 	schema: {
@@ -16,16 +17,43 @@ export default {
 		const orgPerm = 'magazines.delete.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
+		// Find and delete all magazine edition files
+		const fileS3Ids = await AKSO.db('magazines_editions_files')
+			.where({
+				magazineId: req.params.magazineId,
+			})
+			.pluck('s3Id');
+		if (fileS3Ids.length) {
+			await deleteObjects({ keys: fileS3Ids });
+		}
+
+		// Find and delete all magazine edition toc entry recitations
+		const recitationS3Ids = await AKSO.db('magazines_editions_toc_recitations')
+			.pluck('s3Id')
+			.join('magazines_editions_toc', 'magazines_editions_toc.id', 'magazines_editions_toc_recitations.tocEntryId')
+			.where({
+				magazineId: req.params.magazineId,
+			});
+		if (recitationS3Ids.length) {
+			await deleteObjects({ keys: recitationS3Ids });
+		}
+
+		// Find and delete all magazine edition thumbnails
+		const thumbnailS3Ids = await AKSO.db('magazines_editions')
+			.where({
+				magazineId: req.params.magazineId,
+			})
+			.whereNotNull('thumbnailS3Id')
+			.pluck('thumbnailS3Id');
+		if (thumbnailS3Ids.length) {
+			await deleteObjects({
+				keys: thumbnailS3Ids.flatMap(s3Id => thumbnailSizes.map(size => `magazines-editions-thumbnails-${s3Id}-${size}`)),
+			});
+		}
+
 		await AKSO.db('magazines')
 			.where('id', req.params.magazineId)
 			.delete();
-
-		// Clean up magazine data
-		await Promise.all([
-			fs.remove(path.join(AKSO.conf.dataDir, 'magazine_edition_files', req.params.magazineId)),
-			fs.remove(path.join(AKSO.conf.dataDir, 'magazine_edition_thumbnails', req.params.magazineId)),
-			fs.remove(path.join(AKSO.conf.dataDir, 'magazine_edition_toc_recitation', req.params.magazineId))
-		]);
 
 		res.sendStatus(204);
 	}

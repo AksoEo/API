@@ -1,5 +1,6 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { getSignedURLObjectGET } from 'akso/lib/s3';
+
+import { thumbnailSizes } from './$editionId/thumbnail/schema';
 
 export const schema = {
 	defaultFields: [ 'id' ],
@@ -9,13 +10,13 @@ export const schema = {
 		'date': 'f',
 		'description': 's',
 		'published': 'f',
-		'hasThumbnail': '',
+		'thumbnail': '',
 		'subscribers': '',
 		'subscriberFiltersCompiled': '',
 		'files': '',
 	},
 	fieldAliases: {
-		hasThumbnail: () => AKSO.db.raw('1'),
+		thumbnail: 'thumbnailS3Id',
 		subscriberFiltersCompiled: () => AKSO.db.raw('1'),
 		files: () => AKSO.db.raw('SELECT GROUP_CONCAT(format) FROM magazines_editions_files WHERE editionId = magazines_editions.id'),
 	},
@@ -29,24 +30,17 @@ export const schema = {
 export async function afterQuery (arr, done) {
 	if (!arr.length) { return done(); }
 
-	if (arr[0].hasThumbnail) {
+	if (arr[0].thumbnailS3Id) {
 		for (const row of arr) {
-			const thumbnailPath = path.join(
-				AKSO.conf.dataDir,
-				'magazine_edition_thumbnails',
-				row.magazineId.toString(),
-				row.id.toString()
-			);
-
-			let access = false;
-			try {
-				await fs.access(thumbnailPath);
-				access = true;
-			} catch (e) {
-				// noop
+			if (!row.thumbnailS3Id) {
+				row.thumbnail = null;
+				continue;
 			}
-
-			row.hasThumbnail = access;
+			row.thumbnail = Object.fromEntries(await Promise.all(thumbnailSizes.map(async size => {
+				const key = `magazines-editions-thumbnails-${row.thumbnailS3Id}-${size}`;
+				const url = await getSignedURLObjectGET({ key, expiresIn: 15 * 60 });
+				return [ size, url ]; // key, val
+			})));
 		}
 	}
 

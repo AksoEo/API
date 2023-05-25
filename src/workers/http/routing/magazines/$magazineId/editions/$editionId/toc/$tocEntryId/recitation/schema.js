@@ -1,30 +1,27 @@
-import fs from 'pn/fs';
-import path from 'pn/path';
+import { getSignedURLObjectGET } from 'akso/lib/s3';
 
 export const schema = {
 	defaultFields: [ 'format' ],
 	fields: {
 		'format': 'f',
 		'downloads': 'f',
-		'size': ''
+		'size': '',
+		'url': '',
 	},
 	fieldAliases: {
-		'size': () => AKSO.db.raw('1')
+		'url': 's3Id',
 	},
-	alwaysSelect: 'format'
 };
 
-export async function afterQuery (arr, done, req) {
-	if (!arr.length || !arr[0].size) { return done(); }
-	const fileNames = arr.map(row => {
-		return path.join(req.params.magazineId, req.params.editionId, req.params.tocEntryId, row.format);
-	});
-	const stats = await Promise.all(fileNames.map(file => {
-		return fs.stat(path.join(AKSO.conf.dataDir, 'magazine_edition_toc_recitation', file));
-	}));
-	for (let i in stats) {
-		const stat = stats[i];
-		arr[i].size = stat.size;
+export async function afterQuery (arr, done, req) { // eslint-disable-line no-unused-vars
+	if (!arr.length || !arr[0].s3Id) { return done(); }
+	
+	for (const row of arr) {
+		row.url = await getSignedURLObjectGET({
+			key: row.s3Id,
+			expiresIn: 2 * 60 * 60, // 2 hours
+		});
 	}
+
 	done();
 }

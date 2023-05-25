@@ -1,6 +1,4 @@
-import path from 'path';
-
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { deleteObject } from 'akso/lib/s3';
 
 export default {
 	schema: {
@@ -17,27 +15,29 @@ export default {
 		const orgPerm = 'magazines.files.delete.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const deleted = await AKSO.db('magazines_editions_files')
+		// Find the file
+		const file = await AKSO.db('magazines_editions_files')
+			.where({
+				magazineId: req.params.magazineId,
+				editionId: req.params.editionId,
+				format: req.params.format
+			})
+			.first('s3Id');
+		if (!file) {
+			return res.sendStatus(404);
+		}
+
+		// Delete the file from s3
+		await deleteObject(file.s3Id);
+
+		// Delete from db
+		await AKSO.db('magazines_editions_files')
 			.where({
 				magazineId: req.params.magazineId,
 				editionId: req.params.editionId,
 				format: req.params.format
 			})
 			.delete();
-
-		if (!deleted) { return res.sendStatus(404); }
-
-		const parPath = path.join(
-			AKSO.conf.dataDir,
-			'magazine_edition_files',
-			req.params.magazineId
-		);
-		const formatPath = path.join(
-			parPath,
-			req.params.editionId,
-			req.params.format
-		);
-		await removePathAndEmptyParents(parPath, formatPath);
 
 		res.sendStatus(204);
 	}

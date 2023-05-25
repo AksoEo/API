@@ -24,6 +24,7 @@ export default {
 		// Delete all location thumbnails
 		const thumbnailS3Ids = await AKSO.db('congresses_instances_locations')
 			.where('congressInstanceId', req.params.instanceId)
+			.whereNotNull('thumbnailS3Id')
 			.pluck('thumbnailS3Id');
 
 		if (thumbnailS3Ids.length) {

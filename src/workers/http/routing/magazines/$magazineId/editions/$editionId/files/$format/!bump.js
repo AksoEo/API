@@ -1,6 +1,3 @@
-import path from 'path';
-import fs from 'pn/fs';
-
 export default {
 	schema: {
 		query: null,
@@ -16,14 +13,17 @@ export default {
 		const orgPerm = 'magazines.read.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const file = path.join(
-			AKSO.conf.dataDir,
-			'magazine_edition_files',
-			req.params.magazineId,
-			req.params.editionId,
-			req.params.format
-		);
-		if (!await fs.exists(file)) { return res.sendStatus(404); }
+		// Make sure the file exists
+		const fileExists = await AKSO.db('magazines_editions_files')
+			.where({
+				magazineId: req.params.magazineId,
+				editionId: req.params.editionId,
+				format: req.params.format
+			})
+			.first(1);
+		if (!fileExists) {
+			return res.sendStatus(404);
+		}
 
 		// Bump the download count
 		await AKSO.db('magazines_editions_files')

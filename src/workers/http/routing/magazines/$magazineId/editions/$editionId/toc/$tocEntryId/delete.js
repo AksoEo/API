@@ -1,6 +1,4 @@
-import path from 'path';
-
-import { removePathAndEmptyParents } from 'akso/lib/file-util';
+import { deleteObjects } from 'akso/lib/s3';
 
 export default {
 	schema: {},
@@ -14,7 +12,26 @@ export default {
 		const orgPerm = 'magazines.update.' + magazine.org;
 		if (!req.hasPermission(orgPerm)) { return res.sendStatus(403); }
 
-		const deleted = await AKSO.db('magazines_editions_toc')
+		const exists = await AKSO.db('magazines_editions_toc')
+			.first(1)
+			.where({
+				magazineId: req.params.magazineId,
+				editionId: req.params.editionId,
+				id: req.params.tocEntryId,
+			});
+		if (!exists) { return res.sendStatus(404); }
+
+		const s3Ids = await AKSO.db('magazines_editions_toc_recitations')
+			.pluck('s3Id')
+			.where({
+				tocEntryId: req.params.tocEntryId,
+			});
+
+		if (s3Ids.length) {
+			await deleteObjects({ keys: s3Ids });
+		}
+
+		await AKSO.db('magazines_editions_toc')
 			.where({
 				magazineId: req.params.magazineId,
 				editionId: req.params.editionId,
@@ -22,21 +39,6 @@ export default {
 			})
 			.delete();
 
-		if (deleted) {
-			const tocParent = path.join(
-				AKSO.conf.dataDir,
-				'magazine_edition_toc_recitation',
-				req.params.magazineId
-			);
-			const tocDir = path.join(
-				tocParent,
-				req.params.editionId,
-				req.params.tocEntryId
-			);
-
-			await removePathAndEmptyParents(tocParent, tocDir);
-		}
-
-		res.sendStatus(deleted ? 204 : 404);
+		res.sendStatus(204);
 	}
 };

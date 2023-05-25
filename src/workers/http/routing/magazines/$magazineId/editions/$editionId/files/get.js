@@ -35,7 +35,7 @@ export default {
 		const query = AKSO.db('magazines_editions_files')
 			.where({
 				magazineId: req.params.magazineId,
-				editionId: req.params.editionId
+				editionId: req.params.editionId,
 			});
 		await QueryUtil.handleCollection({
 			req,

@@ -1,7 +1,5 @@
-import path from 'path';
-import fs from 'fs-extra';
-
 import { sendTemplate, inheritTextMd } from 'akso/lib/notif-template-util';
+import { getSignedURLObjectGET } from 'akso/lib/s3';
 
 export default {
 	schema: {
@@ -66,7 +64,7 @@ export default {
 			editionData = await AKSO.db('magazines_editions AS e')
 				.first(
 					'org', 'magazineId', 'e.id AS editionId', 'name', 'm.description AS magazineDescription',
-					'e.description AS editionDescription', 'issn', 'idHuman', 'date')
+					'e.description AS editionDescription', 'issn', 'idHuman', 'date', 'thumbnailS3Id')
 				.innerJoin('magazines AS m', 'e.magazineId', 'm.id')
 				.where({
 					magazineId: req.body.magazineId,
@@ -131,18 +129,13 @@ export default {
 				tocText += `| ${toc.page.toString().padStart(tocTextPageLen)} ... ${toc.title.padEnd(tocTextTitleLen)} |`;
 			}
 
-			const thumbnailPath = path.join(
-				AKSO.conf.dataDir,
-				'magazine_edition_thumbnails',
-				req.body.magazineId.toString(),
-				req.body.editionId.toString()
-			);
-
-			let hasThumbnail = false;
-			try {
-				await fs.access(thumbnailPath);
-				hasThumbnail = true;
-			} catch { /* noop */ }
+			let thumbnailURL = null;
+			if (editionData.thumbnailS3Id) {
+				thumbnailURL = getSignedURLObjectGET({
+					key: `magazines-editions-thumbnails-${editionData.thumbnailS3Id}-512`,
+					expiresIn: 30 * 24 * 60 * 60, // 1 month
+				});
+			}
 
 			intentData = {
 				'magazine.id': editionData.magazineId,
@@ -156,7 +149,7 @@ export default {
 				'edition.id': editionData.editionId,
 				'edition.idHuman': editionData.idHuman,
 				'edition.date': editionData.date,
-				'edition.thumbnailURL': hasThumbnail ? `https://uea.org/_/revuo/bildo?m=${editionData.magazineId}&e=${editionData.editionId}&s=512px` : null,
+				'edition.thumbnailURL': thumbnailURL,
 				'edition.description': editionData.editionDescription,
 				'edition.editionURL': `https://uea.org/revuoj/revuo/${editionData.magazineId}/numero/${editionData.editionId}`,
 
