@@ -287,6 +287,11 @@ async function init () {
 		if (AKSO.conf.stripe.deleteWebhooks) {
 			AKSO.log.warn('Stripe webhooks are deleted upon shutdown');
 		}
+
+		// s3
+		// validate connection
+		AKSO.log.info('Validating connection to S3 ...');
+		await require('./lib/s3').validateConnection();
 	}
 
 	// Load shared modules

@@ -3,11 +3,10 @@ import {
 	PutObjectCommand,
 	GetObjectCommand,
 	DeleteObjectCommand, DeleteObjectsCommand,
+	HeadBucketCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
-
-const BUCKET = AKSO.conf.s3.bucket;
 
 export const s3Client = new S3Client({
 	endpoint: AKSO.conf.s3.endpoint,
@@ -18,6 +17,17 @@ export const s3Client = new S3Client({
 	},
 	s3BucketEndpoint: true,
 });
+
+export async function validateConnection () {
+	try {
+		await s3Client.send(new HeadBucketCommand({
+			Bucket: AKSO.conf.s3.bucket,
+		}));
+	} catch (e) {
+		AKSO.log.error('An error occured while establishing a connection to S3, see stack below:');
+		throw e;
+	}
+}
 
 export async function putObject ({
 	params = {},
@@ -36,7 +46,7 @@ export async function putObject ({
 	}
 
 	const res = await s3Client.send(new PutObjectCommand({
-		Bucket: BUCKET,
+		Bucket: AKSO.conf.s3.bucket,
 		Body: body,
 		Key: s3Key,
 		ACL: acl,
@@ -60,7 +70,7 @@ export async function deleteObjects ({
 		const keyChunk = keys.slice(i, i + 1000);
 
 		promises.push(s3Client.send(new DeleteObjectsCommand({
-			Bucket: BUCKET,
+			Bucket: AKSO.conf.s3.bucket,
 			Delete: {
 				Objects: keyChunk.map(key => {
 					return { Key: key, };
@@ -74,7 +84,7 @@ export async function deleteObjects ({
 
 export async function deleteObject (key, params = {}) {
 	return s3Client.send(new DeleteObjectCommand({
-		Bucket: BUCKET,
+		Bucket: AKSO.conf.s3.bucket,
 		Key: key,
 		...params,
 	}));
@@ -86,12 +96,12 @@ export async function getSignedURLObjectGET ({
 	expiresIn = 15 * 60, // seconds, default is 15 minutes
 } = {}) {
 	return getSignedUrl(s3Client, new GetObjectCommand({
-		Bucket: BUCKET,
+		Bucket: AKSO.conf.s3.bucket,
 		Key: key,
 		...params,
 	}), { expiresIn });
 }
 
 export function getPublicObjectURL (key) {
-	return new URL(`/${BUCKET}/${key}`, AKSO.conf.s3.endpoint).toString();
+	return new URL(`/${AKSO.conf.s3.bucket}/${key}`, AKSO.conf.s3.endpoint).toString();
 }
