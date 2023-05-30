@@ -310,6 +310,14 @@ async function init () {
 		}
 	};
 	if (cluster.isMaster) {
+		// Make sure the MySQL event scheduler is running
+		const eventSchedulerRunning = await AKSO.db.raw('SELECT @@global.event_scheduler = "ON" AS running')
+			.then(res => !!res[0][0].running);
+		if (!eventSchedulerRunning) {
+			AKSO.log.warn('The MySQL event scheduler is turned off!');
+		}
+
+
 		// Set up cluster
 		let shuttingDown = false;
 		const workers = {};
