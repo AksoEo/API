@@ -11,3 +11,15 @@ export async function deleteExpiredLogs () {
 }
 deleteExpiredLogs.intervalMs = 43200000; // 12 hours
 deleteExpiredLogs.disregardExecutionTime = true;
+
+export async function deleteCodeholderHist () {
+	const tables = await AKSO.db.raw('show tables like "codeholders_hist_%"')
+		.then(tablesRaw => tablesRaw[0].map(x => x[Object.keys(x)[0]]));
+	
+	const deltaTime = moment().unix() - AKSO.CODEHOLDER_HIST_DELETION_TIME;
+	const promises = tables
+		.map(async table => await AKSO.db.raw('DELETE FROM ?? WHERE modTime < ?', [ table, deltaTime ]));
+	await Promise.all(promises);
+}
+deleteCodeholderHist.intervalMs = 43200000; // 12 hours
+deleteCodeholderHist.disregardExecutionTime = true;
