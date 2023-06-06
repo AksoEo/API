@@ -1,14 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
-import msgpack from 'msgpack-lite';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 import PDFDocument from 'pdfkit';
 import tmp from 'tmp-promise';
-const nodeFs = require('fs').promises;
 
 import * as AKSOMail from 'akso/mail';
 import * as AKSONotif from 'akso/notif';
 import QueryUtil from 'akso/lib/query-util';
+import { createConsumer } from 'akso/queue';
 
 import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -31,33 +30,10 @@ const PAGE_SIZES = {
 };
 
 export async function init () {
-	// Set up dir scanning
-	scheduleTimer(0);
+	await createConsumer('AKSO_ADDRESS_LABELS', consumer);
 }
 
-function scheduleTimer (wait = 500) {
-	setTimeout(() => { timer().catch(e => { throw e; }); }, wait);
-}
-
-async function timer () {
-	const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
-	const dir = await nodeFs.opendir(scheduleDir);
-	let entry;
-	do {
-		entry = await dir.read();
-		if (!entry) { break; }
-		if (!entry.isFile() || entry.name.indexOf('label-') !== 0) { continue; }
-		const file = path.join(scheduleDir, entry.name);
-		const rawData = await fs.readFile(file);
-		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
-		await processLabelOrder(data);
-		await fs.unlink(file);
-	} while (entry);
-	await dir.close();
-	scheduleTimer();
-}
-
-async function processLabelOrder (data) {
+async function consumer (data) {
 	const req = {
 		memberFilter: data.memberFilter,
 		query: data.query,

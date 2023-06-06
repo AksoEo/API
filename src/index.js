@@ -76,6 +76,7 @@ async function init () {
 				secretAccessKey: process.env.AKSO_S3_SECRET_ACCESS_KEY,
 				region: process.env.AKSO_S3_REGION,
 			},
+			rabbitmq: process.env.AKSO_RABBITMQ,
 			sendgrid: {
 				apiKey: process.env.AKSO_SENDGRID_API_KEY
 			},
@@ -204,6 +205,10 @@ async function init () {
 			AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 			process.exit(1);
 		}
+		if (!AKSO.conf.rabbitmq) {
+			AKSO.log.error('Missing AKSO_RABBITMQ');
+			process.exit(1);
+		}
 		if (!AKSO.conf.s3.bucket) {
 			AKSO.log.error('Missing AKSO_S3_BUCKET');
 			process.exit(1);
@@ -247,14 +252,6 @@ async function init () {
 			AKSO.log.error('Missing AKSO_OPEN_EXCHANGE_RATES_APP_ID');
 			process.exit(1);
 		}
-
-		// Set up state dirs
-		AKSO.log.info('Setting up state dirs');
-		await Promise.all([
-			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_telegram')),
-			fs.ensureDir(path.join(AKSO.conf.stateDir, 'notifs_mail')),
-			fs.ensureDir(path.join(AKSO.conf.stateDir, 'address_label_orders')),
-		]);
 	}
 
 	// Init

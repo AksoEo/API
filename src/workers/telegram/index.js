@@ -2,10 +2,9 @@ import { Telegraf } from 'telegraf';
 import { base64url } from 'rfc4648';
 import path from 'path';
 import fs from 'fs-extra';
-import msgpack from 'msgpack-lite';
 import PQueue from 'p-queue';
-const nodeFs = require('fs').promises;
 
+import { createConsumer } from 'akso/queue';
 import { renderTemplate } from 'akso/util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
@@ -40,38 +39,7 @@ export async function init () {
 		data: await telegraf.telegram.getMe(),
 	});
 
-	// Set up dir scanning
-	scheduleTimer(0);
-}
-
-function scheduleTimer (wait = 500) {
-	setTimeout(() => { timer().catch(e => { throw e; }); }, wait);
-}
-
-async function timer () {
-	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_telegram');
-	const dir = await nodeFs.opendir(scheduleDir);
-	let entry;
-	do {
-		entry = await dir.read();
-		if (!entry) { break; }
-		if (!entry.isFile() || entry.name.indexOf('tg-') !== 0) { continue; }
-		const file = path.join(scheduleDir, entry.name);
-		const rawData = await fs.readFile(file);
-		const data = msgpack.decode(rawData, { codec: AKSO.msgpack });
-
-		try {
-			await sendNotification(data);
-			await fs.unlink(file);
-		} catch (e) {
-			AKSO.log.error(e);
-
-			const newName = entry.name.replace('tg-', 'err-');
-			await fs.move(file, path.join(scheduleDir, newName));
-		}
-	} while (entry);
-	await dir.close();
-	scheduleTimer(2000);
+	await createConsumer('AKSO_SEND_TELEGRAM', sendNotification);
 }
 
 /**

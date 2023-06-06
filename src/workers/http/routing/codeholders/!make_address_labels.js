@@ -1,8 +1,4 @@
-import fs from 'fs-extra';
-import path from 'path';
-import tmp from 'tmp-promise';
-import msgpack from 'msgpack-lite';
-import moment from 'moment-timezone';
+import { addToQueue } from 'akso/queue';
 
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
@@ -208,11 +204,7 @@ export default {
 			user: req.user.isUser() ? req.user.user : null
 		};
 
-		const scheduleDir = path.join(AKSO.conf.stateDir, 'address_label_orders');
-		const tmpName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tmp-' });
-		await fs.writeFile(tmpName, msgpack.encode(labelInfo, { codec: AKSO.msgpack }));
-		const newName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'label-' + moment().unix(), keep: true });
-		await fs.move(tmpName, newName);
+		await addToQueue('AKSO_ADDRESS_LABELS', labelInfo);
 
 		res.sendStatus(202);
 	}

@@ -1,11 +1,10 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { default as deepmerge } from 'deepmerge';
-import tmp from 'tmp-promise';
-import msgpack from 'msgpack-lite';
-import moment from 'moment-timezone';
 
 import { renderTemplate, promiseAllObject } from 'akso/util';
+import { addToQueue } from 'akso/queue';
+
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
@@ -139,13 +138,9 @@ export async function renderSendEmail ({
 
 /**
  * Schedules a raw email for sending
- * @param  {Object} msg A Sendgrid mail object
+ * @param  {Object} msg A sendgrid email object
  */
 export async function sendRawMail (msg) {
-	const scheduleDir = path.join(AKSO.conf.stateDir, 'notifs_mail');
-
-	const tmpName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'tmp-' });
-	await fs.writeFile(tmpName, msgpack.encode(msg, { codec: AKSO.msgpack }));
-	const newName = await tmp.tmpName({ tmpdir: scheduleDir, prefix: 'mail-' + moment().unix(), keep: true });
-	await fs.move(tmpName, newName);
+	await addToQueue('AKSO_SEND_EMAIL', msg);
 }
+
