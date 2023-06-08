@@ -8,6 +8,18 @@ export async function validateDataEntry ({
 	addFormValues = {},
 	allowInvalidData = false,
 } = {}) {
+	// Make sure all fields are present
+	for (const formEntry of formData.form) {
+		if (formEntry.el === 'input') {
+			const name = formEntry.name;
+			if (!(name in data)) {
+				const err = new Error('Missing required field data.' + name);
+				err.statusCode = 400;
+				throw err;
+			}
+		}
+	}
+
 	await doAscMagic();
 
 	const aksoCountries = (await AKSO.db('countries').select('code'))
@@ -202,7 +214,6 @@ export async function validateDataEntry ({
 	for (const formEntry of formData.form) {
 		if (formEntry.el === 'input') {
 			const name = formEntry.name;
-			dataSchema.required.push(name);
 			dataSchema.properties[name] = getFieldSchema(formEntry);
 		} else if (formEntry.el === 'script') {
 			scripts.push(formEntry.script);
