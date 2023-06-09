@@ -171,11 +171,11 @@ export default {
 						...renderedTemplate,
 						to: {
 							name: validatedDataEntry.evaluate(formMetaData.formData.identifierName),
-							email: participantEmail,
+							address: participantEmail,
 						},
 						from: {
 							name: templateData.fromName ?? '',
-							email: templateData.from,
+							address: templateData.from,
 						},
 					});
 				})

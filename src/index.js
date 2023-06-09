@@ -77,8 +77,8 @@ async function init () {
 				region: process.env.AKSO_S3_REGION,
 			},
 			rabbitmq: process.env.AKSO_RABBITMQ,
-			sendgrid: {
-				apiKey: process.env.AKSO_SENDGRID_API_KEY
+			nodemailer: {
+				transport: JSON.parse(process.env.AKSO_NODEMAILER ?? '{}'),
 			},
 			telegram: {
 				token: process.env.AKSO_TELEGRAM_TOKEN
@@ -199,10 +199,6 @@ async function init () {
 		// Complain about missing/invalid env vars
 		if (!Number.isSafeInteger(AKSO.conf.http.threads) || AKSO.conf.http.threads > 32 || AKSO.conf.http.threads < 1) {
 			AKSO.log.error('AKSO_HTTP_THREADS must be an integer in the range 1-32');
-			process.exit(1);
-		}
-		if (!AKSO.conf.sendgrid.apiKey) {
-			AKSO.log.error('Missing AKSO_SENDGRID_API_KEY');
 			process.exit(1);
 		}
 		if (!AKSO.conf.rabbitmq) {

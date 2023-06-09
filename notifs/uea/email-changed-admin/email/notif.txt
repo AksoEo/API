@@ -1,4 +1,4 @@
-Estimata \{{name}},
+Estimata {{name}},
 
 Oficisto ĵus ŝanĝis vian registritan retpoŝtadreson ĉe UEA/TEJO:
 

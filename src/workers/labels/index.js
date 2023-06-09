@@ -222,22 +222,18 @@ async function consumer (data) {
 	const emailConf = {
 		attachments: [{
 			filename: 'Adresetikdoj.pdf',
-			content: fileBuffer.toString('base64'),
-			type: 'application/pdf'
-		}]
+			content: fileBuffer,
+			contentType: 'application/pdf',
+		}],
 	};
 
 	if (req.body.email) {
-		await AKSOMail.renderSendEmail({
-			personalizations: [{
-				to: req.body.email,
-				substitutions: {
-					name: 'mendinto'
-				}
-			}],
+		await AKSOMail.renderSendNotification({
+			to: req.body.email,
 			org: 'akso',
 			tmpl: 'admin-address-labels-ready',
-			msgData: emailConf
+			view: { name: 'mendinto' },
+			nodemailer: emailConf,
 		});
 	} else {
 		await AKSONotif.sendNotification({
@@ -249,10 +245,10 @@ async function consumer (data) {
 				type: 'document',
 				file: {
 					source: fileBuffer,
-					filename: 'Adresetikedoj.pdf'
-				}
+					filename: 'Adresetikedoj.pdf',
+				},
 			},
-			emailConf: emailConf
+			emailConf: emailConf,
 		});
 	}
 }

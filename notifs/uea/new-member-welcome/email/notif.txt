@@ -1,4 +1,4 @@
-Estimata \{{name}},
+Estimata {{name}},
 
 Koran dankon pro via membriĝo en UEA{{#if isTEJO}} kaj TEJO{{/if}}. Ĝi nun estas sukcese traktita.
 

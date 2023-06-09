@@ -1,5 +1,5 @@
 import { createTransaction, arrToObjByKey } from 'akso/util';
-import { renderSendEmail } from 'akso/mail';
+import { renderSendNotification } from 'akso/mail';
 
 import { afterQuery as intentAfterQuery } from 'akso/workers/http/routing/aksopay/payment_intents/schema';
 import { afterQuery as registrationEntryAfterQuery } from 'akso/workers/http/routing/registration/entries/schema';
@@ -187,14 +187,12 @@ export async function sendReceiptEmail (id, email = undefined) {
 
 	const intentData = await getIntentData(intent);
 
-	await renderSendEmail({
+	await renderSendNotification({
 		org: intent.org,
 		tmpl: 'aksopay-receipt',
-		personalizations: [{
-			to: {
-				email,
-				name: intent.customer_name,
-			},
+		to: [{
+			address: email,
+			name: intent.customer_name,
 		}],
 		view: {
 			...intentData,
@@ -244,14 +242,12 @@ export async function sendInstructionsEmail (id) {
 	const idEncoded = base32.stringify(intent.id);
 	const paymentFacilitatorURL = new URL('i/' + idEncoded, AKSO.conf.paymentFacilitator);
 
-	await renderSendEmail({
+	await renderSendNotification({
 		org: intent.org,
 		tmpl: 'aksopay-instructions',
-		personalizations: [{
-			to: {
-				email: intent.customer_email,
-				name: intent.customer_name,
-			},
+		to: [{
+			address: intent.customer_email,
+			name: intent.customer_name,
 		}],
 		view: {
 			...intentData,

@@ -1,4 +1,4 @@
-Estimata \{{name}},
+Estimata {{name}},
 
 Aperis egaleco en voĉdono en kiu vi estis elektita kiel la egalecrompanto.
 

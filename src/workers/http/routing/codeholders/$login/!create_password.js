@@ -57,18 +57,18 @@ export default {
 			.where('id', codeholder.id)
 			.update({
 				createPasswordTime: moment().unix(),
-				createPasswordKey: createPasswordKey
+				createPasswordKey: createPasswordKey,
 			});
 
 		// Send the email
-		await AKSOMail.renderSendEmail({
+		await AKSOMail.renderSendNotification({
 			org: req.body.org,
 			tmpl: 'create-password',
 			to: codeholder.id,
 			view: {
 				code: encodeURIComponent(codeholder.newCode),
-				key: createPasswordKey.toString('hex')
-			}
+				key: createPasswordKey.toString('hex'),
+			},
 		});
 	}
 };

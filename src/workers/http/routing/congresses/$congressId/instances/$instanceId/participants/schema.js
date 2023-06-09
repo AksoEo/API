@@ -299,11 +299,11 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		...await renderTemplate(template, intentData),
 		to: {
 			name: validatedDataEntry.evaluate(formMetaData.formData.identifierName),
-			email: validatedDataEntry.evaluate(formMetaData.formData.identifierEmail),
+			address: validatedDataEntry.evaluate(formMetaData.formData.identifierEmail),
 		},
 		from: {
 			name: template.fromName || '',
-			email: template.from
+			address: template.from
 		},
 	});
 }

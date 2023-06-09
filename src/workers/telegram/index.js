@@ -43,7 +43,7 @@ export async function init () {
 }
 
 /**
- * Sends a telegram notification to an array of recipients
+ * Sends a built-in telegram notification to an array of recipients
  * @param {Object}   options
  * @param {number[]} options.codeholderIds The recipients
  * @param {string}   options.org           The org of the notification

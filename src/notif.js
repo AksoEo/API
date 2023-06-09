@@ -2,12 +2,12 @@ import * as AKSOTelegram from './telegram';
 import * as AKSOMail from './mail';
 
 /**
- * Sends a notification to a number of recipients
+ * Sends a built-in notification to a number of recipients
  * @param  {number[]} options.codeholderIds   The codeholder ids of the recipients
  * @param  {string}   options.org             The organization of the notification
  * @param  {string}   options.notif           The name of the template for the notification
  * @param  {string}   options.category        The category of the notification
- * @param  {Object}   [options.emailConf]     Additional settings to pass to sendgrid emails
+ * @param  {Object}   [options.emailConf]     Additional settings to pass to nodemailer
  * @param  {Map}      [emailPersonalizations] A `Map` of codeholderId:personalization object
  * @param  {Object}   [tgAttach]              A Telegram attachment object
  * @param  {Object}   [view]                  A view for rendering the notification
@@ -61,7 +61,7 @@ export async function sendNotification ({
 
 	const recipients = {
 		telegram: [],
-		email: []
+		email: [],
 	};
 	for (let [id, prefs] of msgPrefs.entries()) {
 		for (let pref of prefs) { recipients[pref].push(id); }
@@ -82,18 +82,16 @@ export async function sendNotification ({
 
 	// Send emails
 	if (recipients.email.length) {
-		const personalizations = recipients.email.map(recipient => {
-			const personalization = emailPersonalizations.get(recipient) ?? {};
-			personalization.to = recipient;
-			return personalization;
-		});
-
-		sendPromises.push(AKSOMail.renderSendEmail({
+		sendPromises.push(AKSOMail.renderSendNotification({
 			org: org,
 			tmpl: notif,
-			personalizations: personalizations,
+			to: recipients.email.map(email => {
+				const recipient = emailPersonalizations.get(email);
+				if (recipient) { return recipient; }
+				return email;
+			}),
 			view: view,
-			msgData: emailConf,
+			nodemailer: emailConf,
 			db,
 		}));
 	}

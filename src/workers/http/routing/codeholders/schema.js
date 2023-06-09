@@ -1084,35 +1084,29 @@ export async function handleHistory ({
 				.first('codeholderType', 'honorific', 'firstName', 'firstNameLegal', 'lastName', 'lastNameLegal', 'fullName');
 			const codeholderName = formatCodeholderName(codeholderNameBits);
 
-			const personalizations = [];
+			const recipients = [];
 			if (validationData.updateData.email !== null) {
-				personalizations.push({ // new
+				recipients.push({ // new
 					to: {
 						name: codeholderName,
-						email: validationData.updateData.email,
-					},
-					substitutions: {
-						name: codeholderName,
+						address: validationData.updateData.email,
 					},
 				});
 			}
 			if (oldData.email !== null) {
-				personalizations.push({ // old
+				recipients.push({ // old
 					to: {
 						name: codeholderName,
-						email: oldData.email,
-					},
-					substitutions: {
-						name: codeholderName,
+						address: oldData.email,
 					},
 				});
 			}
-			if (personalizations.length) {
-				histPromises.push(AKSOMail.renderSendEmail({
+			if (recipients.length) {
+				histPromises.push(AKSOMail.renderSendNotification({
 					org: 'uea',
 					tmpl: 'email-changed-admin',
 					view: view,
-					personalizations,
+					to: recipients,
 				}));
 			}
 		}

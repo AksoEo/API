@@ -155,11 +155,11 @@ export async function sendTemplate ({
 						...renderedEmail,
 						to: {
 							name: notifView['codeholder.name'],
-							email: codeholder.email
+							address: codeholder.email,
 						},
 						from: {
-							name: template.fromName || '',
-							email: template.from
+							name: template.fromName ?? '',
+							address: template.from,
 						}
 					};
 					// TODO: Change this when we support Telegram for notif templates
