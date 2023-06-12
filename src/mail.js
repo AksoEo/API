@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import { default as deepmerge } from 'deepmerge';
+import { crush } from 'html-crush';
 
 import { renderTemplate, promiseAllObject } from 'akso/util';
 import { addToQueue } from 'akso/queue';
@@ -142,6 +143,16 @@ export async function renderSendNotification ({
  * @param  {Object} msg A nodemailer email object
  */
 export async function sendRawMail (msg) {
-	await addToQueue('AKSO_SEND_EMAIL', msg);
+	// Minify the HTML
+	// html-crush is email-safe
+	const msgMinified = { ...msg };
+	if (msg.html) {
+		msgMinified.html = crush(msg.html, {
+			removeLineBreaks: true,
+			lineLengthLimit: 900, // RFC 5322 § 2.1.1 says max is 998, we'll do 900 to be conservative
+			removeHTMLComments: 1, // remove non-outlook comments
+		}).result;
+	}
+	await addToQueue('AKSO_SEND_EMAIL', msgMinified);
 }
 
