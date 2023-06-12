@@ -4,8 +4,6 @@ import { analyzeAll } from '@tejo/akso-script';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import AKSONotifTemplateIntent from 'akso/lib/enums/akso-notif-template-intent';
 
-import { domains } from './schema';
-
 const genericRequiredProps = [
 	'base', 'org', 'name', 'intent', 'subject', 'from'
 ];
@@ -218,7 +216,7 @@ export default {
 
 		// Verify from
 		const fromDomain = req.body.from.substring(1 + req.body.from.lastIndexOf('@'));
-		if (!domains[req.body.org].includes(fromDomain)){
+		if (!AKSOOrganization.getEmailDomains(req.body.org).includes(fromDomain)){
 			return res.status(403).type('text/plain')
 				.send(`Illegal from address domain ${fromDomain}`);
 		}

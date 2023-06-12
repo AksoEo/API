@@ -1,7 +1,5 @@
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 
-import { domains } from '../schema';
-
 export default {
 	schema: {},
 
@@ -10,7 +8,8 @@ export default {
 			.filter(org => req.hasPermission('notif_templates.read.' + org));
 		
 		const filteredDomains = {};
-		for (const [ org, orgDomains ] of Object.entries(domains)) {
+		for (const [ orgUpper, orgDomains ] of Object.entries(AKSOOrganization.domains)) {
+			const org = orgUpper.toLowerCase();
 			if (!orgs.includes(org)) { continue; }
 			filteredDomains[org] = orgDomains;
 		}

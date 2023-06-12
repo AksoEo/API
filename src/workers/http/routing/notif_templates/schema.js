@@ -18,8 +18,3 @@ export const schema = {
 	},
 	alwaysSelect: [ 'base' ]
 };
-
-export const domains = {
-	tejo: [ 'tejo.org' ],
-	uea: [ 'uea.org', 'co.uea.org' ]
-};

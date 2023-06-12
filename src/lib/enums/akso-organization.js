@@ -1,6 +1,7 @@
 import Enum from './enum';
 
 class AKSOOrganization extends Enum {
+	// Returns the primary domain for the website (grav or AKSO Admin)
 	static getDomain (prop) {
 		switch (this.normalize(prop)) {
 		case 'AKSO':
@@ -11,6 +12,19 @@ class AKSOOrganization extends Enum {
 			return 'https://uea.org';
 		}
 	}
+
+	// Permitted email-sender domains
+	static domains = {
+		AKSO: [ 'akso.org' ],
+		TEJO: [ 'tejo.org' ],
+		UEA:  [ 'uea.org', 'co.uea.org' ],
+	};
+
+	static getEmailDomains (prop) {
+		return AKSOOrganization.domains[this.normalize(prop)];
+	}
+
+
 }
 AKSOOrganization.setProps('akso', 'tejo', 'uea');
 
