@@ -152,7 +152,7 @@ const schema = {
 													items: {
 														type: 'string',
 														minLength: 1,
-														maxLength: 5000
+														maxLength: 20000
 													}
 												},
 												button: {
