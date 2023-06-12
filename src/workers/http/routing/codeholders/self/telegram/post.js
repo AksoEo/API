@@ -43,6 +43,6 @@ export default {
 		const url = new URL(AKSO.telegrafBotUser.username, 'https://t.me');
 		url.searchParams.set('start', deepLinkIdBase64);
 
-		res.type('text/plain').send(url);
+		res.type('text/plain').send(url.toString());
 	}
 };
