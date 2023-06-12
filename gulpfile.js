@@ -11,23 +11,7 @@ const compileSrc = function (source) {
 		.pipe(header("import 'core-js/stable';import 'regenerator-runtime/runtime';import 'source-map-support/register';"))
 		.pipe(sourcemaps.init())
 		.pipe(babel({
-				presets: [
-					["@babel/preset-env", {
-						"exclude": [ "@babel/plugin-transform-exponentiation-operator" ]
-					}]
-				],
-				plugins: [
-					"@babel/transform-async-to-generator",
-					"@babel/plugin-proposal-export-namespace-from",
-					"@babel/plugin-syntax-bigint",
-					[
-						"module-resolver", {
-							"alias": {
-								"akso": "./dist"
-							}
-						}
-					]
-				]
+				root: __dirname,
 			}))
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist'))
