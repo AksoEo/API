@@ -9,7 +9,7 @@ import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import responseTime from 'response-time';
-import csurf from 'csurf';
+import csurf from '@dr.pogodin/csurf';
 import ipaddr from 'ipaddr.js';
 import rateLimit from 'express-rate-limit';
 import useragent from 'useragent';
