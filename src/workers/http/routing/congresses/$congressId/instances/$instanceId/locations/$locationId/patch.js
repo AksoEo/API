@@ -138,8 +138,10 @@ export default {
 		if ('name' in req.body) { mainData.name = req.body.name; }
 		if ('description' in req.body) { mainData.description = req.body.description; }
 
+		const trx = await req.createTransaction();
+
 		if (Object.keys(mainData).length) {
-			await AKSO.db('congresses_instances_locations')
+			await trx('congresses_instances_locations')
 				.where('id', req.params.locationId)
 				.update(mainData);
 		}
@@ -150,40 +152,40 @@ export default {
 		if ('icon' in req.body) { externalData.icon = req.body.icon; }
 
 		if (Object.keys(externalData).length) {
-			await AKSO.db('congresses_instances_locations_external')
+			await trx('congresses_instances_locations_external')
 				.where('congressInstanceLocationId', req.params.locationId)
 				.update(externalData);
 		}
 
 		if ('externalLoc' in req.body) {
-			await AKSO.db('congresses_instances_locations_internal')
+			await trx('congresses_instances_locations_internal')
 				.where('congressInstanceLocationId', req.params.locationId)
 				.update('externalLoc', req.body.externalLoc);
 		}
 
 		if ('rating' in req.body) {
 			if (req.body.rating === null) {
-				await AKSO.db('congresses_instances_locations_external_rating')
+				await trx('congresses_instances_locations_external_rating')
 					.where('congressInstanceLocationId', req.params.locationId)
 					.delete();
 			} else {
-				await insertAsReplace(AKSO.db('congresses_instances_locations_external_rating')
+				await insertAsReplace(trx('congresses_instances_locations_external_rating')
 					.insert({
 						congressInstanceLocationId: req.params.locationId,
 						rating: req.body.rating.rating.toFixed(2),
 						rating_max: req.body.rating.max,
 						rating_type: req.body.rating.type
-					}));
+					}), trx);
 			}
 		}
 
 		if ('openHours' in req.body) {
-			await AKSO.db('congresses_instances_locations_openHours')
+			await trx('congresses_instances_locations_openHours')
 				.where('congressInstanceLocationId', req.params.locationId)
 				.delete();
 
 			if (openHours !== null) {
-				await AKSO.db('congresses_instances_locations_openHours')
+				await trx('congresses_instances_locations_openHours')
 					.insert(openHours.map(x => {
 						return {
 							congressInstanceLocationId: req.params.locationId,
@@ -192,6 +194,8 @@ export default {
 					}));
 			}
 		}
+
+		await trx.commit();
 
 		res.sendStatus(204);
 	}
