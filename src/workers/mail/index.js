@@ -1,13 +1,13 @@
 import nodemailer from 'nodemailer';
 
-import { createConsumer } from 'akso/queue';
+import { createConsumer, WorkerQueues } from 'akso/queue';
 
 let transporter;
 export async function init () {
 	const transport = AKSO.conf.nodemailer.transport;
 	transporter = nodemailer.createTransport(transport);
 
-	await createConsumer('AKSO_SEND_EMAIL', consumer);
+	await createConsumer(WorkerQueues.SEND_EMAIL, consumer);
 }
 
 async function consumer (data) {

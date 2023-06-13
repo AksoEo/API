@@ -1,4 +1,4 @@
-import { addToQueue } from 'akso/queue';
+import { addToQueue, WorkerQueues } from 'akso/queue';
 
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
@@ -204,7 +204,7 @@ export default {
 			user: req.user.isUser() ? req.user.user : null
 		};
 
-		await addToQueue('AKSO_ADDRESS_LABELS', labelInfo);
+		await addToQueue(WorkerQueues.ADDRESS_LABELS, labelInfo);
 
 		res.sendStatus(202);
 	}

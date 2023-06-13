@@ -4,7 +4,7 @@ import { default as deepmerge } from 'deepmerge';
 import { crush } from 'html-crush';
 
 import { renderTemplate, promiseAllObject } from 'akso/util';
-import { addToQueue } from 'akso/queue';
+import { addToQueue, WorkerQueues } from 'akso/queue';
 
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
@@ -153,6 +153,6 @@ export async function sendRawMail (msg) {
 			removeHTMLComments: 1, // remove non-outlook comments
 		}).result;
 	}
-	await addToQueue('AKSO_SEND_EMAIL', msgMinified);
+	await addToQueue(WorkerQueues.SEND_EMAIL, msgMinified);
 }
 

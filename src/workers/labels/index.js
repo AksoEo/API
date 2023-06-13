@@ -7,7 +7,7 @@ import tmp from 'tmp-promise';
 import * as AKSOMail from 'akso/mail';
 import * as AKSONotif from 'akso/notif';
 import QueryUtil from 'akso/lib/query-util';
-import { createConsumer } from 'akso/queue';
+import { createConsumer, WorkerQueues } from 'akso/queue';
 
 import { schema as parSchema, memberFilter } from 'akso/workers/http/routing/codeholders/schema';
 
@@ -30,7 +30,7 @@ const PAGE_SIZES = {
 };
 
 export async function init () {
-	await createConsumer('AKSO_ADDRESS_LABELS', consumer);
+	await createConsumer(WorkerQueues.ADDRESS_LABELS, consumer);
 }
 
 async function consumer (data) {

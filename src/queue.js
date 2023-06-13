@@ -1,6 +1,12 @@
 import Connection from 'rabbitmq-client';
 import msgpack from 'msgpack-lite';
 
+export const WorkerQueues = {
+	SEND_EMAIL: 'AKSO_SEND_EMAIL',
+	SEND_TELEGRAM: 'AKSO_SEND_TELEGRAM',
+	ADDRESS_LABELS: 'AKSO_ADDRESS_LABELS',
+};
+
 let _rabbit = null;
 export function getConnection () {
 	if (!_rabbit) {

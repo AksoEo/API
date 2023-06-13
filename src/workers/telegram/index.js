@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import PQueue from 'p-queue';
 
-import { createConsumer } from 'akso/queue';
+import { createConsumer, WorkerQueues } from 'akso/queue';
 import { renderTemplate } from 'akso/util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
 import { formatCodeholderName } from 'akso/workers/http/lib/codeholder-util';
@@ -39,7 +39,7 @@ export async function init () {
 		data: await telegraf.telegram.getMe(),
 	});
 
-	await createConsumer('AKSO_SEND_TELEGRAM', sendNotification);
+	await createConsumer(WorkerQueues.SEND_TELEGRAM, sendNotification);
 }
 
 /**
