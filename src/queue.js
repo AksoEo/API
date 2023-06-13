@@ -50,11 +50,28 @@ export async function createQueue (queue) {
 
 	}
 	const channel = await getChannel();
-	await channel.queueDeclare({
+	const res = await channel.queueDeclare({
 		queue,
 		durable: true,
 	});
 	queues.push(queue);
+	return res;
+}
+
+export async function getQueueSize (queue) {
+	let queueRes;
+	if (!queues.includes(queue)) {
+		queueRes = await createQueue(queue);
+	} else {
+		const channel = await getChannel();
+		// only checks state
+		queueRes = await channel.queueDeclare({
+			queue,
+			durable: true,
+			passive: true,
+		});
+	}
+	return queueRes;
 }
 
 export async function addToQueue (queue, data) {
@@ -63,7 +80,7 @@ export async function addToQueue (queue, data) {
 	}
 	const channel = await getChannel();
 	const encodedData = msgpack.encode(data, { codec: AKSO.msgpack });
-	await channel.basicPublish({ routingKey: queue }, encodedData);
+	await channel.basicPublish({ routingKey: queue, durable: true }, encodedData);
 }
 
 export async function createConsumer (queue, listener) {
