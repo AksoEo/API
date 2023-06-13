@@ -64,7 +64,7 @@ export async function createQueue (queue) {
 	return res;
 }
 
-export async function getQueueSize (queue) {
+export async function getQueueInfo (queue) {
 	let queueRes;
 	if (!queues.includes(queue)) {
 		queueRes = await createQueue(queue);
