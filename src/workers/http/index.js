@@ -246,6 +246,11 @@ export function init () {
 					}
 				}
 
+				if (err.name === 'KnexTimeoutError') {
+					return res.status(400).type('text/plain')
+						.send('TimeOut: The query you provided to ?filter took too long to execute, please try simplifying it.');
+				}
+
 				if (status >= 500) {
 					const url = Url.parse(req.originalUrl).pathname;
 					if (err.sqlState) { // It's from knex

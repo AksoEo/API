@@ -292,6 +292,7 @@ const QueryUtil = {
 	 * @param {Array}             [fieldWhitelist] The filterable fields used for per client whitelisting
 	 * @param {Object}            [customCompOps]  Custom comparison operators. See `/src/workers/http/routing/codeholders/schema.js` for usage
 	 * @param {Object}            [customLogicOps] Custom logic operators. See `/src/workers/http/routing/codeholders/schema.js` for usage
+	 * @param {number}            [queryTimeoutMs] Optionally, maximum execution time for the query
 	 */
 	filter: function queryUtilFilter ({
 		fields,
@@ -301,8 +302,12 @@ const QueryUtil = {
 		fieldWhitelist,
 		customCompOps = {},
 		customLogicOps = {},
-		customLogicOpsFields = {}
+		customLogicOpsFields = {},
+		queryTimeoutMs,
 	} = {}) {
+		if (queryTimeoutMs) {
+			query.timeout(queryTimeoutMs, { cancel: true });
+		}
 		query.where(function () {
 			for (let key in filter) { // Iterate through each key
 				if (key in fields) { // key is a field
@@ -499,7 +504,8 @@ const QueryUtil = {
 				fieldWhitelist,
 				customCompOps: schema.customFilterCompOps,
 				customLogicOpsFields: schema.customFilterLogicOpsFields,
-				customLogicOps: schema.customFilterLogicOps
+				customLogicOps: schema.customFilterLogicOps,
+				queryTimeoutMs: req.queryTimeoutMs,
 			});
 		}
 

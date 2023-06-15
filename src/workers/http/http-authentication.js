@@ -136,6 +136,18 @@ async function authentication (app) {
 
 	// Set up permissions
 	app.use(AKSOPermissions);
+
+	// Define maximum query execution time
+	app.use(function (req, res, next) {
+		if (req.hasPermission('ratelimit.disable')) {
+			req.queryTimeoutMs = 3000;
+		} else if (req.hasPermission('admin')) {
+			req.queryTimeoutMs = 1000;
+		} else {
+			req.queryTimeoutMs = 15;
+		}
+		next();
+	});
 }
 
 export default authentication;
