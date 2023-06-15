@@ -36,8 +36,7 @@ export async function updateExchangeRatesIfNeeded () {
 		}
 	}
 
-	// TODO: Only read the file if stat says outdated
-	if (!rates) {
+	if (!rates && !AKSO.exchangeRates) {
 		rates = await fs.readJSON(exchangeRatesPath);
 	}
 
