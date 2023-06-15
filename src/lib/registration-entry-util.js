@@ -260,9 +260,10 @@ export async function checkIssuesInPaidRegistrationEntry (registrationEntryId, d
 	}
 
 	if (!isExistingCodeholder && !newCodeholderData) {
-		throw new Error('Registration Entry has no codeholder id or data obj');
 		// This should absolutely never be able to happen
-		// TODO: Report error
+		const err = new Error('Registration Entry has no codeholder id or data obj');
+		err.statusCode = 500;
+		throw err;
 	}
 
 	const registrationEntry = await db('registration_entries')
