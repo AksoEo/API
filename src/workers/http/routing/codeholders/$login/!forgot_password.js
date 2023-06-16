@@ -39,7 +39,7 @@ export default {
 		const codeholder = await AKSO.db('codeholders')
 			.where(whereStmt)
 			.whereNotNull('password')
-			.first('id', 'newCode', 'createPasswordTime');
+			.first('id', 'newCode', 'createPasswordTime', 'email');
 		if (!codeholder) { return; }
 
 		if (!req.hasPermission('admin')) {
@@ -51,12 +51,23 @@ export default {
 
 		// Update createPasswordTime and createPasswordKey
 		const createPasswordKey = await crypto.randomBytes(16);
-
 		await AKSO.db('codeholders')
 			.where('id', codeholder.id)
 			.update({
 				createPasswordTime: moment().unix(),
 				createPasswordKey: createPasswordKey
+			});
+
+		// Generate email deletion token
+		const deleteToken = await crypto.randomBytes(32);
+		await AKSO.db('tokens')
+			.insert({
+				token: deleteToken,
+				expiry: moment().add(1, 'day').unix(),
+				payload: JSON.stringify({
+					email: codeholder.email,
+				}),
+				ctx: 'DELETE_EMAIL_ADDRESS',
 			});
 
 		// Send the notification
@@ -67,7 +78,8 @@ export default {
 			category: 'account',
 			view: {
 				code: encodeURIComponent(codeholder.newCode),
-				key: createPasswordKey.toString('hex')
+				key: createPasswordKey.toString('hex'),
+				deleteToken: deleteToken.toString('hex'),
 			}
 		});
 	}

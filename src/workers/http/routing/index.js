@@ -38,6 +38,7 @@ import { init as route$queries } from './queries';
 import { init as route$registration } from './registration';
 import { init as route$status } from './status';
 import { init as route$tasks } from './tasks';
+import { init as route$tokens } from './tokens';
 import { init as route$vote_templates } from './vote_templates';
 import { init as route$votes } from './votes';
 
@@ -86,6 +87,7 @@ export function init () {
 	router.use('/registration', route$registration());
 	router.use('/status', route$status());
 	router.use('/tasks', route$tasks());
+	router.use('/tokens', route$tokens());
 	router.use('/vote_templates', route$vote_templates());
 	router.use('/votes', route$votes());
 
