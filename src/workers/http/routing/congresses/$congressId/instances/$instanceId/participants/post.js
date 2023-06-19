@@ -4,7 +4,11 @@ import crypto from 'pn/crypto';
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
-import { manualDataValidation, sendParticipantConfirmationNotif } from './schema';
+import {
+	manualDataValidation,
+	sendParticipantConfirmationNotif,
+	assignSequenceIdIfNeeded
+} from './schema';
 
 export default {
 	schema: {
@@ -152,6 +156,9 @@ export default {
 						})
 				);
 		}
+
+		await assignSequenceIdIfNeeded(req.params.instanceId, dataId, trx);
+
 		await trx.commit();
 
 		const dataIdHex = dataId.toString('hex');

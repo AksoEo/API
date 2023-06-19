@@ -5,7 +5,11 @@ import CongressParticipantResource from 'akso/lib/resources/congress-participant
 import { validateDataEntry, insertFormDataEntry } from 'akso/workers/http/lib/form-util';
 import { isActiveMember } from 'akso/workers/http/lib/codeholder-util';
 
-import { manualDataValidation, schema as parSchema } from '../schema';
+import {
+	manualDataValidation,
+	schema as parSchema,
+	assignSequenceIdIfNeeded,
+} from '../schema';
 
 export default {
 	schema: {
@@ -209,6 +213,9 @@ export default {
 					);
 			}
 		}
+
+		await assignSequenceIdIfNeeded(req.params.instanceId, req.params.dataId, trx);
+
 		await trx.commit();
 
 		res.sendStatus(204);

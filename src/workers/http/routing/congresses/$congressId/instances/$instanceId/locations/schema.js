@@ -1,7 +1,6 @@
 import moment from 'moment-timezone';
 
 import { getSignedURLObjectGET } from 'akso/lib/s3';
-import { arrToObjByKey } from 'akso/util';
 
 import { thumbnailSizes } from './$locationId/thumbnail/schema';
 
@@ -73,7 +72,7 @@ export const schema = {
 					this.select(1)
 						.from('congresses_instances_locations_tags')
 						.whereRaw('congresses_instances_locations_tags.congressInstanceLocationId = congresses_instances_locations.id')
-						.whereIn('congressInstanceLocationTagId', arr)
+						.whereIn('congressInstanceLocationTagId', arr);
 				});
 			},
 		},

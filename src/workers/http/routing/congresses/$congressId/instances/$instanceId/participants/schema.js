@@ -1,4 +1,5 @@
 import { escapeId } from 'mysql2';
+import { createTransaction } from 'akso/util';
 
 import { memberFilter, schema as chSchema } from 'akso/workers/http/routing/codeholders/schema';
 import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
@@ -306,4 +307,46 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 			address: template.from
 		},
 	});
+}
+
+export async function assignSequenceIdIfNeeded (instanceId, dataId, _db) {
+	let db;
+	if (_db) {
+		db = _db;
+	} else {
+		db = await createTransaction();
+	}
+
+	// Find the sequenceId settings
+	const registrationForm = await db('congresses_instances_registrationForm')
+		.first('sequenceIds_startAt', 'sequenceIds_requireValid')
+		.where('congressInstanceId', instanceId);
+	if (!registrationForm || !registrationForm.sequenceIds_startAt) { return; }
+
+	// Find the registration entry
+	const registrationEntry = await db('view_congresses_instances_participants')
+		.first('isValid', 'sequenceId')
+		.where({ dataId });
+	if (!registrationEntry || registrationEntry.sequenceId) { return; }
+	if (registrationForm.sequenceIds_requireValid && !registrationEntry.isValid) { return; }
+
+	// Find the next useable sequenceId
+	const sequenceId = await db('congresses_instances_participants AS p1')
+		.select({ num: AKSO.db.raw('coalesce(min(p1.sequenceId) + 1, ?)', [ registrationForm.sequenceIds_startAt ]) })
+		.whereNotExists(function () {
+			this.select(1)
+				.from('congresses_instances_participants AS p2')
+				.whereRaw('p2.sequenceId = p1.sequenceId + 1');
+		})
+		.where('p1.sequenceId', '>=', registrationForm.sequenceIds_startAt)
+		.then(res => res[0].num);
+
+	// Assign it
+	await db('congresses_instances_participants')
+		.where({ dataId })
+		.update({ sequenceId });
+
+	if (!_db) {
+		await db.commit();
+	}
 }

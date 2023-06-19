@@ -37,4 +37,4 @@ export async function triggerTriggerablePurposes () {
 	await AKSO.db('pay_triggerHist')
 		.insert(newTriggerHists);
 }
-triggerTriggerablePurposes.intervalMs = 5000; // Check every 5 seconds
+triggerTriggerablePurposes.intervalMs = 10000; // Check every 10 seconds
