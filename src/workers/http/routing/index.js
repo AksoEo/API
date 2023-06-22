@@ -36,6 +36,7 @@ import { init as route$newsletters } from './newsletters';
 import { init as route$notif_templates } from './notif_templates';
 import { init as route$queries } from './queries';
 import { init as route$registration } from './registration';
+import { init as route$statistics } from './statistics';
 import { init as route$status } from './status';
 import { init as route$tasks } from './tasks';
 import { init as route$tokens } from './tokens';
@@ -85,6 +86,7 @@ export function init () {
 	router.use('/notif_templates', route$notif_templates());
 	router.use('/queries', route$queries());
 	router.use('/registration', route$registration());
+	router.use('/statistics', route$statistics());
 	router.use('/status', route$status());
 	router.use('/tasks', route$tasks());
 	router.use('/tokens', route$tokens());
