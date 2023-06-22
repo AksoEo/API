@@ -1,5 +1,5 @@
 import { escapeId } from 'mysql2';
-import { createTransaction } from 'akso/util';
+import { createTransaction, rollbackTransaction } from 'akso/util';
 
 import { memberFilter, schema as chSchema } from 'akso/workers/http/routing/codeholders/schema';
 import CongressParticipantResource from 'akso/lib/resources/congress-participant-resource';
@@ -317,18 +317,22 @@ export async function assignSequenceIdIfNeeded (instanceId, dataId, _db) {
 		db = await createTransaction();
 	}
 
+	async function rollback () {
+		if (!_db) { await rollbackTransaction(db); }
+	}
+
 	// Find the sequenceId settings
 	const registrationForm = await db('congresses_instances_registrationForm')
 		.first('sequenceIds_startAt', 'sequenceIds_requireValid')
 		.where('congressInstanceId', instanceId);
-	if (!registrationForm || !registrationForm.sequenceIds_startAt) { return; }
+	if (!registrationForm || !registrationForm.sequenceIds_startAt) { return await rollback(); }
 
 	// Find the registration entry
 	const registrationEntry = await db('view_congresses_instances_participants')
 		.first('isValid', 'sequenceId')
 		.where({ dataId });
-	if (!registrationEntry || registrationEntry.sequenceId) { return; }
-	if (registrationForm.sequenceIds_requireValid && !registrationEntry.isValid) { return; }
+	if (!registrationEntry || registrationEntry.sequenceId) { return await rollback(); }
+	if (registrationForm.sequenceIds_requireValid && !registrationEntry.isValid) { return await rollback(); }
 
 	// Find the next useable sequenceId
 	const sequenceId = await db('congresses_instances_participants AS p1')

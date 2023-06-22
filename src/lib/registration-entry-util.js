@@ -4,7 +4,7 @@ import { base32 } from 'rfc4648';
 import crypto from 'pn/crypto';
 import * as AddressFormat from '@cpsdqs/google-i18n-address';
 
-import { createTransaction } from 'akso/util';
+import { createTransaction, rollbackTransaction } from 'akso/util';
 import { sendNotification } from 'akso/notif';
 
 export async function handlePaidRegistrationEntry (registrationEntryId, db = undefined) {
@@ -13,6 +13,10 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 		// Ensure trx
 		selfCommitTrx = true;
 		db = await createTransaction();
+	}
+
+	async function rollback () {
+		if (selfCommitTrx) { await rollbackTransaction(db); }
 	}
 
 	// First, we need to auto-update its status
@@ -24,7 +28,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 		newCodeholderData,
 		newUEACode;
 	if (!issue) {
-		const existingCodeholderData = await AKSO.db('registration_entries_codeholderData_id')
+		const existingCodeholderData = await db('registration_entries_codeholderData_id')
 			.where('registrationEntryId', registrationEntryId)
 			.first('codeholderId');
 
@@ -32,12 +36,13 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 		newCodeholderData = null;
 		if (!existingCodeholderData) {
 			isExistingCodeholder = false;
-			newCodeholderData = await AKSO.db('registration_entries_codeholderData_obj')
+			newCodeholderData = await db('registration_entries_codeholderData_obj')
 				.where('registrationEntryId', registrationEntryId)
 				.first('*');
 		}
 
 		if (!isExistingCodeholder && !newCodeholderData) {
+			await rollback();
 			throw new Error(`Registration entry ${registrationEntryId.toString('hex')} has neither codeholder id nor codeholder data obj`);
 			// This should absolutely never be able to happen
 		}
@@ -62,13 +67,14 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 			});
 
 			if (!suggestedUEACodes.length) {
+				await rollback();
 				throw new Error(`No suggested UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
 				// The probability of this happening is extremely small, but we should probably still have some logic in place to deal with it
 				// TODO: Do something here
 			}
 
 			const takenUEACodes = (
-				await AKSO.db('codeholders')
+				await db('codeholders')
 					.select('newCode')
 					.whereIn('newCode', suggestedUEACodes)
 			).map(x => x.newCode);
@@ -77,6 +83,7 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				.filter(x => !takenUEACodes.includes(x));
 
 			if (!availableUEACodes.length) {
+				await rollback();
 				throw new Error(`No available UEA code found for registration entry ${registrationEntryId.toString('hex')}`);
 				// The probability of this happening is extremely small, but we should probably still have some logic in place to deal with it
 				// TODO: Do something here
@@ -159,17 +166,18 @@ export async function handlePaidRegistrationEntry (registrationEntryId, db = und
 				await db('codeholders_human').insert(humanCodeholderData);
 				await db('codeholders_address').insert(addressCodeholderData);
 			} catch (e) {
+				await rollback();
 				AKSO.log.error(`An error occured when processing registration entry ${registrationEntryId.toString('hex')}`);
 				throw new Error(e);
 			}
 		}
 
-		const registrationEntry = await AKSO.db('registration_entries')
+		const registrationEntry = await db('registration_entries')
 			.where('id', registrationEntryId)
 			.first('year');
 
 		// Give the offers
-		const offers = await AKSO.db('registration_entries_offers')
+		const offers = await db('registration_entries_offers')
 			.where('registrationEntryId', registrationEntryId)
 			.select('type', 'membershipCategoryId', 'magazineId', 'paperVersion');
 
