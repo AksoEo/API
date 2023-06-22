@@ -17,9 +17,9 @@ export async function deleteCodeholderHist () {
 		.then(tablesRaw => tablesRaw[0].map(x => x[Object.keys(x)[0]]));
 	
 	const deltaTime = moment().unix() - AKSO.CODEHOLDER_HIST_DELETION_TIME;
-	const promises = tables
-		.map(async table => await AKSO.db.raw('DELETE FROM ?? WHERE modTime < ?', [ table, deltaTime ]));
-	await Promise.all(promises);
+	for (const table of tables) {
+		await AKSO.db.raw('DELETE FROM ?? WHERE modTime < ?', [ table, deltaTime ]);
+	}
 }
 deleteCodeholderHist.intervalMs = 43200000; // 12 hours
 deleteCodeholderHist.disregardExecutionTime = true;
