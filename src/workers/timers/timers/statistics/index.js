@@ -99,12 +99,10 @@ export async function saveStatistics () {
 	const statistics = {};
 
 	for (const row of rawStatsMembership) {
-		let country = row.feeCountry;
-		if (country === null) { country = 'xn'; }
-		if (!(country in statistics)) {
-			statistics[country] = { membershipCategories: [], roles: [] };
+		if (!(row.feeCountry in statistics)) {
+			statistics[row.feeCountry] = { membershipCategories: [], roles: [] };
 		}
-		statistics[country].membershipCategories.push({
+		statistics[row.feeCountry].membershipCategories.push({
 			membershipCategoryId: row.categoryId,
 			membershipCategory: membershipCategories[row.categoryId],
 			count: row.count,
@@ -122,12 +120,10 @@ export async function saveStatistics () {
 		});
 	}
 	for (const row of rawStatsRoles) {
-		let country = row.feeCountry;
-		if (country === null) { country = 'xn'; }
-		if (!(country in statistics)) {
-			statistics[country] = { membershipCategories: [], roles: [] };
+		if (!(row.feeCountry in statistics)) {
+			statistics[row.feeCountry] = { membershipCategories: [], roles: [] };
 		}
-		statistics[country].roles.push({
+		statistics[row.feeCountry].roles.push({
 			roleId: row.roleId,
 			role: roles[row.roleId],
 			count: row.count,
@@ -145,7 +141,7 @@ export async function saveStatistics () {
 		});
 	}
 
-	statistics.xt = {
+	statistics.total = {
 		membershipCategories: rawStatsMembershipTotal.map(row => {
 			return {
 				membershipCategoryId: row.categoryId,
@@ -184,8 +180,9 @@ export async function saveStatistics () {
 		}),
 	};
 
-	await AKSO.db('statistics').insert(Object.entries(statistics).map(([countryCode, data]) => {
-		return { date: yesterday, countryCode, data: JSON.stringify(data) };
-	}));
+	await AKSO.db('statistics').insert({
+		date: yesterday,
+		data: statistics,
+	});
 }
 saveStatistics.intervalMs = 30 * 60 * 1000; // 30 minutes
