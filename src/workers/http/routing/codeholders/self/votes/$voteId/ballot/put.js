@@ -30,7 +30,7 @@ export default {
 	run: async function run (req, res) {
 		// Obtain info on the vote and make sure the codeholder can vote in it
 		const voteData = await AKSO.db('votes')
-			.first('*', AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.result" = "TIE_BREAKER_NEEDED" AS isTieBreaker', req.user.user))
+			.first('*', AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.status" = "tie-breaker-needed" AS isTieBreaker', req.user.user))
 			.innerJoin('votes_voters', 'votes.id', 'votes_voters.voteId')
 			.where({
 				'votes.id': req.params.voteId,
@@ -39,7 +39,7 @@ export default {
 			.where(function () {
 				this
 					.where('mayVote', true)
-					.orWhere(AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.result" = "TIE_BREAKER_NEEDED"', req.user.user));
+					.orWhere(AKSO.db.raw('tieBreakerCodeholder = ? AND results->"$.status" = "tie-breaker-needed"', req.user.user));
 			});
 		if (!voteData) { return res.sendStatus(404); }
 		if (!voteData.isTieBreaker) {

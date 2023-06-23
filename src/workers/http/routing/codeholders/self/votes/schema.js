@@ -43,7 +43,7 @@ export default {
 		hasStarted: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP()'),
 		hasEnded: () => AKSO.db.raw('timeEnd <= UNIX_TIMESTAMP()'),
 		isActive: () => AKSO.db.raw('timeStart <= UNIX_TIMESTAMP() AND timeEnd > UNIX_TIMESTAMP()'),
-		isTieBreaker: () => AKSO.db.raw('results->"$.result" = "TIE_BREAKER_NEEDED" AND tieBreakerCodeholder = codeholderId',),
+		isTieBreaker: () => AKSO.db.raw('results->"$.status" = "tie-breaker-needed" AND tieBreakerCodeholder = codeholderId',),
 		usedTieBreaker: () => AKSO.db.raw('tieBreakerBallot IS NOT NULL')
 	}
 };
