@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs-extra';
 import MarkdownIt from 'markdown-it';
 import MarkdownItMultimdTable from 'markdown-it-multimd-table';
+import crypto from 'crypto';
+import moment from 'moment-timezone';
 
 import QueryUtil from 'akso/lib/query-util';
 import AKSOOrganization from 'akso/lib/enums/akso-organization';
@@ -21,15 +23,26 @@ import { escapeHTML, promiseAllObject, renderTemplate as renderNativeTemplate, g
  * @param  {Object}  [fieldWhitelist]     A field whitelist to pass to QueryUtil.simpleCollection
  * @param  {boolean} [ignoreMemberFilter] Whether to ignore the member filter if present in req
  * @param  {Function}[queryModifier]      A sync function to modify the raw knex codeholder query
+ * @param  {number}  [newsletterId]       The id of the newsletter, if this a newsletter we are sending (used for unsubscription purposes)
  */
 export async function sendTemplate ({
 	templateId, intentData = {}, req = {}, fieldWhitelist = [],
-	ignoreMemberFilter = false, queryModifier,
+	ignoreMemberFilter = false, queryModifier, newsletterId,
 }) {
 	const template = await AKSO.db('notif_templates')
 		.where('id', templateId)
 		.first('*');
 	if (!template) { throw new Error('Could not fetch notif template with id ' + templateId); }
+
+	let newsletter;
+	if (newsletterId) {
+		newsletter = await AKSO.db('newsletters')
+			.where('id', newsletterId)
+			.first('*');
+		if (!newsletter) {
+			throw new Error('Cannot find newsletter with id ' + newsletterId);
+		}
+	}
 
 	const recipientsQuery = AKSO.db('view_codeholders')
 		.whereNotNull('email') // TODO: Remove when adding proper Telegram notif support
@@ -148,8 +161,28 @@ export async function sendTemplate ({
 			...intentData,
 		};
 
+		const extraOuterView = {};
+		if (newsletterId) {
+			// Generate unsubscription token
+			const token = await crypto.randomBytes(32);
+			await AKSO.db('tokens')
+				.insert({
+					token,
+					expiry: moment().add(30, 'day').unix(),
+					payload: JSON.stringify({
+						codeholderId: codeholder.id,
+						newsletterId: newsletterId,
+					}),
+					ctx: 'UNSUBSCRIBE_NEWSLETTER',
+				});
+			extraOuterView.newsletterUnsubscribe = {
+				token: token.toString('hex'),
+				newsletter,
+			};
+		}
+
 		sendPromises.push(new Promise((resolve, reject) => {
-			renderTemplate(template, notifView)
+			renderTemplate(template, notifView, extraOuterView)
 				.then(renderedEmail => {
 					const msg = {
 						...renderedEmail,
@@ -160,8 +193,20 @@ export async function sendTemplate ({
 						from: {
 							name: template.fromName ?? '',
 							address: template.from,
-						}
+						},
 					};
+					if (newsletterId) {
+						msg.headers = {
+							'List-Unsubscribe':
+								renderNativeTemplate(
+									'<{{#url}}/ott?ctx=unsubscribe_newsletter&token={{../token}}{{/url}}>',
+									{ domain: AKSOOrganization.getDomain(newsletter.org), token: extraOuterView.newsletterUnsubscribe.token },
+									false,
+								),
+							'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+						};
+					}
+
 					// TODO: Change this when we support Telegram for notif templates
 					return sendRawMail(msg);
 				})
@@ -178,9 +223,10 @@ export async function sendTemplate ({
  * Renders a notif template
  * @param  {number|string|Object} template  The id of the template or an object containing all its data
  * @param  {Object} intentData              An object containing the context data relevant for the template's intent
+ * @param  {Object} [extraOuterView]        A view object with additional data to submit to the outer view
  * @return {Object} Returns an object containing rendered html, text and subject.
  */
-export async function renderTemplate (template, intentData) {
+export async function renderTemplate (template, intentData, extraOuterView = {}) {
 	await doAscMagic();
 
 	if (typeof template !== 'object') {
@@ -213,7 +259,7 @@ export async function renderTemplate (template, intentData) {
 	if (template.base === 'raw') {
 		data = await renderRawTemplate(template, viewFn);
 	} else if (template.base === 'inherit') {
-		data = await renderInheritTemplate(template, viewFn);
+		data = await renderInheritTemplate(template, viewFn, extraOuterView);
 	}
 	data.subject = renderTemplateStr('text', template.subject, viewFn);
 	return data;
@@ -226,7 +272,7 @@ async function renderRawTemplate (templateData, viewFn) {
 	};
 }
 
-async function renderInheritTemplate (templateData, viewFn) {
+async function renderInheritTemplate (templateData, viewFn, extraOuterView = {}) {
 	const notifsDir = path.join(AKSO.dir, 'notifs');
 	const tmplsDir = path.join(notifsDir, 'notif-templates');
 	const orgDir = path.join(notifsDir, templateData.org);
@@ -259,6 +305,7 @@ async function renderInheritTemplate (templateData, viewFn) {
 	const outerView = {
 		subject: templateData.subject,
 		domain: AKSOOrganization.getDomain(templateData.org),
+		...extraOuterView,
 	};
 
 	const outerViewHtml = {

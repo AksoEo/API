@@ -65,6 +65,31 @@ export default {
 
 			break;
 		}
+		case 'UNSUBSCRIBE_NEWSLETTER': {
+			// Unsubscribe
+			const unsubscribed = await AKSO.db('newsletters_subscribers')
+				.where({
+					codeholderId: payload.codeholderId,
+					newsletterId: payload.newsletterId,
+				})
+				.delete();
+
+			if (!unsubscribed) { break; }
+
+			const subscriberCount = (await AKSO.db('newsletters_subscribers')
+				.count({ count: 1 })
+				.where('newsletterId', payload.newsletterId))[0].count;
+
+			await AKSO.db('newsletters_unsubscriptions')
+				.insert({
+					newsletterId: payload.newsletterId,
+					reason: 0, // other
+					time: moment().unix(),
+					subscriberCount,
+				});
+
+			break;
+		}
 		}
 
 		await trx('tokens')

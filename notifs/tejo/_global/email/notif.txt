@@ -1,11 +1,15 @@
 {{{content}}}
 
 --
-Tiu ĉi mesaĝo estis aŭtomate sendita de:
+Tiu ĉi mesaĝo estis sendita de:
 TEJO (Tutmonda Esperantista Junulara Organizo)
 {{#url}}{{/url}}
 Nieuwe Binnenweg 176, 3015 BJ Rotterdam, Nederlando
 +31 10 310 4924
 
+{{#if newsletterUnsubscribe~}}
+Iru al la jena ligilo por malaboni » {{newsletter.name}} «:
+{{#url}}/ott?ctx=unsubscribe_newsletter&token={{token}}{{/url}}
+{{~/if}}
 Iru al la jena ligilo por ŝanĝi viajn retpoŝtajn agordojn:
 {{#url}}konto/sciigoj{{/url}}

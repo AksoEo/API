@@ -219,10 +219,13 @@
             <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
                 <tr>
                     <td style="padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;">
-                        Tiu ĉi mesaĝo estis aŭtomate sendita de:
+                        Tiu ĉi mesaĝo estis sendita de:
                         <br>
                         <a href="{{#url}}{{/url}}" style="color: #888888; text-decoration: underline;">Universala Esperanto-Asocio</a><br><span class="unstyle-auto-detected-links">Nieuwe Binnenweg 176, 3015 BJ, Rotterdam, Nederlando<br>+31 10 436 1044</span>
                         <br><br>
+                        {{#if newsletterUnsubscribe}}
+                        <a href="{{#url}}/ott?ctx=unsubscribe_newsletter&token={{token}}{{/url}}">Alklaku tie ĉi por malaboni » {{newsletter.name}} «</a>
+                        {{/if}}
                         <a href="{{#url}}konto/sciigoj{{/url}}" style="color: #888888; text-decoration: underline;">Alklaku tie ĉi por ŝanĝi viajn retpoŝtajn agordojn</a>
                     </td>
                 </tr>

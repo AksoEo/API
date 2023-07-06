@@ -171,6 +171,7 @@ export default {
 				},
 			},
 			intentData,
+			newsletterId: req.params.newsletterId,
 		});
 
 		// Delete the template if necessary
