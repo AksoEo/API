@@ -45,7 +45,7 @@ export default {
 
 		const newsletter = await AKSO.db('newsletters')
 			.where('id', req.params.newsletterId)
-			.first('org');
+			.first('org', 'id');
 		if (!newsletter) { return res.sendStatus(404); }
 		if (newsletter.org !== templateData.org) {
 			return res.sendStatus(404);
@@ -171,7 +171,7 @@ export default {
 				},
 			},
 			intentData,
-			newsletterId: req.params.newsletterId,
+			newsletterId: newsletter.id,
 		});
 
 		// Delete the template if necessary
