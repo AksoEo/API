@@ -3,7 +3,7 @@
 --
 Tiu ĉi mesaĝo estis sendita de:
 TEJO (Tutmonda Esperantista Junulara Organizo)
-{{#url}}{{/url}}
+https://tejo.org
 Nieuwe Binnenweg 176, 3015 BJ Rotterdam, Nederlando
 +31 10 310 4924
 

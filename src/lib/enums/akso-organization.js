@@ -7,7 +7,7 @@ class AKSOOrganization extends Enum {
 		case 'AKSO':
 			return 'https://admin.akso.org';
 		case 'TEJO':
-			return 'https://tejo.org';
+			return 'https://uea.org'; // TODO: Change me when tejo.org runs akso-grav
 		case 'UEA':
 			return 'https://uea.org';
 		}
