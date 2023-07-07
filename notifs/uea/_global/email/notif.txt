@@ -8,8 +8,8 @@ Nieuwe Binnenweg 176, 3015 BJ Rotterdam, Nederlando
 +31 10 436 1044
 
 {{#if newsletterUnsubscribe~}}
-Iru al la jena ligilo por malaboni » {{newsletter.name}} «:
-{{#url}}/ott?ctx=unsubscribe_newsletter&token={{token}}{{/url}}
-{{~/if}}
+Iru al la jena ligilo por malaboni » {{@root.newsletterUnsubscribe.newsletter.name}} «:
+{{#url}}/ott?ctx=unsubscribe_newsletter&token={{@root.newsletterUnsubscribe.token}}{{/url}}
+{{/if}}
 Iru al la jena ligilo por ŝanĝi viajn retpoŝtajn agordojn:
 {{#url}}konto/sciigoj{{/url}}
