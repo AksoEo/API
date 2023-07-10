@@ -85,7 +85,7 @@ export default {
 		// Set up the query
 		formMetaData.query
 			.select([
-				'price', 'sequenceId', 'createdTime', 'd.dataId',
+				'price', 'sequenceId', 'createdTime', 'd.dataId', 'amountPaid',
 				...Object.entries(formMetaData.schema.fieldAliases)
 					.filter(([key]) => key.startsWith('data.'))
 					.map(([key, aliasFn]) => {
@@ -105,7 +105,7 @@ export default {
 				rawParticipant,
 				{
 					query: {
-						fields: [ 'price', 'sequenceId', 'createdTime', 'dataId' ],
+						fields: [ 'price', 'sequenceId', 'createdTime', 'dataId', 'amountPaid' ],
 					},
 				},
 				null,
@@ -124,6 +124,7 @@ export default {
 
 			const intentData = {
 				'registrationEntry.price': participant.price,
+				'registrationEntry.amountPaid': participant.amountPaid,
 				'registrationEntry.currency': formMetaData.formData.price_currency,
 				'registrationEntry.sequenceId': participant.sequenceId,
 				'registrationEntry.createdTime': participant.createdTime,

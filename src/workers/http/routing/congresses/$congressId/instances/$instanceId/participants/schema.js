@@ -218,7 +218,7 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 	formMetaData.query
 		.where('d.dataId', dataId)
 		.first([
-			'price', 'sequenceId', 'createdTime', 'd.dataId',
+			'price', 'sequenceId', 'createdTime', 'd.dataId', 'amountPaid',
 			...Object.entries(formMetaData.schema.fieldAliases)
 				.filter(([key]) => key.startsWith('data.'))
 				.map(([key, aliasFn]) => {
@@ -229,7 +229,7 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 		await formMetaData.query,
 		{
 			query: {
-				fields: [ 'price', 'sequenceId', 'createdTime', 'dataId' ],
+				fields: [ 'price', 'sequenceId', 'createdTime', 'dataId', 'amountPaid' ],
 			},
 		},
 		null,
@@ -248,6 +248,7 @@ export async function sendParticipantConfirmationNotif (instanceId, dataId, temp
 
 	const intentData = {
 		'registrationEntry.price': participant.price,
+		'registrationEntry.amountPaid': participant.amountPaid,
 		'registrationEntry.currency': formMetaData.formData.price_currency,
 		'registrationEntry.sequenceId': participant.sequenceId,
 		'registrationEntry.createdTime': participant.createdTime,

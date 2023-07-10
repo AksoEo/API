@@ -53,6 +53,7 @@ formValues.NEWSLETTER_MAGAZINE = {
 };
 formValues.CONGRESS = {
 	'registrationEntry.price': union([ NULL, NUMBER ]),
+	'registrationEntry.amountPaid': NUMBER,
 	'registrationEntry.currency': union([ NULL, STRING ]),
 	'registrationEntry.sequenceId': union([ NULL, NUMBER ]),
 	'registrationEntry.createdTime': NUMBER,
@@ -136,6 +137,7 @@ bogusData.NEWSLETTER_MAGAZINE = {
 };
 bogusData.CONGRESS = {
 	'registrationEntry.price': 10000,
+	'registrationEntry.amountPaid': 2000,
 	'registrationEntry.currency': 'EUR',
 	'registrationEntry.sequenceId': 34,
 	'registrationEntry.createdTime': 1667814523,
