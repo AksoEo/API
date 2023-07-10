@@ -16,6 +16,11 @@ export default {
 					minLength: 1,
 					maxLength: 24,
 				},
+				unsubscribeReason: {
+					type: 'integer',
+					format: 'uint8',
+					maximum: 4,
+				},
 			},
 			required: [ 'token', 'ctx' ],
 			additionalProperties: false,
@@ -25,6 +30,11 @@ export default {
 	run: async function run (req, res) {
 		const token = Buffer.from(req.query.token, 'hex');
 		const ctx = req.query.ctx.toUpperCase();
+
+		if ('unsubscribeReason' in req.body && ctx !== 'UNSUBSCRIBE_NEWSLETTER') {
+			return res.type('text/plain').status(400)
+				.send('unsubscribeReason may only be used when ctx is UNSUBSCRIBE_NEWSLETTER');
+		}
 
 		const tokenData = await AKSO.db('tokens')
 			.first('payload')
@@ -83,7 +93,7 @@ export default {
 			await AKSO.db('newsletters_unsubscriptions')
 				.insert({
 					newsletterId: payload.newsletterId,
-					reason: 0, // other
+					reason: req.body.unsubscribeReason ?? 0, // defaults to other
 					time: moment().unix(),
 					subscriberCount,
 				});
