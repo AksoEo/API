@@ -390,6 +390,7 @@ export default {
 		}
 
 		await trx.commit();
+		res.sendStatus(204); // respond so the client is not left hanging
 
 		// Recalculate prices for all participants
 		if (req.body.price) {
@@ -460,7 +461,5 @@ export default {
 				}
 			}));
 		}
-
-		res.sendStatus(204);
 	}
 };
