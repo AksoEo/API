@@ -2,8 +2,8 @@ import moment from 'moment-timezone';
 
 export default {
 	schema: {
-		body: null,
-		query: {
+		query: null,
+		body: {
 			type: 'object',
 			properties: {
 				token: {
@@ -28,8 +28,8 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		const token = Buffer.from(req.query.token, 'hex');
-		const ctx = req.query.ctx.toUpperCase();
+		const token = Buffer.from(req.body.token, 'hex');
+		const ctx = req.body.ctx.toUpperCase();
 
 		if ('unsubscribeReason' in req.body && ctx !== 'UNSUBSCRIBE_NEWSLETTER') {
 			return res.type('text/plain').status(400)
