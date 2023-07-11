@@ -209,7 +209,5 @@ export async function saveStatistics () {
 		date: yesterday,
 		data: statistics,
 	});
-
-	console.dir(statistics, { depth: null });
 }
 saveStatistics.intervalMs = 30 * 60 * 1000; // 30 minutes
