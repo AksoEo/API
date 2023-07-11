@@ -12,6 +12,23 @@ export async function saveStatistics () {
 		.where('date', yesterday);
 	if (haveStatistics) { return; }
 
+	let ageBuckets = '';
+	for (let i = -5; i <= 115; i += 10) {
+		const age = Math.max(i, 0);
+		ageBuckets += `COUNT(CASE WHEN agePrimo >= ${age} AND agePrimo < ${i + 10} THEN 1 END) AS countAgePrimo_${age},\n`;
+	}
+	ageBuckets += 'COUNT(CASE WHEN agePrimo >= 125 THEN 1 END) AS countAgePrimo_rest,';
+	function formatAgeBuckets (row) {
+		const ageBucketData = {
+			rest: row.countAgePrimo_rest,
+		};
+		for (let i = -5; i <= 115; i += 10) {
+			const age = Math.max(i, 0);
+			ageBucketData[age] = row['countAgePrimo_' + age];
+		}
+		return ageBucketData;
+	}
+
 	const rawStatsMembership = await AKSO.db.raw(`
 		SELECT
 			feeCountry, categoryId,
@@ -20,6 +37,7 @@ export async function saveStatistics () {
 		    AVG(age) AS age_avg,
 		    MIN(age) AS age_min,
 		    MAX(age) AS age_max,
+		    ${ageBuckets}
 		    AVG(agePrimo) AS agePrimo_avg,
 		    MIN(agePrimo) AS agePrimo_min,
 		    MAX(agePrimo) AS agePrimo_max
@@ -39,6 +57,7 @@ export async function saveStatistics () {
 		    AVG(age) AS age_avg,
 		    MIN(age) AS age_min,
 		    MAX(age) AS age_max,
+		    ${ageBuckets}
 		    AVG(agePrimo) AS agePrimo_avg,
 		    MIN(agePrimo) AS agePrimo_min,
 		    MAX(agePrimo) AS agePrimo_max
@@ -65,6 +84,7 @@ export async function saveStatistics () {
 		    AVG(age) AS age_avg,
 		    MIN(age) AS age_min,
 		    MAX(age) AS age_max,
+		    ${ageBuckets}
 		    AVG(agePrimo) AS agePrimo_avg,
 		    MIN(agePrimo) AS agePrimo_min,
 		    MAX(agePrimo) AS agePrimo_max
@@ -81,6 +101,7 @@ export async function saveStatistics () {
 		    AVG(age) AS age_avg,
 		    MIN(age) AS age_min,
 		    MAX(age) AS age_max,
+		    ${ageBuckets}
 		    AVG(agePrimo) AS agePrimo_avg,
 		    MIN(agePrimo) AS agePrimo_min,
 		    MAX(agePrimo) AS agePrimo_max
@@ -116,6 +137,7 @@ export async function saveStatistics () {
 				avg: parseFloat(row.agePrimo_avg),
 				min: row.agePrimo_min,
 				max: row.agePrimo_max,
+				counts: formatAgeBuckets(row),
 			},
 		});
 	}
@@ -137,6 +159,7 @@ export async function saveStatistics () {
 				avg: parseFloat(row.agePrimo_avg),
 				min: row.agePrimo_min,
 				max: row.agePrimo_max,
+				counts: formatAgeBuckets(row),
 			},
 		});
 	}
@@ -157,6 +180,7 @@ export async function saveStatistics () {
 					avg: parseFloat(row.agePrimo_avg),
 					min: row.agePrimo_min,
 					max: row.agePrimo_max,
+					counts: formatAgeBuckets(row),
 				},
 			};
 		}),
@@ -175,6 +199,7 @@ export async function saveStatistics () {
 					avg: parseFloat(row.agePrimo_avg),
 					min: row.agePrimo_min,
 					max: row.agePrimo_max,
+					counts: formatAgeBuckets(row),
 				},
 			};
 		}),
@@ -184,5 +209,7 @@ export async function saveStatistics () {
 		date: yesterday,
 		data: statistics,
 	});
+
+	console.dir(statistics, { depth: null });
 }
 saveStatistics.intervalMs = 30 * 60 * 1000; // 30 minutes
