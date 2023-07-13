@@ -159,7 +159,17 @@ export async function validateDataEntry ({
 		}
 
 		const disabled = getComputedProp(formEntry, 'disabled');
-		if (disabled) { return { type: 'null' }; }
+		if (disabled) {
+			if (oldData) {
+				return {
+					oneOf: [
+						{ const: oldData[formEntry.name] },
+						{ type: 'null' },
+					],
+				};
+			}
+			return { type: 'null' };
+		}
 
 		const required = getComputedProp(formEntry, 'required');
 
