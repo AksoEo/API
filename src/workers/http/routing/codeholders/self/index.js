@@ -13,6 +13,8 @@ import { init as route$votes } from './votes';
 import method$get from './get';
 import method$patch from './patch';
 
+import operation$validate_login from './!validate_login';
+
 /**
  * Sets up /codeholders/self
  * @return {express.Router}
@@ -37,6 +39,8 @@ export function init () {
 
 	bindMethod(router, '/', 'get', method$get);
 	bindMethod(router, '/', 'patch', method$patch);
+
+	bindMethod(router, '/!validate_login', 'post', operation$validate_login);
 
 	return router;
 }

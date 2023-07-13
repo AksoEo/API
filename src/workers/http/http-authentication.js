@@ -57,7 +57,8 @@ async function authentication (app) {
 
 	// User-based totp authentication strategy
 	passport.use(new TotpStrategy({
-		codeField: 'totp'
+		codeField: 'totp',
+		window: 2,
 	}, async function authenticateTotp (user, done) {
 		// Obtain TOTP secret
 		const totpData = await AKSO.db.first('secret', 'iv').from('codeholders_totp').where({
