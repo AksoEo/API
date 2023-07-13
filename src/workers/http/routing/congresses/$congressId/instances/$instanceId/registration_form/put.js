@@ -172,7 +172,20 @@ export default {
 		// Obtain the existing form if one exists
 		const existingRegistrationForm = await AKSO.db('congresses_instances_registrationForm')
 			.where('congressInstanceId', req.params.instanceId)
-			.first('formId', 'form');
+			.first('formId', 'form', 'price_currency');
+
+		// If changing currency
+		if (existingRegistrationForm && req.body.price.currency !== existingRegistrationForm.price_currency) {
+			// Are there participants with a non-zero amountPaid already?
+			const hasParticipants = await AKSO.db('view_congresses_instances_participants')
+				.first(1)
+				.where('amountPaid', '>', 0)
+				.where('congressInstanceId', req.params.instanceId);
+			if (hasParticipants) {
+				return res.type('text/plain').status(400)
+					.send('price.currency may not be changed as long as there are participants with a non-zero amountPaid')
+			}
+		}
 
 		// Validate the form
 		const customFormVarTypeDefs = {};
