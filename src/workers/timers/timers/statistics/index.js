@@ -125,7 +125,7 @@ export async function saveStatistics () {
 		}
 		statistics[row.feeCountry].membershipCategories.push({
 			membershipCategoryId: row.categoryId,
-			membershipCategory: membershipCategories[row.categoryId],
+			membershipCategory: membershipCategories[row.categoryId][0],
 			count: row.count,
 			countTEJO: row.countTEJO,
 			age: {
@@ -147,7 +147,7 @@ export async function saveStatistics () {
 		}
 		statistics[row.feeCountry].roles.push({
 			roleId: row.roleId,
-			role: roles[row.roleId],
+			role: roles[row.roleId][0],
 			count: row.count,
 			countTEJO: row.countTEJO,
 			age: {
@@ -168,7 +168,7 @@ export async function saveStatistics () {
 		membershipCategories: rawStatsMembershipTotal.map(row => {
 			return {
 				membershipCategoryId: row.categoryId,
-				membershipCategory: membershipCategories[row.categoryId],
+				membershipCategory: membershipCategories[row.categoryId][0],
 				count: row.count,
 				countTEJO: row.countTEJO,
 				age: {
@@ -187,7 +187,7 @@ export async function saveStatistics () {
 		roles: rawStatsRolesTotal.map(row => {
 			return {
 				roleId: row.roleId,
-				role: roles[row.roleId],
+				role: roles[row.roleId][0],
 				count: row.count,
 				countTEJO: row.countTEJO,
 				age: {
