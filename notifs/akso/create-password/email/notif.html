@@ -8,7 +8,7 @@
                     <p>Estimata {{name}},</p>
                     <p>Iu petis krei pasvorton ĉe AKSO per via UEA-kodo. Se vi volas krei pasvorton, bonvolu alklaki la ĉi-suban butonon.</p>
                     <p>Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.</p>
-                    <p>Se vi ne estas la celita ricevanto de tiu ĉi mesaĝo, bonvolu alklaki <a href="{{#url}}/ott?ctx=delete_email_address&token={{../deleteToken}}{{/url}}">tiun ĉi ligilon</a> por forigi vian retpoŝtadreson el nia datumbazo.</p>
+                    <p>Se vi ne estas la celita ricevanto de tiu ĉi mesaĝo, bonvolu alklaki <a href="https://uea.org/ott?ctx=delete_email_address&token={{@root.deleteToken}}">tiun ĉi ligilon</a> por forigi vian retpoŝtadreson el nia datumbazo.</p>
                 </td>
             </tr>
             <tr>
@@ -17,7 +17,7 @@
                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                         <tr>
                             <td class="button-td button-td-primary" style="border-radius: 4px; background: #222222;">
-							     <a class="button-a button-a-primary" href="{{#url}}/krei_pasvorton/{{../code}}/{{../key}}{{/url}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Krei pasvorton</a>
+							     <a class="button-a button-a-primary" href="https://uea.org/krei_pasvorton/{{@root.code}}/{{@root.key}}" style="background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Krei pasvorton</a>
 							</td>
                         </tr>
                     </table>

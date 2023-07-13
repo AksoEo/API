@@ -1,9 +1,9 @@
 Estimata {{name}},
 
 Iu petis krei pasvorton ĉe TEJO.org per via UEA-kodo. Se vi volas krei pasvorton, bonvolu iri al la ĉi-suba ligilo:
-{{#url}}ensaluti?krei-pasvorton={{../code}}/{{../key}}{{/url}}
+{{#url}}ensaluti?krei-pasvorton={{@root.code}}/{{@root.key}}{{/url}}
 
 Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.
 
 Se vi ne estas la celita ricevanto de tiu ĉi mesaĝo, por forigi vian retpoŝtadreson el nia datumbazo bonvolu iri al la ĉi-suba ligilo:
-{{#url}}/ott?ctx=delete_email_address&token={{../deleteToken}}{{/url}}
+{{#url}}/ott?ctx=delete_email_address&token={{@root.deleteToken}}{{/url}}

@@ -196,11 +196,13 @@ export async function sendTemplate ({
 						},
 					};
 					if (newsletterId) {
+						let ottOrg = newsletter.org;
+						if (ottOrg === 'akso') { ottOrg = 'uea'; } // AKSO Admin does not support OTT
 						msg.headers = {
 							'List-Unsubscribe':
 								renderNativeTemplate(
 									'<{{#url}}/ott?ctx=unsubscribe_newsletter&token={{../token}}{{/url}}>',
-									{ domain: AKSOOrganization.getDomain(newsletter.org), token: extraOuterView.newsletterUnsubscribe.token },
+									{ domain: AKSOOrganization.getDomain(ottOrg), token: extraOuterView.newsletterUnsubscribe.token },
 									false,
 								),
 							'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',

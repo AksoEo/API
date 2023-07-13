@@ -1,8 +1,11 @@
 Estimata {{name}},
 
-Iu petis krei pasvorton ĉe AKSO per via UEA-kodo. Se ne estas vi, kiu faris tion, vi povas senprobleme ignori tiun ĉi mesaĝon.
+Iu petis krei pasvorton ĉe AKSO per via UEA-kodo. Por krei vian pasvorton, bonvolu iri al la ĉi-suba ligilo:
+https://uea.org/ensaluti?nova-pasvorto={{@root.code}}/{{@root.key}}
 
-Se vi ja volas krei pasvorton, bonvolu iri al la ĉi-suba ligilo:
-{{#url}}/krei_pasvorton/{{../code}}/{{../key}}{{/url}}
+Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.
+
+Se vi ne estas {{name}}, por forigi vian retpoŝtadreson el nia datumbazo bonvolu iri al la ĉi-suba ligilo:
+https://uea.org/ott?ctx=delete_email_address&token={{@root.deleteToken}}
 
 Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.

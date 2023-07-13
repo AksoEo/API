@@ -1,9 +1,9 @@
 Estimata {{name}},
 
-Iu petis krei pasvorton ĉe UEA.org per via UEA-kodo. Por ŝanĝi vian pasvorton, bonvolu iri al la ĉi-suba ligilo:
-{{#url}}ensaluti?nova-pasvorto={{../code}}/{{../key}}{{/url}}
+Iu petis krei pasvorton ĉe UEA.org per via UEA-kodo. Por krei pasvorton, bonvolu iri al la ĉi-suba ligilo:
+{{#url}}ensaluti?nova-pasvorto={{@root.code}}/{{@root.key}}{{/url}}
 
 Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.
 
 Se vi ne estas {{name}}, por forigi vian retpoŝtadreson el nia datumbazo bonvolu iri al la ĉi-suba ligilo:
-{{#url}}/ott?ctx=delete_email_address&token={{../deleteToken}}{{/url}}
+{{#url}}/ott?ctx=delete_email_address&token={{@root.deleteToken}}{{/url}}
