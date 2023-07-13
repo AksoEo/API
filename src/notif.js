@@ -12,6 +12,7 @@ import * as AKSOMail from './mail';
  * @param  {Object}   [tgAttach]              A Telegram attachment object
  * @param  {Object}   [view]                  A view for rendering the notification
  * @param  {KnexTrx}  [db]                    The knex transaction to use for db queries, defaults to AKSO.db
+ * @param  {boolean}  [alwaysSendEmail]       Optionally, whether to always send an email even if the codeholder opted not to receive this notif category by email
  */
 export async function sendNotification ({
 	codeholderIds,
@@ -23,6 +24,7 @@ export async function sendNotification ({
 	tgAttach = undefined,
 	view = {},
 	db = AKSO.db,
+	alwaysSendEmail = false,
 } = {}) {
 	if (!codeholderIds.length) { return; }
 
@@ -56,7 +58,11 @@ export async function sendNotification ({
 
 	for (let pref of msgPrefsDb) {
 		if (!pref.pref) { continue; }
-		msgPrefs.set(pref.id, pref.pref.split(','));
+		const msgPref = pref.pref.split(',');
+		if (alwaysSendEmail && !msgPref.includes('email')) {
+			msgPref.push('email');
+		}
+		msgPrefs.set(pref.id, msgPref);
 	}
 
 	const recipients = {

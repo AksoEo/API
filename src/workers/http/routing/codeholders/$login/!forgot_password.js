@@ -76,6 +76,7 @@ export default {
 			org: req.body.org,
 			notif: 'forgot-password',
 			category: 'account',
+			alwaysSendEmail: true,
 			view: {
 				code: encodeURIComponent(codeholder.newCode),
 				key: createPasswordKey.toString('hex'),
