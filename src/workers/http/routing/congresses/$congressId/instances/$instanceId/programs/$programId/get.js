@@ -1,7 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
-import SimpleResource from 'akso/lib/resources/simple-resource';
+import CongressInstanceProgramResource from 'akso/lib/resources/congress-instance-program-resource';
 
-import parSchema from '../schema';
+import { schema as parSchema, afterQuery } from '../schema';
 
 const schema = {
 	...parSchema,
@@ -35,7 +35,8 @@ export default {
 
 		const row = await query;
 		if (!row) { return res.sendStatus(404); }
-		const obj = new SimpleResource(row);
+		await new Promise(resolve => afterQuery([row], resolve));
+		const obj = new CongressInstanceProgramResource(row, req, schema);
 		res.sendObj(obj);
 	}
 };

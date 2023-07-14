@@ -1,6 +1,7 @@
 import QueryUtil from 'akso/lib/query-util';
+import CongressInstanceProgramResource from 'akso/lib/resources/congress-instance-program-resource';
 
-import parSchema from './schema';
+import { schema as parSchema, afterQuery } from './schema';
 
 const schema = {
 	...parSchema,
@@ -27,6 +28,10 @@ export default {
 
 		const query = AKSO.db('congresses_instances_programs')
 			.where('congressInstanceId', req.params.instanceId);
-		await QueryUtil.handleCollection({ req, res, schema, query });
+		await QueryUtil.handleCollection({
+			req, res, schema, query, afterQuery,
+			Res: CongressInstanceProgramResource,
+			passToCol: [[ req, schema ]],
+		});
 	}
 };
