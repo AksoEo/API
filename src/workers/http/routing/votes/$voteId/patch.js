@@ -8,7 +8,14 @@ const bannedActiveProps = [
 	'ballotsSecret',
 	'maxOptionsPerBallot',
 	'publishVoters',
-	'options'
+	'options',
+];
+
+const permittedPropsAfterEnd = [
+	'tieBreakerCodeholder',
+	'publishResults',
+	'publishVotersPercentage',
+	'viewerCodeholders',
 ];
 
 export default {
@@ -28,7 +35,10 @@ export default {
 
 		const time = moment().unix();
 		if (vote.timeEnd < time) {
-			return res.sendStatus(409);
+			for (const prop in req.body) {
+				if (permittedPropsAfterEnd.includes(prop)) { continue; }
+				return res.type('text/plain').status(400).send(`${prop} is not allowed in PATCH on votes that have ended`);
+			}
 		}
 		if (vote.timeStart <= time) {
 			for (const prop of bannedActiveProps) {
