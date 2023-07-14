@@ -107,7 +107,9 @@ export async function afterQuery (arr, done) {
 
 	if (arr[0].purposes) {
 		const purposesArr = await AKSO.db('view_pay_intents_purposes')
-			.select('*')
+			.leftJoin('congresses_instances_participants', 'congresses_instances_participants.dataId', 'view_pay_intents_purposes.trigger_congress_registration_dataId')
+			.leftJoin('congresses_instances', 'congresses_instances.id', 'congresses_instances_participants.congressInstanceId')
+			.select('view_pay_intents_purposes.*', 'congresses_instances.congressId', 'congresses_instances_participants.congressInstanceId')
 			.whereIn('paymentIntentId', ids)
 			.orderBy('paymentIntentId', 'pos');
 		const purposesObj = {};
@@ -143,6 +145,8 @@ export async function afterQuery (arr, done) {
 
 				if (purpose.triggers === 'congress_registration') {
 					purposeFormatted.dataId = purpose.trigger_congress_registration_dataId;
+					purposeFormatted.congressInstanceId = purpose.congressInstanceId;
+					purposeFormatted.congressId = purpose.congressId;
 				} else if (purpose.triggers === 'registration_entry') {
 					purposeFormatted.registrationEntryId = purpose.trigger_registration_entry_registrationEntryId;
 				}
