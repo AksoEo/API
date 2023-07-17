@@ -12,6 +12,7 @@ export default {
 					else { resolve(); }
 				});
 			});
+			req.session = null;
 			res.clearCookie('remember_totp', { path: '/' });
 			res.sendStatus(204);
 		} else {

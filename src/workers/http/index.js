@@ -278,6 +278,7 @@ export function init () {
 									else { resolve(); }
 								});
 							});
+							req.session = null;
 						}
 
 						res.status(status).type('text/plain').send(err.message);
