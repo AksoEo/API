@@ -160,7 +160,7 @@ export async function validateDataEntry ({
 
 		const disabled = getComputedProp(formEntry, 'disabled');
 		if (disabled) {
-			if (oldData) {
+			if (oldData && oldData[formEntry.name] !== null) {
 				return {
 					oneOf: [
 						{ const: oldData[formEntry.name] },
