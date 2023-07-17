@@ -76,6 +76,8 @@ export default {
 					} else {
 						res.clearCookie('remember_totp');
 					}
+				} else {
+					req.session.totp = false;
 				}
 
 				res.sendStatus(204);
