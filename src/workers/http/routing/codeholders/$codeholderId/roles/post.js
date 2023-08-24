@@ -12,12 +12,12 @@ const schema = {
 			properties: {
 				durationFrom: {
 					type: 'integer',
-					format: 'uint64',
+					format: 'int64',
 					nullable: true
 				},
 				durationTo: {
 					type: 'integer',
-					format: 'uint64',
+					format: 'int64',
 					nullable: true
 				},
 				roleId: {

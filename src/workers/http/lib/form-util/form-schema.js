@@ -430,7 +430,7 @@ export const formSchema = {
 							default: {
 								oneOf: [
 									{ type: 'object' },
-									{ type: 'integer', format: 'uint64' },
+									{ type: 'integer', format: 'int64' },
 									{ type: 'null' }
 								]
 							},
@@ -441,12 +441,12 @@ export const formSchema = {
 							},
 							min: {
 								type: 'integer',
-								format: 'uint64',
+								format: 'int64',
 								nullable: true
 							},
 							max: {
 								type: 'string',
-								format: 'uint64',
+								format: 'int64',
 								nullable: true
 							}
 						},

@@ -92,7 +92,7 @@ export async function validateDataEntry ({
 		};
 		case 'datetime': return {
 			type: 'number',
-			format: 'uint64'
+			format: 'int64'
 		};
 		case 'boolean_table':
 			const items = []; // rows

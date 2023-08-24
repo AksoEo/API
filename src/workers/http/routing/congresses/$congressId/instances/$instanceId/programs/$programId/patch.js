@@ -24,11 +24,11 @@ export default {
 				},
 				timeFrom: {
 					type: 'integer',
-					format: 'uint64'
+					format: 'int64'
 				},
 				timeTo: {
 					type: 'integer',
-					format: 'uint64'
+					format: 'int64'
 				},
 				location: {
 					type: 'integer',

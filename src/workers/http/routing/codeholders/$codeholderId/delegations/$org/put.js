@@ -96,7 +96,7 @@ const schema = {
 						},
 						docDataProtectionUEATime: {
 							type: 'integer',
-							format: 'uint64'
+							format: 'int64'
 						},
 						docDelegatesUEA: {
 							type: 'boolean',
@@ -104,7 +104,7 @@ const schema = {
 						},
 						docDelegatesUEATime: {
 							type: 'integer',
-							format: 'uint64'
+							format: 'int64'
 						},
 						docDelegatesDataProtectionUEA: {
 							type: 'boolean',
@@ -112,14 +112,14 @@ const schema = {
 						},
 						docDelegatesDataProtectionUEATime: {
 							type: 'integer',
-							format: 'uint64'
+							format: 'int64'
 						},
 						paperAnnualBook: {
 							type: 'boolean'
 						},
 						paperAnnualBookTime: {
 							type: 'integer',
-							format: 'uint64'
+							format: 'int64'
 						}
 					},
 					required: [
