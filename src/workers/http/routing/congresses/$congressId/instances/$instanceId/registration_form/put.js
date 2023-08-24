@@ -175,7 +175,7 @@ export default {
 			.first('formId', 'form', 'price_currency');
 
 		// If changing currency
-		if (existingRegistrationForm && req.body.price.currency !== existingRegistrationForm.price_currency) {
+		if (existingRegistrationForm && req.body.price?.currency !== existingRegistrationForm.price_currency) {
 			// Are there participants with a non-zero amountPaid already?
 			const hasParticipants = await AKSO.db('view_congresses_instances_participants')
 				.first(1)
