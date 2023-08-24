@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Linux (x86_64)
 --
 -- Host: localhost    Database: akso
 -- ------------------------------------------------------
--- Server version	8.0.33-0ubuntu0.20.04.2
+-- Server version	8.0.34-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -1356,7 +1356,7 @@ CREATE TABLE `codeholders_human` (
   `lastName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `lastNameLegal` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `searchName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `honorific` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `honorific` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `profession` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `landlinePhone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -3822,7 +3822,7 @@ USE `akso`;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_congresses_instances_participants_metadata` AS select `congresses_instances_participants`.`dataId` AS `dataId`,(select coalesce(sum(`pay_triggerHist`.`amountTriggered`),0) from (`pay_triggerHist` join `view_pay_intents_purposes` on(((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`)))) where ((`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`) and (0 = `view_pay_intents_purposes`.`invalid`))) AS `amountPaid`,if((`congresses_instances_registrationForm`.`price_var` = NULL),NULL,((select `amountPaid`) >= least(`congresses_instances_participants`.`price`,coalesce(`congresses_instances_registrationForm`.`price_minUpfront`,`congresses_instances_participants`.`price`)))) AS `hasPaidMinimum`,if((`congresses_instances_participants`.`cancelledTime` <> NULL),false,if(`congresses_instances_registrationForm`.`manualApproval`,`congresses_instances_participants`.`approved`,((0 <> `congresses_instances_participants`.`approved`) or (0 <> (select coalesce(`hasPaidMinimum`,true)))))) AS `isValid` from (`congresses_instances_participants` join `congresses_instances_registrationForm` on((`congresses_instances_participants`.`congressInstanceId` = `congresses_instances_registrationForm`.`congressInstanceId`))) */;
+/*!50001 VIEW `view_congresses_instances_participants_metadata` AS select `congresses_instances_participants`.`dataId` AS `dataId`,(select coalesce((sum(`pay_triggerHist`.`amountTriggered`) - sum(`pay_intents`.`amountRefunded`)),0) from ((`pay_triggerHist` join `view_pay_intents_purposes` on(((`pay_triggerHist`.`paymentIntentId` = `view_pay_intents_purposes`.`paymentIntentId`) and (`pay_triggerHist`.`pos` = `view_pay_intents_purposes`.`pos`)))) join `pay_intents` on((`pay_triggerHist`.`paymentIntentId` = `pay_intents`.`id`))) where ((`view_pay_intents_purposes`.`trigger_congress_registration_dataId` = `congresses_instances_participants`.`dataId`) and (0 = `view_pay_intents_purposes`.`invalid`))) AS `amountPaid`,if((`congresses_instances_registrationForm`.`price_var` = NULL),NULL,((select `amountPaid`) >= least(`congresses_instances_participants`.`price`,coalesce(`congresses_instances_registrationForm`.`price_minUpfront`,`congresses_instances_participants`.`price`)))) AS `hasPaidMinimum`,if((`congresses_instances_participants`.`cancelledTime` <> NULL),false,if(`congresses_instances_registrationForm`.`manualApproval`,`congresses_instances_participants`.`approved`,((0 <> `congresses_instances_participants`.`approved`) or (0 <> (select coalesce(`hasPaidMinimum`,true)))))) AS `isValid` from (`congresses_instances_participants` join `congresses_instances_registrationForm` on((`congresses_instances_participants`.`congressInstanceId` = `congresses_instances_registrationForm`.`congressInstanceId`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3908,4 +3908,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-22 18:25:18
+-- Dump completed on 2023-08-24  9:24:21

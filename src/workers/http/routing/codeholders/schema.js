@@ -712,7 +712,7 @@ export const patchSchema = {
 		},
 		honorific: {
 			type: 'string',
-			pattern: '^[^\\n]{2,15}$',
+			pattern: '^[^\\n]{2,25}$',
 			nullable: true
 		},
 		birthdate: {
