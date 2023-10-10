@@ -2468,7 +2468,7 @@ CREATE TABLE `magazines_editions` (
   `description` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `published` tinyint(1) NOT NULL DEFAULT '0',
   `subscribers` json DEFAULT NULL,
-  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `date` (`date`),
   KEY `magazineId` (`magazineId`),
@@ -2491,7 +2491,7 @@ CREATE TABLE `magazines_editions_files` (
   `editionId` int unsigned NOT NULL,
   `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `downloads` int unsigned NOT NULL DEFAULT '0',
-  `s3Id` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `s3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `size` int unsigned NOT NULL,
   PRIMARY KEY (`magazineId`,`editionId`,`format`),
   KEY `downloads` (`downloads`),
@@ -2542,7 +2542,7 @@ CREATE TABLE `magazines_editions_toc_recitations` (
   `tocEntryId` int unsigned NOT NULL,
   `format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `downloads` int unsigned NOT NULL DEFAULT '0',
-  `s3Id` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `s3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `size` int unsigned NOT NULL,
   PRIMARY KEY (`tocEntryId`,`format`),
   KEY `downloads` (`downloads`),
@@ -3008,7 +3008,7 @@ CREATE TABLE `pay_methods` (
   `stripeSecretKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `stripePublishableKey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `prices` json DEFAULT NULL,
-  `thumbnailS3Id` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnailS3Id` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orgId` (`paymentOrgId`),
   KEY `type` (`type`),
@@ -3329,7 +3329,7 @@ CREATE TABLE `tokens` (
   `token` binary(32) NOT NULL,
   `payload` json NOT NULL,
   `expiry` bigint unsigned NOT NULL,
-  `ctx` varchar(24) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ctx` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`token`),
   KEY `expiry` (`expiry`),
   KEY `ctx` (`ctx`)
@@ -3908,4 +3908,4 @@ USE `akso`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-24  9:24:21
+-- Dump completed on 2023-10-10 17:09:27

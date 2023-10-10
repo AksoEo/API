@@ -24,7 +24,7 @@ export async function updateExchangeRatesIfNeeded () {
 		try {
 			const res = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${AKSO.conf.openExchangeRatesAppID}`);
 			rates = await res.json();
-			if (rates.error) {
+			if (!rates || rates.error) {
 				AKSO.log.error(rates);
 				await fs.utimes(exchangeRatesPath, stat.atime, new Date());
 			} else {

@@ -17,7 +17,7 @@ export default {
 	},
 
 	run: async function run (req, res) {
-		if (!AKSO.cashify) { return res.sendStatus(423); }
+		if (!AKSO.exchangeRates) { return res.sendStatus(423); }
 
 		const rates = {};
 		for (const cur of AKSOCurrency.all) {
