@@ -40,10 +40,12 @@ export async function updateExchangeRatesIfNeeded () {
 		rates = await fs.readJSON(exchangeRatesPath);
 	}
 
-	process.send({
-		forward: true,
-		action: 'set_exchange_rates',
-		data: rates
-	});
+	if (rates) {
+		process.send({
+			forward: true,
+			action: 'set_exchange_rates',
+			data: rates
+		});
+	}
 }
 updateExchangeRatesIfNeeded.intervalMs = 1000 * 60 * 10; // Check every 10 minutes
