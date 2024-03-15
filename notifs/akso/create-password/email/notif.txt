@@ -1,7 +1,7 @@
 Estimata {{name}},
 
 Iu petis krei pasvorton ĉe AKSO per via UEA-kodo. Por krei vian pasvorton, bonvolu iri al la ĉi-suba ligilo:
-https://uea.org/ensaluti?nova-pasvorto={{@root.code}}/{{@root.key}}
+{{#url}}/krei_pasvorton/{{@root.code}}/{{@root.key}}{{/url}}
 
 Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.
 

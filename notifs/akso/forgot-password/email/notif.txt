@@ -1,7 +1,7 @@
 Estimata {{name}},
 
 Iu petis ŝanĝi vian pasvorton por via konto ĉe AKSO. Por ŝanĝi vian pasvorton, bonvolu iri al la ĉi-suba ligilo:
-{{#url}}ensaluti?nova-pasvorto={{@root.code}}/{{@root.key}}{{/url}}
+{{#url}}/nova_pasvorto/{{@root.code}}/{{@root.key}}{{/url}}
 
 Atentu, ke tiu ĉi ligilo nur validas dum 24 horoj. Poste vi devos repeti novan ligilon.
 
