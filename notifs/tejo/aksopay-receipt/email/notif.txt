@@ -1,6 +1,6 @@
 Estimata{{#if intent.customer_name}} {{intent.customer_name}}{{/if}},
 
-Koran dankon pro via {{#if isDonation}}donaco{{else}}mendo{{/if}}.
+Koran dankon pro via pago.
 
 
 ---
